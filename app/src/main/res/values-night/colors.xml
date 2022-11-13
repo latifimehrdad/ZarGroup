@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="primaryColor">#206cc9</color>
+    <color name="primaryColorVariant">#111820</color>
+
+
+    <color name="splashGradiantStartColor">#0c1927</color>
+    <color name="splashGradiantCenterColor">#0b1929</color>
+    <color name="splashGradiantEndColor">#011934</color>
+
+    <color name="homeGradiantStartColor">#0c1927</color>
+    <color name="homeGradiantCenterColor">#0b1929</color>
+    <color name="homeGradiantEndColor">#011934</color>
+
+    <color name="footerMenuGradiantStartColor">#3396C4FB</color>
+    <color name="footerMenuGradiantCenterColor">#3396C4FB</color>
+    <color name="footerMenuGradiantEndColor">#3396C4FB</color>
+
+    <color name="textViewColor1">@color/white</color>
+    <color name="textViewColor2">@color/white</color>
+    <color name="textViewFooter">@color/white</color>
+
+    <color name="cardViewHomeProfileColor">#33FFFFFF</color>
+    <color name="cardViewHomeNotificationColor">#ff3636</color>
+
+    <color name="editTextBorder">@color/white</color>
+
+    <color name="loginFooterColor">#2EFFFFFF</color>
+
+</resources>

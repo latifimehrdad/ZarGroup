@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_host"
+    app:startDestination="@id/HomeFragment">
+
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.zarholding.zar.view.fragment.SplashFragment"
+        android:label="SplashFragment">
+
+        <action
+            android:id="@+id/action_splashFragment_to_loginFragment"
+            app:destination="@id/LoginFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left"/>
+
+        <action
+            android:id="@+id/action_splashFragment_to_HomeFragment"
+            app:destination="@id/HomeFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left"/>
+
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/LoginFragment"
+        android:name="com.zarholding.zar.view.fragment.LoginFragment"
+        android:label="LoginFragment"/>
+
+    <fragment
+        android:id="@+id/HomeFragment"
+        android:name="com.zarholding.zar.view.fragment.HomeFragment"
+        android:label="HomeFragment"/>
+
+
+</navigation>
