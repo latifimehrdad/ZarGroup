@@ -7,6 +7,10 @@
     <string name="userName">نام کاربری</string>
     <string name="passcode">رمز ورود</string>
     <string name="enter">ورود</string>
+    <string name="home">صفحه اصلی</string>
+    <string name="tripAndMap">سرویس و نقشه</string>
+    <string name="personnelList">لیست پرسنل</string>
+    <string name="foodReservation">رزرو غذا</string>
 
 
     <string name="logoDescription">logo</string>

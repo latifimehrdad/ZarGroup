@@ -31,6 +31,14 @@
     <color name="cardViewHomeProfileColor">#33FFFFFF</color>
     <color name="cardViewHomeNotificationColor">#ff3636</color>
 
+    <color name="cardAppGradiantStart">#3396C4FB</color>
+    <color name="cardAppGradiantEnd">#3396C4FB</color>
+
+    <color name="homeSlideGradiantStartColor">#0c1927</color>
+    <color name="homeSlideGradiantEndColor">#002248</color>
+
+    <color name="appComingSoon">#80000000</color>
+
     <color name="editTextBorder">@color/white</color>
 
     <color name="loginFooterColor">#2EFFFFFF</color>
