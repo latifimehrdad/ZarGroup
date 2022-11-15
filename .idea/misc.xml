@@ -17,10 +17,11 @@
         <entry key="..\:/AndroidSource/ZarGroup/app/src/main/res/drawable/page_gradiant.xml" value="0.1615" />
         <entry key="..\:/AndroidSource/ZarGroup/app/src/main/res/layout-v28/fragment_home.xml" value="0.23854166666666668" />
         <entry key="..\:/AndroidSource/ZarGroup/app/src/main/res/layout/activity_main.xml" value="0.2421875" />
-        <entry key="..\:/AndroidSource/ZarGroup/app/src/main/res/layout/fragment_home.xml" value="0.264" />
+        <entry key="..\:/AndroidSource/ZarGroup/app/src/main/res/layout/fragment_home.xml" value="0.25" />
         <entry key="..\:/AndroidSource/ZarGroup/app/src/main/res/layout/fragment_login.xml" value="0.264" />
         <entry key="..\:/AndroidSource/ZarGroup/app/src/main/res/layout/fragment_splash.xml" value="0.2421875" />
         <entry key="..\:/AndroidSource/ZarGroup/app/src/main/res/layout/item_app.xml" value="0.264" />
+        <entry key="..\:/AndroidSource/ZarGroup/app/src/main/res/layout/item_slider.xml" value="0.2375" />
       </map>
     </option>
   </component>

@@ -58,7 +58,9 @@ dependencies {
 
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
-
     implementation("net.orandja.shadowlayout:shadowlayout:1.0.1")
+
+    implementation 'com.github.IslamKhSh:CardSlider:1.0.1'
+
 
 }

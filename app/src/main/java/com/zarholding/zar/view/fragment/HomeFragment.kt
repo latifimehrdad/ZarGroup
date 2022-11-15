@@ -9,11 +9,13 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.github.islamkhsh.CardSliderAdapter
 import com.zar.core.enums.EnumErrorType
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zarholding.zar.model.other.AppModel
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.view.recycler.adapter.AppAdapter
+import com.zarholding.zar.view.recycler.adapter.SliderAdapter
 import zar.R
 import zar.databinding.FragmentHomeBinding
 import zar.databinding.FragmentLoginBinding
@@ -62,7 +64,7 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
         apps.add(AppModel(R.drawable.icon_trip, getString(R.string.tripAndMap), 1))
         apps.add(AppModel(R.drawable.icon_personnel, getString(R.string.personnelList), 1))
         apps.add(AppModel(R.drawable.icon_food_reservation, getString(R.string.foodReservation), 0))
-        apps.add(AppModel(R.drawable.icon_trip, getString(R.string.tripAndMap), 0))
+        apps.add(AppModel(R.drawable.icon_gift_card, getString(R.string.giftCard), 0))
         setAppsAdapter(apps)
     }
     //---------------------------------------------------------------------------------------------- initApps
@@ -85,6 +87,17 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
     }
     //---------------------------------------------------------------------------------------------- setAppsAdapter
 
+
+
+
+/*    private fun setSliderAdapter() {
+        val apps: MutableList<AppModel> = mutableListOf()
+        apps.add(AppModel(R.drawable.icon_trip, getString(R.string.tripAndMap), 1))
+        apps.add(AppModel(R.drawable.icon_personnel, getString(R.string.personnelList), 1))
+        apps.add(AppModel(R.drawable.icon_food_reservation, getString(R.string.foodReservation), 0))
+        apps.add(AppModel(R.drawable.icon_gift_card, getString(R.string.giftCard), 0))
+        binding.viewPager.adapter = SliderAdapter(apps)
+    }*/
 
 
     //---------------------------------------------------------------------------------------------- onDestroyView
