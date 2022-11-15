@@ -44,5 +44,7 @@
 
     <color name="loginFooterColor">@color/white</color>
 
+    <color name="bannerSliderIndicator">@color/white</color>
+
 
 </resources>

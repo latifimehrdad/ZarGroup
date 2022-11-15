@@ -13,10 +13,20 @@
     <string name="foodReservation">رزرو غذا</string>
     <string name="giftCard">بن کارت</string>
     <string name="comingSoon">به زودی</string>
+    <string name="view">مشاهده</string>
+    <string name="showNews">مشاهده خبر</string>
+    <string name="personnelRequest">درخواست پرسنل</string>
+    <string name="bePatient">شکیبا باشید…</string>
+
+
+    <string name="userNameIsEmpty">نام کاربری را وارد نمایید</string>
+    <string name="passcodeIsEmpty">رمز ورود را وارد نمایید</string>
 
 
     <string name="logoDescription">logo</string>
     <string name="profileDescription">profile</string>
     <string name="notificationDescription">notification</string>
+    <string name="sliderDescription">slider</string>
+    <string name="newsDescription">news</string>
 
 </resources>

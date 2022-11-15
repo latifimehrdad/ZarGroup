@@ -1,5 +1,6 @@
 package com.zarholding.zar.viewmodel
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.zarholding.zar.model.request.LoginRequestModel
 import com.zarholding.zar.repository.LoginRepository
@@ -12,6 +13,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(var repository: LoginRepository) : ViewModel() {
+
+    var userName: String? = null
+    var passcode: String? = null
+    var loadingLiveDate = MutableLiveData(false)
 
     //---------------------------------------------------------------------------------------------- requestLogin
     fun requestLogin(login: LoginRequestModel) = repository.requestLogin(login)

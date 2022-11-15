@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.zarholding.zar.model.response.news.NewsModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/_100sdp"
+        android:padding="@dimen/_5sdp"
+        android:clipChildren="false"
+        android:clipToPadding="false">
+
+        <net.orandja.shadowlayout.ShadowLayout
+            android:id="@+id/shadowLayoutSlider"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintDimensionRatio="16:9"
+            app:shadow_cast_only_background="false"
+            app:shadow_color="#66FFFFFF"
+            app:shadow_downscale="0.2"
+            app:shadow_radius="20"
+            app:shadow_with_color="false"
+            app:shadow_with_css_scale="true"
+            app:shadow_with_dpi_scale="true">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="@dimen/_5sdp"
+                android:background="@drawable/drawable_news_gradiant">
+
+                <TextView
+                    android:id="@+id/textViewTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:textSize="@dimen/_10sdp"
+                    android:textColor="@color/textViewColor1"
+                    android:fontFamily="@font/kalameh_medium"
+                    android:maxLines="2"
+                    android:text="@{item.title}"/>
+
+                <TextView
+                    android:id="@+id/textViewSmallContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+                    android:textSize="@dimen/_9sdp"
+                    android:textColor="@color/textViewColor1"
+                    android:text="@{item.smallContent}"
+                    android:fontFamily="@font/kalameh_light"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buttonShow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/textViewSmallContent"
+                    app:layout_constraintStart_toEndOf="@id/imageViewLogo"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginEnd="@dimen/_5sdp"
+                    android:textSize="@dimen/_9sdp"
+                    android:fontFamily="@font/kalameh_regular"
+                    app:cornerRadius="@dimen/_5sdp"
+                    android:textColor="@color/white"
+                    android:text="@string/showNews" />
+
+
+                <ImageView
+                    android:id="@+id/imageViewLogo"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/_60sdp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/textViewSmallContent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/buttonShow"
+                    android:layout_marginEnd="@dimen/_5sdp"
+                    android:contentDescription="@string/newsDescription"
+                    app:loadImage="@{item.smallIcon}"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </net.orandja.shadowlayout.ShadowLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
+

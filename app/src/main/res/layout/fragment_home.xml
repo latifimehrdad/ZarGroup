@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -114,14 +115,15 @@
             <net.orandja.shadowlayout.ShadowLayout
                 android:id="@+id/shadowLayoutSlider"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_140sdp"
+                android:layout_height="0dp"
                 android:layout_gravity="center"
                 android:layout_margin="@dimen/_10sdp"
+                app:layout_constraintDimensionRatio="H,16:9"
                 app:layout_constraintTop_toBottomOf="@id/textViewHome"
                 app:shadow_cast_only_background="false"
-                app:shadow_color="#BFFFFFFF"
+                app:shadow_color="#E6A2BFDF"
                 app:shadow_downscale="0.4"
-                app:shadow_radius="20"
+                app:shadow_radius="30"
                 app:shadow_with_color="false"
                 app:shadow_with_css_scale="true"
                 app:shadow_with_dpi_scale="true">
@@ -132,7 +134,7 @@
                     app:cardCornerRadius="@dimen/_15sdp">
 
                     <com.zarholding.zar.view.autoimageslider.SliderView
-                        android:id="@+id/imageSlider"
+                        android:id="@+id/sliderViewBanner"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -145,8 +147,8 @@
                         app:sliderIndicatorOrientation="horizontal"
                         app:sliderIndicatorPadding="4dp"
                         app:sliderIndicatorRadius="2dp"
-                        app:sliderIndicatorSelectedColor="@color/white"
-                        app:sliderIndicatorUnselectedColor="#070707" />
+                        app:sliderIndicatorSelectedColor="@color/bannerSliderIndicator"
+                        app:sliderIndicatorUnselectedColor="#222020" />
 
                 </androidx.cardview.widget.CardView>
 
@@ -160,7 +162,31 @@
                 android:layout_marginStart="@dimen/_10sdp"
                 android:layout_marginEnd="@dimen/_10sdp"
                 android:layout_marginTop="@dimen/_15sdp"
-                app:layout_constraintTop_toBottomOf="@id/shadowLayoutSlider" />
+                app:layout_constraintTop_toBottomOf="@id/shadowLayoutSlider"
+                tools:itemCount="2" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewNews"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_15sdp"
+                app:layout_constraintTop_toBottomOf="@id/recyclerViewApps"
+                tools:itemCount="2" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewRequest"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                app:layout_constraintDimensionRatio="H,16:7"
+                app:layout_constraintTop_toBottomOf="@id/recyclerViewNews"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:itemCount="2" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

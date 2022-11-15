@@ -30,6 +30,41 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:background="@drawable/drawable_footer_menu">
 
+        <ImageView
+            android:id="@+id/imageViewSetting"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/imageViewHome"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:padding="@dimen/_9sdp"
+            android:src="@drawable/ic_setting"/>
+
+
+        <ImageView
+            android:id="@+id/imageViewHome"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/icon_home"
+            app:layout_constraintStart_toEndOf="@id/imageViewSetting"
+            app:layout_constraintEnd_toStartOf="@id/imageViewProfile"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:padding="@dimen/_9sdp"/>
+
+        <ImageView
+            android:id="@+id/imageViewProfile"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_profile"
+            app:layout_constraintStart_toEndOf="@id/imageViewHome"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:padding="@dimen/_9sdp"/>
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

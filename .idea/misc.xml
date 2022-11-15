@@ -11,6 +11,7 @@
         <entry key="..\:/AndroidSource/ZarGroup/app/src/main/res/drawable/drawable_home_profile.xml" value="0.1105" />
         <entry key="..\:/AndroidSource/ZarGroup/app/src/main/res/drawable/drawable_home_slider.xml" value="0.1605" />
         <entry key="..\:/AndroidSource/ZarGroup/app/src/main/res/drawable/drawable_login_footer.xml" value="0.11" />
+        <entry key="..\:/AndroidSource/ZarGroup/app/src/main/res/drawable/drawable_news_gradiant.xml" value="0.1605" />
         <entry key="..\:/AndroidSource/ZarGroup/app/src/main/res/drawable/drawable_splash_gradiant.xml" value="0.11" />
         <entry key="..\:/AndroidSource/ZarGroup/app/src/main/res/drawable/drawble_button.xml" value="0.11" />
         <entry key="..\:/AndroidSource/ZarGroup/app/src/main/res/drawable/home_gradiant.xml" value="0.11" />
@@ -21,6 +22,9 @@
         <entry key="..\:/AndroidSource/ZarGroup/app/src/main/res/layout/fragment_login.xml" value="0.264" />
         <entry key="..\:/AndroidSource/ZarGroup/app/src/main/res/layout/fragment_splash.xml" value="0.2421875" />
         <entry key="..\:/AndroidSource/ZarGroup/app/src/main/res/layout/item_app.xml" value="0.264" />
+        <entry key="..\:/AndroidSource/ZarGroup/app/src/main/res/layout/item_banner_slider.xml" value="0.23072916666666668" />
+        <entry key="..\:/AndroidSource/ZarGroup/app/src/main/res/layout/item_news.xml" value="0.264" />
+        <entry key="..\:/AndroidSource/ZarGroup/app/src/main/res/layout/item_request.xml" value="0.23177083333333334" />
         <entry key="..\:/AndroidSource/ZarGroup/app/src/main/res/layout/item_slider.xml" value="0.2375" />
       </map>
     </option>

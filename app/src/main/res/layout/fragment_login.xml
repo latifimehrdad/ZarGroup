@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <data>
+        <variable
+            name="viewModel"
+            type="com.zarholding.zar.viewmodel.LoginViewModel" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -68,7 +74,7 @@
                         android:fontFamily="@font/kalameh_light"/>
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/textInputLayoutUser"
+                        android:id="@+id/textInputLayoutUserName"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         app:layout_constraintTop_toBottomOf="@id/textViewEnterUserPass"
@@ -84,7 +90,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/textInputEditTextUser"
+                            android:id="@+id/textInputEditTextUserName"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="start|center_vertical"
@@ -93,15 +99,16 @@
                             android:maxLength="20"
                             android:singleLine="true"
                             android:textSize="@dimen/_10sdp"
+                            android:text="@={viewModel.userName}"
                             android:fontFamily="@font/kalameh_light"/>
 
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/layoutPassword"
+                        android:id="@+id/textInputLayoutPasscode"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        app:layout_constraintTop_toBottomOf="@id/textInputLayoutUser"
+                        app:layout_constraintTop_toBottomOf="@id/textInputLayoutUserName"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         android:layout_marginTop="@dimen/_10sdp"
@@ -116,7 +123,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/textInputEditTextPassword"
+                            android:id="@+id/textInputEditTextPasscode"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="start|center_vertical"
@@ -125,6 +132,7 @@
                             android:maxLength="20"
                             android:singleLine="true"
                             android:textSize="@dimen/_10sdp"
+                            android:text="@={viewModel.passcode}"
                             android:fontFamily="@font/kalameh_light"/>
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -133,8 +141,8 @@
                         android:id="@+id/buttonLogin"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:layout_constraintStart_toStartOf="@id/layoutPassword"
-                        app:layout_constraintTop_toBottomOf="@id/layoutPassword"
+                        app:layout_constraintStart_toStartOf="@id/textInputLayoutPasscode"
+                        app:layout_constraintTop_toBottomOf="@id/textInputLayoutPasscode"
                         android:layout_marginTop="@dimen/_15sdp"
                         android:minWidth="@dimen/_100sdp"
                         android:textSize="@dimen/_12sdp"
@@ -143,7 +151,7 @@
                         android:fontFamily="@font/kalameh_semibold"
                         app:cornerRadius="@dimen/_5sdp"
                         android:textColor="@color/white"
-                        android:text="@string/enter" />
+                        android:text='@{viewModel.loadingLiveDate ? @string/bePatient : @string/enter}' />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

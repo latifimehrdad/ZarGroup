@@ -43,4 +43,6 @@
 
     <color name="loginFooterColor">#2EFFFFFF</color>
 
+    <color name="bannerSliderIndicator">#ffdb2c</color>
+
 </resources>
