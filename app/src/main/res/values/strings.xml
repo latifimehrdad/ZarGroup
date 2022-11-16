@@ -17,6 +17,9 @@
     <string name="showNews">مشاهده خبر</string>
     <string name="personnelRequest">درخواست پرسنل</string>
     <string name="bePatient">شکیبا باشید…</string>
+    <string name="all">همه</string>
+    <string name="yesterday">دیروز</string>
+    <string name="today">امروز</string>
 
 
     <string name="userNameIsEmpty">نام کاربری را وارد نمایید</string>
@@ -28,5 +31,6 @@
     <string name="notificationDescription">notification</string>
     <string name="sliderDescription">slider</string>
     <string name="newsDescription">news</string>
+    <string name="closeDescription">close</string>
 
 </resources>

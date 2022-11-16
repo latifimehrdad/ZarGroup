@@ -11,6 +11,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
+import javax.inject.Named
 import javax.inject.Singleton
 
 /**
@@ -24,6 +25,7 @@ class Providers {
     //---------------------------------------------------------------------------------------------- provideBaseUrl
     @Provides
     @Singleton
+    @Named("Normal")
     fun provideBaseUrl(): String {
         return "http://192.168.50.153:8081"
     }
@@ -43,7 +45,7 @@ class Providers {
     //---------------------------------------------------------------------------------------------- provideApiService
     @Provides
     @Singleton
-    fun provideApiService(retrofit: Retrofit): ApiInterface {
+    fun provideApiService(@Named("Normal") retrofit: Retrofit): ApiInterface {
         return retrofit.create(ApiInterface::class.java)
     }
     //---------------------------------------------------------------------------------------------- provideApiService

@@ -1,70 +1,159 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.zarholding.zar.view.activity.MainActivity"
-    android:background="@drawable/drawable_home_gradiant">
-
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/nav_host_fragment"
-        android:name="androidx.navigation.fragment.NavHostFragment"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/constraintLayoutFooterMenu"
-        app:defaultNavHost="true"
-        app:navGraph="@navigation/nav_host" />
-
-
+<layout>
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayoutFooterMenu"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_40sdp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:background="@drawable/drawable_footer_menu">
+        android:layout_height="match_parent"
+        tools:context="com.zarholding.zar.view.activity.MainActivity"
+        android:background="@drawable/drawable_home_gradiant">
 
-        <ImageView
-            android:id="@+id/imageViewSetting"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayoutProfile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_10sdp"
+            android:background="@drawable/drawable_home_profile"
+            android:padding="@dimen/_4sdp"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardViewProfile"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_40sdp"
+                app:cardCornerRadius="@dimen/_30sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/profileDescription" />
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/textViewProfileName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:fontFamily="@font/kalameh_regular"
+                android:text="مهرداد لطیفی"
+                android:textColor="@color/textViewColor2"
+                android:textSize="@dimen/_10sdp"
+                app:layout_constraintBottom_toTopOf="@id/textViewProfileCode"
+                app:layout_constraintEnd_toStartOf="@id/cardViewProfile"
+                app:layout_constraintTop_toTopOf="@id/cardViewProfile" />
+
+            <TextView
+                android:id="@+id/textViewProfileCode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:fontFamily="@font/kalameh_light"
+                android:text="کد پرسنلی : 5000602"
+                android:textColor="@color/textViewColor2"
+                android:textSize="@dimen/_10sdp"
+                app:layout_constraintBottom_toBottomOf="@id/cardViewProfile"
+                app:layout_constraintEnd_toStartOf="@id/cardViewProfile"
+                app:layout_constraintTop_toBottomOf="@id/textViewProfileName" />
+
+            <ImageView
+                android:id="@+id/imageViewNotification"
+                android:layout_width="@dimen/_26sdp"
+                android:layout_height="@dimen/_33sdp"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:contentDescription="@string/profileDescription"
+                android:src="@drawable/notification"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_marginStart="@dimen/_15sdp"
+                app:cardBackgroundColor="@color/cardViewHomeNotificationColor"
+                app:cardCornerRadius="@dimen/_20sdp"
+                app:layout_constraintBottom_toTopOf="@id/imageViewNotification"
+                app:layout_constraintStart_toStartOf="@id/imageViewNotification"
+                app:layout_constraintTop_toTopOf="@id/imageViewNotification">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fontFamily="@font/kalameh_regular"
+                    android:gravity="center"
+                    android:text="02"
+                    android:textColor="@color/textViewColor1"
+                    android:textSize="@dimen/_10sdp" />
+
+            </androidx.cardview.widget.CardView>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/nav_host_fragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/_5sdp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/constraintLayoutProfile"
+            app:layout_constraintBottom_toTopOf="@id/constraintLayoutFooterMenu"
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/nav_host" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayoutFooterMenu"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/imageViewHome"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:padding="@dimen/_9sdp"
-            android:src="@drawable/ic_setting"/>
-
-
-        <ImageView
-            android:id="@+id/imageViewHome"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:src="@drawable/icon_home"
-            app:layout_constraintStart_toEndOf="@id/imageViewSetting"
-            app:layout_constraintEnd_toStartOf="@id/imageViewProfile"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:padding="@dimen/_9sdp"/>
-
-        <ImageView
-            android:id="@+id/imageViewProfile"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_profile"
-            app:layout_constraintStart_toEndOf="@id/imageViewHome"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:padding="@dimen/_9sdp"/>
+            android:background="@drawable/drawable_footer_menu">
 
+            <ImageView
+                android:id="@+id/imageViewSetting"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/imageViewHome"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:padding="@dimen/_9sdp"
+                android:src="@drawable/ic_setting"/>
+
+
+            <ImageView
+                android:id="@+id/imageViewHome"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/icon_home"
+                app:layout_constraintStart_toEndOf="@id/imageViewSetting"
+                app:layout_constraintEnd_toStartOf="@id/imageViewProfile"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:padding="@dimen/_9sdp"/>
+
+            <ImageView
+                android:id="@+id/imageViewProfile"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_profile"
+                app:layout_constraintStart_toEndOf="@id/imageViewHome"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:padding="@dimen/_9sdp"/>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

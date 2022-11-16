@@ -37,6 +37,10 @@
     <color name="homeSlideGradiantStartColor">#0c1927</color>
     <color name="homeSlideGradiantEndColor">#002248</color>
 
+    <color name="dialogHeaderGradiantStartColor">#206cc9</color>
+    <color name="dialogHeaderGradiantEndColor">#60a7ff</color>
+    <color name="dialogBackgroundColor">#D9484848</color>
+
     <color name="appComingSoon">#80000000</color>
 
     <color name="editTextBorder">@color/white</color>
