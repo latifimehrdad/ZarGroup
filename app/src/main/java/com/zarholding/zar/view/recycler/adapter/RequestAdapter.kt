@@ -27,7 +27,7 @@ class RequestAdapter(private val apps : MutableList<AppModel>) : RecyclerView.Ad
 
     //---------------------------------------------------------------------------------------------- onBindViewHolder
     override fun onBindViewHolder(holder: RequestItemHolder, position: Int) {
-        holder.bind(apps[position], position)
+        holder.bind(apps[position])
     }
     //---------------------------------------------------------------------------------------------- onBindViewHolder
 

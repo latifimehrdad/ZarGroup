@@ -6,10 +6,13 @@ import android.graphics.Bitmap
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import coil.load
+import com.zar.core.tools.extensions.toSolarDate
+import java.time.LocalDateTime
 
 /**
  * Created by m-latifi on 11/14/2022.
@@ -32,6 +35,24 @@ fun View.setAppComingSoon(link : Int) {
         View.GONE
 }
 //-------------------------------------------------------------------------------------------------- ImageView.setAppIcon
+
+
+
+//-------------------------------------------------------------------------------------------------- TextView.setDateTime
+@BindingAdapter("setDateTime")
+fun TextView.setDateTime(localDateTime: LocalDateTime?) {
+    localDateTime?.let { date ->
+        val solarDateModel = date.toSolarDate()
+        solarDateModel?.let {
+            text = it.getFullDate()
+        } ?: run {
+            text = ""
+        }
+    } ?: run {
+        text = ""
+    }
+}
+//-------------------------------------------------------------------------------------------------- TextView.setDateTime
 
 
 

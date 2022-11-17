@@ -11,7 +11,7 @@ import zar.databinding.ItemRequestBinding
 class RequestItemHolder(private val binding : ItemRequestBinding) : RecyclerView.ViewHolder(binding.root)
 {
     //---------------------------------------------------------------------------------------------- bind
-    fun bind(item : AppModel, position : Int) {
+    fun bind(item: AppModel) {
         binding.item = item
         binding.executePendingBindings()
     }

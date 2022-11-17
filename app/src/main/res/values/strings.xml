@@ -20,6 +20,8 @@
     <string name="all">همه</string>
     <string name="yesterday">دیروز</string>
     <string name="today">امروز</string>
+    <string name="deleteAllNotification">حذف کل اعلانات</string>
+    <string name="deleteChecked">حذف انتخاب شده ها</string>
 
 
     <string name="userNameIsEmpty">نام کاربری را وارد نمایید</string>
@@ -32,5 +34,6 @@
     <string name="sliderDescription">slider</string>
     <string name="newsDescription">news</string>
     <string name="closeDescription">close</string>
+    <string name="iconNotificationDescription">iconNotification</string>
 
 </resources>

@@ -41,20 +41,72 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/imageViewClose"
             app:tabIndicatorAnimationMode="elastic"
-            android:layoutDirection="rtl"/>
+            android:layoutDirection="rtl"
+            app:tabTextAppearance="@style/tab_text"/>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+            android:id="@+id/recyclerViewNotification"
             android:layout_width="0dp"
             android:layout_height="@dimen/_300sdp"
             android:nestedScrollingEnabled="true"
             android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tabLayout"
-            tools:listitem="@layout/item_category" />
+            tools:listitem="@layout/item_notification_category" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/recyclerViewNotification"
+            android:background="@color/notificationButtonShadowColor"
+            android:outlineProvider="background"
+            android:elevation="2dp">
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_1sdp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/materialButtonDeleteAll"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/materialButtonDeleteChecked"
+                    android:text="@string/deleteAllNotification"
+                    android:textSize="@dimen/_10sdp"
+                    android:fontFamily="@font/kalameh_regular"
+                    android:background="@color/notificationButtonColor"
+                    app:backgroundTint="@color/notificationButtonColor"
+                    android:textColor="@color/cardViewHomeNotificationColor"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/materialButtonDeleteChecked"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/materialButtonDeleteAll"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginStart="@dimen/_2sdp"
+                    android:text="@string/deleteChecked"
+                    android:textSize="@dimen/_10sdp"
+                    android:fontFamily="@font/kalameh_regular"
+                    android:background="@color/notificationButtonColor"
+                    app:backgroundTint="@color/notificationButtonColor"
+                    android:textColor="@color/cardViewHomeNotificationColor" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </FrameLayout>
+
+
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

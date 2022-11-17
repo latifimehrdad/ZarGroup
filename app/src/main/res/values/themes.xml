@@ -15,4 +15,15 @@
         <item name="android:navigationBarColor">@color/splashGradiantStartColor</item>
 
     </style>
+
+
+    <style name="tab_text" parent="@android:style/TextAppearance.Widget.TabWidget">
+        <item name="android:fontFamily">@font/kalameh_regular</item>
+    </style>
+
+    <style name="checkBoxStyle" parent="Base.Theme.AppCompat">
+        <item name="colorAccent">@color/primaryColor</item>
+        <item name="android:textColorSecondary">@color/textViewFooter</item>
+    </style>
+
 </resources>

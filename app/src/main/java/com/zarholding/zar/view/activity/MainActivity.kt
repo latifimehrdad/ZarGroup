@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.NavHostFragment
@@ -14,13 +15,13 @@ import com.zar.core.enums.EnumAuthorizationType
 import com.zar.core.enums.EnumErrorType
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zar.core.tools.manager.DialogManager
-import com.zarholding.zar.model.other.notification.Category
-import com.zarholding.zar.model.other.notification.Item
-import com.zarholding.zar.view.recycler.CategoriesAdapter
+import com.zarholding.zar.model.other.notification.NotificationCategoryModel
+import com.zarholding.zar.model.other.notification.NotificationModel
+import com.zarholding.zar.view.recycler.adapter.notification.NotificationCategoryAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import zar.R
 import zar.databinding.ActivityMainBinding
-import javax.inject.Inject
+import java.time.LocalDateTime
 
 
 /**
@@ -120,32 +121,40 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
     private fun initNotification(dialog: Dialog) {
 
         val tabLayout = dialog.findViewById<TabLayout>(R.id.tabLayout)
-        val recyclerView = dialog.findViewById<RecyclerView>(R.id.recyclerView)
+        val recyclerView = dialog.findViewById<RecyclerView>(R.id.recyclerViewNotification)
+        val imageViewClose = dialog.findViewById<ImageView>(R.id.imageViewClose)
+
+        imageViewClose.setOnClickListener {
+            dialog.dismiss()
+        }
 
         val categories = mutableListOf(
-            Category(
+            NotificationCategoryModel(
                 "امروز",
-                Item("item 1"),
-                Item("item 2"),
-                Item("item 3"),
-                Item("item 4"),
-                Item("item 5")
+                LocalDateTime.now(),
+                NotificationModel("", "", "", "", LocalDateTime.now(), false),
+                NotificationModel("", "", "", "", LocalDateTime.now(), false),
+                NotificationModel("", "", "", "", LocalDateTime.now(), false),
+                NotificationModel("", "", "", "", LocalDateTime.now(), false),
+                NotificationModel("", "", "", "", LocalDateTime.now(), false),
+                NotificationModel("", "", "", "", LocalDateTime.now(), false),
             ),
-            Category(
+            NotificationCategoryModel(
                 "دیروز",
-                Item("item 2-1"),
-                Item("item 2-2"),
-                Item("item 2-3"),
-                Item("item 2-4"),
-                Item("item 2-5"),
-                Item("item 2-6"),
-                Item("item 2-6")
+                LocalDateTime.now().minusDays(1),
+                NotificationModel("", "", "", "", LocalDateTime.now(), false),
+                NotificationModel("", "", "", "", LocalDateTime.now(), false),
+                NotificationModel("", "", "", "", LocalDateTime.now(), false),
+                NotificationModel("", "", "", "", LocalDateTime.now(), false),
+                NotificationModel("", "", "", "", LocalDateTime.now(), false),
             ),
-            Category(
+            NotificationCategoryModel(
                 "همه",
-                Item("item 3-1"),
-                Item("item 3-2"),
-                Item("item 3-3")
+                null,
+                NotificationModel("", "", "", "", LocalDateTime.now(), false),
+                NotificationModel("", "", "", "", LocalDateTime.now(), false),
+                NotificationModel("", "", "", "", LocalDateTime.now(), false),
+                NotificationModel("", "", "", "", LocalDateTime.now(), false),
             )
         )
 
@@ -159,7 +168,7 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
             badge?.number = 3
         }
 
-        recyclerView.adapter = CategoriesAdapter(this, categories)
+        recyclerView.adapter = NotificationCategoryAdapter(categories)
 
         TabbedListMediator(
             recyclerView,

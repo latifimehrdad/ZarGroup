@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="item"
+            type="com.zarholding.zar.model.other.notification.NotificationModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/imageViewIcon"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:background="@drawable/drawable_notification_icon"
+            android:contentDescription="@string/iconNotificationDescription" />
+
+        <CheckBox
+            android:id="@+id/checkboxRead"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="55 دقیقه پیش"
+            app:layout_constraintTop_toTopOf="@id/imageViewIcon"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:fontFamily="@font/kalameh_light"
+            android:textSize="@dimen/_8sdp"
+            android:textColor="@color/textViewFooter"
+            android:checked="false"
+            android:theme="@style/checkBoxStyle"/>
+
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/checkboxRead"
+            app:layout_constraintEnd_toStartOf="@id/imageViewIcon"
+            app:layout_constraintTop_toTopOf="@id/imageViewIcon"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:text="مجتبی یکتا"
+            android:textSize="@dimen/_10sdp"
+            android:textColor="@color/textViewColor2"
+            android:fontFamily="@font/kalameh_regular"
+            android:lines="1"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/checkboxRead"
+            app:layout_constraintEnd_toStartOf="@id/imageViewIcon"
+            app:layout_constraintBottom_toBottomOf="@id/imageViewIcon"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:text="مجتبی یکتا"
+            android:textSize="@dimen/_10sdp"
+            android:textColor="@color/textViewFooter"
+            android:fontFamily="@font/kalameh_light"
+            android:lines="1"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/textViewFooter"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
