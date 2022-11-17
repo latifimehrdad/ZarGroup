@@ -3,6 +3,7 @@ package com.zarholding.zar.view.extension
 import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
@@ -12,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import coil.load
 import com.zar.core.tools.extensions.toSolarDate
+import zar.R
 import java.time.LocalDateTime
 
 /**
@@ -73,6 +75,19 @@ fun ImageView.loadImage(url : String) {
 }
 //-------------------------------------------------------------------------------------------------- loadImage
 
+
+
+//-------------------------------------------------------------------------------------------------- setUnreadNotification
+@BindingAdapter("setUnreadNotification")
+fun View.setUnreadNotification(read : Boolean) {
+     if (read)
+         setBackgroundColor(Color.TRANSPARENT)
+    else
+         setBackgroundColor(context
+             .resources
+             .getColor(R.color.notificationUnreadColor, context.theme))
+}
+//-------------------------------------------------------------------------------------------------- setUnreadNotification
 
 
 //-------------------------------------------------------------------------------------------------- hideKeyboard

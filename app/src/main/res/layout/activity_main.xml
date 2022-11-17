@@ -62,8 +62,8 @@
 
             <ImageView
                 android:id="@+id/imageViewNotification"
-                android:layout_width="@dimen/_26sdp"
-                android:layout_height="@dimen/_33sdp"
+                android:layout_width="@dimen/_23sdp"
+                android:layout_height="@dimen/_30sdp"
                 android:layout_marginStart="@dimen/_5sdp"
                 android:contentDescription="@string/profileDescription"
                 android:src="@drawable/notification"
@@ -72,12 +72,11 @@
 
 
             <androidx.cardview.widget.CardView
-                android:layout_width="@dimen/_20sdp"
-                android:layout_height="@dimen/_20sdp"
+                android:layout_width="@dimen/_18sdp"
+                android:layout_height="@dimen/_18sdp"
                 android:layout_marginStart="@dimen/_15sdp"
                 app:cardBackgroundColor="@color/cardViewHomeNotificationColor"
                 app:cardCornerRadius="@dimen/_20sdp"
-                app:layout_constraintBottom_toTopOf="@id/imageViewNotification"
                 app:layout_constraintStart_toStartOf="@id/imageViewNotification"
                 app:layout_constraintTop_toTopOf="@id/imageViewNotification">
 
@@ -87,8 +86,9 @@
                     android:fontFamily="@font/kalameh_regular"
                     android:gravity="center"
                     android:text="02"
+                    android:lines="1"
                     android:textColor="@color/textViewColor1"
-                    android:textSize="@dimen/_10sdp" />
+                    android:textSize="@dimen/_8sdp" />
 
             </androidx.cardview.widget.CardView>
 

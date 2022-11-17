@@ -120,6 +120,7 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
 
     private fun initNotification(dialog: Dialog) {
 
+        dialog.setCancelable(true)
         val tabLayout = dialog.findViewById<TabLayout>(R.id.tabLayout)
         val recyclerView = dialog.findViewById<RecyclerView>(R.id.recyclerViewNotification)
         val imageViewClose = dialog.findViewById<ImageView>(R.id.imageViewClose)
@@ -133,28 +134,28 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
                 "امروز",
                 LocalDateTime.now(),
                 NotificationModel("", "", "", "", LocalDateTime.now(), false),
+                NotificationModel("", "", "", "", LocalDateTime.now(), true),
                 NotificationModel("", "", "", "", LocalDateTime.now(), false),
-                NotificationModel("", "", "", "", LocalDateTime.now(), false),
-                NotificationModel("", "", "", "", LocalDateTime.now(), false),
-                NotificationModel("", "", "", "", LocalDateTime.now(), false),
-                NotificationModel("", "", "", "", LocalDateTime.now(), false),
+                NotificationModel("", "", "", "", LocalDateTime.now(), true),
+                NotificationModel("", "", "", "", LocalDateTime.now(), true),
+                NotificationModel("", "", "", "", LocalDateTime.now(), true),
             ),
             NotificationCategoryModel(
                 "دیروز",
                 LocalDateTime.now().minusDays(1),
+                NotificationModel("", "", "", "", LocalDateTime.now(), true),
                 NotificationModel("", "", "", "", LocalDateTime.now(), false),
-                NotificationModel("", "", "", "", LocalDateTime.now(), false),
-                NotificationModel("", "", "", "", LocalDateTime.now(), false),
-                NotificationModel("", "", "", "", LocalDateTime.now(), false),
-                NotificationModel("", "", "", "", LocalDateTime.now(), false),
+                NotificationModel("", "", "", "", LocalDateTime.now(), true),
+                NotificationModel("", "", "", "", LocalDateTime.now(), true),
+                NotificationModel("", "", "", "", LocalDateTime.now(), true),
             ),
             NotificationCategoryModel(
                 "همه",
                 null,
-                NotificationModel("", "", "", "", LocalDateTime.now(), false),
-                NotificationModel("", "", "", "", LocalDateTime.now(), false),
-                NotificationModel("", "", "", "", LocalDateTime.now(), false),
-                NotificationModel("", "", "", "", LocalDateTime.now(), false),
+                NotificationModel("", "", "", "", LocalDateTime.now(), true),
+                NotificationModel("", "", "", "", LocalDateTime.now(), true),
+                NotificationModel("", "", "", "", LocalDateTime.now(), true),
+                NotificationModel("", "", "", "", LocalDateTime.now(), true),
             )
         )
 
