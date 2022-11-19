@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_host"
-    app:startDestination="@id/SettingFragment">
+    app:startDestination="@id/ServiceFragment">
 
     <fragment
         android:id="@+id/splashFragment"
@@ -48,6 +49,11 @@
         android:name="com.zarholding.zar.view.fragment.SettingFragment"
         android:label="SettingFragment"/>
 
+
+    <fragment
+        android:id="@+id/ServiceFragment"
+        android:name="com.zarholding.zar.view.fragment.ServiceFragment"
+        tools:layout="ServiceFragment"/>
 
 
     <action

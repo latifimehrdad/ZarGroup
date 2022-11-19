@@ -1,5 +1,6 @@
 package com.zarholding.zar.view.activity
 
+import android.Manifest
 import android.app.Dialog
 import android.os.Bundle
 import android.view.Gravity
@@ -12,6 +13,11 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.RecyclerView
 import com.ahmadhamwi.tabsync.TabbedListMediator
 import com.google.android.material.tabs.TabLayout
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.zar.core.enums.EnumAuthorizationType
 import com.zar.core.enums.EnumErrorType
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
@@ -54,6 +60,7 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- initView
     private fun initView() {
         setListener()
+        checkLocationPermission()
     }
     //---------------------------------------------------------------------------------------------- initView
 
@@ -135,6 +142,35 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
         navController?.navigate(fragment, null)
     }
     //---------------------------------------------------------------------------------------------- gotoFragment
+
+
+    //---------------------------------------------------------------------------------------------- checkLocationPermission
+    private fun checkLocationPermission() {
+
+        Dexter.withContext(this)
+            .withPermissions(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+
+            )
+            .withListener(object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(p0: MultiplePermissionsReport?) {
+
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    p0: MutableList<PermissionRequest>?,
+                    p1: PermissionToken?
+                ) {
+
+                }
+
+            })
+            .check()
+    }
+    //---------------------------------------------------------------------------------------------- checkLocationPermission
+
 
 
     private fun initNotification(dialog: Dialog) {
