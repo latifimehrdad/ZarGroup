@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/drawable_home_gradiant">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/textViewSetting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:fontFamily="@font/kalameh_regular"
+                android:text="@string/setting"
+                android:textColor="@color/textViewColor2"
+                android:textSize="@dimen/_11sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayoutSetting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_10sdp"
+                android:background="@drawable/drawable_home_profile"
+                android:padding="@dimen/_10sdp"
+                app:layout_constraintTop_toBottomOf="@id/textViewSetting">
+
+                <ImageView
+                    android:id="@+id/imageViewSupport"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintDimensionRatio="H,1:1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent="0.15"
+                    android:layout_margin="@dimen/_3sdp"
+                    android:src="@drawable/ic_support"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_5sdp"
+                    android:fontFamily="@font/kalameh_regular"
+                    android:text="@string/appSupportTeam"
+                    android:textColor="@color/textViewColor2"
+                    android:textSize="@dimen/_12sdp"
+                    android:lines="1"
+                    app:layout_constraintEnd_toStartOf="@id/imageViewSupport"
+                    app:layout_constraintTop_toTopOf="@id/imageViewSupport"
+                    app:layout_constraintBottom_toBottomOf="@id/imageViewSupport"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buttonLogin"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/imageViewSupport"
+                    android:layout_marginHorizontal="@dimen/_5sdp"
+                    android:layout_marginTop="@dimen/_15sdp"
+                    android:minWidth="@dimen/_100sdp"
+                    android:textSize="@dimen/_12sdp"
+                    android:paddingTop="@dimen/_5sdp"
+                    android:paddingBottom="@dimen/_5sdp"
+                    android:fontFamily="@font/kalameh_semibold"
+                    app:cornerRadius="@dimen/_5sdp"
+                    android:textColor="@color/textViewColor2"
+                    android:text="@string/sendTicket" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <include
+                android:id="@+id/layoutActiveDarkMode"
+                layout="@layout/layout_setting_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="@dimen/_10sdp"
+                app:layout_constraintTop_toBottomOf="@id/constraintLayoutSetting"
+                app:title="@{@string/activeDarkTheme}"
+                app:icon="@{@drawable/ic_dark_theme}" />
+
+
+            <include
+                android:id="@+id/layoutActiveFingerPrint"
+                layout="@layout/layout_setting_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="@dimen/_10sdp"
+                app:layout_constraintTop_toBottomOf="@id/layoutActiveDarkMode"
+                app:title="@{@string/loginByFingerPrint}"
+                app:icon="@{@drawable/ic_finger_print}" />
+
+
+            <include
+                android:id="@+id/layoutActiveGetNews"
+                layout="@layout/layout_setting_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="@dimen/_10sdp"
+                app:layout_constraintTop_toBottomOf="@id/layoutActiveFingerPrint"
+                app:title="@{@string/getNews}"
+                app:icon="@{@drawable/ic_news_vector_2}" />
+
+
+            <include
+                android:id="@+id/layoutChangePass"
+                layout="@layout/layout_profile_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="@dimen/_10sdp"
+                app:layout_constraintTop_toBottomOf="@id/layoutActiveGetNews"
+                app:title="@{@string/changePasscode}"
+                app:icon="@{@drawable/ic_password}"
+                app:showMore="@{true}"/>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.core.widget.NestedScrollView>
+
+
+</layout>

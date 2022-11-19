@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_host"
-    app:startDestination="@id/HomeFragment">
+    app:startDestination="@id/SettingFragment">
 
     <fragment
         android:id="@+id/splashFragment"
@@ -38,5 +38,26 @@
         android:name="com.zarholding.zar.view.fragment.HomeFragment"
         android:label="HomeFragment"/>
 
+    <fragment
+        android:id="@+id/ProfileFragment"
+        android:name="com.zarholding.zar.view.fragment.ProfileFragment"
+        android:label="ProfileFragment"/>
+
+    <fragment
+        android:id="@+id/SettingFragment"
+        android:name="com.zarholding.zar.view.fragment.SettingFragment"
+        android:label="SettingFragment"/>
+
+
+
+    <action
+        android:id="@+id/action_goto_ProfileFragment"
+        app:destination="@id/ProfileFragment"
+        app:popUpTo="@id/ProfileFragment"
+        app:launchSingleTop="true"
+        app:enterAnim="@anim/slide_in_left"
+        app:exitAnim="@anim/slide_out_right"
+        app:popEnterAnim="@anim/slide_in_right"
+        app:popExitAnim="@anim/slide_out_left"/>
 
 </navigation>

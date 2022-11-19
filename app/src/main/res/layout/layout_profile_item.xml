@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+
+        <import type="android.view.View"/>
+
+        <variable
+            name="showMore"
+            type="Boolean" />
+
+        <variable
+            name="title"
+            type="String" />
+
+        <variable
+            name="icon"
+            type="android.graphics.drawable.Drawable" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/imageViewMore"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            app:layout_constraintTop_toTopOf="@id/imageViewIcon"
+            app:layout_constraintBottom_toBottomOf="@id/imageViewIcon"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginHorizontal="@dimen/_15sdp"
+            android:src="@drawable/ic_more"
+            android:visibility="@{showMore ? View.VISIBLE : View.GONE}"
+            android:contentDescription="@string/profileDescription" />
+
+        <ImageView
+            android:id="@+id/imageViewIcon"
+            android:layout_width="@dimen/_27sdp"
+            android:layout_height="@dimen/_27sdp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginHorizontal="@dimen/_15sdp"
+            android:layout_marginVertical="@dimen/_10sdp"
+            android:src="@{icon}"
+            android:contentDescription="@string/profileDescription" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@id/imageViewIcon"
+            app:layout_constraintBottom_toBottomOf="@id/imageViewIcon"
+            app:layout_constraintEnd_toStartOf="@id/imageViewIcon"
+            app:layout_constraintStart_toEndOf="@id/imageViewMore"
+            android:layout_marginHorizontal="@dimen/_20sdp"
+            android:text="@{title}"
+            android:fontFamily="@font/kalameh_light"
+            android:textSize="@dimen/_10sdp"
+            android:textColor="@color/textViewColor2"
+            />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1px"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@color/textViewFooter"
+            app:layout_constraintStart_toStartOf="@id/imageViewMore"
+            app:layout_constraintEnd_toEndOf="@id/imageViewIcon"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</layout>
+

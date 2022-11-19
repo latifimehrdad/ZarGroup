@@ -1,0 +1,18 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="38.009dp"
+    android:height="25.905dp"
+    android:viewportWidth="38.009"
+    android:viewportHeight="25.905">
+  <path
+      android:fillColor="@color/profileIconColor2"
+      android:pathData="M27.775,0.794a1.03,1.03 0,0 0,-1.239 -0.766L0.794,6.101A1.03,1.03 0,0 0,0.028 7.34l4.193,17.772a1.029,1.029 0,0 0,1.239 0.766l25.74,-6.073a1.03,1.03 0,0 0,0.766 -1.239zM27.903,10.31 L23.493,7.749 26.31,3.562zM2.574,9.161l4.392,2.486 -2.8,4.262zM3.826,7.502 L24.449,2.637 16.389,14.614zM5.989,23.636 L4.818,18.671 8.764,12.665 16.205,16.877a1.03,1.03 0,0 0,1.362 -0.322l4.774,-7.094 6.214,3.609 1.171,4.965z"/>
+  <path
+      android:pathData="M36.98,0.692h-6.472a1.03,1.03 0,0 0,0 2.06h6.472a1.03,1.03 0,0 0,0 -2.06z"
+      android:fillColor="@color/profileIconColor"/>
+  <path
+      android:pathData="M35.892,5.938h-4.3a1.03,1.03 0,0 0,0 2.06h4.3a1.03,1.03 0,0 0,0 -2.06z"
+      android:fillColor="@color/profileIconColor"/>
+  <path
+      android:pathData="M34.862,11.185h-2.234a1.03,1.03 0,0 0,0 2.06L34.862,13.245a1.03,1.03 0,1 0,0 -2.06z"
+      android:fillColor="@color/profileIconColor"/>
+</vector>

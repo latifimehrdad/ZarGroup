@@ -25,4 +25,9 @@
         <item name="android:textColorSecondary">@color/textViewFooter</item>
     </style>
 
+    <style name="switchStyle" parent="Base.Theme.AppCompat">
+        <item name="colorAccent">@color/profileIconColor</item>
+        <item name="android:colorForeground">@color/textViewFooter</item>
+    </style>
+
 </resources>

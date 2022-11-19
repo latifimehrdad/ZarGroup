@@ -22,7 +22,19 @@
     <string name="today">امروز</string>
     <string name="deleteAllNotification">حذف کل اعلانات</string>
     <string name="deleteChecked">حذف انتخاب شده ها</string>
-
+    <string name="profile">پروفایل</string>
+    <string name="personalInformation">اطلاعات کاربری</string>
+    <string name="messages">پیام ها</string>
+    <string name="news">خبرنامه ها</string>
+    <string name="trainings">آموزش ها</string>
+    <string name="logout">خروج از حساب کاربری</string>
+    <string name="setting">تنظیمات</string>
+    <string name="appSupportTeam">پشتیبانی نرم افزار هلدینگ زر</string>
+    <string name="sendTicket">ارسال تیکت</string>
+    <string name="activeDarkTheme">فعال کردن تم دارک</string>
+    <string name="loginByFingerPrint">ورود از طریق اثر انگشت</string>
+    <string name="getNews">دریافت خبرنامه</string>
+    <string name="changePasscode">تغییر رمز عبور</string>
 
     <string name="userNameIsEmpty">نام کاربری را وارد نمایید</string>
     <string name="passcodeIsEmpty">رمز ورود را وارد نمایید</string>

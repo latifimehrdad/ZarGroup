@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.RecyclerView
 import com.ahmadhamwi.tabsync.TabbedListMediator
@@ -32,6 +33,7 @@ import java.time.LocalDateTime
 class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
 
     lateinit var binding : ActivityMainBinding
+    var navController : NavController? = null
 
     //---------------------------------------------------------------------------------------------- companion object
     companion object {
@@ -51,21 +53,24 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- initView
     private fun initView() {
-        setNavListener()
+        setListener()
     }
     //---------------------------------------------------------------------------------------------- initView
 
 
-    //---------------------------------------------------------------------------------------------- setNavListener
-    private fun setNavListener() {
+    //---------------------------------------------------------------------------------------------- setListener
+    private fun setListener() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment?
         navHostFragment?.let {
+            navController = it.navController
             it.navController.addOnDestinationChangedListener { _, destination, _ ->
                 if (destination.label != null)
                     showAndHideBottomMenu(destination.label.toString())
             }
         }
+
+
 
         binding.imageViewNotification.setOnClickListener {
             val position = binding.imageViewNotification.top +
@@ -76,8 +81,13 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
             dialog.show()
         }
 
+
+        binding.imageViewProfile.setOnClickListener {
+            gotoFragment(R.id.action_goto_ProfileFragment)
+        }
+
     }
-    //---------------------------------------------------------------------------------------------- setNavListener
+    //---------------------------------------------------------------------------------------------- setListener
 
 
     //---------------------------------------------------------------------------------------------- showAndHideBottomMenu
@@ -89,6 +99,10 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
                 binding.constraintLayoutFooterMenu.visibility = View.GONE
                 binding.constraintLayoutProfile.visibility = View.GONE
 
+            }
+            "ProfileFragment" ->
+            {
+                binding.constraintLayoutProfile.visibility = View.GONE
             }
             else ->
             {
@@ -116,6 +130,11 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- unAuthorization
 
 
+    //---------------------------------------------------------------------------------------------- gotoFragment
+    private fun gotoFragment(fragment : Int) {
+        navController?.navigate(fragment, null)
+    }
+    //---------------------------------------------------------------------------------------------- gotoFragment
 
 
     private fun initNotification(dialog: Dialog) {
