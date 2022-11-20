@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@drawable/drawable_home_gradiant">
 
         <TextView
             android:id="@+id/textViewService"
@@ -20,6 +22,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewMap"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintTop_toBottomOf="@id/textViewService"
@@ -29,7 +32,7 @@
             android:layout_marginHorizontal="@dimen/_10sdp"
             android:layout_marginVertical="@dimen/_10sdp"
             app:cardElevation="@dimen/_5sdp"
-            app:cardCornerRadius="@dimen/_5sdp">
+            app:cardCornerRadius="@dimen/_10sdp">
 
             <org.osmdroid.views.MapView
                 android:id="@+id/mapView"
@@ -39,6 +42,58 @@
 
         </androidx.cardview.widget.CardView>
 
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/cardViewMap"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginVertical="@dimen/_15sdp"
+            android:background="@drawable/drawable_trip_gradiant">
+
+            <TextView
+                android:id="@+id/textViewMyService"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/textViewColor1"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/textViewListService"
+                android:text="@string/myService"
+                android:fontFamily="@font/kalameh_semibold"
+                android:gravity="center"
+                android:paddingVertical="@dimen/_5sdp"
+                android:background="@drawable/drawable_trip_unselect_button"/>
+
+
+            <TextView
+                android:id="@+id/textViewListService"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/textViewColor1"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/textViewMyService"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:text="@string/listOfService"
+                android:fontFamily="@font/kalameh_semibold"
+                android:gravity="center"
+                android:paddingVertical="@dimen/_5sdp"
+                android:background="@drawable/drawable_trip_unselect_button"/>
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewService"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintTop_toBottomOf="@id/textViewMyService"
+                app:layout_constraintBottom_toBottomOf="parent"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

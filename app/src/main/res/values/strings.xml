@@ -35,6 +35,11 @@
     <string name="loginByFingerPrint">ورود از طریق اثر انگشت</string>
     <string name="getNews">دریافت خبرنامه</string>
     <string name="changePasscode">تغییر رمز عبور</string>
+    <string name="myService">سرویس های من</string>
+    <string name="listOfService">لیست سرویس ها</string>
+    <string name="reserveService">درخواست رزرو این سرویس</string>
+    <string name="deleteService">حذف سرویس</string>
+    <string name="pendingForAccept">در انتظار تایید</string>
 
     <string name="userNameIsEmpty">نام کاربری را وارد نمایید</string>
     <string name="passcodeIsEmpty">رمز ورود را وارد نمایید</string>
@@ -47,5 +52,8 @@
     <string name="newsDescription">news</string>
     <string name="closeDescription">close</string>
     <string name="iconNotificationDescription">iconNotification</string>
+    <string name="showMoreDescription">show more</string>
+    <string name="iconDescription">icon</string>
+    <string name="plusDescription">plus</string>
 
 </resources>
