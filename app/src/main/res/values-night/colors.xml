@@ -70,6 +70,6 @@
     <color name="tripButtonUnSelectColor">#33FFFFFF</color>
     <color name="tripMoreBackgroundColor">#CCFFFFFF</color>
 
-    <color name="polyLineColor">#B3185EEB</color>
+    <color name="polyLineColor">#B33775F3</color>
 
 </resources>

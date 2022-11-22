@@ -41,7 +41,6 @@ class ServiceHolder(private val binding: ItemServiceBinding) :
     //---------------------------------------------------------------------------------------------- showMore
     private fun showMore() {
         binding.expandableMore.expand()
-
         val rotate = RotateAnimation(
             0f,
             -90f,

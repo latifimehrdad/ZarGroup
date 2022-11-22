@@ -1,9 +1,12 @@
 package com.zarholding.zar.utility
 
-import android.util.Size
+import android.content.Context
 import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
-import java.lang.Math.*
+import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.Marker
+import zar.R
+import kotlin.math.*
 
 
 /**
@@ -15,7 +18,7 @@ class OsmManager {
 
 
     //---------------------------------------------------------------------------------------------- getBoundingBoxFromPoints
-    fun getBoundingBoxFromPoints(points : List<GeoPoint>): BoundingBox {
+    fun getBoundingBoxFromPoints(points: List<GeoPoint>): BoundingBox {
         var north = 0.0
         var south = 0.0
         var west = 0.0
@@ -28,19 +31,44 @@ class OsmManager {
             if (i == 0 || lon < west) west = lon
             if (i == 0 || lon > east) east = lon
         }
-        north+=0.01
-        south-=0.01
-        east+=0.01
-        west-=0.01
+        north += 0.01
+        south -= 0.01
+        east += 0.01
+        west -= 0.01
         return BoundingBox(north, east, south, west)
     }
     //---------------------------------------------------------------------------------------------- getBoundingBoxFromPoints
 
 
 
-    fun addPolyline() : List<GeoPoint> {
+    //---------------------------------------------------------------------------------------------- getBearing
+    fun getBearing(
+        from: GeoPoint,
+        to: GeoPoint
+    ): Double {
+        val degreesPerRadian = 180.0 / PI
+        val lat1: Double = from.latitude * PI / 180.0
+        val lon1: Double = from.longitude * PI / 180.0
+        val lat2: Double = to.latitude * PI / 180.0
+        val lon2: Double = to.longitude * PI / 180.0
+        var angle = -atan2(
+            sin(lon1 - lon2) * cos(lat2),
+            cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(lon1 - lon2)
+        )
+        if (angle < 0.0) angle += PI * 2.0
+        angle *= degreesPerRadian
+        return angle
+    }
+    //---------------------------------------------------------------------------------------------- getBearing
+
+
+
+
+
+
+    fun addPolyline(): List<GeoPoint> {
         val geoPoints = mutableListOf<GeoPoint>()
-        geoPoints.add(GeoPoint(35.84033, 51.01642))
+        geoPoints.add(GeoPoint(35.84033, 51.01617))
         geoPoints.add(GeoPoint(35.84035, 51.01581))
         geoPoints.add(GeoPoint(35.84041, 51.01533))
         geoPoints.add(GeoPoint(35.84063, 51.01539))
@@ -131,9 +159,6 @@ class OsmManager {
         geoPoints.add(GeoPoint(35.90561, 50.81941))
         return geoPoints.toList()
     }
-
-
-
 
 
 }

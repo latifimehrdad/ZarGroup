@@ -1,7 +1,9 @@
 package com.zarholding.zar.view.fragment
 
+import android.content.Context
 import android.graphics.Paint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,6 +28,8 @@ import org.osmdroid.api.IMapController
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
 import org.osmdroid.views.overlay.TilesOverlay
 import zar.R
@@ -40,6 +44,7 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
 
     private var _binding: FragmentServiceBinding? = null
     private val binding get() = _binding!!
+    private var polyline : Polyline? = null
 
 
     //---------------------------------------------------------------------------------------------- onCreateView
@@ -60,6 +65,7 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
         binding.lifecycleOwner = viewLifecycleOwner
         setListener()
         initMap()
+        selectListOfServices()
     }
     //---------------------------------------------------------------------------------------------- onViewCreated
 
@@ -107,11 +113,21 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- initListOfService
     private fun initListOfService() {
         val service: MutableList<ServiceModel> = mutableListOf()
-        service.add(ServiceModel("https://azadimarket.com/wp-content/uploads/2021/09/19cd3daa135c4f66f5f5df0f1889f527.png", "اتوبوس کد 00512 - آقای فرحی", "مبدا : سه راه گوهردشت/مقصد: کارخانه زرماکارون","ایستگاه ها : سه راه گوهردشت - میان جاده - چهارراه گلشهر - چهارراه گلزار"))
-        service.add(ServiceModel("https://fs.noorgram.ir/xen/2022/02/3098_5479a701607915b9791e6c23f3e07cb6.png","اتوبوس کد 00512 - آقای فرحی", "مبدا : سه راه گوهردشت/مقصد: کارخانه زرماکارون","ایستگاه ها : سه راه گوهردشت - میان جاده - چهارراه گلشهر - چهارراه گلزار"))
-        service.add(ServiceModel("https://azadimarket.com/wp-content/uploads/2021/09/19cd3daa135c4f66f5f5df0f1889f527.png","اتوبوس کد 00512 - آقای فرحی", "مبدا : سه راه گوهردشت/مقصد: کارخانه زرماکارون","ایستگاه ها : سه راه گوهردشت - میان جاده - چهارراه گلشهر - چهارراه گلزار"))
-        service.add(ServiceModel("https://azadimarket.com/wp-content/uploads/2021/09/19cd3daa135c4f66f5f5df0f1889f527.png","اتوبوس کد 00512 - آقای فرحی", "مبدا : سه راه گوهردشت/مقصد: کارخانه زرماکارون","ایستگاه ها : سه راه گوهردشت - میان جاده - چهارراه گلشهر - چهارراه گلزار"))
-        service.add(ServiceModel("https://azadimarket.com/wp-content/uploads/2021/09/19cd3daa135c4f66f5f5df0f1889f527.png","اتوبوس کد 00512 - آقای فرحی", "مبدا : سه راه گوهردشت/مقصد: کارخانه زرماکارون","ایستگاه ها : سه راه گوهردشت - میان جاده - چهارراه گلشهر - چهارراه گلزار"))
+        service.add(ServiceModel("https://azadimarket.com/wp-content/uploads/2021/09/19cd3daa135c4f66f5f5df0f1889f527.png", "اتوبوس کد 00512 - آقای فرحی1", "مبدا : سه راه گوهردشت/مقصد: کارخانه زرماکارون","ایستگاه ها : سه راه گوهردشت - میان جاده - چهارراه گلشهر - چهارراه گلزار"))
+        service.add(ServiceModel("https://fs.noorgram.ir/xen/2022/02/3098_5479a701607915b9791e6c23f3e07cb6.png","اتوبوس کد 00512 - آقای فرحی2", "مبدا : سه راه گوهردشت/مقصد: کارخانه زرماکارون","ایستگاه ها : سه راه گوهردشت - میان جاده - چهارراه گلشهر - چهارراه گلزار"))
+        service.add(ServiceModel("https://azadimarket.com/wp-content/uploads/2021/09/19cd3daa135c4f66f5f5df0f1889f527.png","اتوبوس کد 00512 - آقای فرحی3", "مبدا : سه راه گوهردشت/مقصد: کارخانه زرماکارون","ایستگاه ها : سه راه گوهردشت - میان جاده - چهارراه گلشهر - چهارراه گلزار"))
+        service.add(ServiceModel("https://azadimarket.com/wp-content/uploads/2021/09/19cd3daa135c4f66f5f5df0f1889f527.png","اتوبوس کد 00512 - آقای فرحی4", "مبدا : سه راه گوهردشت/مقصد: کارخانه زرماکارون","ایستگاه ها : سه راه گوهردشت - میان جاده - چهارراه گلشهر - چهارراه گلزار"))
+        service.add(ServiceModel("https://azadimarket.com/wp-content/uploads/2021/09/19cd3daa135c4f66f5f5df0f1889f527.png","اتوبوس کد 00512 - آقای فرحی5", "مبدا : سه راه گوهردشت/مقصد: کارخانه زرماکارون","ایستگاه ها : سه راه گوهردشت - میان جاده - چهارراه گلشهر - چهارراه گلزار"))
+        service.add(ServiceModel("https://azadimarket.com/wp-content/uploads/2021/09/19cd3daa135c4f66f5f5df0f1889f527.png","اتوبوس کد 00512 - آقای فرحی6", "مبدا : سه راه گوهردشت/مقصد: کارخانه زرماکارون","ایستگاه ها : سه راه گوهردشت - میان جاده - چهارراه گلشهر - چهارراه گلزار"))
+        service.add(ServiceModel("https://azadimarket.com/wp-content/uploads/2021/09/19cd3daa135c4f66f5f5df0f1889f527.png","اتوبوس کد 00512 - آقای فرحی7", "مبدا : سه راه گوهردشت/مقصد: کارخانه زرماکارون","ایستگاه ها : سه راه گوهردشت - میان جاده - چهارراه گلشهر - چهارراه گلزار"))
+        service.add(ServiceModel("https://azadimarket.com/wp-content/uploads/2021/09/19cd3daa135c4f66f5f5df0f1889f527.png","اتوبوس کد 00512 - آقای فرحی8", "مبدا : سه راه گوهردشت/مقصد: کارخانه زرماکارون","ایستگاه ها : سه راه گوهردشت - میان جاده - چهارراه گلشهر - چهارراه گلزار"))
+        service.add(ServiceModel("https://azadimarket.com/wp-content/uploads/2021/09/19cd3daa135c4f66f5f5df0f1889f527.png","اتوبوس کد 00512 - آقای فرحی9", "مبدا : سه راه گوهردشت/مقصد: کارخانه زرماکارون","ایستگاه ها : سه راه گوهردشت - میان جاده - چهارراه گلشهر - چهارراه گلزار"))
+        service.add(ServiceModel("https://azadimarket.com/wp-content/uploads/2021/09/19cd3daa135c4f66f5f5df0f1889f527.png","اتوبوس کد 00512 - آقای فرحی10", "مبدا : سه راه گوهردشت/مقصد: کارخانه زرماکارون","ایستگاه ها : سه راه گوهردشت - میان جاده - چهارراه گلشهر - چهارراه گلزار"))
+        service.add(ServiceModel("https://azadimarket.com/wp-content/uploads/2021/09/19cd3daa135c4f66f5f5df0f1889f527.png","اتوبوس کد 00512 - آقای فرحی11", "مبدا : سه راه گوهردشت/مقصد: کارخانه زرماکارون","ایستگاه ها : سه راه گوهردشت - میان جاده - چهارراه گلشهر - چهارراه گلزار"))
+        service.add(ServiceModel("https://azadimarket.com/wp-content/uploads/2021/09/19cd3daa135c4f66f5f5df0f1889f527.png","اتوبوس کد 00512 - آقای فرحی12", "مبدا : سه راه گوهردشت/مقصد: کارخانه زرماکارون","ایستگاه ها : سه راه گوهردشت - میان جاده - چهارراه گلشهر - چهارراه گلزار"))
+        service.add(ServiceModel("https://azadimarket.com/wp-content/uploads/2021/09/19cd3daa135c4f66f5f5df0f1889f527.png","اتوبوس کد 00512 - آقای فرحی13", "مبدا : سه راه گوهردشت/مقصد: کارخانه زرماکارون","ایستگاه ها : سه راه گوهردشت - میان جاده - چهارراه گلشهر - چهارراه گلزار"))
+        service.add(ServiceModel("https://azadimarket.com/wp-content/uploads/2021/09/19cd3daa135c4f66f5f5df0f1889f527.png","اتوبوس کد 00512 - آقای فرحی14", "مبدا : سه راه گوهردشت/مقصد: کارخانه زرماکارون","ایستگاه ها : سه راه گوهردشت - میان جاده - چهارراه گلشهر - چهارراه گلزار"))
+        service.add(ServiceModel("https://azadimarket.com/wp-content/uploads/2021/09/19cd3daa135c4f66f5f5df0f1889f527.png","اتوبوس کد 00512 - آقای فرحی15", "مبدا : سه راه گوهردشت/مقصد: کارخانه زرماکارون","ایستگاه ها : سه راه گوهردشت - میان جاده - چهارراه گلشهر - چهارراه گلزار"))
         setServiceAdapter(service)
     }
     //---------------------------------------------------------------------------------------------- initListOfService
@@ -182,28 +198,61 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
         mapController.setCenter(startPoint)
 //        binding.mapView.overlayManager.tilesOverlay.setColorFilter(TilesOverlay.INVERT_COLORS) // dark
         binding.mapView.onResume()
-
         val points = OsmManager().addPolyline()
-        val box = OsmManager().getBoundingBoxFromPoints(points)
-        val line = Polyline(binding.mapView, true, false)
-        line.setPoints(points)
-        line.outlinePaint.color = resources.getColor(R.color.polyLineColor, requireContext().theme)
-        line.outlinePaint.strokeWidth = 18.0f
-
-        line.isGeodesic = true
-        line.outlinePaint.strokeCap = Paint.Cap.ROUND
-        binding.mapView.overlayManager.add(line)
-        CoroutineScope(IO).launch {
-            delay(1500)
-            withContext(Main) {
-                binding.mapView.zoomToBoundingBox(box, true)
-            }
-        }
-
-
+        drawPolylineOnMap(points)
     }
     //---------------------------------------------------------------------------------------------- initMap
 
+
+
+    //---------------------------------------------------------------------------------------------- drawPolylineOnMap
+    private fun drawPolylineOnMap(points : List<GeoPoint>) {
+        polyline = Polyline(binding.mapView, true, false)
+        polyline?.setPoints(points)
+        polyline?.outlinePaint?.color = resources.getColor(R.color.polyLineColor, requireContext().theme)
+        polyline?.outlinePaint?.strokeWidth = 20.0f
+        polyline?.isGeodesic = true
+        polyline?.outlinePaint?.strokeCap = Paint.Cap.ROUND
+        binding.mapView.overlayManager.add(polyline)
+        binding.mapView.invalidate()
+        boundBoxMap(points)
+    }
+    //---------------------------------------------------------------------------------------------- drawPolylineOnMap
+
+
+
+    //---------------------------------------------------------------------------------------------- boundBoxMap
+    private fun boundBoxMap(points : List<GeoPoint>) {
+        val box = OsmManager().getBoundingBoxFromPoints(points)
+        CoroutineScope(IO).launch {
+            delay(1000)
+            withContext(Main) {
+                binding.mapView.zoomToBoundingBox(box, true)
+                drawArrowOnPolyline(points)
+            }
+        }
+    }
+    //---------------------------------------------------------------------------------------------- boundBoxMap
+
+
+    //---------------------------------------------------------------------------------------------- drawArrowOnPolyline
+    fun drawArrowOnPolyline(points : List<GeoPoint>) {
+        for (i in 0..points.size)
+            if (i + 1 < points.size) {
+                val from = points[i]
+                val to = points[i +1]
+                val angel = OsmManager().getBearing(from, to)
+                val marker = Marker(binding.mapView, context)
+                val center = GeoPoint.fromCenterBetween(from, to)
+                marker.icon = resources.getDrawableForDensity(R.drawable.ic_icon_map_location_arrow, 2, requireContext().theme)
+//                marker.icon = resources.getDrawable(R.drawable.ic_icon_map_location_arrow, context.theme)
+                marker.position = center
+                marker.rotation = 360 - angel.toFloat()
+                binding.mapView.overlayManager.add(marker)
+            }
+        binding.mapView.invalidate()
+    }
+    //---------------------------------------------------------------------------------------------- drawArrowOnPolyline
 
 
     //---------------------------------------------------------------------------------------------- onDestroyView
