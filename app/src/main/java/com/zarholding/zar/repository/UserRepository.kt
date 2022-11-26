@@ -2,14 +2,14 @@ package com.zarholding.zar.repository
 
 import com.zar.core.tools.api.apiCall
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
-import com.zarholding.zar.api.ApiInterface
+import com.zarholding.zar.api.ApiBPMS
 import javax.inject.Inject
 
 /**
  * Created by m-latifi on 11/26/2022.
  */
 
-class UserRepository @Inject constructor(private val api: ApiInterface) {
+class UserRepository @Inject constructor(private val api: ApiBPMS) {
 
     @Inject
     lateinit var emitter: RemoteErrorEmitter

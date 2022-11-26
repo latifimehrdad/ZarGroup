@@ -12,7 +12,7 @@ import retrofit2.http.POST
  * Created by m-latifi on 11/8/2022.
  */
 
-interface ApiInterface {
+interface ApiBPMS {
 
     companion object {
         const val api = "/Api"

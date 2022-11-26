@@ -1,14 +1,12 @@
 package com.zarholding.zar.hilt
 
-import android.content.Context
-import android.content.SharedPreferences
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
-import com.zarholding.zar.api.ApiInterface
+import com.zarholding.zar.api.ApiBPMS
+import com.zarholding.zar.api.ApiSuperApp
 import com.zarholding.zar.view.activity.MainActivity
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import javax.inject.Named
@@ -22,14 +20,27 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class Providers {
 
-    //---------------------------------------------------------------------------------------------- provideBaseUrl
+    //---------------------------------------------------------------------------------------------- provideBPMSUrl
     @Provides
     @Singleton
     @Named("Normal")
-    fun provideBaseUrl(): String {
+    fun provideBPMSUrl(): String {
         return "http://192.168.50.153:8081"
     }
-    //---------------------------------------------------------------------------------------------- provideBaseUrl
+    //---------------------------------------------------------------------------------------------- provideBPMSUrl
+
+
+
+
+    //---------------------------------------------------------------------------------------------- provideSuperAppUrl
+    @Provides
+    @Singleton
+    @Named("SuperApp")
+    fun provideSuperAppUrl(): String {
+        return "http://192.168.50.153:8081"
+    }
+    //---------------------------------------------------------------------------------------------- provideSuperAppUrl
+
 
 
     //---------------------------------------------------------------------------------------------- provideRemoteErrorEmitter
@@ -42,13 +53,22 @@ class Providers {
 
 
 
-    //---------------------------------------------------------------------------------------------- provideApiService
+    //---------------------------------------------------------------------------------------------- provideApiBPMS
     @Provides
     @Singleton
-    fun provideApiService(@Named("Normal") retrofit: Retrofit): ApiInterface {
-        return retrofit.create(ApiInterface::class.java)
+    fun provideApiBPMS(@Named("Normal") retrofit: Retrofit): ApiBPMS {
+        return retrofit.create(ApiBPMS::class.java)
     }
-    //---------------------------------------------------------------------------------------------- provideApiService
+    //---------------------------------------------------------------------------------------------- provideApiBPMS
 
+
+
+    //---------------------------------------------------------------------------------------------- provideApiSuperApp
+    @Provides
+    @Singleton
+    fun provideApiSuperApp(@Named("SuperApp") retrofit: Retrofit): ApiSuperApp {
+        return retrofit.create(ApiSuperApp::class.java)
+    }
+    //---------------------------------------------------------------------------------------------- provideApiSuperApp
 
 }
