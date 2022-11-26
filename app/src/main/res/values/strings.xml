@@ -4,6 +4,7 @@
     <string name="welcomeToApp">به نرم افزار هلدینگ زر خوش آمدید.</string>
     <string name="designer">طراحی و توسعه توسط تیم نرم افزار هلدینگ زر</string>
     <string name="pleaseEnterUserPass">لطفا نام کاربری و رمز ورود خود را وارد کنید</string>
+    <string name="responseIsEmpty">اطلاعات دریافتی خالی می باشد</string>
     <string name="userName">نام کاربری</string>
     <string name="passcode">رمز ورود</string>
     <string name="enter">ورود</string>
@@ -45,6 +46,7 @@
     <string name="userNameIsEmpty">نام کاربری را وارد نمایید</string>
     <string name="passcodeIsEmpty">رمز ورود را وارد نمایید</string>
 
+    <string name="personalCode">کد پرسنلی : %1$s</string>
 
     <string name="logoDescription">logo</string>
     <string name="profileDescription">profile</string>

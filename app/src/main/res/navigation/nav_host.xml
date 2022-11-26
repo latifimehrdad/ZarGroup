@@ -37,7 +37,18 @@
     <fragment
         android:id="@+id/HomeFragment"
         android:name="com.zarholding.zar.view.fragment.HomeFragment"
-        android:label="HomeFragment"/>
+        android:label="HomeFragment">
+
+        <action
+            android:id="@+id/action_HomeFragment_to_ServiceFragment"
+            app:destination="@id/ServiceFragment"
+            app:launchSingleTop="true"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left"/>
+
+    </fragment>
 
     <fragment
         android:id="@+id/ProfileFragment"

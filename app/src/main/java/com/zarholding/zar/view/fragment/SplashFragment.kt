@@ -7,12 +7,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.zar.core.enums.EnumErrorType
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
+import com.zarholding.zar.model.response.user.UserInfoModel
+import com.zarholding.zar.repository.UserRepository
 import com.zarholding.zar.utility.CompanionValues
 import com.zarholding.zar.view.activity.MainActivity
+import com.zarholding.zar.viewmodel.TokenViewModel
+import com.zarholding.zar.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -36,6 +41,12 @@ class SplashFragment : Fragment(), RemoteErrorEmitter {
 
     @Inject
     lateinit var sharedPreferences: SharedPreferences
+
+    @Inject lateinit var userRepository: UserRepository
+
+    private val tokenViewModel: TokenViewModel by viewModels()
+
+    private val userViewModel: UserViewModel by viewModels()
 
 
     //---------------------------------------------------------------------------------------------- onCreateView
@@ -62,10 +73,10 @@ class SplashFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- onError
     override fun onError(errorType: EnumErrorType, message: String) {
         val snack = Snackbar.make(binding.constraintLayoutParent, message, 10 * 1000)
-        snack.setBackgroundTint(resources.getColor(R.color.primaryColor,requireContext().theme))
-        snack.setTextColor(resources.getColor(R.color.textViewColor3,requireContext().theme))
+        snack.setBackgroundTint(resources.getColor(R.color.primaryColor, requireContext().theme))
+        snack.setTextColor(resources.getColor(R.color.textViewColor3, requireContext().theme))
         snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
-        snack.setActionTextColor(resources.getColor(R.color.textViewColor1,requireContext().theme))
+        snack.setActionTextColor(resources.getColor(R.color.textViewColor1, requireContext().theme))
         snack.show()
     }
     //---------------------------------------------------------------------------------------------- onError
@@ -85,9 +96,8 @@ class SplashFragment : Fragment(), RemoteErrorEmitter {
     private fun gotoFragmentLogin() {
         job = CoroutineScope(IO).launch {
             delay(5000)
-            withContext(Main){
-                onError(EnumErrorType.UNKNOWN, "خطایی رخ داده است")
-                //findNavController().navigate(R.id.action_splashFragment_to_loginFragment)
+            withContext(Main) {
+                findNavController().navigate(R.id.action_splashFragment_to_loginFragment)
             }
         }
     }
@@ -98,12 +108,37 @@ class SplashFragment : Fragment(), RemoteErrorEmitter {
     private fun gotoFragmentHome() {
         job = CoroutineScope(IO).launch {
             delay(5000)
-            withContext(Main){
-                findNavController().navigate(R.id.action_splashFragment_to_HomeFragment)
+            withContext(Main) {
+                requestUserInfo()
             }
         }
     }
     //---------------------------------------------------------------------------------------------- gotoFragmentHome
+
+
+    //---------------------------------------------------------------------------------------------- requestUserInfo
+    private fun requestUserInfo() {
+        userViewModel.requestUserInfo(tokenViewModel.getBearerToken())
+            .observe(viewLifecycleOwner) { response ->
+                response?.let { userInfo ->
+                    if (userInfo.hasError)
+                        onError(EnumErrorType.UNKNOWN, userInfo.message)
+                    else
+                        userInfo.data?.let {
+                            (activity as MainActivity).setUserInfo(it)
+                            findNavController()
+                                .navigate(R.id.action_splashFragment_to_HomeFragment)
+                        } ?: run {
+                            onError(EnumErrorType.UNKNOWN, resources.getString(R.string.responseIsEmpty))
+                        }
+                } ?: run {
+                    onError(EnumErrorType.UNKNOWN, resources.getString(R.string.responseIsEmpty))
+                }
+            }
+    }
+    //---------------------------------------------------------------------------------------------- requestUserInfo
+
+
 
 
     //---------------------------------------------------------------------------------------------- onDestroyView

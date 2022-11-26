@@ -24,6 +24,7 @@ import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zar.core.tools.manager.DialogManager
 import com.zarholding.zar.model.other.notification.NotificationCategoryModel
 import com.zarholding.zar.model.other.notification.NotificationModel
+import com.zarholding.zar.model.response.user.UserInfoModel
 import com.zarholding.zar.view.recycler.adapter.notification.NotificationCategoryAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import zar.R
@@ -171,6 +172,15 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
     }
     //---------------------------------------------------------------------------------------------- checkLocationPermission
 
+
+
+    //---------------------------------------------------------------------------------------------- setUserInfo
+    fun setUserInfo(userInfoModel: UserInfoModel) {
+        binding.textViewProfileName.text = userInfoModel.fullName
+        binding.textViewPersonalCode.text = resources
+            .getString(R.string.personalCode,userInfoModel.personnelNumber)
+    }
+    //---------------------------------------------------------------------------------------------- setUserInfo
 
 
     private fun initNotification(dialog: Dialog) {

@@ -10,12 +10,12 @@ import javax.inject.Inject
  * Created by m-latifi on 11/9/2022.
  */
 
-class LoginRepository @Inject constructor(private val apiInterface: ApiInterface) {
+class LoginRepository @Inject constructor(private val api: ApiInterface) {
 
     @Inject lateinit var emitter: RemoteErrorEmitter
 
     //---------------------------------------------------------------------------------------------- requestLogin
-    fun requestLogin(login : LoginRequestModel) = apiCall(emitter){apiInterface.requestLogin(login)}
+    fun requestLogin(login : LoginRequestModel) = apiCall(emitter){api.requestLogin(login)}
     //---------------------------------------------------------------------------------------------- requestLogin
 
 }

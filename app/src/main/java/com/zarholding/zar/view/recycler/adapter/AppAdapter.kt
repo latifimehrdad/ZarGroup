@@ -11,23 +11,29 @@ import zar.databinding.ItemAppBinding
  * Created by m-latifi on 11/14/2022.
  */
 
-class AppAdapter(private val apps : MutableList<AppModel>) : RecyclerView.Adapter<AppItemHolder>() {
+class AppAdapter(
+    private val apps: MutableList<AppModel>,
+    private val click: AppItemHolder.Click
+) : RecyclerView.Adapter<AppItemHolder>() {
 
-    private var layoutInflater : LayoutInflater? = null
+    private var layoutInflater: LayoutInflater? = null
 
 
     //---------------------------------------------------------------------------------------------- onCreateViewHolder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AppItemHolder {
         if (layoutInflater == null)
             layoutInflater = LayoutInflater.from(parent.context)
-        return AppItemHolder(ItemAppBinding.inflate(layoutInflater!!,parent, false))
+        return AppItemHolder(
+            ItemAppBinding.inflate(layoutInflater!!, parent, false),
+            click
+        )
     }
     //---------------------------------------------------------------------------------------------- onCreateViewHolder
 
 
     //---------------------------------------------------------------------------------------------- onBindViewHolder
     override fun onBindViewHolder(holder: AppItemHolder, position: Int) {
-        holder.bind(apps[position], position)
+        holder.bind(apps[position])
     }
     //---------------------------------------------------------------------------------------------- onBindViewHolder
 

@@ -6,13 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zar.core.enums.EnumErrorType
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zarholding.zar.model.other.AppModel
 import com.zarholding.zar.model.response.banner.BannerModel
 import com.zarholding.zar.model.response.news.NewsModel
+import com.zarholding.zar.model.response.user.UserInfoModel
+import com.zarholding.zar.utility.CompanionValues
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.view.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType
 import com.zarholding.zar.view.autoimageslider.SliderAnimations
@@ -21,6 +23,7 @@ import com.zarholding.zar.view.recycler.adapter.AppAdapter
 import com.zarholding.zar.view.recycler.adapter.BannerAdapter
 import com.zarholding.zar.view.recycler.adapter.NewsAdapter
 import com.zarholding.zar.view.recycler.adapter.RequestAdapter
+import com.zarholding.zar.view.recycler.holder.AppItemHolder
 import zar.R
 import zar.databinding.FragmentHomeBinding
 
@@ -32,6 +35,7 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+    private var userModel : UserInfoModel? = null
 
 
     //---------------------------------------------------------------------------------------------- onCreateView
@@ -50,6 +54,7 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner
+        userModel = arguments?.getParcelable(CompanionValues.USER_INFO)
         initApps()
         initBanner()
         initNews()
@@ -68,7 +73,12 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- initApps
     private fun initApps() {
         val apps: MutableList<AppModel> = mutableListOf()
-        apps.add(AppModel(R.drawable.icon_trip, getString(R.string.tripAndMap), 1))
+
+        apps.add(AppModel(
+            R.drawable.icon_trip,
+            getString(R.string.tripAndMap),
+            R.id.action_HomeFragment_to_ServiceFragment))
+
         apps.add(AppModel(R.drawable.icon_personnel, getString(R.string.personnelList), 1))
         apps.add(AppModel(R.drawable.icon_food_reservation, getString(R.string.foodReservation), 0))
         apps.add(AppModel(R.drawable.icon_gift_card, getString(R.string.giftCard), 0))
@@ -80,15 +90,18 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- setAppsAdapter
     private fun setAppsAdapter(apps: MutableList<AppModel>) {
-        val adapter = AppAdapter(apps)
-
+        val click = object : AppItemHolder.Click {
+            override fun appClick(action: Int) {
+                findNavController().navigate(action)
+            }
+        }
+        val adapter = AppAdapter(apps, click)
         val linearLayoutManager = LinearLayoutManager(
             requireContext(),
             LinearLayoutManager.HORIZONTAL,
             false
         )
         linearLayoutManager.reverseLayout = true
-
         binding.recyclerViewApps.layoutManager = linearLayoutManager
         binding.recyclerViewApps.adapter = adapter
     }
@@ -194,5 +207,7 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
         _binding = null
     }
     //---------------------------------------------------------------------------------------------- onDestroyView
+
+
 
 }

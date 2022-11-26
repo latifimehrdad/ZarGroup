@@ -8,12 +8,26 @@ import zar.databinding.ItemAppBinding
  * Created by m-latifi on 11/14/2022.
  */
 
-class AppItemHolder(private val binding : ItemAppBinding) : RecyclerView.ViewHolder(binding.root)
-{
+class AppItemHolder(
+    private val binding: ItemAppBinding,
+    private val click: Click
+) : RecyclerView.ViewHolder(binding.root) {
+
+    //---------------------------------------------------------------------------------------------- Click
+    interface Click {
+        fun appClick(action: Int)
+    }
+    //---------------------------------------------------------------------------------------------- Click
+
+
     //---------------------------------------------------------------------------------------------- bind
-    fun bind(item : AppModel, position : Int) {
+    fun bind(item: AppModel) {
         binding.item = item
+        binding.root.setOnClickListener {
+            click.appClick(item.link)
+        }
         binding.executePendingBindings()
     }
     //---------------------------------------------------------------------------------------------- bind
+
 }

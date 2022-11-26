@@ -11,10 +11,13 @@ import androidx.fragment.app.viewModels
 import com.zar.core.enums.EnumErrorType
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zarholding.zar.model.request.LoginRequestModel
+import com.zarholding.zar.repository.UserRepository
 import com.zarholding.zar.utility.CompanionValues
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.view.extension.hideKeyboard
 import com.zarholding.zar.viewmodel.LoginViewModel
+import com.zarholding.zar.viewmodel.LoginViewModel_Factory
+import com.zarholding.zar.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import zar.R
 import zar.databinding.FragmentLoginBinding
