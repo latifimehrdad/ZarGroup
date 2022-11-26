@@ -7,6 +7,6 @@ package com.zarholding.zar.utility
 class CompanionValues {
 
     companion object {
-        const val sharedPreferencesToken = "token"
+        const val TOKEN = "token"
     }
 }

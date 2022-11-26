@@ -1,11 +1,8 @@
 package com.zarholding.zar.utility
 
-import android.content.Context
+import android.location.Location
 import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
-import org.osmdroid.views.MapView
-import org.osmdroid.views.overlay.Marker
-import zar.R
 import kotlin.math.*
 
 
@@ -15,6 +12,19 @@ import kotlin.math.*
 
 
 class OsmManager {
+
+
+    //---------------------------------------------------------------------------------------------- measureDistance
+    fun measureDistance(Old: GeoPoint, New: GeoPoint): Float {
+        val results = FloatArray(1)
+        Location.distanceBetween(
+            Old.latitude, Old.longitude,
+            New.latitude, New.longitude, results
+        )
+        return if (results.isNotEmpty()) results[0] else 0f
+    }
+    //---------------------------------------------------------------------------------------------- measureDistance
+
 
 
     //---------------------------------------------------------------------------------------------- getBoundingBoxFromPoints

@@ -115,7 +115,7 @@ class LoginFragment : Fragment(), RemoteErrorEmitter {
                 } else {
                     sharedPreferences
                         .edit()
-                        .putString(CompanionValues.sharedPreferencesToken, it.data)
+                        .putString(CompanionValues.TOKEN, it.data)
                         .apply()
                     if (activity != null)
                         requireActivity().onBackPressed()
