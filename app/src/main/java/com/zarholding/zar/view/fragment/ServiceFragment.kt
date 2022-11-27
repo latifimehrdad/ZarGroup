@@ -17,7 +17,6 @@ import com.zar.core.enums.EnumErrorType
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zar.core.tools.manager.DialogManager
 import com.zarholding.zar.model.response.trip.TripModel
-import com.zarholding.zar.model.response.trip.TripPointModel
 import com.zarholding.zar.utility.OsmManager
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.view.recycler.adapter.MyServiceAdapter
@@ -35,6 +34,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.osmdroid.api.IMapController
+import org.osmdroid.bonuspack.routing.OSRMRoadManager
+import org.osmdroid.bonuspack.routing.RoadManager
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
@@ -78,7 +79,7 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
         binding.lifecycleOwner = viewLifecycleOwner
         setListener()
         initMap()
-        requestGetTrips()
+//        requestGetTrips()
     }
     //---------------------------------------------------------------------------------------------- onViewCreated
 
@@ -244,6 +245,27 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
         mapController.setCenter(startPoint)
 //        binding.mapView.overlayManager.tilesOverlay.setColorFilter(TilesOverlay.INVERT_COLORS) // dark
         binding.mapView.onResume()
+
+        val geoPoints = arrayListOf<GeoPoint>()
+        geoPoints.add(GeoPoint(35.83952, 51.01509))
+        geoPoints.add(GeoPoint(35.84014, 51.01408))
+        val roadManager: RoadManager = OSRMRoadManager(context,"")
+        CoroutineScope(IO).launch {
+            val road = roadManager.getRoad(geoPoints)
+            val poly: Polyline = RoadManager.buildRoadOverlay(road)
+            polyline = Polyline(binding.mapView, true, false)
+            polyline!!.setPoints(poly.actualPoints)
+            polyline!!.outlinePaint?.color =
+                resources.getColor(R.color.polyLineColor, requireContext().theme)
+            polyline!!.outlinePaint?.strokeWidth = 20.0f
+            polyline!!.isGeodesic = true
+            polyline!!.outlinePaint?.strokeCap = Paint.Cap.ROUND
+            withContext(Main) {
+                binding.mapView.overlays.add(polyline)
+                binding.mapView.invalidate();
+            }
+        }
+
 
     }
     //---------------------------------------------------------------------------------------------- initMap
