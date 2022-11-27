@@ -9,5 +9,5 @@ import com.zarholding.zar.model.response.BaseResponseAbstractModel
 data class TripResponseModel(
     override val hasError: Boolean,
     override val message: String,
-    val data : TripModel?
+    val data : List<TripModel>?
     ) : BaseResponseAbstractModel()

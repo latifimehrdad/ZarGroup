@@ -1,5 +1,6 @@
 package com.zarholding.zar.hilt
 
+import com.google.gson.Gson
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zarholding.zar.api.ApiBPMS
 import com.zarholding.zar.api.ApiSuperApp
@@ -8,7 +9,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -32,17 +35,6 @@ class Providers {
 
 
 
-    //---------------------------------------------------------------------------------------------- provideSuperAppUrl
-    @Provides
-    @Singleton
-    @Named("SuperApp")
-    fun provideSuperAppUrl(): String {
-        return "http://192.168.50.153:8081"
-    }
-    //---------------------------------------------------------------------------------------------- provideSuperAppUrl
-
-
-
     //---------------------------------------------------------------------------------------------- provideRemoteErrorEmitter
     @Provides
     @Singleton
@@ -60,6 +52,19 @@ class Providers {
         return retrofit.create(ApiBPMS::class.java)
     }
     //---------------------------------------------------------------------------------------------- provideApiBPMS
+
+
+
+    //---------------------------------------------------------------------------------------------- provideRetrofit
+    @Provides
+    @Singleton
+    @Named("SuperApp")
+    fun provideRetrofit(client: OkHttpClient, gson: Gson): Retrofit = Retrofit.Builder()
+        .baseUrl("http://192.168.50.153:9090")
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .client(client)
+        .build()
+    //---------------------------------------------------------------------------------------------- provideRetrofit
 
 
 

@@ -1,11 +1,10 @@
 package com.zarholding.zar.view.recycler.holder
 
-import android.R
 import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
 import androidx.recyclerview.widget.RecyclerView
-import com.zarholding.zar.model.response.MyServiceModel
+import com.zarholding.zar.model.response.trip.TripModel
 import zar.databinding.ItemMyServiceBinding
 
 
@@ -16,26 +15,27 @@ import zar.databinding.ItemMyServiceBinding
 class MyServiceHolder(private val binding: ItemMyServiceBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
-    //---------------------------------------------------------------------------------------------- bind
-    fun bind(item: MyServiceModel) {
-        binding.item = item
-        setListener()
-        binding.executePendingBindings()
+    //---------------------------------------------------------------------------------------------- Click
+    interface Click {
+        fun serviceClick(item: TripModel)
     }
+    //---------------------------------------------------------------------------------------------- Click
+
+
+
     //---------------------------------------------------------------------------------------------- bind
-
-
-    //---------------------------------------------------------------------------------------------- setListener
-    private fun setListener() {
-
+    fun bind(item: TripModel, click: Click) {
+        binding.item = item
+        binding.root.setOnClickListener { click.serviceClick(item) }
         binding.imageViewShowMore.setOnClickListener {
             if (binding.expandableMore.isExpanded)
                 hideMore()
             else
                 showMore()
         }
+        binding.executePendingBindings()
     }
-    //---------------------------------------------------------------------------------------------- setListener
+    //---------------------------------------------------------------------------------------------- bind
 
 
 

@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import coil.load
 import com.zar.core.tools.extensions.toSolarDate
+import com.zarholding.zardriver.model.response.TripStationModel
 import zar.R
 import java.time.LocalDateTime
 
@@ -20,9 +21,45 @@ import java.time.LocalDateTime
  * Created by m-latifi on 11/14/2022.
  */
 
+
+//-------------------------------------------------------------------------------------------------- setStation
+@BindingAdapter("setStation")
+fun TextView.setStation(stations: List<TripStationModel>?) {
+    var title = "${context.getString(R.string.stations)} : "
+    stations?.let {
+        for (i in it.indices)
+            if (i + 1 < it.size)
+                title += "${it[i].stationName} - "
+        else
+                title += it[i].stationName
+    }
+    text = title
+}
+//-------------------------------------------------------------------------------------------------- setStation
+
+
+
+
+//-------------------------------------------------------------------------------------------------- setStartEndStation
+@BindingAdapter("setOriginName", "setDestinationName")
+fun TextView.setStartEndStation(originName : String?, destinationName : String?) {
+    var title = ""
+    originName?.let {
+        title += "${context.getString(R.string.origin)} : $originName"
+    }
+    destinationName.let {
+        title += " / ${context.getString(R.string.destination)} : $destinationName"
+    }
+    text = title
+}
+//-------------------------------------------------------------------------------------------------- setStartEndStation
+
+
+
+
 //-------------------------------------------------------------------------------------------------- ImageView.setAppIcon
 @BindingAdapter("setAppIcon")
-fun ImageView.setAppIcon(icon : Int) {
+fun ImageView.setAppIcon(icon: Int) {
     setImageResource(icon)
 }
 //-------------------------------------------------------------------------------------------------- ImageView.setAppIcon
@@ -30,14 +67,13 @@ fun ImageView.setAppIcon(icon : Int) {
 
 //-------------------------------------------------------------------------------------------------- ImageView.setAppIcon
 @BindingAdapter("setAppComingSoon")
-fun View.setAppComingSoon(link : Int) {
+fun View.setAppComingSoon(link: Int) {
     visibility = if (link == 0)
         View.VISIBLE
     else
         View.GONE
 }
 //-------------------------------------------------------------------------------------------------- ImageView.setAppIcon
-
 
 
 //-------------------------------------------------------------------------------------------------- TextView.setDateTime
@@ -57,10 +93,9 @@ fun TextView.setDateTime(localDateTime: LocalDateTime?) {
 //-------------------------------------------------------------------------------------------------- TextView.setDateTime
 
 
-
 //-------------------------------------------------------------------------------------------------- loadImage
 @BindingAdapter("loadImage")
-fun ImageView.loadImage(url : String) {
+fun ImageView.loadImage(url: String) {
     val circularProgressDrawable = CircularProgressDrawable(this.context)
     circularProgressDrawable.strokeWidth = 5f
     circularProgressDrawable.centerRadius = 30f
@@ -76,16 +111,17 @@ fun ImageView.loadImage(url : String) {
 //-------------------------------------------------------------------------------------------------- loadImage
 
 
-
 //-------------------------------------------------------------------------------------------------- setUnreadNotification
 @BindingAdapter("setUnreadNotification")
-fun View.setUnreadNotification(read : Boolean) {
-     if (read)
-         setBackgroundColor(Color.TRANSPARENT)
+fun View.setUnreadNotification(read: Boolean) {
+    if (read)
+        setBackgroundColor(Color.TRANSPARENT)
     else
-         setBackgroundColor(context
-             .resources
-             .getColor(R.color.notificationUnreadColor, context.theme))
+        setBackgroundColor(
+            context
+                .resources
+                .getColor(R.color.notificationUnreadColor, context.theme)
+        )
 }
 //-------------------------------------------------------------------------------------------------- setUnreadNotification
 
@@ -94,9 +130,11 @@ fun View.setUnreadNotification(read : Boolean) {
 fun Fragment.hideKeyboard() {
     view?.let { activity?.hideKeyboard(it) }
 }
+
 fun Activity.hideKeyboard() {
     hideKeyboard(currentFocus ?: View(this))
 }
+
 fun Context.hideKeyboard(view: View) {
     val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
     inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)

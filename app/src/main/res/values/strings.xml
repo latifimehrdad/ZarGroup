@@ -42,7 +42,9 @@
     <string name="deleteService">حذف سرویس</string>
     <string name="pendingForAccept">در انتظار تایید</string>
     <string name="dismiss">بستن</string>
-
+    <string name="stations">ایستگاه ها</string>
+    <string name="origin">مبدا</string>
+    <string name="destination">مقصد</string>
     <string name="userNameIsEmpty">نام کاربری را وارد نمایید</string>
     <string name="passcodeIsEmpty">رمز ورود را وارد نمایید</string>
 

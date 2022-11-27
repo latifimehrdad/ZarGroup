@@ -6,9 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.google.android.material.snackbar.Snackbar
 import com.zar.core.enums.EnumErrorType
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zarholding.zar.view.activity.MainActivity
+import zar.R
 import zar.databinding.FragmentSettingBinding
 
 /**
@@ -43,7 +45,7 @@ class SettingFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- onError
     override fun onError(errorType: EnumErrorType, message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+
     }
     //---------------------------------------------------------------------------------------------- onError
 

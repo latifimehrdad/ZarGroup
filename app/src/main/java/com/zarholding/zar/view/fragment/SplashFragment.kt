@@ -5,14 +5,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.zar.core.enums.EnumErrorType
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
-import com.zarholding.zar.model.response.user.UserInfoModel
 import com.zarholding.zar.repository.UserRepository
 import com.zarholding.zar.utility.CompanionValues
 import com.zarholding.zar.view.activity.MainActivity

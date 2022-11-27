@@ -3,7 +3,7 @@ package com.zarholding.zar.view.recycler.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.zarholding.zar.model.response.ServiceModel
+import com.zarholding.zar.model.response.trip.TripModel
 import com.zarholding.zar.view.recycler.holder.ServiceHolder
 import zar.databinding.ItemServiceBinding
 
@@ -11,7 +11,10 @@ import zar.databinding.ItemServiceBinding
  * Created by m-latifi on 11/20/2022.
  */
 
-class ServiceAdapter(private val services: MutableList<ServiceModel>) :
+class ServiceAdapter(
+    private val tripList: List<TripModel>,
+    private val click: ServiceHolder.Click
+) :
     RecyclerView.Adapter<ServiceHolder>() {
 
     private var layoutInflater: LayoutInflater? = null
@@ -28,13 +31,13 @@ class ServiceAdapter(private val services: MutableList<ServiceModel>) :
 
     //---------------------------------------------------------------------------------------------- onBindViewHolder
     override fun onBindViewHolder(holder: ServiceHolder, position: Int) {
-        holder.bind(services[position])
+        holder.bind(tripList[position], click)
     }
     //---------------------------------------------------------------------------------------------- onBindViewHolder
 
 
     //---------------------------------------------------------------------------------------------- getItemCount
-    override fun getItemCount() = services.size
+    override fun getItemCount() = tripList.size
     //---------------------------------------------------------------------------------------------- getItemCount
 
 

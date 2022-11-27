@@ -4,7 +4,7 @@
     <data>
         <variable
             name="item"
-            type="com.zarholding.zar.model.response.MyServiceModel" />
+            type="com.zarholding.zar.model.response.trip.TripModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -35,8 +35,7 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:contentDescription="@string/iconDescription"
-                app:loadImage="@{item.image}"/>
+                android:contentDescription="@string/iconDescription" />
 
         </androidx.cardview.widget.CardView>
 
@@ -56,7 +55,7 @@
             android:fontFamily="@font/kalameh_semibold"
             android:textSize="@dimen/_10sdp"
             android:maxLines="2"
-            android:text="@{item.title}"/>
+            android:text="@{item.commuteTripName}"/>
 
         <TextView
             android:id="@+id/textViewDirection"
@@ -74,7 +73,8 @@
             android:fontFamily="@font/kalameh_light"
             android:textSize="@dimen/_8sdp"
             android:maxLines="2"
-            android:text="@{item.direction}"/>
+            app:setOriginName="@{item.originName}"
+            app:setDestinationName="@{item.destinationName}"/>
 
 
         <TextView
@@ -94,8 +94,7 @@
             android:textColor="@color/textViewColor3"
             android:fontFamily="@font/kalameh_regular"
             android:textSize="@dimen/_8sdp"
-            android:maxLines="2"
-            android:text="@{item.myState}"/>
+            android:maxLines="2" />
 
         <net.cachapa.expandablelayout.ExpandableLayout
             android:id="@+id/expandableMore"
@@ -127,7 +126,7 @@
                     android:textColor="@color/textViewColor3"
                     android:fontFamily="@font/kalameh_light"
                     android:textSize="@dimen/_9sdp"
-                    android:text="@{item.stations}"/>
+                    app:setStation="@{item.stations}"/>
 
 
                 <TextView

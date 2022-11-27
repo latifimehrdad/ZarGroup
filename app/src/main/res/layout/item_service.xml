@@ -4,7 +4,7 @@
     <data>
         <variable
             name="item"
-            type="com.zarholding.zar.model.response.ServiceModel" />
+            type="com.zarholding.zar.model.response.trip.TripModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -34,8 +34,7 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:contentDescription="@string/iconDescription"
-                app:loadImage="@{item.image}"/>
+                android:contentDescription="@string/iconDescription" />
 
         </androidx.cardview.widget.CardView>
 
@@ -55,7 +54,7 @@
             android:fontFamily="@font/kalameh_semibold"
             android:textSize="@dimen/_10sdp"
             android:lines="2"
-            android:text="@{item.title}"/>
+            android:text="@{item.commuteTripName}"/>
 
         <TextView
             android:id="@+id/textViewDirection"
@@ -73,7 +72,8 @@
             android:fontFamily="@font/kalameh_light"
             android:textSize="@dimen/_8sdp"
             android:lines="2"
-            android:text="@{item.direction}"/>
+            app:setOriginName="@{item.originName}"
+            app:setDestinationName="@{item.destinationName}"/>
 
 
         <net.cachapa.expandablelayout.ExpandableLayout
@@ -85,7 +85,7 @@
             app:layout_constraintTop_toBottomOf="@id/cardViewImage"
             android:layout_marginTop="@dimen/_5sdp"
             app:el_duration="1000"
-            app:el_expanded="false"
+            app:el_expanded="true"
             app:el_parallax="0.5">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -106,7 +106,7 @@
                     android:textColor="@color/textViewColor3"
                     android:fontFamily="@font/kalameh_light"
                     android:textSize="@dimen/_9sdp"
-                    android:text="@{item.stations}"/>
+                    app:setStation="@{item.stations}"/>
 
 
                 <ImageView

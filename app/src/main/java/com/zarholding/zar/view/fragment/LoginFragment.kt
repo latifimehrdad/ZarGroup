@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.google.android.material.snackbar.Snackbar
 import com.zar.core.enums.EnumErrorType
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zarholding.zar.model.request.LoginRequestModel
@@ -63,7 +64,12 @@ class LoginFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- onError
     override fun onError(errorType: EnumErrorType, message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+        val snack = Snackbar.make(binding.constraintLayoutParent, message, 10 * 1000)
+        snack.setBackgroundTint(resources.getColor(R.color.primaryColor, requireContext().theme))
+        snack.setTextColor(resources.getColor(R.color.textViewColor3, requireContext().theme))
+        snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
+        snack.setActionTextColor(resources.getColor(R.color.textViewColor1, requireContext().theme))
+        snack.show()
         stopLoading()
     }
     //---------------------------------------------------------------------------------------------- onError

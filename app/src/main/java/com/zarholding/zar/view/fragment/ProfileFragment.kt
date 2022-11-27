@@ -43,7 +43,7 @@ class ProfileFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- onError
     override fun onError(errorType: EnumErrorType, message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+
     }
     //---------------------------------------------------------------------------------------------- onError
 
