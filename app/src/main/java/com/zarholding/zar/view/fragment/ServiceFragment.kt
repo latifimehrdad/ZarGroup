@@ -5,6 +5,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.ImageView
+import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -138,7 +141,7 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
         tripList?.let {
             binding.textViewMyService.setBackgroundResource(R.drawable.drawable_trip_select_button)
             binding.textViewListService.setBackgroundResource(R.drawable.drawable_trip_unselect_button)
-            val myService = tripList!!.filter { it.myStationTripId == 1 }
+            val myService = tripList!!.filter { it.myStationTripId != 0 }
             setMyServiceAdapter(myService)
         }
         binding.mapView.overlays.clear()
@@ -169,7 +172,7 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
             }
 
             override fun registerStation(item: TripModel) {
-                TODO("Not yet implemented")
+                showDialogRegisterStation(item)
             }
         }
         val adapter = ServiceAdapter(tripList, click)
@@ -210,7 +213,19 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- showDialogRegisterStation
     private fun showDialogRegisterStation(item : TripModel) {
-        val dialog = DialogManager().createDialogHeightMatchParent(requireContext(), )
+        val station = item.stations!!.map { it.stationName }
+        val adapter = ArrayAdapter(
+            binding.root.context,
+            android.R.layout.simple_spinner_item,
+            station
+        )
+        val dialog = DialogManager()
+            .createDialogHeightMatchParent(requireContext(), R.layout.dialog_register_station)
+        val spinner = dialog.findViewById<Spinner>(R.id.spinnerStations)
+        spinner.adapter = adapter
+        val imageClose = dialog.findViewById<ImageView>(R.id.imageViewClose)
+        imageClose.setOnClickListener { dialog.dismiss() }
+        dialog.show()
     }
     //---------------------------------------------------------------------------------------------- showDialogRegisterStation
 

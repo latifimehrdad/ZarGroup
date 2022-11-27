@@ -47,6 +47,7 @@
     <string name="destination">مقصد</string>
     <string name="userNameIsEmpty">نام کاربری را وارد نمایید</string>
     <string name="passcodeIsEmpty">رمز ورود را وارد نمایید</string>
+    <string name="chooseStation">ایستگاه را انتخاب کنید</string>
 
     <string name="personalCode">کد پرسنلی : %1$s</string>
 

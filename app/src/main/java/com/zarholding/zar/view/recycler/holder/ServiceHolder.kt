@@ -3,6 +3,7 @@ package com.zarholding.zar.view.recycler.holder
 import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
+import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.zarholding.zar.model.response.trip.TripModel
 import zar.databinding.ItemServiceBinding
@@ -40,7 +41,6 @@ class ServiceHolder(private val binding: ItemServiceBinding) :
     //---------------------------------------------------------------------------------------------- bind
 
 
-
     //---------------------------------------------------------------------------------------------- showMore
     private fun showMore() {
         binding.expandableMore.expand()
@@ -58,7 +58,6 @@ class ServiceHolder(private val binding: ItemServiceBinding) :
         binding.imageViewShowMore.startAnimation(rotate)
     }
     //---------------------------------------------------------------------------------------------- showMore
-
 
 
     //---------------------------------------------------------------------------------------------- hideMore
