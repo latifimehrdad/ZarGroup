@@ -3,6 +3,7 @@ package com.zarholding.zar.repository
 import com.zar.core.tools.api.apiCall
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zarholding.zar.api.ApiSuperApp
+import com.zarholding.zar.model.request.RequestRegisterStationModel
 import javax.inject.Inject
 
 /**
@@ -13,9 +14,15 @@ class TripRepository @Inject constructor(private val api : ApiSuperApp) {
 
     @Inject lateinit var emitter: RemoteErrorEmitter
 
-    //---------------------------------------------------------------------------------------------- requestGetTrips
-    fun requestGetTrips(token : String) = apiCall(emitter){api.requestGetTrips(token)}
-    //---------------------------------------------------------------------------------------------- requestGetTrips
+    //---------------------------------------------------------------------------------------------- requestGetAllTrips
+    fun requestGetAllTrips(token : String) = apiCall(emitter){api.requestGetAllTrips(token)}
+    //---------------------------------------------------------------------------------------------- requestGetAllTrips
+
+
+    //---------------------------------------------------------------------------------------------- requestRegisterStation
+    fun requestRegisterStation(registerStationModel: RequestRegisterStationModel, token : String) =
+        apiCall(emitter){api.requestRegisterStation(registerStationModel, token)}
+    //---------------------------------------------------------------------------------------------- requestRegisterStation
 
 
 }

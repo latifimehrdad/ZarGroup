@@ -72,4 +72,10 @@
 
     <color name="polyLineColor">#B33775F3</color>
 
+    <color name="recyclerLoadingShadow">#80FFFFFF</color>
+    <color name="recyclerLoadingBack">#33FFFFFF</color>
+
+    <color name="positive">#02C076</color>
+    <color name="negative">#F84960</color>
+
 </resources>

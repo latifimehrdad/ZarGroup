@@ -52,7 +52,7 @@ class ServiceHolder(private val binding: ItemServiceBinding) :
             Animation.RELATIVE_TO_SELF,
             0.5f
         )
-        rotate.duration = 850
+        rotate.duration = 350
         rotate.interpolator = LinearInterpolator()
         rotate.fillAfter = true
         binding.imageViewShowMore.startAnimation(rotate)
@@ -71,7 +71,7 @@ class ServiceHolder(private val binding: ItemServiceBinding) :
             Animation.RELATIVE_TO_SELF,
             0.5f
         )
-        rotate.duration = 950
+        rotate.duration = 400
         rotate.interpolator = LinearInterpolator()
         rotate.fillAfter = true
         binding.imageViewShowMore.startAnimation(rotate)

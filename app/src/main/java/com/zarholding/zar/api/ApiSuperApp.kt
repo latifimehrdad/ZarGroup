@@ -1,9 +1,8 @@
 package com.zarholding.zar.api
 
-import com.zarholding.zar.model.response.trip.RegisterStationModel
+import com.zarholding.zar.model.request.RequestRegisterStationModel
 import com.zarholding.zar.model.response.trip.RegisterStationResponseModel
 import com.zarholding.zar.model.response.trip.TripResponseModel
-import com.zarholding.zar.model.response.user.UserInfoResponseModel
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -22,16 +21,19 @@ interface ApiSuperApp {
 
 
     @GET("${v1}/PersonnelsRegisteredStation/list-registered-trip")
-    suspend fun requestGetTrips(
+    suspend fun requestGetAllTrips(
         @Header("Authorization") token : String
     ) : TripResponseModel
 
 
+
     @POST("${v1}/PersonnelsRegisteredStation/register-station")
     suspend fun requestRegisterStation(
-        @Body registerStationModel: RegisterStationModel,
+        @Body registerStationModel: RequestRegisterStationModel,
         @Header("Authorization") token : String
     ) : RegisterStationResponseModel
+
+
 
 
 }

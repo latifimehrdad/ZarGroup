@@ -22,7 +22,10 @@ data class TripModel(
     val stations : List<TripStationModel>?,
     val strTripPoint : String?,
     val myStationTripId : Int,
-    val myStationTripStatus : Int
+    val myStationTripStatus : Int,
+    val myStationName : String?,
+    val carImageName : String?,
+    val driverImageName : String?
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
@@ -39,7 +42,10 @@ data class TripModel(
         parcel.createTypedArrayList(TripStationModel),
         parcel.readString(),
         parcel.readInt(),
-        parcel.readInt()
+        parcel.readInt(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -57,6 +63,9 @@ data class TripModel(
         parcel.writeString(strTripPoint)
         parcel.writeInt(myStationTripId)
         parcel.writeInt(myStationTripStatus)
+        parcel.writeString(myStationName)
+        parcel.writeString(carImageName)
+        parcel.writeString(driverImageName)
     }
 
     override fun describeContents(): Int {

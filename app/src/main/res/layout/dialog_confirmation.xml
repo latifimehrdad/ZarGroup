@@ -34,8 +34,9 @@
 
         <TextView
             android:id="@+id/textViewTitle"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_10sdp"
             app:layout_constraintTop_toBottomOf="@id/imageViewClose"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -47,35 +48,35 @@
             />
 
 
-        <LinearLayout
-            android:id="@+id/linearLayoutSpinner"
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonYes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/textViewTitle"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/buttonNo"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:padding="@dimen/_5sdp"
-            android:background="@drawable/drawable_spinner">
-
-            <Spinner
-                android:id="@+id/spinnerStations"
-                android:layout_width="@dimen/_150sdp"
-                android:layout_height="wrap_content"
-                />
-
-        </LinearLayout>
-
+            app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginVertical="@dimen/_15sdp"
+            android:minWidth="@dimen/_100sdp"
+            android:textSize="@dimen/_12sdp"
+            android:paddingTop="@dimen/_5sdp"
+            android:paddingBottom="@dimen/_5sdp"
+            android:fontFamily="@font/kalameh_semibold"
+            app:cornerRadius="@dimen/_5sdp"
+            android:textColor="@color/textViewColor1"
+            android:text='@string/yes'
+            android:backgroundTint="@color/positive"/>
 
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/buttonRegister"
+            android:id="@+id/buttonNo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/linearLayoutSpinner"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/buttonYes"
+            app:layout_constraintTop_toTopOf="@id/buttonYes"
+            app:layout_constraintBottom_toBottomOf="@id/buttonYes"
             android:layout_marginVertical="@dimen/_10sdp"
             android:minWidth="@dimen/_100sdp"
             android:textSize="@dimen/_12sdp"
@@ -83,8 +84,9 @@
             android:paddingBottom="@dimen/_5sdp"
             android:fontFamily="@font/kalameh_semibold"
             app:cornerRadius="@dimen/_5sdp"
-            android:textColor="@color/textViewColor2"
-            android:text='@string/reserveService' />
+            android:textColor="@color/textViewColor1"
+            android:text='@string/no'
+            android:backgroundTint="@color/negative"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

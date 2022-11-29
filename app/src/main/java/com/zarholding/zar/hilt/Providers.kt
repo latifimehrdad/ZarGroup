@@ -23,6 +23,10 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class Providers {
 
+    companion object {
+        const val url = "http://192.168.50.153:9090"
+    }
+
     //---------------------------------------------------------------------------------------------- provideBPMSUrl
     @Provides
     @Singleton
@@ -60,7 +64,7 @@ class Providers {
     @Singleton
     @Named("SuperApp")
     fun provideRetrofit(client: OkHttpClient, gson: Gson): Retrofit = Retrofit.Builder()
-        .baseUrl("http://192.168.50.153:9090")
+        .baseUrl(url)
         .addConverterFactory(GsonConverterFactory.create(gson))
         .client(client)
         .build()

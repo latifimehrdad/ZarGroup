@@ -48,8 +48,14 @@
     <string name="userNameIsEmpty">نام کاربری را وارد نمایید</string>
     <string name="passcodeIsEmpty">رمز ورود را وارد نمایید</string>
     <string name="chooseStation">ایستگاه را انتخاب کنید</string>
+    <string name="myStation">ایستگاه من</string>
+    <string name="yes">بله</string>
+    <string name="no">خیر</string>
 
     <string name="personalCode">کد پرسنلی : %1$s</string>
+
+    <string name="carEntityType">cars</string>
+    <string name="driversEntityType">drivers</string>
 
     <string name="logoDescription">logo</string>
     <string name="profileDescription">profile</string>

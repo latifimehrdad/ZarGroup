@@ -88,7 +88,7 @@
                     app:layout_constraintEnd_toStartOf="@id/buttonShow"
                     android:layout_marginEnd="@dimen/_5sdp"
                     android:contentDescription="@string/newsDescription"
-                    app:loadImage="@{item.smallIcon}"/>
+                    app:loadImage1="@{item.smallIcon}"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

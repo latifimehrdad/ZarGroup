@@ -17,7 +17,7 @@
             android:layout_height="match_parent"
             android:scaleType="fitXY"
             android:contentDescription="@string/sliderDescription"
-            app:loadImage="@{item.bannerImage}"/>
+            app:loadImage1="@{item.bannerImage}"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonShow"

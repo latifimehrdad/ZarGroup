@@ -18,6 +18,7 @@ class MyServiceHolder(private val binding: ItemMyServiceBinding) :
     //---------------------------------------------------------------------------------------------- Click
     interface Click {
         fun serviceClick(item: TripModel)
+        fun deleteRegisterStation(item: TripModel)
     }
     //---------------------------------------------------------------------------------------------- Click
 
@@ -51,7 +52,7 @@ class MyServiceHolder(private val binding: ItemMyServiceBinding) :
             Animation.RELATIVE_TO_SELF,
             0.5f
         )
-        rotate.duration = 850
+        rotate.duration = 350
         rotate.interpolator = LinearInterpolator()
         rotate.fillAfter = true
         binding.imageViewShowMore.startAnimation(rotate)
@@ -71,7 +72,7 @@ class MyServiceHolder(private val binding: ItemMyServiceBinding) :
             Animation.RELATIVE_TO_SELF,
             0.5f
         )
-        rotate.duration = 950
+        rotate.duration = 400
         rotate.interpolator = LinearInterpolator()
         rotate.fillAfter = true
         binding.imageViewShowMore.startAnimation(rotate)

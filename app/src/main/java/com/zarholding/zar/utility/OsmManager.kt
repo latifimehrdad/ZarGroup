@@ -1,5 +1,9 @@
 package com.zarholding.zar.utility
 
+import android.content.Context
+import android.content.res.Resources
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.location.Location
 import com.zarholding.zar.model.response.trip.TripPointModel
 import org.osmdroid.util.BoundingBox
@@ -42,10 +46,10 @@ class OsmManager {
             if (i == 0 || lon < west) west = lon
             if (i == 0 || lon > east) east = lon
         }
-        north += 0.01
-        south -= 0.01
-        east += 0.01
-        west -= 0.01
+        north += 0.02
+        south -= 0.02
+        east += 0.02
+        west -= 0.02
         return BoundingBox(north, east, south, west)
     }
     //---------------------------------------------------------------------------------------------- getBoundingBoxFromPoints
@@ -75,11 +79,11 @@ class OsmManager {
 
 
     //---------------------------------------------------------------------------------------------- getGeoPoints
-    fun getGeoPoints(tripPoints : List<TripPointModel>) : List<GeoPoint> {
-        val geoPoints = mutableListOf<GeoPoint>()
+    fun getGeoPoints(tripPoints : List<TripPointModel>) : ArrayList<GeoPoint> {
+        val geoPoints = ArrayList<GeoPoint>()
         for (item in tripPoints)
             geoPoints.add(GeoPoint(item.lat.toDouble(), item.long.toDouble()))
-        return geoPoints.toList()
+        return geoPoints
     }
     //---------------------------------------------------------------------------------------------- getGeoPoints
 
