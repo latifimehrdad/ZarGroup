@@ -10,19 +10,25 @@ import javax.inject.Inject
  * Created by m-latifi on 11/26/2022.
  */
 
-class TripRepository @Inject constructor(private val api : ApiSuperApp) {
+class TripRepository @Inject constructor(private val api: ApiSuperApp) {
 
-    @Inject lateinit var emitter: RemoteErrorEmitter
+    @Inject
+    lateinit var emitter: RemoteErrorEmitter
 
     //---------------------------------------------------------------------------------------------- requestGetAllTrips
-    fun requestGetAllTrips(token : String) = apiCall(emitter){api.requestGetAllTrips(token)}
+    fun requestGetAllTrips(token: String) = apiCall(emitter) { api.requestGetAllTrips(token) }
     //---------------------------------------------------------------------------------------------- requestGetAllTrips
 
 
     //---------------------------------------------------------------------------------------------- requestRegisterStation
-    fun requestRegisterStation(registerStationModel: RequestRegisterStationModel, token : String) =
-        apiCall(emitter){api.requestRegisterStation(registerStationModel, token)}
+    fun requestRegisterStation(registerStationModel: RequestRegisterStationModel, token: String) =
+        apiCall(emitter) { api.requestRegisterStation(registerStationModel, token) }
     //---------------------------------------------------------------------------------------------- requestRegisterStation
 
+
+    //---------------------------------------------------------------------------------------------- requestDeleteRegisteredStation
+    fun requestDeleteRegisteredStation(id: Int, token: String) =
+        apiCall(emitter) { api.requestDeleteRegisteredStation(id, token) }
+    //---------------------------------------------------------------------------------------------- requestDeleteRegisteredStation
 
 }

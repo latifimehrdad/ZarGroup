@@ -24,4 +24,9 @@ class TripViewModel @Inject constructor(private val repository: TripRepository) 
     //---------------------------------------------------------------------------------------------- requestRegisterStation
 
 
+    //---------------------------------------------------------------------------------------------- requestDeleteRegisteredStation
+    fun requestDeleteRegisteredStation(id: Int, token: String) =
+        repository.requestDeleteRegisteredStation(id, token)
+    //---------------------------------------------------------------------------------------------- requestDeleteRegisteredStation
+
 }

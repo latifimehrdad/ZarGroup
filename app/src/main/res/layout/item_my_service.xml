@@ -29,14 +29,23 @@
             android:layout_height="@dimen/_60sdp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:cardCornerRadius="@dimen/_5sdp">
+            app:cardCornerRadius="@dimen/_5sdp"
+            app:setRegisterStationStatus="@{item.myStationTripStatus}">
 
-            <ImageView
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:contentDescription="@string/iconDescription"
-                app:loadImage="@{item.carImageName}"
-                app:setEntityType="@{@string/carEntityType}"/>
+                app:cardCornerRadius="@dimen/_5sdp"
+                android:layout_margin="2dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/iconDescription"
+                    app:loadImage="@{item.carImageName}"
+                    app:setEntityType="@{@string/carEntityType}"/>
+
+            </androidx.cardview.widget.CardView>
 
         </androidx.cardview.widget.CardView>
 
@@ -47,7 +56,9 @@
             app:cardCornerRadius="@dimen/_30sdp"
             app:layout_constraintBottom_toBottomOf="@id/cardViewImage"
             app:layout_constraintStart_toStartOf="@id/cardViewImage"
-            app:cardElevation="@dimen/_2sdp">
+            app:cardElevation="@dimen/_2sdp"
+            android:layout_marginBottom="@dimen/_3sdp"
+            android:layout_marginStart="@dimen/_3sdp">
 
             <ImageView
                 android:layout_width="match_parent"
@@ -180,8 +191,8 @@
                     app:layout_constraintTop_toTopOf="@id/textViewDelete"
                     app:layout_constraintBottom_toBottomOf="@id/textViewDelete"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:src="@drawable/ic_pending"
-                    android:contentDescription="@string/plusDescription" />
+                    android:contentDescription="@string/plusDescription"
+                    app:setRegisterStationStatus="@{item.myStationTripStatus}"/>
 
                 <TextView
                     android:id="@+id/textViewPlus"
@@ -194,7 +205,7 @@
                     android:textColor="@color/textViewColor3"
                     android:fontFamily="@font/kalameh_light"
                     android:textSize="@dimen/_9sdp"
-                    android:text="@string/pendingForAccept"/>
+                    app:setRegisterStationStatus="@{item.myStationTripStatus}"/>
 
 
 

@@ -13,6 +13,7 @@ import android.view.animation.AnimationUtils
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.Spinner
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,18 +30,16 @@ import com.zarholding.zar.utility.OsmManager
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.view.recycler.adapter.MyServiceAdapter
 import com.zarholding.zar.view.recycler.adapter.ServiceAdapter
+import com.zarholding.zar.view.recycler.adapter.SpinnerStringAdapter
 import com.zarholding.zar.view.recycler.holder.MyServiceHolder
 import com.zarholding.zar.view.recycler.holder.ServiceHolder
 import com.zarholding.zar.viewmodel.TokenViewModel
 import com.zarholding.zar.viewmodel.TripViewModel
 import com.zarholding.zardriver.model.response.TripStationModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.osmdroid.api.IMapController
 import org.osmdroid.bonuspack.routing.OSRMRoadManager
 import org.osmdroid.bonuspack.routing.RoadManager
@@ -68,6 +67,7 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
     private val tokenViewModel: TokenViewModel by viewModels()
     private val loadingManager = LoadingManager()
     private var tripList: List<TripModel>? = null
+    private var job: Job? = null
 
     private enum class ShowTrip {
         ALL,
@@ -99,7 +99,7 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- onError
     override fun onError(errorType: EnumErrorType, message: String) {
-        val snack = Snackbar.make(binding.constraintLayoutParent, message, 10 * 1000)
+        val snack = Snackbar.make(binding.constraintLayoutParent, message, 5 * 1000)
         snack.setBackgroundTint(resources.getColor(R.color.primaryColor, requireContext().theme))
         snack.setTextColor(resources.getColor(R.color.textViewColor3, requireContext().theme))
         snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
@@ -112,7 +112,7 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- unAuthorization
     override fun unAuthorization(type: EnumAuthorizationType, message: String) {
-        val snack = Snackbar.make(binding.constraintLayoutParent, message, 10 * 1000)
+        val snack = Snackbar.make(binding.constraintLayoutParent, message, 5 * 1000)
         snack.setBackgroundTint(resources.getColor(R.color.primaryColor, requireContext().theme))
         snack.setTextColor(resources.getColor(R.color.textViewColor3, requireContext().theme))
         snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
@@ -151,7 +151,10 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
             binding.textViewMyService.setBackgroundResource(R.drawable.drawable_trip_select_button)
             binding.textViewListService.setBackgroundResource(R.drawable.drawable_trip_unselect_button)
             val myService = tripList!!.filter { it.myStationTripId != 0 }
-            setMyServiceAdapter(myService)
+            if (myService.isNotEmpty())
+                setMyServiceAdapter(myService)
+            else
+                selectListAllServices()
         }
         binding.mapView.overlays.clear()
         binding.mapView.invalidate()
@@ -249,11 +252,7 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- showDialogRegisterStation
     private fun showDialogRegisterStation(item: TripModel) {
         val station = item.stations!!.map { it.stationName }
-        val adapter = ArrayAdapter(
-            binding.root.context,
-            android.R.layout.simple_spinner_item,
-            station
-        )
+        val adapter = SpinnerStringAdapter(station)
         val dialog = DialogManager().createDialogHeightWrapContent(
             requireContext(),
             R.layout.dialog_register_station,
@@ -291,8 +290,6 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- requestRegisterStation
 
 
-
-
     //---------------------------------------------------------------------------------------------- showDialogDeleteRegisterStation
     private fun showDialogDeleteRegisterStation(item: TripModel) {
         val dialog = DialogManager().createDialogHeightWrapContent(
@@ -301,11 +298,13 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
             Gravity.BOTTOM,
             150
         )
+        val textViewTitle = dialog.findViewById<TextView>(R.id.textViewTitle)
+        textViewTitle.text = resources.getString(R.string.confirmForDelete, item.myStationName)
         val imageClose = dialog.findViewById<ImageView>(R.id.imageViewClose)
         imageClose.setOnClickListener { dialog.dismiss() }
         val buttonYes = dialog.findViewById<MaterialButton>(R.id.buttonYes)
         buttonYes.setOnClickListener {
-            requestDeleteRegisterStation(item.id, item.stations[spinner.selectedItemPosition].id)
+            requestDeleteRegisterStation(item.myStationTripId)
             dialog.dismiss()
         }
         val buttonNo = dialog.findViewById<MaterialButton>(R.id.buttonNo)
@@ -315,12 +314,10 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- showDialogDeleteRegisterStation
 
 
-
     //---------------------------------------------------------------------------------------------- requestDeleteRegisterStation
-    private fun requestDeleteRegisterStation(tripId: Int, stationId: Int) {
+    private fun requestDeleteRegisterStation(stationId: Int) {
         startLoading(binding.nestedScrollView)
-        val requestModel = RequestRegisterStationModel(tripId, stationId)
-        tripViewModel.requestRegisterStation(requestModel, tokenViewModel.getBearerToken())
+        tripViewModel.requestDeleteRegisteredStation(stationId, tokenViewModel.getBearerToken())
             .observe(viewLifecycleOwner) { response ->
                 loadingManager.stopLoadingView()
                 response?.let {
@@ -331,8 +328,6 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
             }
     }
     //---------------------------------------------------------------------------------------------- requestDeleteRegisterStation
-
-
 
 
     //---------------------------------------------------------------------------------------------- initMap
@@ -354,12 +349,15 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- drawPolylineOnMap
     private fun drawPolylineOnMap(item: TripModel) {
-        item.tripPoints?.let {
-            binding.cardViewMap
-                .startAnimation(AnimationUtils.loadAnimation(requireContext(), R.anim.alpha))
-            val points = OsmManager().getGeoPoints(it)
-            val roadManager: RoadManager = OSRMRoadManager(context, "")
-            CoroutineScope(IO).launch {
+        job?.cancel()
+        binding.mapView.overlays.clear()
+        binding.mapView.invalidate()
+        job = CoroutineScope(IO).launch {
+            item.tripPoints?.let {
+                binding.cardViewMap
+                    .startAnimation(AnimationUtils.loadAnimation(requireContext(), R.anim.alpha))
+                val points = OsmManager().getGeoPoints(it)
+                val roadManager: RoadManager = OSRMRoadManager(context, "")
                 val road = roadManager.getRoad(points)
                 val poly: Polyline = RoadManager.buildRoadOverlay(road)
                 polyline = Polyline(binding.mapView, true, false)

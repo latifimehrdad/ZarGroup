@@ -56,13 +56,13 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="@dimen/_10sdp"
             android:padding="@dimen/_5sdp"
-            android:background="@drawable/drawable_spinner">
+            >
 
             <Spinner
                 android:id="@+id/spinnerStations"
                 android:layout_width="@dimen/_150sdp"
                 android:layout_height="wrap_content"
-                />
+                android:background="@drawable/drawable_spinner"/>
 
         </LinearLayout>
 

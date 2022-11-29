@@ -41,6 +41,8 @@
     <string name="reserveService">درخواست رزرو این سرویس</string>
     <string name="deleteService">حذف سرویس</string>
     <string name="pendingForAccept">در انتظار تایید</string>
+    <string name="confirmedByOfficial">تایید شده توسط اداری</string>
+    <string name="reject">رد شده</string>
     <string name="dismiss">بستن</string>
     <string name="stations">ایستگاه ها</string>
     <string name="origin">مبدا</string>
@@ -53,6 +55,8 @@
     <string name="no">خیر</string>
 
     <string name="personalCode">کد پرسنلی : %1$s</string>
+
+    <string name="confirmForDelete">آیا برای حذف %1$s مطمئن هستید؟</string>
 
     <string name="carEntityType">cars</string>
     <string name="driversEntityType">drivers</string>

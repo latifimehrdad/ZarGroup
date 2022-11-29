@@ -1,12 +1,10 @@
 package com.zarholding.zar.api
 
 import com.zarholding.zar.model.request.RequestRegisterStationModel
+import com.zarholding.zar.model.response.trip.DeleteRegisteredStationResponseModel
 import com.zarholding.zar.model.response.trip.RegisterStationResponseModel
 import com.zarholding.zar.model.response.trip.TripResponseModel
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.POST
+import retrofit2.http.*
 
 /**
  * Created by m-latifi on 11/26/2022.
@@ -34,6 +32,11 @@ interface ApiSuperApp {
     ) : RegisterStationResponseModel
 
 
+    @GET("${v1}/PersonnelsRegisteredStation/delete-register-station/{id}")
+    suspend fun requestDeleteRegisteredStation(
+        @Path("id") id : Int,
+        @Header("Authorization") token : String
+    ) : DeleteRegisteredStationResponseModel
 
 
 }

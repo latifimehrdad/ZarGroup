@@ -77,5 +77,6 @@
 
     <color name="positive">#02C076</color>
     <color name="negative">#F84960</color>
+    <color name="waiting">#ffb300</color>
 
 </resources>

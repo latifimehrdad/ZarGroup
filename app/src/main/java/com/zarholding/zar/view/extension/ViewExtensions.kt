@@ -8,6 +8,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.databinding.BindingAdapter
 import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
@@ -21,6 +22,46 @@ import java.time.LocalDateTime
 /**
  * Created by m-latifi on 11/14/2022.
  */
+
+
+//-------------------------------------------------------------------------------------------------- setRegisterStationStatus
+@BindingAdapter("setRegisterStationStatus")
+fun CardView.setRegisterStationStatus(status : Int){
+    when(status) {
+        0 -> setCardBackgroundColor(context.resources.getColor(R.color.waiting, context.theme))
+        1 -> setCardBackgroundColor(context.resources.getColor(R.color.positive, context.theme))
+        2 -> setCardBackgroundColor(context.resources.getColor(R.color.negative, context.theme))
+    }
+}
+//-------------------------------------------------------------------------------------------------- setRegisterStationStatus
+
+
+
+//-------------------------------------------------------------------------------------------------- setRegisterStationStatus
+@BindingAdapter("setRegisterStationStatus")
+fun TextView.setRegisterStationStatus(status : Int){
+    when(status) {
+        0 -> text = context.resources.getString(R.string.pendingForAccept)
+        1 -> text = context.resources.getString(R.string.confirmedByOfficial)
+        2 -> text = context.resources.getString(R.string.reject)
+    }
+}
+//-------------------------------------------------------------------------------------------------- setRegisterStationStatus
+
+
+
+//-------------------------------------------------------------------------------------------------- setRegisterStationStatus
+@BindingAdapter("setRegisterStationStatus")
+fun ImageView.setRegisterStationStatus(status : Int){
+    when(status) {
+        0 -> setImageResource(R.drawable.ic_pending)
+        1 -> setImageResource(R.drawable.ic_check)
+        2 -> setImageResource(R.drawable.ic_delete)
+    }
+}
+//-------------------------------------------------------------------------------------------------- setRegisterStationStatus
+
+
 
 
 //-------------------------------------------------------------------------------------------------- setMyStation

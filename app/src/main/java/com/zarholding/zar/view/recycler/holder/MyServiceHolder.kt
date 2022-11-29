@@ -28,6 +28,8 @@ class MyServiceHolder(private val binding: ItemMyServiceBinding) :
     fun bind(item: TripModel, click: Click) {
         binding.item = item
         binding.root.setOnClickListener { click.serviceClick(item) }
+        binding.textViewDelete.setOnClickListener { click.deleteRegisterStation(item) }
+        binding.imageViewDelete.setOnClickListener { click.deleteRegisterStation(item) }
         binding.imageViewShowMore.setOnClickListener {
             if (binding.expandableMore.isExpanded)
                 hideMore()
