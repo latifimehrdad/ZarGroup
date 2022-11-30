@@ -8,6 +8,5 @@ class CompanionValues {
 
     companion object {
         const val TOKEN = "token"
-        const val USER_INFO = "userInfo"
     }
 }

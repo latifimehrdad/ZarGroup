@@ -77,4 +77,26 @@
         app:popEnterAnim="@anim/slide_in_right"
         app:popExitAnim="@anim/slide_out_left"/>
 
+
+    <action
+        android:id="@+id/action_goto_SettingFragment"
+        app:destination="@id/SettingFragment"
+        app:popUpTo="@id/SettingFragment"
+        app:launchSingleTop="true"
+        app:enterAnim="@anim/slide_in_left"
+        app:exitAnim="@anim/slide_out_right"
+        app:popEnterAnim="@anim/slide_in_right"
+        app:popExitAnim="@anim/slide_out_left"/>
+
+
+    <action
+        android:id="@+id/action_goto_HomeFragment"
+        app:destination="@id/HomeFragment"
+        app:popUpTo="@id/HomeFragment"
+        app:launchSingleTop="true"
+        app:enterAnim="@anim/slide_in_left"
+        app:exitAnim="@anim/slide_out_right"
+        app:popEnterAnim="@anim/slide_in_right"
+        app:popExitAnim="@anim/slide_out_left"/>
+
 </navigation>

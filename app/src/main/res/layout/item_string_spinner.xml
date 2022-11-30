@@ -11,15 +11,29 @@
         app:layout_constraintTop_toTopOf="parent"
         android:textSize="@dimen/_12sdp"
         android:textColor="@color/textViewColor2"
-        android:gravity="center"
+        android:gravity="start"
         android:fontFamily="@font/kalameh_medium"
-        android:padding="@dimen/_5sdp"/>
+        android:paddingHorizontal="@dimen/_5sdp"
+        android:paddingVertical="@dimen/_3sdp" />
+
+
+    <TextView
+        android:id="@+id/textViewTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        android:textSize="@dimen/_9sdp"
+        android:textColor="@color/textViewDisable"
+        android:gravity="start"
+        android:fontFamily="@font/kalameh_regular"
+        android:paddingHorizontal="@dimen/_5sdp"
+        android:paddingVertical="@dimen/_3sdp"/>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:alpha="0.5"
-        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        app:layout_constraintTop_toBottomOf="@id/textViewTime"
         app:layout_constraintBottom_toBottomOf="parent"
         android:background="@color/textViewFooter"/>
 

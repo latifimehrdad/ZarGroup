@@ -3,7 +3,7 @@ package com.zarholding.zar.view.recycler.adapter
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.zarholding.zar.model.response.banner.BannerModel
+import com.zarholding.zar.database.entity.ArticleEntity
 import com.zarholding.zar.view.recycler.holder.BannerItemHolder
 import com.zarholding.zar.view.autoimageslider.SliderViewAdapter
 import zar.databinding.ItemBannerSliderBinding
@@ -12,7 +12,7 @@ import zar.databinding.ItemBannerSliderBinding
  * Created by m-latifi on 11/15/2022.
  */
 
-class BannerAdapter(private val banners : MutableList<BannerModel>) :
+class BannerAdapter(private val banners : List<ArticleEntity>) :
     SliderViewAdapter<BannerItemHolder>() {
 
     private var layoutInflater : LayoutInflater? = null

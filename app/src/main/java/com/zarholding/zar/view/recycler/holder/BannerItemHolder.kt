@@ -1,9 +1,6 @@
 package com.zarholding.zar.view.recycler.holder
 
-import android.graphics.Bitmap
-import androidx.swiperefreshlayout.widget.CircularProgressDrawable
-import coil.load
-import com.zarholding.zar.model.response.banner.BannerModel
+import com.zarholding.zar.database.entity.ArticleEntity
 import com.zarholding.zar.view.autoimageslider.SliderViewAdapter
 import zar.databinding.ItemBannerSliderBinding
 
@@ -16,7 +13,7 @@ class BannerItemHolder(private val binding: ItemBannerSliderBinding) :
 
 
     //---------------------------------------------------------------------------------------------- bind
-    fun bind(item: BannerModel) {
+    fun bind(item: ArticleEntity) {
         binding.item = item
         binding.executePendingBindings()
     }

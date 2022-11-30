@@ -4,18 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.zar.core.enums.EnumErrorType
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
+import com.zarholding.zar.database.dao.ArticleDao
+import com.zarholding.zar.database.entity.ArticleEntity
+import com.zarholding.zar.model.enum.EnumArticleType
 import com.zarholding.zar.model.other.AppModel
-import com.zarholding.zar.model.response.banner.BannerModel
-import com.zarholding.zar.model.response.news.NewsModel
-import com.zarholding.zar.model.response.user.UserInfoModel
-import com.zarholding.zar.utility.CompanionValues
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.view.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType
 import com.zarholding.zar.view.autoimageslider.SliderAnimations
@@ -25,18 +23,28 @@ import com.zarholding.zar.view.recycler.adapter.BannerAdapter
 import com.zarholding.zar.view.recycler.adapter.NewsAdapter
 import com.zarholding.zar.view.recycler.adapter.RequestAdapter
 import com.zarholding.zar.view.recycler.holder.AppItemHolder
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import zar.R
 import zar.databinding.FragmentHomeBinding
+import javax.inject.Inject
 
 /**
  * Created by m-latifi on 11/13/2022.
  */
 
+@AndroidEntryPoint
 class HomeFragment : Fragment(), RemoteErrorEmitter {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private var userModel : UserInfoModel? = null
+
+    @Inject
+    lateinit var articleDao: ArticleDao
 
 
     //---------------------------------------------------------------------------------------------- onCreateView
@@ -55,9 +63,8 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner
-        userModel = arguments?.getParcelable(CompanionValues.USER_INFO)
         initApps()
-        initBanner()
+        getBannerFromDB()
         initNews()
         initPersonnelRequest()
     }
@@ -115,19 +122,21 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
 
 
 
-    //---------------------------------------------------------------------------------------------- initBanner
-    private fun initBanner() {
-        val banners: MutableList<BannerModel> = mutableListOf()
-        banners.add(BannerModel("https://irp.cdn-website.com/29726fa2/dms3rep/multi/Double-width-6m-long-1920w+%281%29.jpg"))
-        banners.add(BannerModel("https://www.bradleysmoker.com/wp-content/uploads/2010/11/Smoked-Sliders-scaled.jpeg"))
-        setBannerSlider(banners)
+    //---------------------------------------------------------------------------------------------- getBannerFromDB
+    private fun getBannerFromDB() {
+        CoroutineScope(IO).launch {
+            val banners = articleDao.getArticles(EnumArticleType.SlideShow.name)
+            withContext(Main) {
+                setBannerSlider(banners)
+            }
+        }
     }
-    //---------------------------------------------------------------------------------------------- initBanner
+    //---------------------------------------------------------------------------------------------- getBannerFromDB
 
 
 
     //---------------------------------------------------------------------------------------------- setBannerSlider
-    private fun setBannerSlider(banners: MutableList<BannerModel>) {
+    private fun setBannerSlider(banners : List<ArticleEntity>) {
         val adapter = BannerAdapter(banners)
         binding.sliderViewBanner.setSliderAdapter(adapter)
         binding.sliderViewBanner.setIndicatorAnimation(IndicatorAnimationType.WORM)
@@ -140,18 +149,20 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- initNews
     private fun initNews() {
-        val news: MutableList<NewsModel> = mutableListOf()
-        news.add(NewsModel("توزیع سهمیه شهریور","برگزاری کلاسهای مدیریت دانش در سالن آمفی تئاتر زر ماکارون", "https://azadimarket.com/wp-content/uploads/2021/09/19cd3daa135c4f66f5f5df0f1889f527.png"))
-        news.add(NewsModel("توزیع سهمیه شهریور","برگزاری کلاسهای مدیریت دانش در سالن آمفی تئاتر زر ماکارون", "https://fs.noorgram.ir/xen/2022/02/3098_5479a701607915b9791e6c23f3e07cb6.png"))
-        news.add(NewsModel("توزیع سهمیه شهریور","برگزاری کلاسهای مدیریت دانش در سالن آمفی تئاتر زر ماکارون", "https://azadimarket.com/wp-content/uploads/2021/09/19cd3daa135c4f66f5f5df0f1889f527.png"))
-        setNewsAdapter(news)
+        CoroutineScope(IO).launch {
+            val news = articleDao.getArticles(EnumArticleType.Article.name)
+            withContext(Main) {
+                setNewsAdapter(news)
+            }
+        }
+
     }
     //---------------------------------------------------------------------------------------------- initNews
 
 
 
     //---------------------------------------------------------------------------------------------- setNewsAdapter
-    private fun setNewsAdapter(news: MutableList<NewsModel>) {
+    private fun setNewsAdapter(news: List<ArticleEntity>) {
         val adapter = NewsAdapter(news)
 
         val linearLayoutManager = LinearLayoutManager(

@@ -3,7 +3,7 @@
     <data>
         <variable
             name="item"
-            type="com.zarholding.zar.model.response.banner.BannerModel" />
+            type="com.zarholding.zar.database.entity.ArticleEntity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -17,7 +17,8 @@
             android:layout_height="match_parent"
             android:scaleType="fitXY"
             android:contentDescription="@string/sliderDescription"
-            app:loadImage1="@{item.bannerImage}"/>
+            app:loadImage="@{item.imageName}"
+            app:setEntityType="@{@string/articlesEntityType}"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonShow"
@@ -30,7 +31,8 @@
             android:fontFamily="@font/kalameh_regular"
             app:cornerRadius="@dimen/_5sdp"
             android:textColor="@color/white"
-            android:text="@string/view" />
+            android:text="@string/view"
+            android:visibility="gone"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

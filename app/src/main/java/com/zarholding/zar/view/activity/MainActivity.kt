@@ -24,7 +24,7 @@ import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zar.core.tools.manager.DialogManager
 import com.zarholding.zar.model.other.notification.NotificationCategoryModel
 import com.zarholding.zar.model.other.notification.NotificationModel
-import com.zarholding.zar.model.response.user.UserInfoModel
+import com.zarholding.zar.database.entity.UserInfoEntity
 import com.zarholding.zar.view.recycler.adapter.notification.NotificationCategoryAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import zar.R
@@ -92,6 +92,14 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
 
         binding.imageViewProfile.setOnClickListener {
             gotoFragment(R.id.action_goto_ProfileFragment)
+        }
+
+        binding.imageViewSetting.setOnClickListener {
+            gotoFragment(R.id.action_goto_SettingFragment)
+        }
+
+        binding.imageViewHome.setOnClickListener {
+            gotoFragment(R.id.action_goto_HomeFragment)
         }
 
     }
@@ -175,10 +183,10 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
 
 
     //---------------------------------------------------------------------------------------------- setUserInfo
-    fun setUserInfo(userInfoModel: UserInfoModel) {
-        binding.textViewProfileName.text = userInfoModel.fullName
+    fun setUserInfo(userInfoEntity: UserInfoEntity) {
+        binding.textViewProfileName.text = userInfoEntity.fullName
         binding.textViewPersonalCode.text = resources
-            .getString(R.string.personalCode,userInfoModel.personnelNumber)
+            .getString(R.string.personalCode,userInfoEntity.personnelNumber)
     }
     //---------------------------------------------------------------------------------------------- setUserInfo
 

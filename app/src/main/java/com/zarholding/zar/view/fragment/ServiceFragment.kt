@@ -251,24 +251,25 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- showDialogRegisterStation
     private fun showDialogRegisterStation(item: TripModel) {
-        val station = item.stations!!.map { it.stationName }
-        val adapter = SpinnerStringAdapter(station)
-        val dialog = DialogManager().createDialogHeightWrapContent(
-            requireContext(),
-            R.layout.dialog_register_station,
-            Gravity.BOTTOM,
-            150
-        )
-        val spinner = dialog.findViewById<Spinner>(R.id.spinnerStations)
-        spinner.adapter = adapter
-        val imageClose = dialog.findViewById<ImageView>(R.id.imageViewClose)
-        imageClose.setOnClickListener { dialog.dismiss() }
-        val buttonRegister = dialog.findViewById<MaterialButton>(R.id.buttonRegister)
-        buttonRegister.setOnClickListener {
-            requestRegisterStation(item.id, item.stations[spinner.selectedItemPosition].id)
-            dialog.dismiss()
+        item.stations?.let {
+            val adapter = SpinnerStringAdapter(it)
+            val dialog = DialogManager().createDialogHeightWrapContent(
+                requireContext(),
+                R.layout.dialog_register_station,
+                Gravity.BOTTOM,
+                150
+            )
+            val spinner = dialog.findViewById<Spinner>(R.id.spinnerStations)
+            spinner.adapter = adapter
+            val imageClose = dialog.findViewById<ImageView>(R.id.imageViewClose)
+            imageClose.setOnClickListener { dialog.dismiss() }
+            val buttonRegister = dialog.findViewById<MaterialButton>(R.id.buttonRegister)
+            buttonRegister.setOnClickListener {
+                requestRegisterStation(item.id, item.stations[spinner.selectedItemPosition].id)
+                dialog.dismiss()
+            }
+            dialog.show()
         }
-        dialog.show()
     }
     //---------------------------------------------------------------------------------------------- showDialogRegisterStation
 

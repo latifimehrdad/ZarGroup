@@ -1,5 +1,6 @@
 package com.zarholding.zar.model.response.user
 
+import com.zarholding.zar.database.entity.UserInfoEntity
 import com.zarholding.zar.model.response.BaseResponseAbstractModel
 
 /**
@@ -9,5 +10,5 @@ import com.zarholding.zar.model.response.BaseResponseAbstractModel
 data class UserInfoResponseModel(
     override val hasError: Boolean,
     override val message: String,
-    val data : UserInfoModel?
+    val data : UserInfoEntity?
 ) : BaseResponseAbstractModel()

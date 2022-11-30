@@ -11,9 +11,13 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.zar.core.enums.EnumErrorType
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
+import com.zarholding.zar.database.dao.ArticleDao
+import com.zarholding.zar.database.dao.UserInfoDao
+import com.zarholding.zar.model.request.ArticleRequestModel
 import com.zarholding.zar.repository.UserRepository
 import com.zarholding.zar.utility.CompanionValues
 import com.zarholding.zar.view.activity.MainActivity
+import com.zarholding.zar.viewmodel.ArticleViewModel
 import com.zarholding.zar.viewmodel.TokenViewModel
 import com.zarholding.zar.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,16 +39,22 @@ class SplashFragment : Fragment(), RemoteErrorEmitter {
     private var _binding: FragmentSplashBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var job: Job
-
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
-    @Inject lateinit var userRepository: UserRepository
+    @Inject
+    lateinit var userRepository: UserRepository
 
+    @Inject
+    lateinit var articleDao: ArticleDao
+
+    @Inject
+    lateinit var userInfoDao: UserInfoDao
+
+    private lateinit var job: Job
     private val tokenViewModel: TokenViewModel by viewModels()
-
     private val userViewModel: UserViewModel by viewModels()
+    private val articleViewModel: ArticleViewModel by viewModels()
 
 
     //---------------------------------------------------------------------------------------------- onCreateView
@@ -105,7 +115,7 @@ class SplashFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- gotoFragmentHome
     private fun gotoFragmentHome() {
         job = CoroutineScope(IO).launch {
-            delay(5000)
+            delay(1000)
             withContext(Main) {
                 requestUserInfo()
             }
@@ -123,20 +133,107 @@ class SplashFragment : Fragment(), RemoteErrorEmitter {
                         onError(EnumErrorType.UNKNOWN, userInfo.message)
                     else
                         userInfo.data?.let {
+                            CoroutineScope(IO).launch {
+                                userInfoDao.insertUserInfo(it)
+                            }
                             (activity as MainActivity).setUserInfo(it)
-                            findNavController()
-                                .navigate(R.id.action_splashFragment_to_HomeFragment)
+                            requestGetSlideShow()
                         } ?: run {
-                            onError(EnumErrorType.UNKNOWN, resources.getString(R.string.responseIsEmpty))
+                            onError(
+                                EnumErrorType.UNKNOWN,
+                                resources.getString(R.string.responseUserInfoIsEmpty)
+                            )
                         }
                 } ?: run {
-                    onError(EnumErrorType.UNKNOWN, resources.getString(R.string.responseIsEmpty))
+                    onError(
+                        EnumErrorType.UNKNOWN,
+                        resources.getString(R.string.responseUserInfoIsEmpty)
+                    )
                 }
             }
     }
     //---------------------------------------------------------------------------------------------- requestUserInfo
 
 
+    //---------------------------------------------------------------------------------------------- requestGetSlideShow
+    private fun requestGetSlideShow() {
+        val request = ArticleRequestModel(
+            1,
+            100,
+            "",
+            false,
+            "SlideShow"
+        )
+        articleViewModel.requestGetArticles(request, tokenViewModel.getBearerToken())
+            .observe(viewLifecycleOwner) { response ->
+                response?.let { articleModels ->
+                    if (articleModels.hasError)
+                        onError(EnumErrorType.UNKNOWN, articleModels.message)
+                    else
+                        articleModels.data?.let { data ->
+                            CoroutineScope(IO).launch {
+                                for (item in data.items)
+                                    item?.let { articleDao.insertArticle(it) }
+                                withContext(Main) {
+                                    requestGetArticle()
+                                }
+                            }
+                        } ?: run {
+                            onError(
+                                EnumErrorType.UNKNOWN,
+                                resources.getString(R.string.responseSlideIsEmpty)
+                            )
+                        }
+                } ?: run {
+                    onError(
+                        EnumErrorType.UNKNOWN,
+                        resources.getString(R.string.responseSlideIsEmpty)
+                    )
+                }
+            }
+    }
+    //---------------------------------------------------------------------------------------------- requestGetSlideShow
+
+
+    //---------------------------------------------------------------------------------------------- requestGetArticle
+    private fun requestGetArticle() {
+        val request = ArticleRequestModel(
+            1,
+            100,
+            "",
+            false,
+            "Article"
+        )
+        articleViewModel.requestGetArticles(request, tokenViewModel.getBearerToken())
+            .observe(viewLifecycleOwner) { response ->
+                response?.let { articleModels ->
+                    if (articleModels.hasError)
+                        onError(EnumErrorType.UNKNOWN, articleModels.message)
+                    else
+                        articleModels.data?.let { data ->
+                            CoroutineScope(IO).launch {
+                                for (item in data.items)
+                                    item?.let { articleDao.insertArticle(it) }
+                                withContext(Main) {
+                                    findNavController()
+                                        .navigate(R.id.action_splashFragment_to_HomeFragment)
+                                }
+                            }
+                        } ?: run {
+                            onError(
+                                EnumErrorType.UNKNOWN,
+                                resources.getString(R.string.responseArticleIsEmpty)
+                            )
+                        }
+                } ?: run {
+                    onError(
+                        EnumErrorType.UNKNOWN,
+                        resources.getString(R.string.responseArticleIsEmpty)
+                    )
+                }
+            }
+    }
+    //---------------------------------------------------------------------------------------------- requestGetArticle
 
 
     //---------------------------------------------------------------------------------------------- onDestroyView

@@ -1,7 +1,7 @@
 package com.zarholding.zar.view.recycler.holder
 
 import androidx.recyclerview.widget.RecyclerView
-import com.zarholding.zar.model.response.news.NewsModel
+import com.zarholding.zar.database.entity.ArticleEntity
 import zar.databinding.ItemNewsBinding
 
 /**
@@ -11,7 +11,7 @@ import zar.databinding.ItemNewsBinding
 class NewsItemHolder(private val binding: ItemNewsBinding) : RecyclerView.ViewHolder(binding.root) {
 
     //---------------------------------------------------------------------------------------------- bind
-    fun bind(item : NewsModel, position : Int) {
+    fun bind(item: ArticleEntity) {
         binding.item = item
         binding.executePendingBindings()
     }
