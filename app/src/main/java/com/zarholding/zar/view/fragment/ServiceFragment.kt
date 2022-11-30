@@ -5,12 +5,8 @@ import android.graphics.BitmapFactory
 import android.graphics.Paint
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.view.animation.AnimationUtils
-import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.TextView
@@ -27,6 +23,8 @@ import com.zar.core.tools.manager.DialogManager
 import com.zarholding.zar.model.request.RequestRegisterStationModel
 import com.zarholding.zar.model.response.trip.TripModel
 import com.zarholding.zar.utility.OsmManager
+import com.zarholding.zar.utility.signalr.RemoteSignalREmitter
+import com.zarholding.zar.utility.signalr.SignalRListener
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.view.recycler.adapter.MyServiceAdapter
 import com.zarholding.zar.view.recycler.adapter.ServiceAdapter
@@ -57,7 +55,7 @@ import zar.databinding.FragmentServiceBinding
  */
 
 @AndroidEntryPoint
-class ServiceFragment : Fragment(), RemoteErrorEmitter {
+class ServiceFragment : Fragment(), RemoteErrorEmitter, RemoteSignalREmitter {
 
     private var _binding: FragmentServiceBinding? = null
     private val binding get() = _binding!!
@@ -68,6 +66,12 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
     private val loadingManager = LoadingManager()
     private var tripList: List<TripModel>? = null
     private var job: Job? = null
+    private var markerCar: Marker? = null
+    private var signalRListener: SignalRListener? = null
+    var moveMap = false
+    var tripId = 0
+    var stationId = 0
+
 
     private enum class ShowTrip {
         ALL,
@@ -126,10 +130,16 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- setListener
     private fun setListener() {
-
         binding.textViewMyService.setOnClickListener { selectMyService() }
-
         binding.textViewListService.setOnClickListener { selectListAllServices() }
+        binding.mapView.setOnTouchListener { _, _ ->
+            moveMap = false
+            false
+        }
+
+
+        binding.textViewService.setOnClickListener {
+        }
     }
     //---------------------------------------------------------------------------------------------- setListener
 
@@ -350,6 +360,8 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- drawPolylineOnMap
     private fun drawPolylineOnMap(item: TripModel) {
+        tripId = item.id
+        stationId = item.myStationTripId
         job?.cancel()
         binding.mapView.overlays.clear()
         binding.mapView.invalidate()
@@ -472,13 +484,91 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
             binding.mapView.overlayManager.add(marker)
         }
         binding.mapView.invalidate()
+        signalRListener =
+            SignalRListener.getInstance(this@ServiceFragment, tokenViewModel.getToken())
+        if (!signalRListener!!.isConnection)
+            signalRListener!!.startConnection()
+        CoroutineScope(IO).launch {
+            delay(2000)
+            moveMap = true
+        }
     }
     //---------------------------------------------------------------------------------------------- addStationMarker
+
+
+    //---------------------------------------------------------------------------------------------- moveCarMarker
+    private fun moveCarMarker(position: GeoPoint) {
+        if (markerCar == null) {
+            val iconBus = Bitmap
+                .createScaledBitmap(
+                    BitmapFactory.decodeResource(resources, R.drawable.icon_bus_marker),
+                    70,
+                    100,
+                    true
+                )
+            val icon = BitmapDrawable(resources, iconBus)
+            markerCar = Marker(binding.mapView, context)
+            markerCar!!.icon = icon
+            markerCar!!.position = position
+            binding.mapView.overlayManager.add(markerCar!!)
+            if (moveMap)
+                moveCamera(position)
+            else
+                binding.mapView.invalidate()
+        }
+        else {
+            markerCar!!.position = position
+            if (moveMap)
+                moveCamera(position)
+            else
+                binding.mapView.invalidate()
+        }
+    }
+    //---------------------------------------------------------------------------------------------- moveCarMarker
+
+
+    //---------------------------------------------------------------------------------------------- moveCamera
+    private fun moveCamera(geoPoint: GeoPoint) {
+        val mapController: IMapController = binding.mapView.controller
+        mapController.animateTo(geoPoint, 18.0, 1000)
+    }
+    //---------------------------------------------------------------------------------------------- moveCamera
+
+
+    //---------------------------------------------------------------------------------------------- SignalR
+    override fun onConnectToSignalR() {
+        signalRListener?.let {
+            if (it.isConnection)
+                it.registerToGroup(tripId, stationId)
+        }
+    }
+
+    override fun onErrorConnectToSignalR() {
+
+    }
+
+    override fun onReConnectToSignalR() {
+
+    }
+
+    override fun onGetPoint(lat: String, lng: String) {
+        CoroutineScope(IO).launch {
+            withContext(Main) {
+                moveCarMarker(GeoPoint(lat.toDouble(), lng.toDouble()))
+            }
+        }
+    }
+    //---------------------------------------------------------------------------------------------- SignalR
 
 
     //---------------------------------------------------------------------------------------------- onDestroyView
     override fun onDestroyView() {
         super.onDestroyView()
+        signalRListener?.let {
+            if (it.isConnection)
+                it.stopConnection()
+        }
+        binding.mapView.onPause()
         _binding = null
     }
     //---------------------------------------------------------------------------------------------- onDestroyView
