@@ -1,15 +1,17 @@
 package com.zarholding.zar.view.fragment
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Paint
-import android.graphics.drawable.BitmapDrawable
+import android.annotation.SuppressLint
+import android.app.Notification
+import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Bundle
+import android.util.Size
 import android.view.*
-import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.TextView
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,6 +24,7 @@ import com.zar.core.tools.loadings.LoadingManager
 import com.zar.core.tools.manager.DialogManager
 import com.zarholding.zar.model.request.RequestRegisterStationModel
 import com.zarholding.zar.model.response.trip.TripModel
+import com.zarholding.zar.utility.CompanionValues
 import com.zarholding.zar.utility.OsmManager
 import com.zarholding.zar.utility.signalr.RemoteSignalREmitter
 import com.zarholding.zar.utility.signalr.SignalRListener
@@ -38,14 +41,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import org.osmdroid.api.IMapController
-import org.osmdroid.bonuspack.routing.OSRMRoadManager
-import org.osmdroid.bonuspack.routing.RoadManager
-import org.osmdroid.config.Configuration
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.Marker
-import org.osmdroid.views.overlay.Polyline
+import org.osmdroid.views.overlay.infowindow.MarkerInfoWindow
 import zar.R
 import zar.databinding.FragmentServiceBinding
 
@@ -55,28 +53,31 @@ import zar.databinding.FragmentServiceBinding
  */
 
 @AndroidEntryPoint
-class ServiceFragment : Fragment(), RemoteErrorEmitter, RemoteSignalREmitter {
+class ServiceFragment : Fragment(), RemoteErrorEmitter {
 
     private var _binding: FragmentServiceBinding? = null
     private val binding get() = _binding!!
-    private var polyline: Polyline? = null
 
     private val tripViewModel: TripViewModel by viewModels()
     private val tokenViewModel: TokenViewModel by viewModels()
     private val loadingManager = LoadingManager()
+    private lateinit var osmManager: OsmManager
     private var tripList: List<TripModel>? = null
-    private var job: Job? = null
     private var markerCar: Marker? = null
+    private var job : Job? = null
     private var signalRListener: SignalRListener? = null
-    var moveMap = false
-    var tripId = 0
-    var stationId = 0
+    private var moveMap = false
+    private var tripId = 0
+    private var stationId = 0
 
 
-    private enum class ShowTrip {
+    //---------------------------------------------------------------------------------------------- ShowTrip
+    private enum class TripSelect {
         ALL,
         MY
     }
+    //---------------------------------------------------------------------------------------------- ShowTrip
+
 
     //---------------------------------------------------------------------------------------------- onCreateView
     override fun onCreateView(
@@ -94,9 +95,10 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter, RemoteSignalREmitter {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner
+        osmManager = OsmManager(binding.mapView)
+        osmManager.mapInitialize()
         setListener()
-        initMap()
-        requestGetAllTrips(ShowTrip.ALL)
+        requestGetAllTrips(TripSelect.ALL)
     }
     //---------------------------------------------------------------------------------------------- onViewCreated
 
@@ -129,6 +131,7 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter, RemoteSignalREmitter {
 
 
     //---------------------------------------------------------------------------------------------- setListener
+    @SuppressLint("ClickableViewAccessibility")
     private fun setListener() {
         binding.textViewMyService.setOnClickListener { selectMyService() }
         binding.textViewListService.setOnClickListener { selectListAllServices() }
@@ -137,8 +140,8 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter, RemoteSignalREmitter {
             false
         }
 
-
         binding.textViewService.setOnClickListener {
+            showNotificationPreviousStationReached()
         }
     }
     //---------------------------------------------------------------------------------------------- setListener
@@ -157,6 +160,7 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter, RemoteSignalREmitter {
 
     //---------------------------------------------------------------------------------------------- selectMyService
     private fun selectMyService() {
+        osmManager.clearOverlays()
         tripList?.let {
             binding.textViewMyService.setBackgroundResource(R.drawable.drawable_trip_select_button)
             binding.textViewListService.setBackgroundResource(R.drawable.drawable_trip_unselect_button)
@@ -166,28 +170,25 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter, RemoteSignalREmitter {
             else
                 selectListAllServices()
         }
-        binding.mapView.overlays.clear()
-        binding.mapView.invalidate()
     }
     //---------------------------------------------------------------------------------------------- selectMyService
 
 
     //---------------------------------------------------------------------------------------------- selectListAllServices
     private fun selectListAllServices() {
+        osmManager.clearOverlays()
         tripList?.let {
             binding.textViewListService.setBackgroundResource(R.drawable.drawable_trip_select_button)
             binding.textViewMyService.setBackgroundResource(R.drawable.drawable_trip_unselect_button)
             val myService = tripList!!.filter { it.myStationTripId == 0 }
             setServiceAdapter(myService)
         }
-        binding.mapView.overlays.clear()
-        binding.mapView.invalidate()
     }
     //---------------------------------------------------------------------------------------------- selectListAllServices
 
 
     //---------------------------------------------------------------------------------------------- requestGetAllTrips
-    private fun requestGetAllTrips(showTrip: ShowTrip) {
+    private fun requestGetAllTrips(tripSelect: TripSelect) {
         startLoading(binding.nestedScrollView)
         tripViewModel.requestGetAllTrips(tokenViewModel.getBearerToken())
             .observe(viewLifecycleOwner) { response ->
@@ -198,9 +199,9 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter, RemoteSignalREmitter {
                     else
                         it.data?.let { trips ->
                             tripList = trips
-                            when (showTrip) {
-                                ShowTrip.ALL -> selectListAllServices()
-                                ShowTrip.MY -> selectMyService()
+                            when (tripSelect) {
+                                TripSelect.ALL -> selectListAllServices()
+                                TripSelect.MY -> selectMyService()
                             }
                         }
                 }
@@ -213,7 +214,7 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter, RemoteSignalREmitter {
     private fun setServiceAdapter(tripList: List<TripModel>) {
         val click = object : ServiceHolder.Click {
             override fun serviceClick(item: TripModel) {
-                drawPolylineOnMap(item)
+                drawRoadOnMap(item, TripSelect.ALL)
             }
 
             override fun registerStation(item: TripModel) {
@@ -227,7 +228,6 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter, RemoteSignalREmitter {
             false
         )
         linearLayoutManager.reverseLayout = true
-
         binding.recyclerViewService.layoutManager = linearLayoutManager
         binding.recyclerViewService.adapter = adapter
     }
@@ -238,7 +238,7 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter, RemoteSignalREmitter {
     private fun setMyServiceAdapter(tripList: List<TripModel>) {
         val click = object : MyServiceHolder.Click {
             override fun serviceClick(item: TripModel) {
-                drawPolylineOnMap(item)
+                drawRoadOnMap(item, TripSelect.MY)
             }
 
             override fun deleteRegisterStation(item: TripModel) {
@@ -294,7 +294,7 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter, RemoteSignalREmitter {
                 response?.let {
                     onError(EnumErrorType.UNKNOWN, it.message)
                     if (!it.hasError)
-                        requestGetAllTrips(ShowTrip.MY)
+                        requestGetAllTrips(TripSelect.MY)
                 }
             }
     }
@@ -334,231 +334,130 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter, RemoteSignalREmitter {
                 response?.let {
                     onError(EnumErrorType.UNKNOWN, it.message)
                     if (!it.hasError)
-                        requestGetAllTrips(ShowTrip.MY)
+                        requestGetAllTrips(TripSelect.MY)
                 }
             }
     }
     //---------------------------------------------------------------------------------------------- requestDeleteRegisterStation
 
 
-    //---------------------------------------------------------------------------------------------- initMap
-    private fun initMap() {
-        Configuration.getInstance().userAgentValue = requireContext().packageName
-        binding.mapView.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE)
-        binding.mapView.setMultiTouchControls(true)
-        binding.mapView.minZoomLevel = 9.0
-        binding.mapView.maxZoomLevel = 21.0
-        val mapController: IMapController = binding.mapView.controller
-        mapController.setZoom(17.0)
-        val startPoint = GeoPoint(35.840378, 51.016217)
-        mapController.setCenter(startPoint)
-//        binding.mapView.overlayManager.tilesOverlay.setColorFilter(TilesOverlay.INVERT_COLORS) // dark
-        binding.mapView.onResume()
-    }
-    //---------------------------------------------------------------------------------------------- initMap
-
-
-    //---------------------------------------------------------------------------------------------- drawPolylineOnMap
-    private fun drawPolylineOnMap(item: TripModel) {
+    //---------------------------------------------------------------------------------------------- drawRoadOnMap
+    private fun drawRoadOnMap(item: TripModel, tripSelect: TripSelect) {
         tripId = item.id
         stationId = item.myStationTripId
-        job?.cancel()
-        binding.mapView.overlays.clear()
-        binding.mapView.invalidate()
-        job = CoroutineScope(IO).launch {
-            item.tripPoints?.let {
-                binding.cardViewMap
-                    .startAnimation(AnimationUtils.loadAnimation(requireContext(), R.anim.alpha))
-                val points = OsmManager().getGeoPoints(it)
-                val roadManager: RoadManager = OSRMRoadManager(context, "")
-                val road = roadManager.getRoad(points)
-                val poly: Polyline = RoadManager.buildRoadOverlay(road)
-                polyline = Polyline(binding.mapView, true, false)
-                polyline!!.setPoints(poly.actualPoints)
-                polyline!!.outlinePaint?.color =
-                    resources.getColor(R.color.polyLineColor, requireContext().theme)
-                polyline!!.outlinePaint?.strokeWidth = 18.0f
-                polyline!!.isGeodesic = true
-                polyline!!.outlinePaint?.strokeCap = Paint.Cap.ROUND
-                delay(500)
-                withContext(Main) {
-                    binding.cardViewMap.clearAnimation()
-                    binding.mapView.overlays.add(polyline)
-                    binding.mapView.invalidate()
-                    boundBoxMap(points)
-                    item.stations?.let { stations ->
-                        addStationMarker(stations)
+
+        item.tripPoints?.let {
+            job = CoroutineScope(IO).launch {
+                osmManager.drawPolyLine(it)
+            }
+        }
+
+        item.stations?.let { station ->
+            CoroutineScope(IO).launch {
+                job?.join()
+                osmManager.addStationMarker(station)
+            }
+        }
+
+        if (tripSelect == TripSelect.MY)
+            startSignalR()
+    }
+    //---------------------------------------------------------------------------------------------- drawRoadOnMap
+
+
+
+
+
+
+
+
+
+    //---------------------------------------------------------------------------------------------- startSignalR
+    private fun startSignalR() {
+        val remote = object : RemoteSignalREmitter {
+            override fun onConnectToSignalR() {
+                signalRListener?.let {
+                    if (it.isConnection)
+                        it.registerToGroup(tripId, stationId)
+                }
+            }
+
+            override fun onErrorConnectToSignalR() {
+
+            }
+
+            override fun onReConnectToSignalR() {
+
+            }
+
+            override fun onGetPoint(lat: String, lng: String) {
+                CoroutineScope(IO).launch {
+                    withContext(Main) {
+                        moveCarMarker(GeoPoint(lat.toDouble(), lng.toDouble()))
                     }
                 }
             }
-        }
-    }
-    //---------------------------------------------------------------------------------------------- drawPolylineOnMap
 
-
-    //---------------------------------------------------------------------------------------------- boundBoxMap
-    private fun boundBoxMap(points: List<GeoPoint>) {
-        val box = OsmManager().getBoundingBoxFromPoints(points)
-        CoroutineScope(IO).launch {
-            delay(1000)
-            withContext(Main) {
-                binding.mapView.zoomToBoundingBox(box, true)
-//                drawArrowOnPolyline(points)
+            override fun onPreviousStationReached(message: String) {
+                showNotificationPreviousStationReached()
             }
         }
-    }
-    //---------------------------------------------------------------------------------------------- boundBoxMap
 
-
-    //---------------------------------------------------------------------------------------------- drawArrowOnPolyline
-    private fun drawArrowOnPolyline(points: List<GeoPoint>) {
-        for (i in 0..points.size step 2)
-            if (i + 1 < points.size) {
-                val from = points[i]
-                val to = points[i + 1]
-                val distance = OsmManager().measureDistance(from, to)
-                if (distance > 80) {
-                    val angel = OsmManager().getBearing(from, to)
-                    val marker = Marker(binding.mapView, context)
-                    val center = GeoPoint.fromCenterBetween(from, to)
-                    marker.icon = resources.getDrawableForDensity(
-                        R.drawable.ic_icon_map_location_arrow,
-                        2,
-                        requireContext().theme
-                    )
-                    marker.position = center
-                    marker.rotation = 360 - angel.toFloat()
-                    binding.mapView.overlayManager.add(marker)
-                }
-            }
-        binding.mapView.invalidate()
-    }
-    //---------------------------------------------------------------------------------------------- drawArrowOnPolyline
-
-
-    //---------------------------------------------------------------------------------------------- addStationMarker
-    private fun addStationMarker(stations: List<TripStationModel>) {
-        val start = GeoPoint(stations[0].stationLat.toDouble(), stations[0].sationLong.toDouble())
-        val markerStart = Marker(binding.mapView, context)
-        val iconStart = Bitmap
-            .createScaledBitmap(
-                BitmapFactory.decodeResource(resources, R.drawable.icon_start_marker),
-                100,
-                97,
-                true
-            )
-        markerStart.icon = BitmapDrawable(resources, iconStart)
-        markerStart.position = start
-        binding.mapView.overlayManager.add(markerStart)
-
-        val end = GeoPoint(
-            stations[stations.size - 1].stationLat.toDouble(),
-            stations[stations.size - 1].sationLong.toDouble()
-        )
-        val markerEnd = Marker(binding.mapView, context)
-        val iconEnd = Bitmap
-            .createScaledBitmap(
-                BitmapFactory.decodeResource(resources, R.drawable.icon_end_marker),
-                100,
-                97,
-                true
-            )
-        markerEnd.icon = BitmapDrawable(resources, iconEnd)
-        markerEnd.position = end
-        binding.mapView.overlayManager.add(markerEnd)
-
-        val iconStation = Bitmap
-            .createScaledBitmap(
-                BitmapFactory.decodeResource(resources, R.drawable.icon_station_marker),
-                70,
-                100,
-                true
-            )
-        val icon = BitmapDrawable(resources, iconStation)
-        for (i in 1..stations.size - 2) {
-            val station =
-                GeoPoint(stations[i].stationLat.toDouble(), stations[i].sationLong.toDouble())
-            val marker = Marker(binding.mapView, context)
-            marker.icon = icon
-            marker.position = station
-            binding.mapView.overlayManager.add(marker)
-        }
-        binding.mapView.invalidate()
-        signalRListener =
-            SignalRListener.getInstance(this@ServiceFragment, tokenViewModel.getToken())
-        if (!signalRListener!!.isConnection)
-            signalRListener!!.startConnection()
         CoroutineScope(IO).launch {
             delay(2000)
+            signalRListener = SignalRListener.getInstance(
+                remote,
+                tokenViewModel.getToken()
+            )
+            if (!signalRListener!!.isConnection)
+                signalRListener!!.startConnection()
             moveMap = true
         }
     }
-    //---------------------------------------------------------------------------------------------- addStationMarker
+    //---------------------------------------------------------------------------------------------- startSignalR
 
 
     //---------------------------------------------------------------------------------------------- moveCarMarker
     private fun moveCarMarker(position: GeoPoint) {
-        if (markerCar == null) {
-            val iconBus = Bitmap
-                .createScaledBitmap(
-                    BitmapFactory.decodeResource(resources, R.drawable.icon_bus_marker),
-                    70,
-                    100,
-                    true
-                )
-            val icon = BitmapDrawable(resources, iconBus)
-            markerCar = Marker(binding.mapView, context)
-            markerCar!!.icon = icon
-            markerCar!!.position = position
-            binding.mapView.overlayManager.add(markerCar!!)
-            if (moveMap)
-                moveCamera(position)
-            else
-                binding.mapView.invalidate()
+        markerCar?.let {
+            it.position = position
+        } ?: run {
+            val iconBus = osmManager
+                .createMarkerIconDrawable(Size(70, 100), R.drawable.icon_bus_marker)
+            markerCar = osmManager.addMarker(iconBus, position, null)
         }
-        else {
-            markerCar!!.position = position
-            if (moveMap)
-                moveCamera(position)
-            else
-                binding.mapView.invalidate()
-        }
+
+        if (moveMap)
+            osmManager.moveCamera(position)
+        else
+            binding.mapView.invalidate()
     }
     //---------------------------------------------------------------------------------------------- moveCarMarker
 
 
-    //---------------------------------------------------------------------------------------------- moveCamera
-    private fun moveCamera(geoPoint: GeoPoint) {
-        val mapController: IMapController = binding.mapView.controller
-        mapController.animateTo(geoPoint, 18.0, 1000)
+    //---------------------------------------------------------------------------------------------- showNotificationPreviousStationReached
+    private fun showNotificationPreviousStationReached() {
+        val vibrate: LongArray = longArrayOf(1000L, 1000L, 1000L, 1000L, 1000L)
+        val alarmSound: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        val notifyManager = NotificationManagerCompat.from(requireContext())
+        val notificationBuilder = NotificationCompat
+            .Builder(requireContext(), CompanionValues.channelId)
+        val notification = notificationBuilder
+            .setOngoing(false)
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentTitle(
+                requireContext()
+                    .resources.getString(R.string.messagePreviousStationReached)
+            )
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setCategory(Notification.CATEGORY_SERVICE)
+            .setVibrate(vibrate)
+            .setSound(alarmSound)
+            .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+        notifyManager.notify(7126, notification.build())
     }
-    //---------------------------------------------------------------------------------------------- moveCamera
-
-
-    //---------------------------------------------------------------------------------------------- SignalR
-    override fun onConnectToSignalR() {
-        signalRListener?.let {
-            if (it.isConnection)
-                it.registerToGroup(tripId, stationId)
-        }
-    }
-
-    override fun onErrorConnectToSignalR() {
-
-    }
-
-    override fun onReConnectToSignalR() {
-
-    }
-
-    override fun onGetPoint(lat: String, lng: String) {
-        CoroutineScope(IO).launch {
-            withContext(Main) {
-                moveCarMarker(GeoPoint(lat.toDouble(), lng.toDouble()))
-            }
-        }
-    }
-    //---------------------------------------------------------------------------------------------- SignalR
+    //---------------------------------------------------------------------------------------------- showNotificationPreviousStationReached
 
 
     //---------------------------------------------------------------------------------------------- onDestroyView

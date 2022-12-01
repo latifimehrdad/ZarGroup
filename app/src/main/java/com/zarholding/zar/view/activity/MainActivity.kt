@@ -2,7 +2,16 @@ package com.zarholding.zar.view.activity
 
 import android.Manifest
 import android.app.Dialog
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.graphics.Color
+import android.media.AudioAttributes
+import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.view.Gravity
 import android.view.View
 import android.widget.ImageView
@@ -22,9 +31,10 @@ import com.zar.core.enums.EnumAuthorizationType
 import com.zar.core.enums.EnumErrorType
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zar.core.tools.manager.DialogManager
+import com.zarholding.zar.database.entity.UserInfoEntity
 import com.zarholding.zar.model.other.notification.NotificationCategoryModel
 import com.zarholding.zar.model.other.notification.NotificationModel
-import com.zarholding.zar.database.entity.UserInfoEntity
+import com.zarholding.zar.utility.CompanionValues
 import com.zarholding.zar.view.recycler.adapter.notification.NotificationCategoryAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import zar.R
@@ -60,8 +70,12 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- initView
     private fun initView() {
+        createNotificationChannel()
         setListener()
         checkLocationPermission()
+/*        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.deleteNotificationChannel(CompanionValues.channelId)*/
+
     }
     //---------------------------------------------------------------------------------------------- initView
 
@@ -189,6 +203,32 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
             .getString(R.string.personalCode,userInfoEntity.personnelNumber)
     }
     //---------------------------------------------------------------------------------------------- setUserInfo
+
+
+
+    //---------------------------------------------------------------------------------------------- createNotificationChannel
+    private fun createNotificationChannel(){
+        val vibrate : LongArray = longArrayOf(1000L,1000L,1000L,1000L,1000L)
+        val alarmSound: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        val audioAttributes = AudioAttributes.Builder()
+            .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+            .build()
+        val importance = NotificationManager.IMPORTANCE_HIGH
+        val channel = NotificationChannel(
+            CompanionValues.channelId,
+            CompanionValues.channelName,
+            importance)
+        channel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+        channel.enableLights(true)
+        channel.lightColor = Color.BLUE
+        channel.enableVibration(true)
+        channel.vibrationPattern = vibrate
+        channel.setSound(alarmSound, audioAttributes)
+        val notificationManager = getSystemService(NotificationManager::class.java)
+        notificationManager.createNotificationChannel(channel)
+    }
+    //---------------------------------------------------------------------------------------------- createNotificationChannel
+
 
 
     private fun initNotification(dialog: Dialog) {

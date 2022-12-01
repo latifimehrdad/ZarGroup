@@ -30,9 +30,12 @@ public class SignalRListener {
                 .build();
 
         hubConnection.on("ReceiveDriverLocation", (serviceId, driverId, lat, lng) -> {
-            Log.i("meri", "ReceiveDriverLocation");
             this.remoteSignalREmitter.onGetPoint(lat, lng);
         }, String.class, Integer.class, String.class, String.class);
+
+
+        hubConnection.on("PreviousStationReached",
+                this.remoteSignalREmitter::onPreviousStationReached, String.class);
 
     }
     //---------------------------------------------------------------------------------------------- SignalRListener

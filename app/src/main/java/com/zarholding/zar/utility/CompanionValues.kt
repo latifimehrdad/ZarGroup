@@ -8,5 +8,7 @@ class CompanionValues {
 
     companion object {
         const val TOKEN = "token"
+        const val channelId = "Zar"
+        const val channelName = "Driver"
     }
 }

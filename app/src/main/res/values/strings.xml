@@ -66,6 +66,7 @@
     <string name="responseSlideIsEmpty">اسلاید های دریافتی خالی می باشد</string>
     <string name="responseArticleIsEmpty">خبرنامه های دریافتی خالی می باشد</string>
     <string name="responseUserInfoIsEmpty">اطلاعات کاربر خالی می باشد</string>
+    <string name="messagePreviousStationReached">سرویس شما به ایستگاه قبلی رسید</string>
 
 
     <string name="logoDescription">logo</string>

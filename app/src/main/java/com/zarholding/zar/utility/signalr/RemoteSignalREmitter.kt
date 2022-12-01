@@ -10,4 +10,5 @@ interface RemoteSignalREmitter {
     fun onErrorConnectToSignalR()
     fun onReConnectToSignalR()
     fun onGetPoint(lat : String, lng : String)
+    fun onPreviousStationReached(message : String)
 }
