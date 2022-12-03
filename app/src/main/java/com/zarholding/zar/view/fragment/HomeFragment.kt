@@ -1,15 +1,19 @@
 package com.zarholding.zar.view.fragment
 
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.zar.core.enums.EnumErrorType
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
+import com.zar.core.tools.manager.DialogManager
 import com.zarholding.zar.database.dao.ArticleDao
 import com.zarholding.zar.database.entity.ArticleEntity
 import com.zarholding.zar.model.enum.EnumArticleType
@@ -23,6 +27,7 @@ import com.zarholding.zar.view.recycler.adapter.BannerAdapter
 import com.zarholding.zar.view.recycler.adapter.NewsAdapter
 import com.zarholding.zar.view.recycler.adapter.RequestAdapter
 import com.zarholding.zar.view.recycler.holder.AppItemHolder
+import com.zarholding.zar.view.recycler.holder.NewsItemHolder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -162,7 +167,12 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- setNewsAdapter
     private fun setNewsAdapter(news: List<ArticleEntity>) {
-        val adapter = NewsAdapter(news)
+        val click = object : NewsItemHolder.Click {
+            override fun detailArticle(article: ArticleEntity) {
+                showDialogDetailNews(article)
+            }
+        }
+        val adapter = NewsAdapter(news, click)
 
         val linearLayoutManager = LinearLayoutManager(
             requireContext(),
@@ -175,6 +185,30 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
         binding.recyclerViewNews.adapter = adapter
     }
     //---------------------------------------------------------------------------------------------- setNewsAdapter
+
+
+
+    //---------------------------------------------------------------------------------------------- showDialogDetailNews
+    private fun showDialogDetailNews(news : ArticleEntity) {
+        val dialog = DialogManager().createDialogHeightWrapContent(
+            requireContext(),
+            R.layout.dialog_detail_news,
+            Gravity.CENTER,
+            0
+        )
+        val textViewTitle = dialog.findViewById<TextView>(R.id.textViewTitle)
+        textViewTitle.text = news.title
+        val textViewSummary = dialog.findViewById<TextView>(R.id.textViewSummary)
+        textViewSummary.text = news.summary
+        val textViewContent = dialog.findViewById<TextView>(R.id.textViewContent)
+        textViewContent.text = news.body
+        val imageViewClose = dialog.findViewById<ImageView>(R.id.imageViewClose)
+        imageViewClose.setOnClickListener { dialog.dismiss() }
+        dialog.show()
+    }
+    //---------------------------------------------------------------------------------------------- showDialogDetailNews
+
+
 
 
     //---------------------------------------------------------------------------------------------- initPersonnelRequest

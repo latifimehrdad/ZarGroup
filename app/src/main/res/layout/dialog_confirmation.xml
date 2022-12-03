@@ -27,7 +27,7 @@
             android:src="@drawable/ic_close"
             android:scaleType="fitEnd"
             app:tint="@color/textViewColor2"
-            android:background="@drawable/drawable_dialog_header_gradiant"
+            android:background="@drawable/drawable_dialog_notify_header_gradiant"
             android:contentDescription="@string/closeDescription"
             tools:ignore="RtlSymmetry" />
 

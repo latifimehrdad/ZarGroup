@@ -54,6 +54,7 @@
     <string name="myStation">ایستگاه من</string>
     <string name="yes">بله</string>
     <string name="no">خیر</string>
+    <string name="showAllNews">مشاهده تمام خبرها</string>
 
     <string name="personalCode">کد پرسنلی : %1$s</string>
     <string name="attendanceTime">ساعت حضور : %1$s</string>

@@ -67,13 +67,19 @@
         <entry key="..\:/AndroidSource/ZarGroup/app/src/main/res/layout/layout_profile_item.xml" value="0.264" />
         <entry key="..\:/AndroidSource/ZarGroup/app/src/main/res/layout/layout_setting_item.xml" value="0.23125" />
         <entry key="..\:/AndroidSource/ZarGroup/app/src/main/res/xml/network_security_config.xml" value="0.23229166666666667" />
+        <entry key="..\:/android/project/ZarGroup/app/src/main/res/drawable/drawable_dialog_gradiant.xml" value="0.174" />
+        <entry key="..\:/android/project/ZarGroup/app/src/main/res/drawable/drawable_dialog_header_gradiant.xml" value="0.174" />
+        <entry key="..\:/android/project/ZarGroup/app/src/main/res/drawable/drawable_footer_menu.xml" value="0.1" />
         <entry key="..\:/android/project/ZarGroup/app/src/main/res/drawable/drawable_spinner.xml" value="0.174" />
+        <entry key="..\:/android/project/ZarGroup/app/src/main/res/drawable/drawable_splash_gradiant.xml" value="0.1" />
         <entry key="..\:/android/project/ZarGroup/app/src/main/res/drawable/drawable_trip_gradiant.xml" value="0.174" />
         <entry key="..\:/android/project/ZarGroup/app/src/main/res/drawable/ic_end_marker.xml" value="0.174" />
         <entry key="..\:/android/project/ZarGroup/app/src/main/res/drawable/ic_map_marker.xml" value="0.174" />
         <entry key="..\:/android/project/ZarGroup/app/src/main/res/drawable/ic_pending.xml" value="0.174" />
         <entry key="..\:/android/project/ZarGroup/app/src/main/res/drawable/ic_start_marker.xml" value="0.174" />
         <entry key="..\:/android/project/ZarGroup/app/src/main/res/layout/dialog_confirmation.xml" value="0.20416666666666666" />
+        <entry key="..\:/android/project/ZarGroup/app/src/main/res/layout/dialog_detail_news.xml" value="0.264" />
+        <entry key="..\:/android/project/ZarGroup/app/src/main/res/layout/dialog_notification.xml" value="0.20416666666666666" />
         <entry key="..\:/android/project/ZarGroup/app/src/main/res/layout/dialog_register_station.xml" value="0.20416666666666666" />
         <entry key="..\:/android/project/ZarGroup/app/src/main/res/layout/fragment_home.xml" value="0.20416666666666666" />
         <entry key="..\:/android/project/ZarGroup/app/src/main/res/layout/fragment_login.xml" value="0.20416666666666666" />

@@ -75,7 +75,10 @@
     <color name="recyclerLoadingShadow">#80FFFFFF</color>
     <color name="recyclerLoadingBack">#33FFFFFF</color>
 
-    <color name="mapLoadingBack">#33FFFFFF</color>
+    <color name="dialogGradiantStartColor">#163c69</color>
+    <color name="dialogGradiantEndColor">#2a69b7</color>
+
+    <color name="mapLoadingBack">#80FFFFFF</color>
     <color name="positive">#02C076</color>
     <color name="negative">#F84960</color>
     <color name="waiting">#ffb300</color>

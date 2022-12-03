@@ -11,18 +11,21 @@ import zar.databinding.ItemNewsBinding
  * Created by m-latifi on 11/15/2022.
  */
 
-class NewsAdapter(private val news : List<ArticleEntity>) :
+class NewsAdapter(private val news: List<ArticleEntity>, private val click: NewsItemHolder.Click) :
     RecyclerView.Adapter<NewsItemHolder>() {
 
 
-    private var layoutInflater : LayoutInflater? = null
+    private var layoutInflater: LayoutInflater? = null
 
 
     //---------------------------------------------------------------------------------------------- onCreateViewHolder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsItemHolder {
         if (layoutInflater == null)
             layoutInflater = LayoutInflater.from(parent.context)
-        return NewsItemHolder(ItemNewsBinding.inflate(layoutInflater!!,parent, false))
+        return NewsItemHolder(
+            ItemNewsBinding.inflate(layoutInflater!!, parent, false),
+            click
+        )
     }
     //---------------------------------------------------------------------------------------------- onCreateViewHolder
 
