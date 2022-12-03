@@ -60,7 +60,7 @@
             android:layout_height="1px"
             app:layout_constraintBottom_toBottomOf="parent"
             android:background="@color/textViewFooter"
-            app:layout_constraintStart_toStartOf="@id/imageViewMore"
+            app:layout_constraintStart_toStartOf="@id/switchActive"
             app:layout_constraintEnd_toEndOf="@id/imageViewIcon"
             />
 

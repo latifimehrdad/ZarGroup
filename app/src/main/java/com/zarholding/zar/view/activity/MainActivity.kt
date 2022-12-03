@@ -5,17 +5,18 @@ import android.app.Dialog
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.Context
+import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.graphics.Color
 import android.media.AudioAttributes
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Bundle
-import android.provider.Settings
 import android.view.Gravity
 import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -31,15 +32,24 @@ import com.zar.core.enums.EnumAuthorizationType
 import com.zar.core.enums.EnumErrorType
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zar.core.tools.manager.DialogManager
+import com.zar.core.tools.manager.ThemeManager
+import com.zarholding.zar.database.dao.UserInfoDao
 import com.zarholding.zar.database.entity.UserInfoEntity
 import com.zarholding.zar.model.other.notification.NotificationCategoryModel
 import com.zarholding.zar.model.other.notification.NotificationModel
 import com.zarholding.zar.utility.CompanionValues
+import com.zarholding.zar.utility.ThemeManagers
 import com.zarholding.zar.view.recycler.adapter.notification.NotificationCategoryAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import zar.R
 import zar.databinding.ActivityMainBinding
 import java.time.LocalDateTime
+import javax.inject.Inject
 
 
 /**
@@ -49,8 +59,15 @@ import java.time.LocalDateTime
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
 
-    lateinit var binding : ActivityMainBinding
-    var navController : NavController? = null
+    lateinit var binding: ActivityMainBinding
+    var navController: NavController? = null
+
+    @Inject
+    lateinit var themeManagers: ThemeManagers
+
+    @Inject
+    lateinit var userInfoDao: UserInfoDao
+
 
     //---------------------------------------------------------------------------------------------- companion object
     companion object {
@@ -73,11 +90,28 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
         createNotificationChannel()
         setListener()
         checkLocationPermission()
+        setUserInfo()
+        setAppTheme(themeManagers.applicationTheme())
+
 /*        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.deleteNotificationChannel(CompanionValues.channelId)*/
 
     }
     //---------------------------------------------------------------------------------------------- initView
+
+
+    //______________________________________________________________________________________________ setAppTheme
+    private fun setAppTheme(theme: Int) {
+        when (theme) {
+            Configuration.UI_MODE_NIGHT_YES -> AppCompatDelegate.setDefaultNightMode(
+                AppCompatDelegate.MODE_NIGHT_YES
+            )
+            Configuration.UI_MODE_NIGHT_NO -> AppCompatDelegate.setDefaultNightMode(
+                AppCompatDelegate.MODE_NIGHT_NO
+            )
+        }
+    }
+    //______________________________________________________________________________________________ setAppTheme
 
 
     //---------------------------------------------------------------------------------------------- setListener
@@ -98,7 +132,8 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
             val position = binding.imageViewNotification.top +
                     binding.imageViewNotification.measuredHeight
             val dialog = DialogManager().createDialogHeightWrapContent(
-                this, R.layout.dialog_notification, Gravity.TOP, position)
+                this, R.layout.dialog_notification, Gravity.TOP, position
+            )
             initNotification(dialog)
             dialog.show()
         }
@@ -124,26 +159,21 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
     private fun showAndHideBottomMenu(fragmentLabel: String) {
         when (fragmentLabel) {
             "SplashFragment",
-            "LoginFragment" ->
-            {
+            "LoginFragment" -> {
                 binding.constraintLayoutFooterMenu.visibility = View.GONE
                 binding.constraintLayoutProfile.visibility = View.GONE
 
             }
-            "ProfileFragment" ->
-            {
+            "ProfileFragment" -> {
                 binding.constraintLayoutProfile.visibility = View.GONE
             }
-            else ->
-            {
+            else -> {
                 binding.constraintLayoutFooterMenu.visibility = View.VISIBLE
                 binding.constraintLayoutProfile.visibility = View.VISIBLE
             }
         }
     }
     //---------------------------------------------------------------------------------------------- showAndHideBottomMenu
-
-
 
 
     //---------------------------------------------------------------------------------------------- onError
@@ -161,7 +191,7 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
 
 
     //---------------------------------------------------------------------------------------------- gotoFragment
-    private fun gotoFragment(fragment : Int) {
+    private fun gotoFragment(fragment: Int) {
         navController?.navigate(fragment, null)
     }
     //---------------------------------------------------------------------------------------------- gotoFragment
@@ -176,7 +206,7 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
                 Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
 
-            )
+                )
             .withListener(object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(p0: MultiplePermissionsReport?) {
 
@@ -195,20 +225,23 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- checkLocationPermission
 
 
-
     //---------------------------------------------------------------------------------------------- setUserInfo
-    fun setUserInfo(userInfoEntity: UserInfoEntity) {
-        binding.textViewProfileName.text = userInfoEntity.fullName
-        binding.textViewPersonalCode.text = resources
-            .getString(R.string.personalCode,userInfoEntity.personnelNumber)
+    fun setUserInfo() {
+        CoroutineScope(IO).launch {
+            val user = userInfoDao.getUserInfo()
+            withContext(Main) {
+                binding.textViewProfileName.text = user?.fullName
+                binding.textViewPersonalCode.text = resources
+                    .getString(R.string.personalCode, user?.personnelNumber)
+            }
+        }
     }
     //---------------------------------------------------------------------------------------------- setUserInfo
 
 
-
     //---------------------------------------------------------------------------------------------- createNotificationChannel
-    private fun createNotificationChannel(){
-        val vibrate : LongArray = longArrayOf(1000L,1000L,1000L,1000L,1000L)
+    private fun createNotificationChannel() {
+        val vibrate: LongArray = longArrayOf(1000L, 1000L, 1000L, 1000L, 1000L)
         val alarmSound: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val audioAttributes = AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_NOTIFICATION)
@@ -217,7 +250,8 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
         val channel = NotificationChannel(
             CompanionValues.channelId,
             CompanionValues.channelName,
-            importance)
+            importance
+        )
         channel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
         channel.enableLights(true)
         channel.lightColor = Color.BLUE
@@ -228,7 +262,6 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
         notificationManager.createNotificationChannel(channel)
     }
     //---------------------------------------------------------------------------------------------- createNotificationChannel
-
 
 
     private fun initNotification(dialog: Dialog) {
@@ -276,7 +309,7 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
             tabLayout.addTab(tabLayout.newTab().setText(category.name))
         }
 
-        tabLayout?.getTabAt(0)?.apply{
+        tabLayout?.getTabAt(0)?.apply {
             orCreateBadge
             badge?.isVisible = true
             badge?.number = 3

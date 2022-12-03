@@ -87,12 +87,15 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
     private fun initApps() {
         val apps: MutableList<AppModel> = mutableListOf()
 
-        apps.add(AppModel(
-            R.drawable.icon_trip,
-            getString(R.string.tripAndMap),
-            R.id.action_HomeFragment_to_ServiceFragment))
+        apps.add(
+            AppModel(
+                R.drawable.icon_trip,
+                getString(R.string.tripAndMap),
+                R.id.action_HomeFragment_to_ServiceFragment
+            )
+        )
 
-        apps.add(AppModel(R.drawable.icon_personnel, getString(R.string.personnelList), 1))
+        apps.add(AppModel(R.drawable.icon_personnel, getString(R.string.personnelList), 0))
         apps.add(AppModel(R.drawable.icon_food_reservation, getString(R.string.foodReservation), 0))
         apps.add(AppModel(R.drawable.icon_gift_card, getString(R.string.giftCard), 0))
         setAppsAdapter(apps)
@@ -100,12 +103,12 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- initApps
 
 
-
     //---------------------------------------------------------------------------------------------- setAppsAdapter
     private fun setAppsAdapter(apps: MutableList<AppModel>) {
         val click = object : AppItemHolder.Click {
             override fun appClick(action: Int) {
-                findNavController().navigate(action)
+                if (action != 0)
+                    findNavController().navigate(action)
             }
         }
         val adapter = AppAdapter(apps, click)
@@ -121,7 +124,6 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- setAppsAdapter
 
 
-
     //---------------------------------------------------------------------------------------------- getBannerFromDB
     private fun getBannerFromDB() {
         CoroutineScope(IO).launch {
@@ -134,9 +136,8 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- getBannerFromDB
 
 
-
     //---------------------------------------------------------------------------------------------- setBannerSlider
-    private fun setBannerSlider(banners : List<ArticleEntity>) {
+    private fun setBannerSlider(banners: List<ArticleEntity>) {
         val adapter = BannerAdapter(banners)
         binding.sliderViewBanner.setSliderAdapter(adapter)
         binding.sliderViewBanner.setIndicatorAnimation(IndicatorAnimationType.WORM)
@@ -144,7 +145,6 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
         binding.sliderViewBanner.autoCycleDirection = SliderView.AUTO_CYCLE_DIRECTION_BACK_AND_FORTH
     }
     //---------------------------------------------------------------------------------------------- setBannerSlider
-
 
 
     //---------------------------------------------------------------------------------------------- initNews
@@ -158,7 +158,6 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
 
     }
     //---------------------------------------------------------------------------------------------- initNews
-
 
 
     //---------------------------------------------------------------------------------------------- setNewsAdapter
@@ -176,7 +175,6 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
         binding.recyclerViewNews.adapter = adapter
     }
     //---------------------------------------------------------------------------------------------- setNewsAdapter
-
 
 
     //---------------------------------------------------------------------------------------------- initPersonnelRequest
@@ -224,7 +222,6 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
         _binding = null
     }
     //---------------------------------------------------------------------------------------------- onDestroyView
-
 
 
 }

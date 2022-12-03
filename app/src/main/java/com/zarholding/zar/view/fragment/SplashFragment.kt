@@ -136,7 +136,7 @@ class SplashFragment : Fragment(), RemoteErrorEmitter {
                             CoroutineScope(IO).launch {
                                 userInfoDao.insertUserInfo(it)
                             }
-                            (activity as MainActivity).setUserInfo(it)
+                            (activity as MainActivity).setUserInfo()
                             requestGetSlideShow()
                         } ?: run {
                             onError(

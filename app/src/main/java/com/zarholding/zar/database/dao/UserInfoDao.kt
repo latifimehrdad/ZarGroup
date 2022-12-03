@@ -13,7 +13,7 @@ interface UserInfoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertUserInfo(userInfoEntity: UserInfoEntity)
 
-    @Query("SELECT * FROM UserInfo")
-    fun getUserInfo(): UserInfoEntity
+    @Query("SELECT * FROM UserInfo LIMIT 1")
+    fun getUserInfo(): UserInfoEntity?
 
 }

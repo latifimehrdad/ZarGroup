@@ -18,6 +18,7 @@
     <string name="showNews">مشاهده خبر</string>
     <string name="personnelRequest">درخواست پرسنل</string>
     <string name="bePatient">شکیبا باشید…</string>
+    <string name="bePatientToLoadMap">درحال دریافت مسیر، شکیبا باشید …</string>
     <string name="all">همه</string>
     <string name="yesterday">دیروز</string>
     <string name="today">امروز</string>

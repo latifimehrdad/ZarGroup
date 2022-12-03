@@ -26,6 +26,7 @@ import com.zarholding.zar.model.request.RequestRegisterStationModel
 import com.zarholding.zar.model.response.trip.TripModel
 import com.zarholding.zar.utility.CompanionValues
 import com.zarholding.zar.utility.OsmManager
+import com.zarholding.zar.utility.ThemeManagers
 import com.zarholding.zar.utility.signalr.RemoteSignalREmitter
 import com.zarholding.zar.utility.signalr.SignalRListener
 import com.zarholding.zar.view.activity.MainActivity
@@ -46,6 +47,7 @@ import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.infowindow.MarkerInfoWindow
 import zar.R
 import zar.databinding.FragmentServiceBinding
+import javax.inject.Inject
 
 
 /**
@@ -70,6 +72,8 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
     private var tripId = 0
     private var stationId = 0
 
+    @Inject
+    lateinit var themeManagers: ThemeManagers
 
     //---------------------------------------------------------------------------------------------- ShowTrip
     private enum class TripSelect {
@@ -96,7 +100,7 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner
         osmManager = OsmManager(binding.mapView)
-        osmManager.mapInitialize()
+        osmManager.mapInitialize(themeManagers.applicationTheme())
         setListener()
         requestGetAllTrips(TripSelect.ALL)
     }
@@ -343,8 +347,10 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- drawRoadOnMap
     private fun drawRoadOnMap(item: TripModel, tripSelect: TripSelect) {
+
         tripId = item.id
         stationId = item.myStationTripId
+
 
         item.tripPoints?.let {
             job = CoroutineScope(IO).launch {
@@ -352,12 +358,17 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
             }
         }
 
-        item.stations?.let { station ->
-            CoroutineScope(IO).launch {
-                job?.join()
-                osmManager.addStationMarker(station)
+        CoroutineScope(Main).launch {
+            binding.textViewLoading.visibility = View.VISIBLE
+            delay(300)
+            item.stations?.let { station ->
+                CoroutineScope(IO).launch {
+                    job?.join()
+                    osmManager.addStationMarker(station, binding.textViewLoading)
+                }
             }
         }
+
 
         if (tripSelect == TripSelect.MY)
             startSignalR()

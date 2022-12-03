@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable
 import android.location.Location
 import android.util.Log
 import android.util.Size
+import android.view.View
 import android.widget.TextView
 import com.zarholding.zar.model.response.trip.TripPointModel
 import com.zarholding.zardriver.model.response.TripStationModel
@@ -26,6 +27,7 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
+import org.osmdroid.views.overlay.TilesOverlay
 import org.osmdroid.views.overlay.infowindow.MarkerInfoWindow
 import zar.R
 import kotlin.math.*
@@ -39,7 +41,7 @@ import kotlin.math.*
 class OsmManager(private val map: MapView) {
 
     //---------------------------------------------------------------------------------------------- mapInitialize
-    fun mapInitialize() {
+    fun mapInitialize(theme: Int) {
         Configuration.getInstance().userAgentValue = map.context.packageName
         map.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE)
         map.setMultiTouchControls(true)
@@ -49,7 +51,8 @@ class OsmManager(private val map: MapView) {
         mapController.setZoom(17.0)
         val startPoint = GeoPoint(35.840378, 51.016217)
         mapController.setCenter(startPoint)
-//        binding.mapView.overlayManager.tilesOverlay.setColorFilter(TilesOverlay.INVERT_COLORS) // dark
+        if (theme == android.content.res.Configuration.UI_MODE_NIGHT_YES)
+            map.overlayManager.tilesOverlay.setColorFilter(TilesOverlay.INVERT_COLORS) // dark
         map.onResume()
     }
     //---------------------------------------------------------------------------------------------- mapInitialize
@@ -131,7 +134,6 @@ class OsmManager(private val map: MapView) {
 
     //---------------------------------------------------------------------------------------------- drawPolyLine
     suspend fun drawPolyLine(ripPoints: List<TripPointModel>) {
-        Log.i("meri", "drawPolyLine1")
         clearOverlays()
         val points = getGeoPoints(ripPoints)
         val roadManager: RoadManager = OSRMRoadManager(map.context, "")
@@ -148,16 +150,14 @@ class OsmManager(private val map: MapView) {
             map.overlays.add(polyline)
             val box = getBoundingBoxFromPoints(points)
             map.zoomToBoundingBox(box, true)
-            Log.i("meri", "drawPolyLine2")
         }
     }
     //---------------------------------------------------------------------------------------------- drawPolyLine
 
 
     //---------------------------------------------------------------------------------------------- addStationMarker
-    suspend fun addStationMarker(stations: List<TripStationModel>) {
+    suspend fun addStationMarker(stations: List<TripStationModel>, view: View) {
         withContext(Main) {
-            Log.i("meri", "addStationMarker1")
             addStartStationMarker(stations[0])
             addEndStationMarker(stations[stations.size - 1])
 
@@ -174,7 +174,7 @@ class OsmManager(private val map: MapView) {
                 )
                 addMarker(iconStation, position, infoWindows)
             }
-            Log.i("meri", "addStationMarker2")
+            view.visibility = View.GONE
         }
     }
     //---------------------------------------------------------------------------------------------- addStationMarker
@@ -268,7 +268,6 @@ class OsmManager(private val map: MapView) {
         mapController.animateTo(geoPoint, 18.0, 1000)
     }
     //---------------------------------------------------------------------------------------------- moveCamera
-
 
 
 /*
