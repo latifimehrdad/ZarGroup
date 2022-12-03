@@ -39,6 +39,7 @@
                 android:layout_margin="2dp">
 
                 <ImageView
+                    android:id="@+id/imageViewBus"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/iconDescription"
@@ -61,6 +62,7 @@
             android:layout_marginStart="@dimen/_3sdp">
 
             <ImageView
+                android:id="@+id/imageViewDriver"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:contentDescription="@string/iconDescription"
