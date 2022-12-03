@@ -50,7 +50,7 @@
                     android:layout_height="match_parent"
                     app:cardCornerRadius="@dimen/_15sdp">
 
-                    <com.zarholding.zar.view.autoimageslider.SliderView
+                    <com.zar.core.tools.autoimageslider.SliderView
                         android:id="@+id/sliderViewBanner"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"

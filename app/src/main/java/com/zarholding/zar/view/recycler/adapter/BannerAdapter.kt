@@ -3,9 +3,9 @@ package com.zarholding.zar.view.recycler.adapter
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.zar.core.tools.autoimageslider.SliderViewAdapter
 import com.zarholding.zar.database.entity.ArticleEntity
 import com.zarholding.zar.view.recycler.holder.BannerItemHolder
-import com.zarholding.zar.view.autoimageslider.SliderViewAdapter
 import zar.databinding.ItemBannerSliderBinding
 
 /**

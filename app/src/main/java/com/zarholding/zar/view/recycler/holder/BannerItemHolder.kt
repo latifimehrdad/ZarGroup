@@ -1,7 +1,7 @@
 package com.zarholding.zar.view.recycler.holder
 
+import com.zar.core.tools.autoimageslider.SliderViewAdapter
 import com.zarholding.zar.database.entity.ArticleEntity
-import com.zarholding.zar.view.autoimageslider.SliderViewAdapter
 import zar.databinding.ItemBannerSliderBinding
 
 /**
