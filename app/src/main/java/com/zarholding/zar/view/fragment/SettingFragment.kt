@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import com.zar.core.enums.EnumErrorType
+import com.zar.core.tools.BiometricTools
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zar.core.tools.manager.ThemeManager
 import com.zarholding.zar.utility.CompanionValues
@@ -51,6 +52,9 @@ class SettingFragment : Fragment(), RemoteErrorEmitter {
 
     @Inject
     lateinit var sharedPreferences: SharedPreferences
+
+    @Inject
+    lateinit var biometricTools: BiometricTools
 
     //---------------------------------------------------------------------------------------------- onCreateView
     override fun onCreateView(
@@ -110,7 +114,7 @@ class SettingFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- setOnListener
     private fun setOnListener() {
         binding.layoutActiveDarkMode.switchActive.setOnClickListener { changeAppTheme() }
-        binding.layoutActiveFingerPrint.switchActive.setOnClickListener { checkDeviceHasBiometric() }
+        binding.layoutActiveFingerPrint.switchActive.setOnClickListener { showBiometricDialog() }
     }
     //---------------------------------------------------------------------------------------------- setOnListener
 
@@ -125,6 +129,7 @@ class SettingFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- changeAppTheme
 
 
+/*
     //---------------------------------------------------------------------------------------------- checkDeviceHasBiometric
     private fun checkDeviceHasBiometric() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
@@ -162,6 +167,7 @@ class SettingFragment : Fragment(), RemoteErrorEmitter {
         }
     }
     //---------------------------------------------------------------------------------------------- checkDeviceHasBiometric
+*/
 
 
     //---------------------------------------------------------------------------------------------- showBiometricDialog
@@ -202,15 +208,7 @@ class SettingFragment : Fragment(), RemoteErrorEmitter {
                     onError(EnumErrorType.UNKNOWN, getString(R.string.actionIsDone))
                 }
             })
-        val promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle("Title")
-            .setSubtitle("sub title")
-            .setDescription("description")
-            .setNegativeButtonText("button")
-            .build()
-
-        biometricPrompt.authenticate(promptInfo)
-
+        biometricTools.checkDeviceHasBiometric(biometricPrompt)
     }
     //---------------------------------------------------------------------------------------------- showBiometricDialog
 

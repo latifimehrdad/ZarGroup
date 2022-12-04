@@ -12,6 +12,7 @@ import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zarholding.zar.database.dao.UserInfoDao
 import com.zarholding.zar.utility.CompanionValues
 import com.zarholding.zar.view.activity.MainActivity
+import com.zarholding.zar.view.dialog.ConfirmDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -76,13 +77,21 @@ class ProfileFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- logOut
     private fun logOut() {
-        sharedPreferences.edit().putString(CompanionValues.TOKEN, null).apply()
-        CoroutineScope(IO).launch {
-            delay(500)
-            withContext(Main) {
-                findNavController().navigate(R.id.action_goto_SplashFragment)
+
+        val click = object : ConfirmDialog.Click {
+            override fun clickYes() {
+                sharedPreferences.edit().putString(CompanionValues.TOKEN, null).apply()
+                CoroutineScope(IO).launch {
+                    delay(500)
+                    withContext(Main) {
+                        findNavController().navigate(R.id.action_goto_SplashFragment)
+                    }
+                }
             }
+
         }
+        ConfirmDialog("آیا برای خروج مطمئن هستید؟", R.drawable.icon_trip, click).show(parentFragmentManager, "fragment_alert")
+
     }
     //---------------------------------------------------------------------------------------------- logOut
 

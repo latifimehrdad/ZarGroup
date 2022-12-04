@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.material.snackbar.Snackbar
 import com.zar.core.enums.EnumErrorType
+import com.zar.core.tools.BiometricTools
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zarholding.zar.model.request.LoginRequestModel
 import com.zarholding.zar.utility.CompanionValues
@@ -34,6 +35,9 @@ class LoginFragment : Fragment(), RemoteErrorEmitter {
 
     @Inject
     lateinit var sharedPreferences: SharedPreferences
+
+    @Inject
+    lateinit var biometricTools: BiometricTools
 
     private val loginViewModel: LoginViewModel by viewModels()
 
@@ -125,15 +129,8 @@ class LoginFragment : Fragment(), RemoteErrorEmitter {
                     fingerPrintClick()
                 }
             })
-        val promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle("Title")
-            .setSubtitle("sub title")
-            .setDescription("description")
-            .setNegativeButtonText("button")
-            .build()
 
-        biometricPrompt.authenticate(promptInfo)
-
+        biometricTools.checkDeviceHasBiometric(biometricPrompt)
     }
     //---------------------------------------------------------------------------------------------- showBiometricDialog
 
