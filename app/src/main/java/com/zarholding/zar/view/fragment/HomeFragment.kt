@@ -22,6 +22,7 @@ import com.zarholding.zar.database.entity.ArticleEntity
 import com.zarholding.zar.model.enum.EnumArticleType
 import com.zarholding.zar.model.other.AppModel
 import com.zarholding.zar.view.activity.MainActivity
+import com.zarholding.zar.view.dialog.ArticleDetailDialog
 import com.zarholding.zar.view.recycler.adapter.AppAdapter
 import com.zarholding.zar.view.recycler.adapter.BannerAdapter
 import com.zarholding.zar.view.recycler.adapter.NewsAdapter
@@ -169,7 +170,7 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
     private fun setNewsAdapter(news: List<ArticleEntity>) {
         val click = object : NewsItemHolder.Click {
             override fun detailArticle(article: ArticleEntity) {
-                showDialogDetailNews(article)
+                ArticleDetailDialog(article).show(parentFragmentManager, "fragment_alert")
             }
         }
         val adapter = NewsAdapter(news, click)
@@ -186,27 +187,6 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
     }
     //---------------------------------------------------------------------------------------------- setNewsAdapter
 
-
-
-    //---------------------------------------------------------------------------------------------- showDialogDetailNews
-    private fun showDialogDetailNews(news : ArticleEntity) {
-        val dialog = DialogManager().createDialogHeightWrapContent(
-            requireContext(),
-            R.layout.dialog_detail_news,
-            Gravity.CENTER,
-            0
-        )
-        val textViewTitle = dialog.findViewById<TextView>(R.id.textViewTitle)
-        textViewTitle.text = news.title
-        val textViewSummary = dialog.findViewById<TextView>(R.id.textViewSummary)
-        textViewSummary.text = news.summary
-        val textViewContent = dialog.findViewById<TextView>(R.id.textViewContent)
-        textViewContent.text = news.body
-        val imageViewClose = dialog.findViewById<ImageView>(R.id.imageViewClose)
-        imageViewClose.setOnClickListener { dialog.dismiss() }
-        dialog.show()
-    }
-    //---------------------------------------------------------------------------------------------- showDialogDetailNews
 
 
 

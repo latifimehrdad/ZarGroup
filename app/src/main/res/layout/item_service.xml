@@ -32,6 +32,7 @@
             app:cardCornerRadius="@dimen/_5sdp">
 
             <ImageView
+                android:id="@+id/imageViewBus"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:contentDescription="@string/iconDescription"
@@ -50,6 +51,7 @@
             app:cardElevation="@dimen/_2sdp">
 
             <ImageView
+                android:id="@+id/imageViewDriver"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:contentDescription="@string/iconDescription"

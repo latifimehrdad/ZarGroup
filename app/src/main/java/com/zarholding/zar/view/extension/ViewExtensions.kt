@@ -2,7 +2,6 @@ package com.zarholding.zar.view.extension
 
 import android.app.Activity
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.Color
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -12,7 +11,7 @@ import androidx.cardview.widget.CardView
 import androidx.databinding.BindingAdapter
 import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
-import coil.load
+import com.bumptech.glide.Glide
 import com.zar.core.tools.extensions.toSolarDate
 import com.zarholding.zar.hilt.Providers
 import com.zarholding.zardriver.model.response.TripStationModel
@@ -152,32 +151,13 @@ fun ImageView.loadImage(url: String, entityType: String) {
     circularProgressDrawable.centerRadius = 30f
     circularProgressDrawable.start()
     val link = "${Providers.url}/api/v1/Content/file?entityType=$entityType&fileName=$url"
-    this.load(link) {
-        crossfade(true)
-        placeholder(circularProgressDrawable)
-        allowHardware(false)
-        bitmapConfig(Bitmap.Config.ARGB_8888)
-    }
+    Glide
+        .with(this)
+        .load(link)
+        .into(this)
 }
 //-------------------------------------------------------------------------------------------------- loadImage
 
-
-//-------------------------------------------------------------------------------------------------- loadImage1
-@BindingAdapter("loadImage1")
-fun ImageView.loadImage1(url: String) {
-    val circularProgressDrawable = CircularProgressDrawable(this.context)
-    circularProgressDrawable.strokeWidth = 5f
-    circularProgressDrawable.centerRadius = 30f
-    circularProgressDrawable.start()
-
-    this.load(url) {
-        crossfade(true)
-        placeholder(circularProgressDrawable)
-        allowHardware(false)
-        bitmapConfig(Bitmap.Config.ARGB_8888)
-    }
-}
-//-------------------------------------------------------------------------------------------------- loadImage1
 
 
 //-------------------------------------------------------------------------------------------------- setUnreadNotification

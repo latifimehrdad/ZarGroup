@@ -13,25 +13,35 @@
         android:layout_height="wrap_content"
         app:setUnreadNotification="@{item.read}">
 
-        <ImageView
-            android:id="@+id/imageViewIcon"
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewIcon"
             android:layout_width="@dimen/_40sdp"
             android:layout_height="@dimen/_40sdp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:cardCornerRadius="@dimen/_30sdp"
             android:layout_marginEnd="@dimen/_8sdp"
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_marginBottom="@dimen/_10sdp"
-            android:background="@drawable/drawable_notification_icon"
-            android:contentDescription="@string/iconNotificationDescription" />
+            app:cardBackgroundColor="@color/notificationIconColor">
+
+            <ImageView
+                android:id="@+id/imageViewIcon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/_1sdp"
+                android:contentDescription="@string/iconNotificationDescription" />
+
+        </androidx.cardview.widget.CardView>
 
         <CheckBox
             android:id="@+id/checkboxRead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="55 دقیقه پیش"
-            app:layout_constraintTop_toTopOf="@id/imageViewIcon"
+            app:layout_constraintTop_toTopOf="@id/cardViewIcon"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="@dimen/_5sdp"
             android:fontFamily="@font/kalameh_light"
@@ -45,8 +55,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toEndOf="@id/checkboxRead"
-            app:layout_constraintEnd_toStartOf="@id/imageViewIcon"
-            app:layout_constraintTop_toTopOf="@id/imageViewIcon"
+            app:layout_constraintEnd_toStartOf="@id/cardViewIcon"
+            app:layout_constraintTop_toTopOf="@id/cardViewIcon"
             android:layout_marginStart="@dimen/_5sdp"
             android:layout_marginEnd="@dimen/_8sdp"
             android:text="مجتبی یکتا"
@@ -59,8 +69,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toEndOf="@id/checkboxRead"
-            app:layout_constraintEnd_toStartOf="@id/imageViewIcon"
-            app:layout_constraintBottom_toBottomOf="@id/imageViewIcon"
+            app:layout_constraintEnd_toStartOf="@id/cardViewIcon"
+            app:layout_constraintBottom_toBottomOf="@id/cardViewIcon"
             android:layout_marginStart="@dimen/_5sdp"
             android:layout_marginEnd="@dimen/_8sdp"
             android:text="مجتبی یکتا"

@@ -5,7 +5,9 @@ import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
 import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.zarholding.zar.model.other.ShowImageModel
 import com.zarholding.zar.model.response.trip.TripModel
+import zar.R
 import zar.databinding.ItemServiceBinding
 
 
@@ -20,6 +22,7 @@ class ServiceHolder(private val binding: ItemServiceBinding) :
     interface Click {
         fun serviceClick(item: TripModel)
         fun registerStation(item: TripModel)
+        fun showImage(item: ShowImageModel)
     }
     //---------------------------------------------------------------------------------------------- Click
 
@@ -30,6 +33,22 @@ class ServiceHolder(private val binding: ItemServiceBinding) :
         binding.root.setOnClickListener { click.serviceClick(item) }
         binding.textViewPlus.setOnClickListener { click.registerStation(item) }
         binding.imageViewPlus.setOnClickListener { click.registerStation(item) }
+        binding.imageViewBus.setOnClickListener {
+            click.showImage(
+                ShowImageModel(
+                    item.carImageName!!,
+                    binding.imageViewBus.context.resources.getString(R.string.carEntityType)
+                )
+            )
+        }
+        binding.imageViewDriver.setOnClickListener {
+            click.showImage(
+                ShowImageModel(
+                    item.driverImageName!!,
+                    binding.imageViewBus.context.resources.getString(R.string.driversEntityType)
+                )
+            )
+        }
         binding.imageViewShowMore.setOnClickListener {
             if (binding.expandableMore.isExpanded)
                 hideMore()

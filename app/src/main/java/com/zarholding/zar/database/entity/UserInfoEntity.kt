@@ -11,7 +11,7 @@ import androidx.room.PrimaryKey
 data class UserInfoEntity(
     val userName : String?,
     val fullName : String?,
-    val personnelNumber : String?,
+    val personnelNumber : Int,
     val organizationUnit : String?,
     val phone : String?,
     val email : String?,

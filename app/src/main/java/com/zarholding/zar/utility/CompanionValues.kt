@@ -10,5 +10,8 @@ class CompanionValues {
         const val TOKEN = "token"
         const val channelId = "Zar"
         const val channelName = "Driver"
+        const val biometric = "biometric"
+        const val userName = "userName"
+        const val passcode = "passcode"
     }
 }

@@ -4,6 +4,7 @@ import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
 import androidx.recyclerview.widget.RecyclerView
+import com.zarholding.zar.model.other.ShowImageModel
 import com.zarholding.zar.model.response.trip.TripModel
 import zar.R
 import zar.databinding.ItemMyServiceBinding
@@ -20,10 +21,9 @@ class MyServiceHolder(private val binding: ItemMyServiceBinding) :
     interface Click {
         fun serviceClick(item: TripModel)
         fun deleteRegisterStation(item: TripModel)
-        fun showImage(imageName : String?, entityType : String)
+        fun showImage(item: ShowImageModel)
     }
     //---------------------------------------------------------------------------------------------- Click
-
 
 
     //---------------------------------------------------------------------------------------------- bind
@@ -34,13 +34,19 @@ class MyServiceHolder(private val binding: ItemMyServiceBinding) :
         binding.imageViewDelete.setOnClickListener { click.deleteRegisterStation(item) }
         binding.imageViewBus.setOnClickListener {
             click.showImage(
-                item.carImageName,
-                binding.imageViewBus.context.resources.getString(R.string.carEntityType))
+                ShowImageModel(
+                    item.carImageName!!,
+                    binding.imageViewBus.context.resources.getString(R.string.carEntityType)
+                )
+            )
         }
         binding.imageViewDriver.setOnClickListener {
             click.showImage(
-                item.carImageName,
-                binding.imageViewBus.context.resources.getString(R.string.driversEntityType))
+                ShowImageModel(
+                    item.driverImageName!!,
+                    binding.imageViewBus.context.resources.getString(R.string.driversEntityType)
+                )
+            )
         }
         binding.imageViewShowMore.setOnClickListener {
             if (binding.expandableMore.isExpanded)
@@ -51,7 +57,6 @@ class MyServiceHolder(private val binding: ItemMyServiceBinding) :
         binding.executePendingBindings()
     }
     //---------------------------------------------------------------------------------------------- bind
-
 
 
     //---------------------------------------------------------------------------------------------- showMore
@@ -72,7 +77,6 @@ class MyServiceHolder(private val binding: ItemMyServiceBinding) :
         binding.imageViewShowMore.startAnimation(rotate)
     }
     //---------------------------------------------------------------------------------------------- showMore
-
 
 
     //---------------------------------------------------------------------------------------------- hideMore

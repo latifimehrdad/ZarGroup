@@ -80,7 +80,6 @@
                     android:layout_marginEnd="@dimen/_10sdp"
                     android:fontFamily="@font/kalameh_regular"
                     android:lines="1"
-                    android:text="مهرداد لطیفی"
                     android:textColor="@color/textViewColor2"
                     android:textSize="@dimen/_10sdp"
                     app:layout_constraintEnd_toStartOf="@id/cardViewProfile"
@@ -93,7 +92,6 @@
                     android:layout_marginTop="@dimen/_5sdp"
                     android:fontFamily="@font/kalameh_regular"
                     android:lines="1"
-                    android:text="کارشناس نرم افزار"
                     android:textColor="@color/textViewColor2"
                     android:textSize="@dimen/_10sdp"
                     app:layout_constraintBottom_toTopOf="@id/textViewPersonalCode"
@@ -109,7 +107,6 @@
                     android:fontFamily="@font/kalameh_regular"
                     android:lines="1"
                     android:padding="@dimen/_5sdp"
-                    android:text="کد پرسنلی : 5000602"
                     android:textColor="@color/textViewColor2"
                     android:textSize="@dimen/_10sdp"
                     app:layout_constraintBottom_toBottomOf="@id/cardViewProfile"
@@ -149,19 +146,6 @@
                 app:showMore="@{true}"/>
 
 
-            <include
-                android:id="@+id/layoutNews"
-                layout="@layout/layout_profile_item"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="@dimen/_10sdp"
-                app:layout_constraintTop_toBottomOf="@id/layoutMessage"
-                app:title="@{@string/news}"
-                app:icon="@{@drawable/ic_news_vector}"
-                app:showMore="@{true}"/>
-
 
             <include
                 android:id="@+id/layoutTrainings"
@@ -171,7 +155,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="@dimen/_10sdp"
-                app:layout_constraintTop_toBottomOf="@id/layoutNews"
+                app:layout_constraintTop_toBottomOf="@id/layoutMessage"
                 app:title="@{@string/trainings}"
                 app:icon="@{@drawable/ic_trainings}"
                 app:showMore="@{true}"/>

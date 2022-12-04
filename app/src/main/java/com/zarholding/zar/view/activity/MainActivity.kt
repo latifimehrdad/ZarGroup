@@ -44,6 +44,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import zar.R
@@ -228,11 +229,12 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- setUserInfo
     fun setUserInfo() {
         CoroutineScope(IO).launch {
+            delay(500)
             val user = userInfoDao.getUserInfo()
             withContext(Main) {
                 binding.textViewProfileName.text = user?.fullName
                 binding.textViewPersonalCode.text = resources
-                    .getString(R.string.personalCode, user?.personnelNumber)
+                    .getString(R.string.personalCode, user?.personnelNumber.toString())
             }
         }
     }

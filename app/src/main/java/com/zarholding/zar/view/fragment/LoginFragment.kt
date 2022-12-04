@@ -5,20 +5,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.biometric.BiometricPrompt
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.material.snackbar.Snackbar
 import com.zar.core.enums.EnumErrorType
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zarholding.zar.model.request.LoginRequestModel
-import com.zarholding.zar.repository.UserRepository
 import com.zarholding.zar.utility.CompanionValues
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.view.extension.hideKeyboard
 import com.zarholding.zar.viewmodel.LoginViewModel
-import com.zarholding.zar.viewmodel.LoginViewModel_Factory
-import com.zarholding.zar.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import zar.R
 import zar.databinding.FragmentLoginBinding
@@ -57,6 +55,7 @@ class LoginFragment : Fragment(), RemoteErrorEmitter {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner
+        initView()
         setListener()
     }
     //---------------------------------------------------------------------------------------------- onViewCreated
@@ -75,6 +74,18 @@ class LoginFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- onError
 
 
+    //---------------------------------------------------------------------------------------------- initView
+    private fun initView() {
+
+        val biometricEnable = sharedPreferences.getBoolean(CompanionValues.biometric, false)
+        if (biometricEnable)
+            binding.buttonFingerLogin.visibility = View.VISIBLE
+        else
+            binding.buttonFingerLogin.visibility = View.GONE
+    }
+    //---------------------------------------------------------------------------------------------- initView
+
+
     //---------------------------------------------------------------------------------------------- setListener
     private fun setListener() {
 
@@ -89,8 +100,51 @@ class LoginFragment : Fragment(), RemoteErrorEmitter {
         binding
             .textInputEditTextPasscode
             .setOnClickListener { binding.textInputLayoutPasscode.error = null }
+
+        binding
+            .buttonFingerLogin
+            .setOnClickListener { showBiometricDialog() }
     }
     //---------------------------------------------------------------------------------------------- setListener
+
+
+    //---------------------------------------------------------------------------------------------- showBiometricDialog
+    private fun showBiometricDialog() {
+        val executor = ContextCompat.getMainExecutor(requireContext())
+        val biometricPrompt = BiometricPrompt(
+            requireActivity(),
+            executor,
+            object : BiometricPrompt.AuthenticationCallback() {
+                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                    super.onAuthenticationError(errorCode, errString)
+                    onError(EnumErrorType.UNKNOWN, getString(R.string.onAuthenticationError))
+                }
+
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                    super.onAuthenticationSucceeded(result)
+                    fingerPrintClick()
+                }
+            })
+        val promptInfo = BiometricPrompt.PromptInfo.Builder()
+            .setTitle("Title")
+            .setSubtitle("sub title")
+            .setDescription("description")
+            .setNegativeButtonText("button")
+            .build()
+
+        biometricPrompt.authenticate(promptInfo)
+
+    }
+    //---------------------------------------------------------------------------------------------- showBiometricDialog
+
+
+    //---------------------------------------------------------------------------------------------- fingerPrintClick
+    private fun fingerPrintClick() {
+        loginViewModel.userName = sharedPreferences.getString(CompanionValues.userName, null)
+        loginViewModel.passcode = sharedPreferences.getString(CompanionValues.passcode, null)
+        checkEmptyValueForLogin()
+    }
+    //---------------------------------------------------------------------------------------------- fingerPrintClick
 
 
     //---------------------------------------------------------------------------------------------- checkEmptyValueForLogin
@@ -125,6 +179,8 @@ class LoginFragment : Fragment(), RemoteErrorEmitter {
                     sharedPreferences
                         .edit()
                         .putString(CompanionValues.TOKEN, it.data)
+                        .putString(CompanionValues.userName, model.UserName)
+                        .putString(CompanionValues.passcode, model.Password)
                         .apply()
                     if (activity != null)
                         requireActivity().onBackPressed()
@@ -147,7 +203,6 @@ class LoginFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- startLoading
 
 
-
     //---------------------------------------------------------------------------------------------- stopLoading
     private fun stopLoading() {
         binding.textInputEditTextUserName.isEnabled = true
@@ -155,7 +210,6 @@ class LoginFragment : Fragment(), RemoteErrorEmitter {
         loginViewModel.loadingLiveDate.value = false
     }
     //---------------------------------------------------------------------------------------------- stopLoading
-
 
 
     //---------------------------------------------------------------------------------------------- onDestroyView

@@ -8,6 +8,7 @@
         android:background="@drawable/drawable_home_gradiant">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayoutParent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -107,19 +108,6 @@
 
 
             <include
-                android:id="@+id/layoutActiveGetNews"
-                layout="@layout/layout_setting_item"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="@dimen/_10sdp"
-                app:layout_constraintTop_toBottomOf="@id/layoutActiveFingerPrint"
-                app:title="@{@string/getNews}"
-                app:icon="@{@drawable/ic_news_vector_2}" />
-
-
-            <include
                 android:id="@+id/layoutChangePass"
                 layout="@layout/layout_profile_item"
                 android:layout_width="match_parent"
@@ -127,7 +115,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="@dimen/_10sdp"
-                app:layout_constraintTop_toBottomOf="@id/layoutActiveGetNews"
+                app:layout_constraintTop_toBottomOf="@id/layoutActiveFingerPrint"
                 app:title="@{@string/changePasscode}"
                 app:icon="@{@drawable/ic_password}"
                 app:showMore="@{true}"/>

@@ -154,6 +154,26 @@
                         android:textColor="@color/textViewColor2"
                         android:text='@{viewModel.loadingLiveDate ? @string/bePatient : @string/enter}' />
 
+
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/buttonFingerLogin"
+                        android:layout_width="@dimen/_50sdp"
+                        android:layout_height="0dp"
+                        app:layout_constraintTop_toTopOf="@id/buttonLogin"
+                        app:layout_constraintBottom_toBottomOf="@id/buttonLogin"
+                        app:layout_constraintStart_toEndOf="@id/buttonLogin"
+                        android:layout_marginHorizontal="@dimen/_10sdp"
+                        android:minWidth="@dimen/_100sdp"
+                        android:textSize="@dimen/_12sdp"
+                        android:paddingTop="@dimen/_5sdp"
+                        android:paddingBottom="@dimen/_5sdp"
+                        android:fontFamily="@font/kalameh_semibold"
+                        app:cornerRadius="@dimen/_5sdp"
+                        android:textColor="@color/textViewColor2"
+                        app:icon="@drawable/ic_finger_print"
+                        app:iconTint="@color/profileIconColor2"/>
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </ScrollView>

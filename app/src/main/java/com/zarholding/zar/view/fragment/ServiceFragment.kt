@@ -22,6 +22,7 @@ import com.zar.core.enums.EnumErrorType
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zar.core.tools.loadings.LoadingManager
 import com.zar.core.tools.manager.DialogManager
+import com.zarholding.zar.model.other.ShowImageModel
 import com.zarholding.zar.model.request.RequestRegisterStationModel
 import com.zarholding.zar.model.response.trip.TripModel
 import com.zarholding.zar.utility.CompanionValues
@@ -30,6 +31,7 @@ import com.zarholding.zar.utility.ThemeManagers
 import com.zarholding.zar.utility.signalr.RemoteSignalREmitter
 import com.zarholding.zar.utility.signalr.SignalRListener
 import com.zarholding.zar.view.activity.MainActivity
+import com.zarholding.zar.view.dialog.ShowImageDialog
 import com.zarholding.zar.view.recycler.adapter.MyServiceAdapter
 import com.zarholding.zar.view.recycler.adapter.ServiceAdapter
 import com.zarholding.zar.view.recycler.adapter.SpinnerStringAdapter
@@ -37,14 +39,12 @@ import com.zarholding.zar.view.recycler.holder.MyServiceHolder
 import com.zarholding.zar.view.recycler.holder.ServiceHolder
 import com.zarholding.zar.viewmodel.TokenViewModel
 import com.zarholding.zar.viewmodel.TripViewModel
-import com.zarholding.zardriver.model.response.TripStationModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.Marker
-import org.osmdroid.views.overlay.infowindow.MarkerInfoWindow
 import zar.R
 import zar.databinding.FragmentServiceBinding
 import javax.inject.Inject
@@ -224,6 +224,10 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
             override fun registerStation(item: TripModel) {
                 showDialogRegisterStation(item)
             }
+
+            override fun showImage(item: ShowImageModel) {
+                ShowImageDialog(item).show(parentFragmentManager, "fragment_alert")
+            }
         }
         val adapter = ServiceAdapter(tripList, click)
         val linearLayoutManager = LinearLayoutManager(
@@ -247,6 +251,10 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
 
             override fun deleteRegisterStation(item: TripModel) {
                 showDialogDeleteRegisterStation(item)
+            }
+
+            override fun showImage(item: ShowImageModel) {
+                ShowImageDialog(item).show(parentFragmentManager, "fragment_alert")
             }
         }
         val adapter = MyServiceAdapter(tripList, click)
@@ -370,17 +378,10 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
         }
 
 
-        if (tripSelect == TripSelect.MY)
+        if (tripSelect == TripSelect.MY && item.myStationTripStatus == 1)
             startSignalR()
     }
     //---------------------------------------------------------------------------------------------- drawRoadOnMap
-
-
-
-
-
-
-
 
 
     //---------------------------------------------------------------------------------------------- startSignalR
