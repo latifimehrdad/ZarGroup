@@ -63,7 +63,28 @@
     <fragment
         android:id="@+id/ServiceFragment"
         android:name="com.zarholding.zar.view.fragment.ServiceFragment"
-        tools:layout="ServiceFragment"/>
+        android:label="ServiceFragment"/>
+
+
+    <fragment
+        android:id="@+id/DashboardFragment"
+        android:name="com.zarholding.zar.view.fragment.DashboardFragment"
+        android:label="DashboardFragment">
+
+        <action
+            android:id="@+id/action_DashboardFragment_to_AdminBusFragment"
+            app:destination="@id/AdminBusFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/AdminBusFragment"
+        android:name="com.zarholding.zar.view.fragment.AdminBusFragment"
+        android:label="AdminBusFragment"/>
 
 
     <action
@@ -100,6 +121,16 @@
         android:id="@+id/action_goto_SplashFragment"
         app:destination="@id/splashFragment"
         app:popUpTo="@id/splashFragment"
+        app:enterAnim="@anim/slide_in_left"
+        app:exitAnim="@anim/slide_out_right"
+        app:popEnterAnim="@anim/slide_in_right"
+        app:popExitAnim="@anim/slide_out_left"/>
+
+
+    <action
+        android:id="@+id/action_goto_DashboardFragment"
+        app:destination="@id/DashboardFragment"
+        app:popUpTo="@id/DashboardFragment"
         app:enterAnim="@anim/slide_in_left"
         app:exitAnim="@anim/slide_out_right"
         app:popEnterAnim="@anim/slide_in_right"

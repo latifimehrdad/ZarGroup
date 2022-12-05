@@ -42,6 +42,7 @@
     <color name="dialogHeaderGradiantStartColor">#206cc9</color>
     <color name="dialogHeaderGradiantEndColor">#60a7ff</color>
     <color name="dialogBackgroundColor">#D9484848</color>
+    <color name="dialogHeaderGradiantEndColor2">#26206cc9</color>
 
     <color name="appComingSoon">#80000000</color>
 
@@ -78,6 +79,14 @@
     <color name="dialogGradiantEndColor">#2a69b7</color>
 
     <color name="fingerPrintDialogColor">#80082258</color>
+
+    <color name="appIconColor">@color/white</color>
+
+    <color name="confirmGradiantStartColor">#5fcb00</color>
+    <color name="confirmGradiantEndColor">#1e9400</color>
+
+    <color name="rejectGradiantStartColor">#ff3636</color>
+    <color name="rejectGradiantEndColor">#c80101</color>
 
     <color name="mapLoadingBack">#80FFFFFF</color>
     <color name="positive">#02C076</color>

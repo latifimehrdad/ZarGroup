@@ -18,14 +18,14 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:maxHeight="@dimen/_200sdp"
         app:cardCornerRadius="@dimen/_10sdp"
-        app:cardBackgroundColor="#E6E5E5">
+        android:layout_marginHorizontal="@dimen/_10sdp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="@dimen/_10sdp">
-            
+
             <ImageView
                 android:id="@+id/imageviewIcon"
                 android:layout_width="@dimen/_30sdp"

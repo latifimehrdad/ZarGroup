@@ -1,57 +1,62 @@
 package com.zarholding.zar.view.dialog
 
+import android.app.Dialog
+import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.InsetDrawable
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.fragment.app.DialogFragment
+import com.google.android.material.button.MaterialButton
 import com.zarholding.zar.model.other.ShowImageModel
+import com.zarholding.zar.utility.TouchImageView
+import com.zarholding.zar.view.extension.loadImage
+import zar.R
 import zar.databinding.DialogShowImageBinding
 
-class ShowImageDialog(private val item : ShowImageModel) : DialogFragment() {
-
-    private lateinit var binding: DialogShowImageBinding
-
-    //---------------------------------------------------------------------------------------------- onCreateView
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = DialogShowImageBinding.inflate(inflater,container, false)
-        binding.item = item
-        return binding.root
-    }
-    //---------------------------------------------------------------------------------------------- onCreateView
+class ShowImageDialog(
+    context: Context,
+    private val item : ShowImageModel) : Dialog(context) {
 
 
-    //---------------------------------------------------------------------------------------------- onCreateView
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    //---------------------------------------------------------------------------------------------- onCreate
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.dialog_show_image)
         val lp = WindowManager.LayoutParams()
-        val window = dialog!!.window
-        val back = ColorDrawable(Color.TRANSPARENT)
-        val inset = InsetDrawable(back, 50)
-        window!!.setBackgroundDrawable(inset)
-        lp.width = WindowManager.LayoutParams.MATCH_PARENT
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT
-        window.attributes = lp
-        setonListener()
+        this.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        this.window?.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
+        this.window?.setGravity(Gravity.CENTER)
+        lp.copyFrom(this.window?.attributes)
+        lp.horizontalMargin = 50f
+        this.window?.attributes = lp
     }
-    //---------------------------------------------------------------------------------------------- onCreateView
+    //---------------------------------------------------------------------------------------------- onCreate
 
 
 
-    //---------------------------------------------------------------------------------------------- setonListener
-    private fun setonListener() {
-        binding.imageViewClose.setOnClickListener {
+    //---------------------------------------------------------------------------------------------- onStart
+    override fun onStart() {
+        initDialog()
+        super.onStart()
+    }
+    //---------------------------------------------------------------------------------------------- onStart
+
+
+
+    //---------------------------------------------------------------------------------------------- initDialog
+    private fun initDialog() {
+        val imageViewClose = this.findViewById<ImageView>(R.id.imageViewClose)
+        val touchImageView = this.findViewById<TouchImageView>(R.id.touchImageView)
+        touchImageView.loadImage(item.imageName, item.entityType)
+
+        imageViewClose.setOnClickListener {
             dismiss()
         }
     }
-    //---------------------------------------------------------------------------------------------- setonListener
+    //---------------------------------------------------------------------------------------------- initDialog
 
 }

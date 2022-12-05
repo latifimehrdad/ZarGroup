@@ -226,7 +226,7 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
             }
 
             override fun showImage(item: ShowImageModel) {
-                ShowImageDialog(item).show(parentFragmentManager, "fragment_alert")
+                ShowImageDialog(requireContext(), item).show()
             }
         }
         val adapter = ServiceAdapter(tripList, click)
@@ -254,7 +254,7 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
             }
 
             override fun showImage(item: ShowImageModel) {
-                ShowImageDialog(item).show(parentFragmentManager, "fragment_alert")
+                ShowImageDialog(requireContext(), item).show()
             }
         }
         val adapter = MyServiceAdapter(tripList, click)

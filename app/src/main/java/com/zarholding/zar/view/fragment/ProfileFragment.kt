@@ -90,7 +90,7 @@ class ProfileFragment : Fragment(), RemoteErrorEmitter {
             }
 
         }
-        ConfirmDialog("آیا برای خروج مطمئن هستید؟", R.drawable.icon_trip, click).show(parentFragmentManager, "fragment_alert")
+        ConfirmDialog(requireContext(), "آیا برای خروج مطمئن هستید؟", click).show()
 
     }
     //---------------------------------------------------------------------------------------------- logOut

@@ -152,6 +152,10 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
             gotoFragment(R.id.action_goto_HomeFragment)
         }
 
+        binding.imageViewAdmin.setOnClickListener {
+            gotoFragment(R.id.action_goto_DashboardFragment)
+        }
+
     }
     //---------------------------------------------------------------------------------------------- setListener
 

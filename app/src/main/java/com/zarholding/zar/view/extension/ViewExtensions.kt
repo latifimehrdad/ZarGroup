@@ -22,6 +22,22 @@ import java.time.LocalDateTime
  * Created by m-latifi on 11/14/2022.
  */
 
+//-------------------------------------------------------------------------------------------------- setRequester
+@BindingAdapter("setRequester")
+fun TextView.setRequester(userName : String) {
+    text = context.getString(R.string.requester, userName)
+}
+//-------------------------------------------------------------------------------------------------- setRequester
+
+
+//-------------------------------------------------------------------------------------------------- setRequester
+@BindingAdapter("setDriverName", "setCommuteTripName" ,"setStationName")
+fun TextView.setDriverAndStation(driverName : String, tripName : String , stationName : String) {
+    text = context.getString(R.string.setTripNameDriverStation, tripName, driverName, stationName)
+}
+//-------------------------------------------------------------------------------------------------- setRequester
+
+
 
 //-------------------------------------------------------------------------------------------------- setRegisterStationStatus
 @BindingAdapter("setRegisterStationStatus")

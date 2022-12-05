@@ -1,71 +1,70 @@
 package com.zarholding.zar.view.dialog
 
+import android.app.Dialog
+import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.InsetDrawable
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.Gravity
 import android.view.WindowManager
-import androidx.fragment.app.DialogFragment
-import com.zarholding.zar.database.entity.ArticleEntity
-import zar.databinding.DialogConfirmBinding
-import zar.databinding.DialogDetailNewsBinding
+import android.widget.TextView
+import com.google.android.material.button.MaterialButton
+import zar.R
 
 class ConfirmDialog(
-    private val title: String,
-    private val icon: Int,
-    private val click: Click
-) : DialogFragment() {
+    context: Context,
+    private val title : String,
+    private val click: Click) : Dialog(context){
 
-    private lateinit var binding: DialogConfirmBinding
 
+    //---------------------------------------------------------------------------------------------- Click
     interface Click {
         fun clickYes()
     }
-
-    //---------------------------------------------------------------------------------------------- onCreateView
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = DialogConfirmBinding.inflate(inflater, container, false)
-        binding.title = title
-        binding.icon = icon
-        return binding.root
-    }
-    //---------------------------------------------------------------------------------------------- onCreateView
+    //---------------------------------------------------------------------------------------------- Click
 
 
-    //---------------------------------------------------------------------------------------------- onCreateView
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    //---------------------------------------------------------------------------------------------- onCreate
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.dialog_confirm)
         val lp = WindowManager.LayoutParams()
-        val window = dialog!!.window
-        val back = ColorDrawable(Color.TRANSPARENT)
-        val inset = InsetDrawable(back, 50)
-        window!!.setBackgroundDrawable(inset)
-        lp.width = WindowManager.LayoutParams.MATCH_PARENT
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT
-        window.attributes = lp
-        setonListener()
+        this.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        this.window?.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
+        this.window?.setGravity(Gravity.CENTER)
+        lp.copyFrom(this.window?.attributes)
+        lp.horizontalMargin = 50f
+        this.window?.attributes = lp
     }
-    //---------------------------------------------------------------------------------------------- onCreateView
+    //---------------------------------------------------------------------------------------------- onCreate
 
 
-    //---------------------------------------------------------------------------------------------- setonListener
-    private fun setonListener() {
-        binding.buttonNo.setOnClickListener {
-            dismiss()
-        }
+    //---------------------------------------------------------------------------------------------- onStart
+    override fun onStart() {
+        initDialog()
+        super.onStart()
+    }
+    //---------------------------------------------------------------------------------------------- onStart
 
-        binding.buttonYes.setOnClickListener {
+
+
+    //---------------------------------------------------------------------------------------------- initDialog
+    private fun initDialog() {
+        val textViewTitle = this.findViewById<TextView>(R.id.textViewTitle)
+        val buttonYes = this.findViewById<MaterialButton>(R.id.buttonYes)
+        val buttonNo = this.findViewById<MaterialButton>(R.id.buttonNo)
+
+        textViewTitle.text = title
+
+        buttonYes.setOnClickListener {
             click.clickYes()
             dismiss()
         }
+
+        buttonNo.setOnClickListener {
+            dismiss()
+        }
     }
-    //---------------------------------------------------------------------------------------------- setonListener
+    //---------------------------------------------------------------------------------------------- initDialog
 
 }

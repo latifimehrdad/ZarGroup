@@ -2,10 +2,9 @@ package com.zarholding.zar.api
 
 import com.zarholding.zar.model.request.ArticleRequestModel
 import com.zarholding.zar.model.request.RequestRegisterStationModel
+import com.zarholding.zar.model.request.TripRequestRegisterStatusModel
 import com.zarholding.zar.model.response.article.ArticleResponseModel
-import com.zarholding.zar.model.response.trip.DeleteRegisteredStationResponseModel
-import com.zarholding.zar.model.response.trip.RegisterStationResponseModel
-import com.zarholding.zar.model.response.trip.TripResponseModel
+import com.zarholding.zar.model.response.trip.*
 import retrofit2.http.*
 
 /**
@@ -46,5 +45,18 @@ interface ApiSuperApp {
         @Body articleRequestModel: ArticleRequestModel,
         @Header("Authorization") token : String
     ) : ArticleResponseModel
+
+
+    @GET("${v1}/personnelsRegisteredStation/list-request-registered-trip")
+    suspend fun requestGetTripRequestRegister(
+        @Header("Authorization") token : String
+    ) : TripRequestRegisterResponseModel
+
+
+    @POST("${v1}/api/v1/personnelsRegisteredStation/response-request-registered-trip")
+    suspend fun requestConfirmAndRejectTripRequestRegister(
+        @Body request : List<TripRequestRegisterStatusModel>,
+        @Header("Authorization") token : String
+    ) : TripRequestRegisterStatusResponseModel
 
 }

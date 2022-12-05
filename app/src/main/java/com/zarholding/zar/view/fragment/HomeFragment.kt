@@ -170,7 +170,7 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
     private fun setNewsAdapter(news: List<ArticleEntity>) {
         val click = object : NewsItemHolder.Click {
             override fun detailArticle(article: ArticleEntity) {
-                ArticleDetailDialog(article).show(parentFragmentManager, "fragment_alert")
+                ArticleDetailDialog(requireContext(), article).show()
             }
         }
         val adapter = NewsAdapter(news, click)
