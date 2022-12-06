@@ -50,6 +50,7 @@
     <string name="dismiss">بستن</string>
     <string name="stations">ایستگاه ها</string>
     <string name="origin">مبدا</string>
+    <string name="originDot">مبدا :</string>
     <string name="destination">مقصد</string>
     <string name="userNameIsEmpty">نام کاربری را وارد نمایید</string>
     <string name="passcodeIsEmpty">رمز ورود را وارد نمایید</string>
@@ -57,7 +58,9 @@
     <string name="taxiReservation">درخواست آژانس</string>
     <string name="went">رفت</string>
     <string name="backAndForth">رفت و برگشت</string>
-
+    <string name="applicator">درخواست کننده : %1$s</string>
+    <string name="doYouWantToExitApp">آیا برای خروج از برنامه مطمئن هستید؟</string>
+    <string name="pleaseSelectPlaceOfOrigin">لطفا لوکیشن مبدا را انتخاب کنید</string>
     <string name="yes">بله</string>
     <string name="no">خیر</string>
     <string name="send">ارسال</string>

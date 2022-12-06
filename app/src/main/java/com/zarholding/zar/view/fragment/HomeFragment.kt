@@ -1,12 +1,10 @@
 package com.zarholding.zar.view.fragment
 
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,13 +14,13 @@ import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zar.core.tools.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType
 import com.zar.core.tools.autoimageslider.SliderAnimations
 import com.zar.core.tools.autoimageslider.SliderView
-import com.zar.core.tools.manager.DialogManager
 import com.zarholding.zar.database.dao.ArticleDao
 import com.zarholding.zar.database.entity.ArticleEntity
 import com.zarholding.zar.model.enum.EnumArticleType
 import com.zarholding.zar.model.other.AppModel
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.view.dialog.ArticleDetailDialog
+import com.zarholding.zar.view.dialog.ConfirmDialog
 import com.zarholding.zar.view.recycler.adapter.AppAdapter
 import com.zarholding.zar.view.recycler.adapter.BannerAdapter
 import com.zarholding.zar.view.recycler.adapter.NewsAdapter
@@ -69,6 +67,7 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner
+        backClickControl()
         initApps()
         getBannerFromDB()
         initNews()
@@ -87,6 +86,27 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
         snack.show()
     }
     //---------------------------------------------------------------------------------------------- onError
+
+
+    //---------------------------------------------------------------------------------------------- backClickControl
+    private fun backClickControl() {
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    context?.let {
+                        ConfirmDialog(
+                            it,
+                            getString(R.string.doYouWantToExitApp),
+                            object : ConfirmDialog.Click {
+                                override fun clickYes() {
+                                    activity?.finish()
+                                }
+                            }).show()
+                    }
+                }
+            })
+    }
+    //---------------------------------------------------------------------------------------------- backClickControl
 
 
     //---------------------------------------------------------------------------------------------- initApps
@@ -193,9 +213,6 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
         binding.recyclerViewNews.adapter = adapter
     }
     //---------------------------------------------------------------------------------------------- setNewsAdapter
-
-
-
 
 
     //---------------------------------------------------------------------------------------------- initPersonnelRequest

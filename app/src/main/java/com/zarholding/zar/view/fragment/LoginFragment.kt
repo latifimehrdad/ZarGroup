@@ -180,7 +180,7 @@ class LoginFragment : Fragment(), RemoteErrorEmitter {
                         .putString(CompanionValues.passcode, model.Password)
                         .apply()
                     if (activity != null)
-                        requireActivity().onBackPressed()
+                        requireActivity().onBackPressedDispatcher.onBackPressed()
                 }
             }
         }

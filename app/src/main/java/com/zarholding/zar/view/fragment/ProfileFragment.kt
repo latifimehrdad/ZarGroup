@@ -99,9 +99,9 @@ class ProfileFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- setUserInfo
     private fun setUserInfo() {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(IO).launch {
             val user = userInfoDao.getUserInfo()
-            withContext(Dispatchers.Main) {
+            withContext(Main) {
                 binding.textViewProfileName.text = user?.fullName
                 binding.textViewPersonalCode.text = resources
                     .getString(R.string.personalCode, user?.personnelNumber.toString())

@@ -2,6 +2,7 @@ package com.zarholding.zar.view.fragment
 
 import android.os.Bundle
 import android.view.*
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import com.zar.core.enums.EnumAuthorizationType
@@ -9,9 +10,15 @@ import com.zar.core.enums.EnumErrorType
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zar.core.tools.loadings.LoadingManager
 import com.zar.core.tools.manager.ThemeManager
+import com.zarholding.zar.database.dao.UserInfoDao
 import com.zarholding.zar.utility.OsmManager
 import com.zarholding.zar.view.activity.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import zar.R
 import zar.databinding.FragmentTaxiBinding
 import javax.inject.Inject
@@ -33,6 +40,9 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
     @Inject
     lateinit var themeManagers: ThemeManager
 
+    @Inject
+    lateinit var userInfoDao: UserInfoDao
+
 
     //---------------------------------------------------------------------------------------------- onCreateView
     override fun onCreateView(
@@ -52,6 +62,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
         binding.lifecycleOwner = viewLifecycleOwner
         osmManager = OsmManager(binding.mapView)
         osmManager.mapInitialize(themeManagers.applicationTheme())
+        initView()
     }
     //---------------------------------------------------------------------------------------------- onViewCreated
 
@@ -78,9 +89,23 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
         snack.setActionTextColor(resources.getColor(R.color.textViewColor1, requireContext().theme))
         snack.show()
         loadingManager.stopLoadingRecycler()
-        requireActivity().onBackPressed()
+        requireActivity().onBackPressedDispatcher.onBackPressed()
     }
     //---------------------------------------------------------------------------------------------- unAuthorization
+
+
+    //---------------------------------------------------------------------------------------------- initView
+    private fun initView() {
+
+        CoroutineScope(IO).launch {
+            val user = userInfoDao.getUserInfo()
+            withContext(Main) {
+                binding.textViewApplicator.text = getString(R.string.applicator, user?.fullName)
+            }
+        }
+
+    }
+    //---------------------------------------------------------------------------------------------- initView
 
 
     //---------------------------------------------------------------------------------------------- onDestroyView

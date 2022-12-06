@@ -130,7 +130,7 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
         snack.setActionTextColor(resources.getColor(R.color.textViewColor1, requireContext().theme))
         snack.show()
         loadingManager.stopLoadingRecycler()
-        requireActivity().onBackPressed()
+        requireActivity().onBackPressedDispatcher.onBackPressed()
     }
     //---------------------------------------------------------------------------------------------- unAuthorization
 
