@@ -1,5 +1,6 @@
 package com.zarholding.zar.model.response.trip
 
+import com.zarholding.zar.model.enum.EnumTripStatus
 import java.time.LocalDateTime
 
 /**
@@ -10,7 +11,7 @@ data class RegisterStationModel(
     val userId : Int,
     val commuteTripId : Int,
     val stationTripId : Int,
-    val status : Int,
+    val status : EnumTripStatus?,
     val reason : String?,
     val id : Int,
     val isActive : Boolean,

@@ -1,11 +1,14 @@
 package com.zarholding.zar.view.recycler.holder
 
+import android.view.View
 import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
 import androidx.recyclerview.widget.RecyclerView
+import com.zarholding.zar.model.enum.EnumTripStatus
 import com.zarholding.zar.model.other.ShowImageModel
 import com.zarholding.zar.model.response.trip.TripModel
+import com.zarholding.zar.view.extension.setRegisterStationStatus
 import zar.R
 import zar.databinding.ItemMyServiceBinding
 
@@ -32,6 +35,17 @@ class MyServiceHolder(private val binding: ItemMyServiceBinding) :
         binding.root.setOnClickListener { click.serviceClick(item) }
         binding.textViewDelete.setOnClickListener { click.deleteRegisterStation(item) }
         binding.imageViewDelete.setOnClickListener { click.deleteRegisterStation(item) }
+        binding.cardViewImage.setRegisterStationStatus(item.myStationTripStatus)
+        binding.imageViewStatus.setRegisterStationStatus(item.myStationTripStatus)
+        binding.textViewStatus.setRegisterStationStatus(item.myStationTripStatus)
+        item.myStationTripStatus?.let {
+            if (it == EnumTripStatus.Reject)
+                binding.textViewReason.visibility = View.VISIBLE
+            else
+                binding.textViewReason.visibility = View.GONE
+        } ?: run {
+            binding.textViewReason.visibility = View.GONE
+        }
         binding.imageViewBus.setOnClickListener {
             click.showImage(
                 ShowImageModel(

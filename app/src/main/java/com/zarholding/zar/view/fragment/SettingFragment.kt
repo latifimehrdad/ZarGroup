@@ -1,21 +1,11 @@
 package com.zarholding.zar.view.fragment
 
-import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Configuration
-import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.biometric.BiometricManager
-import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
-import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -25,7 +15,6 @@ import com.zar.core.tools.BiometricTools
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zar.core.tools.manager.ThemeManager
 import com.zarholding.zar.utility.CompanionValues
-import com.zarholding.zar.utility.ThemeManagers
 import com.zarholding.zar.view.activity.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -34,7 +23,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import zar.R
 import zar.databinding.FragmentSettingBinding
-import java.util.concurrent.Executor
 import javax.inject.Inject
 
 /**
@@ -48,7 +36,7 @@ class SettingFragment : Fragment(), RemoteErrorEmitter {
     private val binding get() = _binding!!
 
     @Inject
-    lateinit var themeManagers: ThemeManagers
+    lateinit var themeManagers: ThemeManager
 
     @Inject
     lateinit var sharedPreferences: SharedPreferences

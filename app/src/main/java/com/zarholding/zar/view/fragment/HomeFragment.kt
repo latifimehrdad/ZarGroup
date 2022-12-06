@@ -100,6 +100,13 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
                 R.id.action_HomeFragment_to_ServiceFragment
             )
         )
+        apps.add(
+            AppModel(
+                R.drawable.icon_trip,
+                getString(R.string.taxiReservation),
+                R.id.action_HomeFragment_to_TaxiReservationFragment
+            )
+        )
 
         apps.add(AppModel(R.drawable.icon_personnel, getString(R.string.personnelList), 0))
         apps.add(AppModel(R.drawable.icon_food_reservation, getString(R.string.foodReservation), 0))

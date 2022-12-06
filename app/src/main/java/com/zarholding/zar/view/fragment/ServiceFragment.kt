@@ -22,12 +22,13 @@ import com.zar.core.enums.EnumErrorType
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zar.core.tools.loadings.LoadingManager
 import com.zar.core.tools.manager.DialogManager
+import com.zar.core.tools.manager.ThemeManager
+import com.zarholding.zar.model.enum.EnumTripStatus
 import com.zarholding.zar.model.other.ShowImageModel
 import com.zarholding.zar.model.request.RequestRegisterStationModel
 import com.zarholding.zar.model.response.trip.TripModel
 import com.zarholding.zar.utility.CompanionValues
 import com.zarholding.zar.utility.OsmManager
-import com.zarholding.zar.utility.ThemeManagers
 import com.zarholding.zar.utility.signalr.RemoteSignalREmitter
 import com.zarholding.zar.utility.signalr.SignalRListener
 import com.zarholding.zar.view.activity.MainActivity
@@ -73,7 +74,7 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
     private var stationId = 0
 
     @Inject
-    lateinit var themeManagers: ThemeManagers
+    lateinit var themeManagers: ThemeManager
 
     //---------------------------------------------------------------------------------------------- ShowTrip
     private enum class TripSelect {
@@ -115,7 +116,7 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
         snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
         snack.setActionTextColor(resources.getColor(R.color.textViewColor1, requireContext().theme))
         snack.show()
-        loadingManager.stopLoadingView()
+        loadingManager.stopLoadingRecycler()
     }
     //---------------------------------------------------------------------------------------------- onError
 
@@ -128,7 +129,7 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
         snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
         snack.setActionTextColor(resources.getColor(R.color.textViewColor1, requireContext().theme))
         snack.show()
-        loadingManager.stopLoadingView()
+        loadingManager.stopLoadingRecycler()
         requireActivity().onBackPressed()
     }
     //---------------------------------------------------------------------------------------------- unAuthorization
@@ -152,11 +153,12 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
 
 
     //---------------------------------------------------------------------------------------------- startLoading
-    private fun startLoading(view: View) {
-        loadingManager.setViewLoading(
-            view,
+    private fun startLoading() {
+        loadingManager.setRecyclerLoading(
+            binding.recyclerViewService,
             R.layout.item_loading,
-            R.color.recyclerLoadingShadow
+            R.color.recyclerLoadingShadow,
+            1
         )
     }
     //---------------------------------------------------------------------------------------------- startLoading
@@ -193,10 +195,10 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- requestGetAllTrips
     private fun requestGetAllTrips(tripSelect: TripSelect) {
-        startLoading(binding.nestedScrollView)
+        startLoading()
         tripViewModel.requestGetAllTrips(tokenViewModel.getBearerToken())
             .observe(viewLifecycleOwner) { response ->
-                loadingManager.stopLoadingView()
+                loadingManager.stopLoadingRecycler()
                 response?.let {
                     if (it.hasError)
                         onError(EnumErrorType.UNKNOWN, it.message)
@@ -298,11 +300,11 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- requestRegisterStation
     private fun requestRegisterStation(tripId: Int, stationId: Int) {
-        startLoading(binding.nestedScrollView)
+        startLoading()
         val requestModel = RequestRegisterStationModel(tripId, stationId)
         tripViewModel.requestRegisterStation(requestModel, tokenViewModel.getBearerToken())
             .observe(viewLifecycleOwner) { response ->
-                loadingManager.stopLoadingView()
+                loadingManager.stopLoadingRecycler()
                 response?.let {
                     onError(EnumErrorType.UNKNOWN, it.message)
                     if (!it.hasError)
@@ -339,10 +341,10 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- requestDeleteRegisterStation
     private fun requestDeleteRegisterStation(stationId: Int) {
-        startLoading(binding.nestedScrollView)
+        startLoading()
         tripViewModel.requestDeleteRegisteredStation(stationId, tokenViewModel.getBearerToken())
             .observe(viewLifecycleOwner) { response ->
-                loadingManager.stopLoadingView()
+                loadingManager.stopLoadingRecycler()
                 response?.let {
                     onError(EnumErrorType.UNKNOWN, it.message)
                     if (!it.hasError)
@@ -378,7 +380,7 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
         }
 
 
-        if (tripSelect == TripSelect.MY && item.myStationTripStatus == 1)
+        if (tripSelect == TripSelect.MY && item.myStationTripStatus == EnumTripStatus.Done)
             startSignalR()
     }
     //---------------------------------------------------------------------------------------------- drawRoadOnMap

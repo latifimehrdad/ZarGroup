@@ -14,6 +14,7 @@ import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.zar.core.tools.extensions.toSolarDate
 import com.zarholding.zar.hilt.Providers
+import com.zarholding.zar.model.enum.EnumTripStatus
 import com.zarholding.zardriver.model.response.TripStationModel
 import zar.R
 import java.time.LocalDateTime
@@ -21,6 +22,16 @@ import java.time.LocalDateTime
 /**
  * Created by m-latifi on 11/14/2022.
  */
+
+
+//-------------------------------------------------------------------------------------------------- setRequestReason
+@BindingAdapter("setRequestReason")
+fun TextView.setRequestReason(reason : String?) {
+    text = context.getString(R.string.reasonOfReject1, reason)
+    setTextColor(context.getColor(R.color.rejectGradiantEndColor))
+}
+//-------------------------------------------------------------------------------------------------- setRequestReason
+
 
 //-------------------------------------------------------------------------------------------------- setRequester
 @BindingAdapter("setRequester")
@@ -40,12 +51,13 @@ fun TextView.setDriverAndStation(driverName : String, tripName : String , statio
 
 
 //-------------------------------------------------------------------------------------------------- setRegisterStationStatus
-@BindingAdapter("setRegisterStationStatus")
-fun CardView.setRegisterStationStatus(status : Int){
-    when(status) {
-        0 -> setCardBackgroundColor(context.resources.getColor(R.color.waiting, context.theme))
-        1 -> setCardBackgroundColor(context.resources.getColor(R.color.positive, context.theme))
-        2 -> setCardBackgroundColor(context.resources.getColor(R.color.negative, context.theme))
+fun CardView.setRegisterStationStatus(status : EnumTripStatus?){
+    status?.let {
+        when(status) {
+            EnumTripStatus.IsPending -> setCardBackgroundColor(context.resources.getColor(R.color.waiting, context.theme))
+            EnumTripStatus.Done -> setCardBackgroundColor(context.resources.getColor(R.color.positive, context.theme))
+            EnumTripStatus.Reject -> setCardBackgroundColor(context.resources.getColor(R.color.negative, context.theme))
+        }
     }
 }
 //-------------------------------------------------------------------------------------------------- setRegisterStationStatus
@@ -53,12 +65,13 @@ fun CardView.setRegisterStationStatus(status : Int){
 
 
 //-------------------------------------------------------------------------------------------------- setRegisterStationStatus
-@BindingAdapter("setRegisterStationStatus")
-fun TextView.setRegisterStationStatus(status : Int){
-    when(status) {
-        0 -> text = context.resources.getString(R.string.pendingForAccept)
-        1 -> text = context.resources.getString(R.string.confirmedByOfficial)
-        2 -> text = context.resources.getString(R.string.reject)
+fun TextView.setRegisterStationStatus(status : EnumTripStatus?){
+    status?.let {
+        text = when(status) {
+            EnumTripStatus.IsPending -> context.resources.getString(R.string.pendingForAccept)
+            EnumTripStatus.Done -> context.resources.getString(R.string.confirmedByOfficial)
+            EnumTripStatus.Reject -> context.resources.getString(R.string.reject)
+        }
     }
 }
 //-------------------------------------------------------------------------------------------------- setRegisterStationStatus
@@ -66,12 +79,13 @@ fun TextView.setRegisterStationStatus(status : Int){
 
 
 //-------------------------------------------------------------------------------------------------- setRegisterStationStatus
-@BindingAdapter("setRegisterStationStatus")
-fun ImageView.setRegisterStationStatus(status : Int){
-    when(status) {
-        0 -> setImageResource(R.drawable.ic_pending)
-        1 -> setImageResource(R.drawable.ic_check)
-        2 -> setImageResource(R.drawable.ic_delete)
+fun ImageView.setRegisterStationStatus(status : EnumTripStatus?){
+    status?.let {
+        when(status) {
+            EnumTripStatus.IsPending -> setImageResource(R.drawable.ic_pending)
+            EnumTripStatus.Done -> setImageResource(R.drawable.ic_check)
+            EnumTripStatus.Reject -> setImageResource(R.drawable.ic_delete)
+        }
     }
 }
 //-------------------------------------------------------------------------------------------------- setRegisterStationStatus
@@ -80,14 +94,13 @@ fun ImageView.setRegisterStationStatus(status : Int){
 
 
 //-------------------------------------------------------------------------------------------------- setMyStation
-@BindingAdapter("setMyStation")
-fun TextView.setMyStation(myStation : String?) {
-    myStation?.let {
-        val title = "${context.getString(R.string.myStation)} : $it"
-        text = title
-    } ?: run {
-        text = ""
-    }
+@BindingAdapter("setMyStation","setArriveTime")
+fun TextView.setMyStation(myStation : String?, arriveTime : String?) {
+    var title = ""
+    title = context.getString(R.string.myStation, myStation) +
+            " \n " +
+            context.getString(R.string.attendanceTime, arriveTime)
+    text = title
 }
 //-------------------------------------------------------------------------------------------------- setMyStation
 
@@ -194,10 +207,6 @@ fun View.setUnreadNotification(read: Boolean) {
 //-------------------------------------------------------------------------------------------------- hideKeyboard
 fun Fragment.hideKeyboard() {
     view?.let { activity?.hideKeyboard(it) }
-}
-
-fun Activity.hideKeyboard() {
-    hideKeyboard(currentFocus ?: View(this))
 }
 
 fun Context.hideKeyboard(view: View) {

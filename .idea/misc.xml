@@ -8,6 +8,7 @@
         <entry key="..\:/android/project/ZarGroup/app/src/main/res/drawable/drawable_dialog_notify_header_gradiant.xml" value="0.174" />
         <entry key="..\:/android/project/ZarGroup/app/src/main/res/drawable/drawable_home_profile.xml" value="0.174" />
         <entry key="..\:/android/project/ZarGroup/app/src/main/res/drawable/drawable_reject.xml" value="0.174" />
+        <entry key="..\:/android/project/ZarGroup/app/src/main/res/drawable/drawable_spinner.xml" value="0.1" />
         <entry key="..\:/android/project/ZarGroup/app/src/main/res/drawable/ic_bus_transport.xml" value="0.174" />
         <entry key="..\:/android/project/ZarGroup/app/src/main/res/drawable/ic_edit.xml" value="0.174" />
         <entry key="..\:/android/project/ZarGroup/app/src/main/res/drawable/ic_more.xml" value="0.174" />
@@ -21,19 +22,23 @@
         <entry key="..\:/android/project/ZarGroup/app/src/main/res/layout/dialog_confirmation.xml" value="0.20052083333333334" />
         <entry key="..\:/android/project/ZarGroup/app/src/main/res/layout/dialog_detail_news.xml" value="0.20052083333333334" />
         <entry key="..\:/android/project/ZarGroup/app/src/main/res/layout/dialog_notification.xml" value="0.20052083333333334" />
+        <entry key="..\:/android/project/ZarGroup/app/src/main/res/layout/dialog_reject_reason.xml" value="0.20052083333333334" />
         <entry key="..\:/android/project/ZarGroup/app/src/main/res/layout/dialog_show_image.xml" value="0.20052083333333334" />
         <entry key="..\:/android/project/ZarGroup/app/src/main/res/layout/fragment_admin_bus.xml" value="0.2" />
         <entry key="..\:/android/project/ZarGroup/app/src/main/res/layout/fragment_cartable.xml" value="0.20052083333333334" />
         <entry key="..\:/android/project/ZarGroup/app/src/main/res/layout/fragment_dashboard.xml" value="0.20052083333333334" />
         <entry key="..\:/android/project/ZarGroup/app/src/main/res/layout/fragment_home.xml" value="0.20052083333333334" />
         <entry key="..\:/android/project/ZarGroup/app/src/main/res/layout/fragment_profile.xml" value="0.20052083333333334" />
+        <entry key="..\:/android/project/ZarGroup/app/src/main/res/layout/fragment_service.xml" value="0.20052083333333334" />
         <entry key="..\:/android/project/ZarGroup/app/src/main/res/layout/fragment_setting.xml" value="0.20052083333333334" />
         <entry key="..\:/android/project/ZarGroup/app/src/main/res/layout/fragment_splash.xml" value="0.20052083333333334" />
+        <entry key="..\:/android/project/ZarGroup/app/src/main/res/layout/fragment_taxi.xml" value="0.20052083333333334" />
         <entry key="..\:/android/project/ZarGroup/app/src/main/res/layout/item_admin_bus.xml" value="0.19947916666666668" />
         <entry key="..\:/android/project/ZarGroup/app/src/main/res/layout/item_app.xml" value="0.20052083333333334" />
         <entry key="..\:/android/project/ZarGroup/app/src/main/res/layout/item_app_dashboard.xml" value="0.20052083333333334" />
         <entry key="..\:/android/project/ZarGroup/app/src/main/res/layout/item_my_service.xml" value="0.20052083333333334" />
         <entry key="..\:/android/project/ZarGroup/app/src/main/res/layout/item_notification.xml" value="0.20052083333333334" />
+        <entry key="..\:/android/project/ZarGroup/app/src/main/res/layout/item_service.xml" value="0.20052083333333334" />
       </map>
     </option>
   </component>

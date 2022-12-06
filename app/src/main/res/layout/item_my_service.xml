@@ -29,8 +29,7 @@
             android:layout_height="@dimen/_60sdp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:cardCornerRadius="@dimen/_5sdp"
-            app:setRegisterStationStatus="@{item.myStationTripStatus}">
+            app:cardCornerRadius="@dimen/_5sdp">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
@@ -120,14 +119,15 @@
             android:layout_marginEnd="@dimen/_5sdp"
             android:layout_marginStart="@dimen/_15sdp"
             android:layout_marginTop="@dimen/_5sdp"
-            android:paddingVertical="@dimen/_5sdp"
+            android:paddingVertical="@dimen/_2sdp"
             android:paddingHorizontal="@dimen/_2sdp"
             android:gravity="start|top"
             android:textColor="@color/textViewColor3"
             android:fontFamily="@font/kalameh_regular"
             android:textSize="@dimen/_8sdp"
             android:maxLines="2"
-            app:setMyStation="@{item.myStationName}"/>
+            app:setMyStation="@{item.myStationName}"
+            app:setArriveTime="@{item.myStationArriveTime}"/>
 
         <net.cachapa.expandablelayout.ExpandableLayout
             android:id="@+id/expandableMore"
@@ -151,65 +151,76 @@
                     android:id="@+id/textViewStations"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginHorizontal="@dimen/_5sdp"
                     android:layout_marginTop="@dimen/_5sdp"
-                    android:textColor="@color/textViewColor3"
                     android:fontFamily="@font/kalameh_light"
+                    android:textColor="@color/textViewColor3"
                     android:textSize="@dimen/_9sdp"
-                    app:setStation="@{item.stations}"/>
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:setStation="@{item.stations}" />
 
 
                 <TextView
                     android:id="@+id/textViewDelete"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@id/textViewStations"
-                    app:layout_constraintStart_toStartOf="@id/textViewStations"
                     android:layout_marginTop="@dimen/_10sdp"
-                    android:textColor="@color/textViewColor3"
                     android:fontFamily="@font/kalameh_light"
+                    android:text="@string/deleteService"
+                    android:textColor="@color/textViewColor3"
                     android:textSize="@dimen/_9sdp"
-                    android:text="@string/deleteService"/>
+                    app:layout_constraintStart_toStartOf="@id/textViewStations"
+                    app:layout_constraintTop_toBottomOf="@id/textViewStations" />
 
 
                 <ImageView
                     android:id="@+id/imageViewDelete"
                     android:layout_width="@dimen/_20sdp"
                     android:layout_height="@dimen/_20sdp"
-                    app:layout_constraintTop_toTopOf="@id/textViewDelete"
+                    android:layout_marginStart="@dimen/_2sdp"
+                    android:contentDescription="@string/plusDescription"
+                    android:src="@drawable/ic_delete"
                     app:layout_constraintBottom_toBottomOf="@id/textViewDelete"
                     app:layout_constraintStart_toEndOf="@id/textViewDelete"
-                    android:layout_marginStart="@dimen/_2sdp"
-                    android:src="@drawable/ic_delete"
-                    android:contentDescription="@string/plusDescription" />
+                    app:layout_constraintTop_toTopOf="@id/textViewDelete" />
 
                 <ImageView
-                    android:id="@+id/imageViewPlus"
+                    android:id="@+id/imageViewStatus"
                     android:layout_width="@dimen/_20sdp"
                     android:layout_height="@dimen/_20sdp"
-                    app:layout_constraintTop_toTopOf="@id/textViewDelete"
+                    android:contentDescription="@string/plusDescription"
                     app:layout_constraintBottom_toBottomOf="@id/textViewDelete"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:contentDescription="@string/plusDescription"
-                    app:setRegisterStationStatus="@{item.myStationTripStatus}"/>
+                    app:layout_constraintTop_toTopOf="@id/textViewDelete" />
 
                 <TextView
-                    android:id="@+id/textViewPlus"
+                    android:id="@+id/textViewStatus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toTopOf="@id/textViewDelete"
-                    app:layout_constraintBottom_toBottomOf="@id/textViewDelete"
-                    app:layout_constraintEnd_toStartOf="@id/imageViewPlus"
                     android:layout_marginHorizontal="@dimen/_2sdp"
-                    android:textColor="@color/textViewColor3"
                     android:fontFamily="@font/kalameh_light"
+                    android:textColor="@color/textViewColor3"
                     android:textSize="@dimen/_9sdp"
-                    app:setRegisterStationStatus="@{item.myStationTripStatus}"/>
+                    app:layout_constraintEnd_toStartOf="@id/imageViewStatus"
+                    app:layout_constraintTop_toTopOf="@id/textViewDelete" />
 
 
+                <TextView
+                    android:id="@+id/textViewReason"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_2sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:fontFamily="@font/kalameh_light"
+                    android:textColor="@color/textViewColor3"
+                    android:textSize="@dimen/_9sdp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="@id/imageViewStatus"
+                    app:layout_constraintStart_toStartOf="@id/textViewDelete"
+                    app:layout_constraintTop_toBottomOf="@id/textViewStatus"
+                    app:setRequestReason="@{item.myStationTripRequestResone}" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,7 +5,6 @@ import android.app.Dialog
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.graphics.Color
 import android.media.AudioAttributes
@@ -34,11 +33,10 @@ import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zar.core.tools.manager.DialogManager
 import com.zar.core.tools.manager.ThemeManager
 import com.zarholding.zar.database.dao.UserInfoDao
-import com.zarholding.zar.database.entity.UserInfoEntity
 import com.zarholding.zar.model.other.notification.NotificationCategoryModel
 import com.zarholding.zar.model.other.notification.NotificationModel
 import com.zarholding.zar.utility.CompanionValues
-import com.zarholding.zar.utility.ThemeManagers
+import com.zarholding.zar.utility.RoleManager
 import com.zarholding.zar.view.recycler.adapter.notification.NotificationCategoryAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -64,10 +62,13 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
     var navController: NavController? = null
 
     @Inject
-    lateinit var themeManagers: ThemeManagers
+    lateinit var themeManagers: ThemeManager
 
     @Inject
     lateinit var userInfoDao: UserInfoDao
+
+    @Inject
+    lateinit var roleManager: RoleManager
 
 
     //---------------------------------------------------------------------------------------------- companion object
@@ -239,10 +240,15 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
                 binding.textViewProfileName.text = user?.fullName
                 binding.textViewPersonalCode.text = resources
                     .getString(R.string.personalCode, user?.personnelNumber.toString())
+                if (roleManager.getAdminRole(user?.roles))
+                    binding.imageViewAdmin.visibility = View.VISIBLE
+                else
+                    binding.imageViewAdmin.visibility = View.GONE
             }
         }
     }
     //---------------------------------------------------------------------------------------------- setUserInfo
+
 
 
     //---------------------------------------------------------------------------------------------- createNotificationChannel

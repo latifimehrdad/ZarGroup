@@ -54,9 +54,14 @@
     <string name="userNameIsEmpty">نام کاربری را وارد نمایید</string>
     <string name="passcodeIsEmpty">رمز ورود را وارد نمایید</string>
     <string name="chooseStation">ایستگاه را انتخاب کنید</string>
-    <string name="myStation">ایستگاه من</string>
+    <string name="taxiReservation">درخواست آژانس</string>
+    <string name="went">رفت</string>
+    <string name="backAndForth">رفت و برگشت</string>
+
     <string name="yes">بله</string>
     <string name="no">خیر</string>
+    <string name="send">ارسال</string>
+    <string name="cancel">انصراف</string>
     <string name="showAllNews">مشاهده تمام خبرها</string>
     <string name="confirmChecked">تایید نشان شده ها</string>
     <string name="rejectChecked">عدم تایید نشان شده ها</string>
@@ -65,6 +70,7 @@
     <string name="setTripNameDriverStation">%1$s - %2$s - %3$s</string>
     <string name="personalCode">کد پرسنلی : %1$s</string>
     <string name="attendanceTime">ساعت حضور : %1$s</string>
+    <string name="myStation">ایستگاه من : %1$s</string>
     <string name="confirmForDelete">آیا برای حذف %1$s مطمئن هستید؟</string>
 
     <string name="carEntityType">cars</string>
@@ -81,6 +87,10 @@
     <string name="onAuthenticationError">اثر انگشت شما تایید نشد</string>
     <string name="actionIsDone">عملیات با موفقیت انجام شد</string>
     <string name="chooseItemsIsEmpty">هیچ موردی انتخاب نشده اشت</string>
+    <string name="pleaseEnterTheReason">لطفا دلیل را وارد نمایید</string>
+    <string name="reasonOfReject">علت عدم تایید :</string>
+    <string name="reasonOfReject1">علت عدم تایید : %1$s</string>
+    <string name="reasonText">متن علت</string>
 
     <string name="logoDescription">logo</string>
     <string name="profileDescription">profile</string>

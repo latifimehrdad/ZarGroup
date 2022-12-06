@@ -12,7 +12,9 @@ import com.google.android.material.snackbar.Snackbar
 import com.zar.core.enums.EnumErrorType
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zarholding.zar.database.dao.ArticleDao
+import com.zarholding.zar.database.dao.RoleDao
 import com.zarholding.zar.database.dao.UserInfoDao
+import com.zarholding.zar.database.entity.RoleEntity
 import com.zarholding.zar.model.request.ArticleRequestModel
 import com.zarholding.zar.repository.UserRepository
 import com.zarholding.zar.utility.CompanionValues
@@ -50,6 +52,9 @@ class SplashFragment : Fragment(), RemoteErrorEmitter {
 
     @Inject
     lateinit var userInfoDao: UserInfoDao
+
+    @Inject
+    lateinit var roleDao: RoleDao
 
     private lateinit var job: Job
     private val tokenViewModel: TokenViewModel by viewModels()
@@ -135,9 +140,11 @@ class SplashFragment : Fragment(), RemoteErrorEmitter {
                         userInfo.data?.let {
                             CoroutineScope(IO).launch {
                                 userInfoDao.insertUserInfo(it)
+                                withContext(Main) {
+                                    (activity as MainActivity).setUserInfo()
+                                    requestUserPermission()
+                                }
                             }
-                            (activity as MainActivity).setUserInfo()
-                            requestGetSlideShow()
                         } ?: run {
                             onError(
                                 EnumErrorType.UNKNOWN,
@@ -153,6 +160,36 @@ class SplashFragment : Fragment(), RemoteErrorEmitter {
             }
     }
     //---------------------------------------------------------------------------------------------- requestUserInfo
+
+
+
+    //---------------------------------------------------------------------------------------------- requestUserPermission
+    private fun requestUserPermission() {
+        userViewModel.requestUserPermission(tokenViewModel.getBearerToken())
+            .observe(viewLifecycleOwner) { response ->
+                response?.let { permissions ->
+                    if (permissions.hasError)
+                        onError(EnumErrorType.UNKNOWN, permissions.message)
+                    else
+                        permissions.data?.let { list ->
+                            val temp : List<RoleEntity> = list.map { RoleEntity(it) }
+                            CoroutineScope(IO).launch {
+                                roleDao.deleteAllRecord()
+                                roleDao.insert(temp)
+                                withContext(Main) {
+                                    requestGetSlideShow()
+                                }
+                            }
+                        } ?: run {
+                            requestGetSlideShow()
+                        }
+                } ?: run {
+                    requestGetSlideShow()
+                }
+            }
+    }
+    //---------------------------------------------------------------------------------------------- requestUserPermission
+
 
 
     //---------------------------------------------------------------------------------------------- requestGetSlideShow

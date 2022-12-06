@@ -11,10 +11,11 @@ import com.google.android.material.snackbar.Snackbar
 import com.zar.core.enums.EnumErrorType
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zar.core.tools.loadings.LoadingManager
+import com.zarholding.zar.model.enum.EnumTripStatus
 import com.zarholding.zar.model.request.TripRequestRegisterStatusModel
 import com.zarholding.zar.model.response.trip.TripRequestRegisterModel
-import com.zarholding.zar.model.response.trip.TripRequestRegisterStatusResponseModel
 import com.zarholding.zar.view.activity.MainActivity
+import com.zarholding.zar.view.dialog.RejectReasonDialog
 import com.zarholding.zar.view.recycler.adapter.AdminBusAdapter
 import com.zarholding.zar.view.recycler.holder.AdminBusItemHolder
 import com.zarholding.zar.viewmodel.TokenViewModel
@@ -74,12 +75,11 @@ class AdminBusFragment : Fragment(), RemoteErrorEmitter {
     private fun setOnListener() {
 
         binding.linearLayoutConfirm.setOnClickListener {
-            requestConfirmAndRejectTripRequestRegister(1, null)
+            requestConfirmAndRejectTripRequestRegister(EnumTripStatus.Done, null)
         }
 
         binding.linearLayoutReject.setOnClickListener {
-            //TODO دیالوگ وارد نمودن دیلیل رد
-            requestConfirmAndRejectTripRequestRegister(2, null)
+            showDialogReasonOfReject()
         }
 
     }
@@ -88,10 +88,10 @@ class AdminBusFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- requestGetTripRequestRegister
     private fun requestGetTripRequestRegister() {
-        startLoading(binding.recyclerViewRequest)
+        startLoading()
         tripViewModel.requestGetTripRequestRegister(tokenViewModel.getBearerToken())
             .observe(viewLifecycleOwner) { response ->
-                loadingManager.stopLoadingView()
+                loadingManager.stopLoadingRecycler()
                 response?.let {
                     if (it.hasError)
                         onError(EnumErrorType.UNKNOWN, it.message)
@@ -106,11 +106,12 @@ class AdminBusFragment : Fragment(), RemoteErrorEmitter {
 
 
     //---------------------------------------------------------------------------------------------- startLoading
-    private fun startLoading(view: View) {
-        loadingManager.setViewLoading(
-            view,
+    private fun startLoading() {
+        loadingManager.setRecyclerLoading(
+            binding.recyclerViewRequest,
             R.layout.item_loading,
-            R.color.recyclerLoadingShadow
+            R.color.recyclerLoadingShadow,
+            1
         )
     }
     //---------------------------------------------------------------------------------------------- startLoading
@@ -147,8 +148,21 @@ class AdminBusFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- countChooseItem
 
 
+    //---------------------------------------------------------------------------------------------- showDialogReasonOfReject
+    private fun showDialogReasonOfReject() {
+        val click = object : RejectReasonDialog.Click {
+            override fun clickSend(reason: String) {
+                requestConfirmAndRejectTripRequestRegister(EnumTripStatus.Reject, reason)
+            }
+
+        }
+        RejectReasonDialog(requireContext(),click).show()
+    }
+    //---------------------------------------------------------------------------------------------- showDialogReasonOfReject
+
+
     //---------------------------------------------------------------------------------------------- requestConfirmAndRejectTripRequestRegister
-    private fun requestConfirmAndRejectTripRequestRegister(status: Int, reason: String?) {
+    private fun requestConfirmAndRejectTripRequestRegister(status: EnumTripStatus, reason: String?) {
         val chosen = adapter.getItems().filterList { choose }
         if (chosen.isEmpty()) {
             onError(EnumErrorType.UNKNOWN, getString(R.string.chooseItemsIsEmpty))
@@ -164,12 +178,12 @@ class AdminBusFragment : Fragment(), RemoteErrorEmitter {
                 )
             )
 
-        startLoading(binding.recyclerViewRequest)
+        startLoading()
         tripViewModel.requestConfirmAndRejectTripRequestRegister(
             request,
             tokenViewModel.getBearerToken())
             .observe(viewLifecycleOwner) { response ->
-                loadingManager.stopLoadingView()
+                loadingManager.stopLoadingRecycler()
                 response?.let {
                     if (it.hasError)
                         onError(EnumErrorType.UNKNOWN, it.message)

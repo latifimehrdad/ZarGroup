@@ -53,7 +53,7 @@ interface ApiSuperApp {
     ) : TripRequestRegisterResponseModel
 
 
-    @POST("${v1}/api/v1/personnelsRegisteredStation/response-request-registered-trip")
+    @POST("${v1}/personnelsRegisteredStation/response-request-registered-trip")
     suspend fun requestConfirmAndRejectTripRequestRegister(
         @Body request : List<TripRequestRegisterStatusModel>,
         @Header("Authorization") token : String

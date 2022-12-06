@@ -3,6 +3,7 @@ package com.zarholding.zar.database
 import android.content.Context
 import androidx.room.Room
 import com.zarholding.zar.database.dao.ArticleDao
+import com.zarholding.zar.database.dao.RoleDao
 import com.zarholding.zar.database.dao.UserInfoDao
 import dagger.Module
 import dagger.Provides
@@ -33,6 +34,16 @@ class DataBaseModule {
         return appDatabase.userInfoDao()
     }
     //---------------------------------------------------------------------------------------------- providerUserInfoDao
+
+
+
+    //---------------------------------------------------------------------------------------------- providerRoleDao
+    @Provides
+    @Singleton
+    fun providerRoleDao(appDatabase: AppDatabase) : RoleDao {
+        return appDatabase.roleDao()
+    }
+    //---------------------------------------------------------------------------------------------- providerRoleDao
 
 
 

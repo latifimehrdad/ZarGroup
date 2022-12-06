@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_host"
     app:startDestination="@id/splashFragment">
 
@@ -16,7 +15,7 @@
             app:enterAnim="@anim/slide_in_left"
             app:exitAnim="@anim/slide_out_right"
             app:popEnterAnim="@anim/slide_in_right"
-            app:popExitAnim="@anim/slide_out_left"/>
+            app:popExitAnim="@anim/slide_out_left" />
 
         <action
             android:id="@+id/action_splashFragment_to_HomeFragment"
@@ -24,15 +23,14 @@
             app:enterAnim="@anim/slide_in_left"
             app:exitAnim="@anim/slide_out_right"
             app:popEnterAnim="@anim/slide_in_right"
-            app:popExitAnim="@anim/slide_out_left"/>
+            app:popExitAnim="@anim/slide_out_left" />
 
     </fragment>
-
 
     <fragment
         android:id="@+id/LoginFragment"
         android:name="com.zarholding.zar.view.fragment.LoginFragment"
-        android:label="LoginFragment"/>
+        android:label="LoginFragment" />
 
     <fragment
         android:id="@+id/HomeFragment"
@@ -42,29 +40,37 @@
         <action
             android:id="@+id/action_HomeFragment_to_ServiceFragment"
             app:destination="@id/ServiceFragment"
+            app:popUpTo="@id/ServiceFragment"
             app:enterAnim="@anim/slide_in_left"
             app:exitAnim="@anim/slide_out_right"
             app:popEnterAnim="@anim/slide_in_right"
-            app:popExitAnim="@anim/slide_out_left"/>
+            app:popExitAnim="@anim/slide_out_left" />
+
+        <action
+            android:id="@+id/action_HomeFragment_to_TaxiReservationFragment"
+            app:destination="@id/TaxiReservationFragment"
+            app:popUpTo="@id/TaxiReservationFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left" />
 
     </fragment>
 
     <fragment
         android:id="@+id/ProfileFragment"
         android:name="com.zarholding.zar.view.fragment.ProfileFragment"
-        android:label="ProfileFragment"/>
+        android:label="ProfileFragment" />
 
     <fragment
         android:id="@+id/SettingFragment"
         android:name="com.zarholding.zar.view.fragment.SettingFragment"
-        android:label="SettingFragment"/>
-
+        android:label="SettingFragment" />
 
     <fragment
         android:id="@+id/ServiceFragment"
         android:name="com.zarholding.zar.view.fragment.ServiceFragment"
-        android:label="ServiceFragment"/>
-
+        android:label="ServiceFragment" />
 
     <fragment
         android:id="@+id/DashboardFragment"
@@ -77,63 +83,67 @@
             app:enterAnim="@anim/slide_in_left"
             app:exitAnim="@anim/slide_out_right"
             app:popEnterAnim="@anim/slide_in_right"
-            app:popExitAnim="@anim/slide_out_left"/>
+            app:popExitAnim="@anim/slide_out_left" />
 
     </fragment>
 
     <fragment
         android:id="@+id/AdminBusFragment"
         android:name="com.zarholding.zar.view.fragment.AdminBusFragment"
-        android:label="AdminBusFragment"/>
+        android:label="AdminBusFragment" />
 
+    <fragment
+        android:id="@+id/TaxiReservationFragment"
+        android:name="com.zarholding.zar.view.fragment.TaxiReservationFragment"
+        android:label="TaxiReservationFragment"/>
 
     <action
         android:id="@+id/action_goto_ProfileFragment"
         app:destination="@id/ProfileFragment"
-        app:popUpTo="@id/ProfileFragment"
         app:enterAnim="@anim/slide_in_left"
         app:exitAnim="@anim/slide_out_right"
         app:popEnterAnim="@anim/slide_in_right"
-        app:popExitAnim="@anim/slide_out_left"/>
+        app:popExitAnim="@anim/slide_out_left"
+        app:popUpTo="@id/ProfileFragment" />
 
 
     <action
         android:id="@+id/action_goto_SettingFragment"
         app:destination="@id/SettingFragment"
-        app:popUpTo="@id/SettingFragment"
         app:enterAnim="@anim/slide_in_left"
         app:exitAnim="@anim/slide_out_right"
         app:popEnterAnim="@anim/slide_in_right"
-        app:popExitAnim="@anim/slide_out_left"/>
+        app:popExitAnim="@anim/slide_out_left"
+        app:popUpTo="@id/SettingFragment" />
 
 
     <action
         android:id="@+id/action_goto_HomeFragment"
         app:destination="@id/HomeFragment"
-        app:popUpTo="@id/HomeFragment"
         app:enterAnim="@anim/slide_in_left"
         app:exitAnim="@anim/slide_out_right"
         app:popEnterAnim="@anim/slide_in_right"
-        app:popExitAnim="@anim/slide_out_left"/>
+        app:popExitAnim="@anim/slide_out_left"
+        app:popUpTo="@id/HomeFragment" />
 
 
     <action
         android:id="@+id/action_goto_SplashFragment"
         app:destination="@id/splashFragment"
-        app:popUpTo="@id/splashFragment"
         app:enterAnim="@anim/slide_in_left"
         app:exitAnim="@anim/slide_out_right"
         app:popEnterAnim="@anim/slide_in_right"
-        app:popExitAnim="@anim/slide_out_left"/>
+        app:popExitAnim="@anim/slide_out_left"
+        app:popUpTo="@id/splashFragment" />
 
 
     <action
         android:id="@+id/action_goto_DashboardFragment"
         app:destination="@id/DashboardFragment"
-        app:popUpTo="@id/DashboardFragment"
         app:enterAnim="@anim/slide_in_left"
         app:exitAnim="@anim/slide_out_right"
         app:popEnterAnim="@anim/slide_in_right"
-        app:popExitAnim="@anim/slide_out_left"/>
+        app:popExitAnim="@anim/slide_out_left"
+        app:popUpTo="@id/DashboardFragment" />
 
 </navigation>
