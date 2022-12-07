@@ -181,6 +181,7 @@
                         app:layout_constraintStart_toEndOf="@id/powerSpinnerOrigin"
                         android:layout_marginStart="@dimen/_10sdp"
                         android:ellipsize="end"
+                        android:lines="1"
                         android:textColor="@color/textViewFooter"
                         android:textSize="@dimen/_10sdp"
                         android:layout_marginEnd="@dimen/_5sdp"
@@ -239,6 +240,7 @@
                         app:layout_constraintStart_toEndOf="@id/powerSpinnerDestination"
                         android:layout_marginStart="@dimen/_10sdp"
                         android:ellipsize="end"
+                        android:lines="1"
                         android:textColor="@color/textViewFooter"
                         android:textSize="@dimen/_10sdp"
                         android:layout_marginEnd="@dimen/_5sdp"
@@ -247,11 +249,10 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/buttonDate"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:layout_constraintTop_toBottomOf="@id/powerSpinnerDestination"
                         app:layout_constraintEnd_toStartOf="@id/textViewTimeTitle"
-                        app:layout_constraintStart_toStartOf="@id/buttonWentTime"
                         android:layout_marginEnd="@dimen/_5sdp"
                         android:minWidth="@dimen/_100sdp"
                         android:textSize="@dimen/_9sdp"
@@ -333,6 +334,7 @@
                         android:text="@string/wentTimeDot"
                         android:fontFamily="@font/kalameh_semibold"
                         android:textStyle="bold"/>
+
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

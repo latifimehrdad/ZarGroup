@@ -15,6 +15,8 @@ import com.zar.core.tools.manager.ThemeManager
 import com.zarholding.zar.database.dao.UserInfoDao
 import com.zarholding.zar.utility.OsmManager
 import com.zarholding.zar.view.activity.MainActivity
+import com.zarholding.zar.view.dialog.TimeMultiDialog
+import com.zarholding.zar.view.dialog.TimeSingleDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -95,7 +97,21 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
         initApplicatorTextView()
         initOriginSpinner()
         initDestinationSpinner()
-
+        binding.buttonWentTime.setOnClickListener {
+            TimeSingleDialog(requireContext(), click = object : TimeSingleDialog.Click{
+                override fun clickYes(time : String) {
+                    binding.buttonWentTime.text = time
+                }
+            }).show()
+        }
+        binding.buttonForthTime.setOnClickListener {
+            TimeMultiDialog(requireContext(), click = object : TimeMultiDialog.Click{
+                override fun clickYes(timeWent : String, timeForth : String) {
+                    binding.buttonWentTime.text = timeWent
+                    binding.buttonForthTime.text = timeForth
+                }
+            }).show()
+        }
     }
     //---------------------------------------------------------------------------------------------- initView
 

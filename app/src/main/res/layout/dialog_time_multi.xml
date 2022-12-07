@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="@dimen/_5sdp"
+    app:cardCornerRadius="@dimen/_10sdp"
+    app:cardBackgroundColor="#181d20">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_5sdp">
+
+
+        <TextView
+            android:id="@+id/textViewForthTile"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/textViewWentTitle"
+            android:textSize="@dimen/_10sdp"
+            android:textColor="#505a69"
+            android:fontFamily="@font/kalameh_bold"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:text="@string/forthTime"/>
+
+
+        <TextView
+            android:id="@+id/textViewWentTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="@dimen/_10sdp"
+            app:layout_constraintStart_toEndOf="@id/textViewForthTile"
+            android:textSize="@dimen/_10sdp"
+            android:textColor="#505a69"
+            android:fontFamily="@font/kalameh_bold"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:text="@string/wentTime"/>
+
+
+        <TextView
+            android:id="@+id/textViewForth"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/textViewWent"
+            app:layout_constraintTop_toBottomOf="@id/textViewWentTitle"
+            android:textSize="@dimen/_15sdp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/kalameh_bold"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:text="17:00"/>
+
+
+        <TextView
+            android:id="@+id/textViewWent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="@dimen/_10sdp"
+            app:layout_constraintStart_toEndOf="@id/textViewForth"
+            app:layout_constraintTop_toBottomOf="@id/textViewWentTitle"
+            android:textSize="@dimen/_15sdp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/kalameh_bold"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:text="08:30"/>
+
+
+        <com.zarholding.zar.view.SleepTimePicker
+            android:id="@+id/timePicker"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            app:divisionColor="#505a69"
+            app:labelColor="#FBFBFB"
+            app:layout_constraintTop_toBottomOf="@id/textViewWent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:progressBackgroundColor="#FBFBFB"
+            app:progressBgStrokeWidth="@dimen/_20sdp"
+            app:progressColor="#505a69"
+            app:progressStrokeWidth="@dimen/_20sdp"
+            app:sleepLayoutId="@layout/layout_picker_sleep"
+            app:wakeLayoutId="@layout/layout_picker_wake"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/buttonConfirm"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/timePicker"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginVertical="@dimen/_10sdp"
+            android:minWidth="@dimen/_100sdp"
+            android:textSize="@dimen/_12sdp"
+            android:paddingTop="@dimen/_5sdp"
+            android:paddingBottom="@dimen/_5sdp"
+            android:fontFamily="@font/kalameh_semibold"
+            app:cornerRadius="@dimen/_5sdp"
+            android:textColor="@color/textViewColor1"
+            android:text='@string/cancel'
+            android:backgroundTint="@color/buttonDisable"/>
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonConfirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/buttonCancel"
+            app:layout_constraintTop_toTopOf="@id/buttonCancel"
+            app:layout_constraintBottom_toBottomOf="@id/buttonCancel"
+            android:layout_marginVertical="@dimen/_10sdp"
+            android:minWidth="@dimen/_100sdp"
+            android:textSize="@dimen/_12sdp"
+            android:paddingTop="@dimen/_5sdp"
+            android:paddingBottom="@dimen/_5sdp"
+            android:fontFamily="@font/kalameh_semibold"
+            app:cornerRadius="@dimen/_5sdp"
+            android:textColor="@color/textViewColor1"
+            android:text='@string/choose'
+            android:backgroundTint="@color/positive"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

@@ -70,6 +70,7 @@
     <string name="wentTime">ساعت حرکت</string>
     <string name="forthTime">ساعت برگشت</string>
     <string name="forthTimeDot">ساعت برگشت :</string>
+    <string name="choose">انتخاب</string>
     <string name="no">خیر</string>
     <string name="send">ارسال</string>
     <string name="cancel">انصراف</string>
