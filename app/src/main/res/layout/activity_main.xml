@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayoutParent"
-        xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
@@ -86,7 +85,6 @@
                     android:layout_height="match_parent"
                     android:fontFamily="@font/kalameh_regular"
                     android:gravity="center"
-                    android:text="0"
                     android:lines="1"
                     android:ellipsize="end"
                     android:textColor="@color/textViewColor1"
@@ -127,7 +125,8 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:padding="@dimen/_9sdp"
-                android:src="@drawable/ic_setting"/>
+                android:src="@drawable/ic_setting"
+                android:contentDescription="@string/iconDescription" />
 
 
             <ImageView
@@ -139,7 +138,8 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:padding="@dimen/_9sdp"
-                android:src="@drawable/ic_cartable"/>
+                android:src="@drawable/ic_cartable"
+                android:contentDescription="@string/iconDescription"/>
 
 
 
@@ -152,7 +152,8 @@
                 app:layout_constraintEnd_toStartOf="@id/imageViewProfile"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:padding="@dimen/_9sdp"/>
+                android:padding="@dimen/_9sdp"
+                android:contentDescription="@string/iconDescription"/>
 
             <ImageView
                 android:id="@+id/imageViewProfile"
@@ -163,7 +164,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:padding="@dimen/_9sdp"/>
+                android:padding="@dimen/_9sdp"
+                android:contentDescription="@string/iconDescription"/>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

@@ -130,33 +130,209 @@
                         android:fontFamily="@font/kalameh_semibold"
                         android:textStyle="bold"/>
 
+                    <com.skydoves.powerspinner.PowerSpinnerView
+                        android:id="@+id/powerSpinnerOrigin"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@id/textViewApplicator"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintWidth_percent="0.35"
+                        android:background="@drawable/drawable_spinner"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:gravity="center"
+                        android:hint="@string/chooseFromList"
+                        android:padding="@dimen/_3sdp"
+                        android:textColor="@color/textViewColor1"
+                        android:textColorHint="@color/textViewFooter"
+                        android:fontFamily="@font/kalameh_light"
+                        android:textSize="@dimen/_10sdp"
+                        app:spinner_arrow_gravity="start"
+                        app:spinner_arrow_padding="8dp"
+                        app:spinner_arrow_tint="@color/primaryColor"
+                        app:spinner_divider_color="@color/primaryColorVariant"
+                        app:spinner_divider_show="true"
+                        app:spinner_divider_size="0.4dp"
+                        app:spinner_item_height="46dp"
+                        app:spinner_popup_animation="bounce"
+                        app:spinner_popup_background="@drawable/drawable_spinner_select"
+                        app:spinner_popup_elevation="14dp" />
+
 
                     <TextView
                         android:id="@+id/textViewOriginTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:layout_constraintTop_toBottomOf="@id/textViewApplicator"
+                        app:layout_constraintTop_toTopOf="@id/powerSpinnerOrigin"
+                        app:layout_constraintBottom_toBottomOf="@id/powerSpinnerOrigin"
                         app:layout_constraintEnd_toEndOf="parent"
                         android:textColor="@color/textViewColor1"
                         android:textSize="@dimen/_10sdp"
-                        android:layout_marginTop="@dimen/_5sdp"
                         android:text="@string/originDot"
                         android:fontFamily="@font/kalameh_semibold"
                         android:textStyle="bold"/>
 
                     <TextView
                         android:id="@+id/textViewOrigin"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        app:layout_constraintTop_toTopOf="@id/textViewOriginTitle"
-                        app:layout_constraintBottom_toBottomOf="@id/textViewOriginTitle"
+                        app:layout_constraintTop_toTopOf="@id/powerSpinnerOrigin"
+                        app:layout_constraintBottom_toBottomOf="@id/powerSpinnerOrigin"
                         app:layout_constraintEnd_toStartOf="@id/textViewOriginTitle"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        android:textColor="@color/textViewDisable"
+                        app:layout_constraintStart_toEndOf="@id/powerSpinnerOrigin"
+                        android:layout_marginStart="@dimen/_10sdp"
+                        android:ellipsize="end"
+                        android:textColor="@color/textViewFooter"
                         android:textSize="@dimen/_10sdp"
                         android:layout_marginEnd="@dimen/_5sdp"
                         android:text="@string/pleaseSelectPlaceOfOrigin"
-                        android:fontFamily="@font/kalameh_semibold" />
+                        android:fontFamily="@font/kalameh_medium" />
+
+
+                    <com.skydoves.powerspinner.PowerSpinnerView
+                        android:id="@+id/powerSpinnerDestination"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@id/powerSpinnerOrigin"
+                        app:layout_constraintStart_toStartOf="@id/powerSpinnerOrigin"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        app:layout_constraintWidth_percent="0.35"
+                        android:background="@drawable/drawable_spinner"
+                        android:gravity="center"
+                        android:hint="@string/chooseFromList"
+                        android:padding="@dimen/_3sdp"
+                        android:textColor="@color/textViewColor1"
+                        android:textColorHint="@color/textViewFooter"
+                        android:fontFamily="@font/kalameh_light"
+                        android:textSize="@dimen/_10sdp"
+                        app:spinner_arrow_gravity="start"
+                        app:spinner_arrow_padding="8dp"
+                        app:spinner_arrow_tint="@color/primaryColor"
+                        app:spinner_divider_color="@color/primaryColorVariant"
+                        app:spinner_divider_show="true"
+                        app:spinner_divider_size="0.4dp"
+                        app:spinner_item_height="46dp"
+                        app:spinner_popup_animation="bounce"
+                        app:spinner_popup_background="@drawable/drawable_spinner_select"
+                        app:spinner_popup_elevation="14dp" />
+
+
+                    <TextView
+                        android:id="@+id/textViewDestinationTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="@id/powerSpinnerDestination"
+                        app:layout_constraintBottom_toBottomOf="@id/powerSpinnerDestination"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:textColor="@color/textViewColor1"
+                        android:textSize="@dimen/_10sdp"
+                        android:text="@string/destinationDot"
+                        android:fontFamily="@font/kalameh_semibold"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/textViewDestination"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="@id/powerSpinnerDestination"
+                        app:layout_constraintBottom_toBottomOf="@id/powerSpinnerDestination"
+                        app:layout_constraintEnd_toStartOf="@id/textViewDestinationTitle"
+                        app:layout_constraintStart_toEndOf="@id/powerSpinnerDestination"
+                        android:layout_marginStart="@dimen/_10sdp"
+                        android:ellipsize="end"
+                        android:textColor="@color/textViewFooter"
+                        android:textSize="@dimen/_10sdp"
+                        android:layout_marginEnd="@dimen/_5sdp"
+                        android:text="@string/pleaseSelectPlaceOfDestination"
+                        android:fontFamily="@font/kalameh_medium" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/buttonDate"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@id/powerSpinnerDestination"
+                        app:layout_constraintEnd_toStartOf="@id/textViewTimeTitle"
+                        app:layout_constraintStart_toStartOf="@id/buttonWentTime"
+                        android:layout_marginEnd="@dimen/_5sdp"
+                        android:minWidth="@dimen/_100sdp"
+                        android:textSize="@dimen/_9sdp"
+                        android:fontFamily="@font/kalameh_semibold"
+                        app:cornerRadius="@dimen/_5sdp"
+                        android:textColor="@color/textViewColor1"
+                        android:drawableTint="@color/textViewColor1"
+                        app:icon="@drawable/ic_date"
+                        android:text="0000/00/00" />
+
+                    <TextView
+                        android:id="@+id/textViewTimeTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="@id/buttonDate"
+                        app:layout_constraintBottom_toBottomOf="@id/buttonDate"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:textColor="@color/textViewColor1"
+                        android:textSize="@dimen/_10sdp"
+                        android:text="@string/dateDot"
+                        android:fontFamily="@font/kalameh_semibold"
+                        android:textStyle="bold"/>
+
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/buttonForthTime"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@id/buttonDate"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/textViewForthTimeTitle"
+                        android:textSize="@dimen/_9sdp"
+                        android:layout_marginEnd="@dimen/_5sdp"
+                        android:fontFamily="@font/kalameh_semibold"
+                        app:cornerRadius="@dimen/_5sdp"
+                        android:textColor="@color/textViewColor1"
+                        android:text="00:00" />
+
+                    <TextView
+                        android:id="@+id/textViewForthTimeTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="@id/buttonForthTime"
+                        app:layout_constraintBottom_toBottomOf="@id/buttonForthTime"
+                        app:layout_constraintStart_toEndOf="@id/buttonForthTime"
+                        app:layout_constraintEnd_toStartOf="@id/buttonWentTime"
+                        android:textColor="@color/textViewColor1"
+                        android:textSize="@dimen/_10sdp"
+                        android:text="@string/forthTimeDot"
+                        android:fontFamily="@font/kalameh_semibold"
+                        android:textStyle="bold"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/buttonWentTime"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="@id/buttonForthTime"
+                        app:layout_constraintBottom_toBottomOf="@id/buttonForthTime"
+                        app:layout_constraintStart_toEndOf="@id/textViewForthTimeTitle"
+                        app:layout_constraintEnd_toStartOf="@id/textViewWentTimeTitle"
+                        android:layout_marginStart="@dimen/_15sdp"
+                        android:layout_marginEnd="@dimen/_5sdp"
+                        android:textSize="@dimen/_9sdp"
+                        android:fontFamily="@font/kalameh_semibold"
+                        app:cornerRadius="@dimen/_5sdp"
+                        android:textColor="@color/textViewColor1"
+                        android:text="00:00" />
+
+                    <TextView
+                        android:id="@+id/textViewWentTimeTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="@id/buttonForthTime"
+                        app:layout_constraintBottom_toBottomOf="@id/buttonForthTime"
+                        app:layout_constraintStart_toEndOf="@id/buttonWentTime"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:textColor="@color/textViewColor1"
+                        android:textSize="@dimen/_10sdp"
+                        android:text="@string/wentTimeDot"
+                        android:fontFamily="@font/kalameh_semibold"
+                        android:textStyle="bold"/>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

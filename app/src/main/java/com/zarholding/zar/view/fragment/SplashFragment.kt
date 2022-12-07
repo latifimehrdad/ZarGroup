@@ -78,6 +78,9 @@ class SplashFragment : Fragment(), RemoteErrorEmitter {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner
+        binding.buttonReTry.visibility = View.GONE
+        binding.frameLayoutLogo.visibility = View.VISIBLE
+        binding.buttonReTry.setOnClickListener { checkUserIsLogged() }
         checkUserIsLogged()
     }
     //---------------------------------------------------------------------------------------------- onViewCreated
@@ -91,12 +94,16 @@ class SplashFragment : Fragment(), RemoteErrorEmitter {
         snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
         snack.setActionTextColor(resources.getColor(R.color.textViewColor1, requireContext().theme))
         snack.show()
+        binding.buttonReTry.visibility = View.VISIBLE
+        binding.frameLayoutLogo.visibility = View.GONE
     }
     //---------------------------------------------------------------------------------------------- onError
 
 
     //---------------------------------------------------------------------------------------------- checkUserIsLogged
     private fun checkUserIsLogged() {
+        binding.buttonReTry.visibility = View.GONE
+        binding.frameLayoutLogo.visibility = View.VISIBLE
         val token = sharedPreferences.getString(CompanionValues.TOKEN, null)
         token?.let {
             gotoFragmentHome()

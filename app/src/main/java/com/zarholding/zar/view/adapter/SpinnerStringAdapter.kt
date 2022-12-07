@@ -1,4 +1,4 @@
-package com.zarholding.zar.view.recycler.adapter
+package com.zarholding.zar.view.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -31,7 +31,6 @@ class SpinnerStringAdapter(private val items : List<TripStationModel>)  : BaseAd
         time.text = time.context.resources.getString(R.string.attendanceTime, items[position].arriveTime)
         return view
     }
-
 
 
 }

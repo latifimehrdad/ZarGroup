@@ -9,6 +9,7 @@
         android:background="@drawable/drawable_splash_gradiant">
 
         <FrameLayout
+            android:id="@+id/frameLayoutLogo"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintDimensionRatio="1:1"
@@ -25,6 +26,23 @@
                 android:contentDescription="@string/logoDescription" />
 
         </FrameLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonReTry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/frameLayoutLogo"
+            app:layout_constraintTop_toBottomOf="@id/frameLayoutLogo"
+            app:layout_constraintEnd_toEndOf="@id/frameLayoutLogo"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:minWidth="@dimen/_100sdp"
+            android:textSize="@dimen/_12sdp"
+            android:paddingTop="@dimen/_5sdp"
+            android:paddingBottom="@dimen/_5sdp"
+            android:fontFamily="@font/kalameh_semibold"
+            app:cornerRadius="@dimen/_5sdp"
+            android:textColor="@color/textViewColor2"
+            android:text="@string/reTry" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

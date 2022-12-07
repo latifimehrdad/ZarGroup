@@ -16,4 +16,7 @@ interface UserInfoDao {
     @Query("SELECT * FROM UserInfo LIMIT 1")
     fun getUserInfo(): UserInfoEntity?
 
+    @Query("DELETE FROM userinfo")
+    fun deleteAllRole()
+
 }

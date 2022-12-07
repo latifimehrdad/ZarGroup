@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.graphics.Color
 import android.media.AudioAttributes
@@ -21,6 +22,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.RecyclerView
 import com.ahmadhamwi.tabsync.TabbedListMediator
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -70,6 +72,9 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
     @Inject
     lateinit var roleManager: RoleManager
 
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
+
 
     //---------------------------------------------------------------------------------------------- companion object
     companion object {
@@ -118,16 +123,14 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- setListener
     private fun setListener() {
+
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment?
-        navHostFragment?.let {
-            navController = it.navController
-            it.navController.addOnDestinationChangedListener { _, destination, _ ->
-                if (destination.label != null)
-                    showAndHideBottomMenu(destination.label.toString())
-            }
+        navController = navHostFragment?.navController
+        navController?.addOnDestinationChangedListener { _, destination, _ ->
+            if (destination.label != null)
+                showAndHideBottomMenu(destination.label.toString())
         }
-
 
 
         binding.imageViewNotification.setOnClickListener {
@@ -192,8 +195,44 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- unAuthorization
     override fun unAuthorization(type: EnumAuthorizationType, message: String) {
         remoteErrorEmitter.unAuthorization(type, message)
+        when (type) {
+            EnumAuthorizationType.UnAuthorization -> unAuthorization()
+            EnumAuthorizationType.UnAccess -> unAccess(message)
+        }
     }
     //---------------------------------------------------------------------------------------------- unAuthorization
+
+
+    //---------------------------------------------------------------------------------------------- unAuthorization
+    private fun unAuthorization() {
+        CoroutineScope(IO).launch {
+            sharedPreferences
+                .edit()
+                .putString(CompanionValues.TOKEN, null)
+                .putString(CompanionValues.userName, null)
+                .putString(CompanionValues.passcode, null)
+                .apply()
+            userInfoDao.deleteAllRole()
+            delay(500)
+            withContext(Main) {
+                gotoFragment(R.id.action_goto_SplashFragment)
+            }
+        }
+    }
+    //---------------------------------------------------------------------------------------------- unAuthorization
+
+
+    //---------------------------------------------------------------------------------------------- unAccess
+    private fun unAccess(message: String) {
+        val snack = Snackbar.make(binding.constraintLayoutParent, message, 5 * 1000)
+        snack.setBackgroundTint(resources.getColor(R.color.primaryColor, theme))
+        snack.setTextColor(resources.getColor(R.color.textViewColor3, theme))
+        snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
+        snack.setActionTextColor(resources.getColor(R.color.textViewColor1, theme))
+        snack.show()
+        onBackPressedDispatcher.onBackPressed()
+    }
+    //---------------------------------------------------------------------------------------------- unAccess
 
 
     //---------------------------------------------------------------------------------------------- gotoFragment
@@ -248,7 +287,6 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
         }
     }
     //---------------------------------------------------------------------------------------------- setUserInfo
-
 
 
     //---------------------------------------------------------------------------------------------- createNotificationChannel

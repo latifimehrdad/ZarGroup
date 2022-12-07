@@ -52,6 +52,7 @@
     <string name="origin">مبدا</string>
     <string name="originDot">مبدا :</string>
     <string name="destination">مقصد</string>
+    <string name="destinationDot">مقصد :</string>
     <string name="userNameIsEmpty">نام کاربری را وارد نمایید</string>
     <string name="passcodeIsEmpty">رمز ورود را وارد نمایید</string>
     <string name="chooseStation">ایستگاه را انتخاب کنید</string>
@@ -61,13 +62,22 @@
     <string name="applicator">درخواست کننده : %1$s</string>
     <string name="doYouWantToExitApp">آیا برای خروج از برنامه مطمئن هستید؟</string>
     <string name="pleaseSelectPlaceOfOrigin">لطفا لوکیشن مبدا را انتخاب کنید</string>
+    <string name="pleaseSelectPlaceOfDestination">لطفا لوکیشن مقصد را انتخاب کنید</string>
+    <string name="dateDot">تاریخ :</string>
+    <string name="date">تاریخ</string>
     <string name="yes">بله</string>
+    <string name="wentTimeDot">ساعت حرکت :</string>
+    <string name="wentTime">ساعت حرکت</string>
+    <string name="forthTime">ساعت برگشت</string>
+    <string name="forthTimeDot">ساعت برگشت :</string>
     <string name="no">خیر</string>
     <string name="send">ارسال</string>
     <string name="cancel">انصراف</string>
     <string name="showAllNews">مشاهده تمام خبرها</string>
     <string name="confirmChecked">تایید نشان شده ها</string>
     <string name="rejectChecked">عدم تایید نشان شده ها</string>
+    <string name="reTry">تلاش دوباره</string>
+    <string name="chooseFromList">انتخاب از لیست</string>
 
     <string name="requester">درخواست کننده : %1$s</string>
     <string name="setTripNameDriverStation">%1$s - %2$s - %3$s</string>

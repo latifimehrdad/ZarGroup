@@ -106,7 +106,6 @@
         app:popExitAnim="@anim/slide_out_left"
         app:popUpTo="@id/ProfileFragment" />
 
-
     <action
         android:id="@+id/action_goto_SettingFragment"
         app:destination="@id/SettingFragment"
@@ -115,7 +114,6 @@
         app:popEnterAnim="@anim/slide_in_right"
         app:popExitAnim="@anim/slide_out_left"
         app:popUpTo="@id/SettingFragment" />
-
 
     <action
         android:id="@+id/action_goto_HomeFragment"
@@ -126,7 +124,6 @@
         app:popExitAnim="@anim/slide_out_left"
         app:popUpTo="@id/HomeFragment" />
 
-
     <action
         android:id="@+id/action_goto_SplashFragment"
         app:destination="@id/splashFragment"
@@ -135,7 +132,6 @@
         app:popEnterAnim="@anim/slide_in_right"
         app:popExitAnim="@anim/slide_out_left"
         app:popUpTo="@id/splashFragment" />
-
 
     <action
         android:id="@+id/action_goto_DashboardFragment"

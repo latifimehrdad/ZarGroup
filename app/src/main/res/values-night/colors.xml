@@ -27,7 +27,7 @@
     <color name="textViewColor1">@color/white</color>
     <color name="textViewColor2">@color/white</color>
     <color name="textViewColor3">@color/black</color>
-    <color name="textViewFooter">@color/white</color>
+    <color name="textViewFooter">#CACACA</color>
     <color name="textViewDisable">#7A7A7A</color>
 
     <color name="cardViewHomeProfileColor">#33FFFFFF</color>

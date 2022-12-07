@@ -16,6 +16,7 @@
 
         <item name="fontFamily">@font/kalameh_regular</item>
         <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
+        <item name="android:textColorPrimary">@color/primaryColor</item>
 
     </style>
 
@@ -33,5 +34,6 @@
         <item name="colorAccent">@color/profileIconColor</item>
         <item name="android:colorForeground">@color/textViewFooter</item>
     </style>
+
 
 </resources>

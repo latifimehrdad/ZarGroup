@@ -35,7 +35,7 @@ import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.view.dialog.ShowImageDialog
 import com.zarholding.zar.view.recycler.adapter.MyServiceAdapter
 import com.zarholding.zar.view.recycler.adapter.ServiceAdapter
-import com.zarholding.zar.view.recycler.adapter.SpinnerStringAdapter
+import com.zarholding.zar.view.adapter.SpinnerStringAdapter
 import com.zarholding.zar.view.recycler.holder.MyServiceHolder
 import com.zarholding.zar.view.recycler.holder.ServiceHolder
 import com.zarholding.zar.viewmodel.TokenViewModel
@@ -123,14 +123,7 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- unAuthorization
     override fun unAuthorization(type: EnumAuthorizationType, message: String) {
-        val snack = Snackbar.make(binding.constraintLayoutParent, message, 5 * 1000)
-        snack.setBackgroundTint(resources.getColor(R.color.primaryColor, requireContext().theme))
-        snack.setTextColor(resources.getColor(R.color.textViewColor3, requireContext().theme))
-        snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
-        snack.setActionTextColor(resources.getColor(R.color.textViewColor1, requireContext().theme))
-        snack.show()
         loadingManager.stopLoadingRecycler()
-        requireActivity().onBackPressedDispatcher.onBackPressed()
     }
     //---------------------------------------------------------------------------------------------- unAuthorization
 

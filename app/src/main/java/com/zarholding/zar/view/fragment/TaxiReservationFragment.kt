@@ -2,9 +2,11 @@ package com.zarholding.zar.view.fragment
 
 import android.os.Bundle
 import android.view.*
-import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
+import com.skydoves.powerspinner.IconSpinnerAdapter
+import com.skydoves.powerspinner.IconSpinnerItem
 import com.zar.core.enums.EnumAuthorizationType
 import com.zar.core.enums.EnumErrorType
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
@@ -82,14 +84,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- unAuthorization
     override fun unAuthorization(type: EnumAuthorizationType, message: String) {
-        val snack = Snackbar.make(binding.constraintLayoutParent, message, 5 * 1000)
-        snack.setBackgroundTint(resources.getColor(R.color.primaryColor, requireContext().theme))
-        snack.setTextColor(resources.getColor(R.color.textViewColor3, requireContext().theme))
-        snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
-        snack.setActionTextColor(resources.getColor(R.color.textViewColor1, requireContext().theme))
-        snack.show()
         loadingManager.stopLoadingRecycler()
-        requireActivity().onBackPressedDispatcher.onBackPressed()
     }
     //---------------------------------------------------------------------------------------------- unAuthorization
 
@@ -97,15 +92,87 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- initView
     private fun initView() {
 
+        initApplicatorTextView()
+        initOriginSpinner()
+        initDestinationSpinner()
+
+    }
+    //---------------------------------------------------------------------------------------------- initView
+
+
+    //---------------------------------------------------------------------------------------------- initApplicatorTextView
+    private fun initApplicatorTextView() {
         CoroutineScope(IO).launch {
             val user = userInfoDao.getUserInfo()
             withContext(Main) {
                 binding.textViewApplicator.text = getString(R.string.applicator, user?.fullName)
             }
         }
-
     }
-    //---------------------------------------------------------------------------------------------- initView
+    //---------------------------------------------------------------------------------------------- initApplicatorTextView
+
+
+    //---------------------------------------------------------------------------------------------- initOriginSpinner
+    private fun initOriginSpinner() {
+        binding.powerSpinnerOrigin.apply {
+            setSpinnerAdapter(IconSpinnerAdapter(this))
+            setItems(
+                arrayListOf(
+                    IconSpinnerItem("کارخانه زر ماکارون"),
+                    IconSpinnerItem("کارخانه زر نام"),
+                    IconSpinnerItem("کارخانه زر کام")
+                )
+            )
+            getSpinnerRecyclerView().layoutManager =
+                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            lifecycleOwner = viewLifecycleOwner
+        }
+
+        binding.powerSpinnerOrigin
+            .setOnSpinnerItemSelectedListener<IconSpinnerItem> { _, _, _, newItem ->
+                binding.powerSpinnerOrigin.setBackgroundResource(R.drawable.drawable_spinner_select)
+                binding.textViewOrigin.text = newItem.text
+                binding.textViewOrigin.setTextColor(
+                    resources.getColor(
+                        R.color.primaryColor,
+                        context?.theme
+                    )
+                )
+            }
+    }
+    //---------------------------------------------------------------------------------------------- initOriginSpinner
+
+
+
+    //---------------------------------------------------------------------------------------------- initDestinationSpinner
+    private fun initDestinationSpinner() {
+        binding.powerSpinnerDestination.apply {
+            setSpinnerAdapter(IconSpinnerAdapter(this))
+            setItems(
+                arrayListOf(
+                    IconSpinnerItem("کارخانه زر ماکارون"),
+                    IconSpinnerItem("کارخانه زر نام"),
+                    IconSpinnerItem("کارخانه زر کام")
+                )
+            )
+            getSpinnerRecyclerView().layoutManager =
+                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            lifecycleOwner = viewLifecycleOwner
+        }
+
+        binding.powerSpinnerDestination
+            .setOnSpinnerItemSelectedListener<IconSpinnerItem> { _, _, _, newItem ->
+                binding.powerSpinnerDestination.setBackgroundResource(R.drawable.drawable_spinner_select)
+                binding.textViewDestination.text = newItem.text
+                binding.textViewDestination.setTextColor(
+                    resources.getColor(
+                        R.color.primaryColor,
+                        context?.theme
+                    )
+                )
+            }
+    }
+    //---------------------------------------------------------------------------------------------- initDestinationSpinner
 
 
     //---------------------------------------------------------------------------------------------- onDestroyView
