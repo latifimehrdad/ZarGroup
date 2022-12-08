@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="SleepTimePicker">
+    <declare-styleable name="wentTimePicker">
 
         <attr name="progressColor" format="color" />
         <attr name="progressBackgroundColor" format="color" />
@@ -13,8 +13,8 @@
         <attr name="strokeTopShadowColor" format="color" />
         <attr name="labelColor" format="color" />
         <attr name="labelFont" format="reference" />
-        <attr name="sleepLayoutId" format="reference" />
-        <attr name="wakeLayoutId" format="reference" />
+        <attr name="wentLayoutId" format="reference" />
+        <attr name="forthLayoutId" format="reference" />
 
     </declare-styleable>
 

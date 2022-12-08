@@ -6,6 +6,7 @@ import kotlin.math.sin
 
 class Utils {
     companion object {
+
         fun to_0_360(angle: Double): Double {
             var result = angle % 360
             if (result < 0) result += 360

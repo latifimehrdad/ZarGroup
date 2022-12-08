@@ -5,44 +5,76 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="@dimen/_5sdp"
     app:cardCornerRadius="@dimen/_10sdp"
-    app:cardBackgroundColor="#181d20">
+    app:cardBackgroundColor="#0c1927">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/_5sdp">
 
-
-        <TextView
-            android:id="@+id/textViewForthTile"
+        <LinearLayout
+            android:id="@+id/linearLayoutForth"
             android:layout_width="0dp"
+            android:orientation="horizontal"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_10sdp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/textViewWentTitle"
-            android:textSize="@dimen/_10sdp"
-            android:textColor="#505a69"
-            android:fontFamily="@font/kalameh_bold"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:text="@string/forthTime"/>
+            android:layout_marginStart="@dimen/_10sdp"
+            app:layout_constraintEnd_toStartOf="@id/linearLayoutWent"
+            android:gravity="center">
 
+            <TextView
+                android:id="@+id/textViewForthTile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:textSize="@dimen/_10sdp"
+                android:textColor="#505a69"
+                android:fontFamily="@font/kalameh_bold"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:text="@string/forthTime"/>
 
-        <TextView
-            android:id="@+id/textViewWentTitle"
+            <ImageView
+                android:layout_width="@dimen/_15sdp"
+                android:layout_height="@dimen/_15sdp"
+                android:layout_marginStart="@dimen/_2sdp"
+                android:src="@drawable/ic_down_arrow_svgrepo_com"
+                android:contentDescription="@string/iconDescription" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayoutWent"
             android:layout_width="0dp"
+            android:orientation="horizontal"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="@dimen/_10sdp"
-            app:layout_constraintStart_toEndOf="@id/textViewForthTile"
-            android:textSize="@dimen/_10sdp"
-            android:textColor="#505a69"
-            android:fontFamily="@font/kalameh_bold"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:text="@string/wentTime"/>
+            app:layout_constraintStart_toEndOf="@id/linearLayoutForth"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/textViewWentTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/_10sdp"
+                android:textColor="#505a69"
+                android:fontFamily="@font/kalameh_bold"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:text="@string/wentTime"/>
+
+            <ImageView
+                android:layout_width="@dimen/_15sdp"
+                android:layout_height="@dimen/_15sdp"
+                android:layout_marginStart="@dimen/_2sdp"
+                android:src="@drawable/ic_up_arrow_ui_svgrepo_com"
+                android:contentDescription="@string/iconDescription" />
+
+
+        </LinearLayout>
 
 
         <TextView
@@ -52,7 +84,7 @@
             android:layout_marginStart="@dimen/_10sdp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/textViewWent"
-            app:layout_constraintTop_toBottomOf="@id/textViewWentTitle"
+            app:layout_constraintTop_toBottomOf="@id/linearLayoutWent"
             android:textSize="@dimen/_15sdp"
             android:textColor="@color/white"
             android:fontFamily="@font/kalameh_bold"
@@ -68,7 +100,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="@dimen/_10sdp"
             app:layout_constraintStart_toEndOf="@id/textViewForth"
-            app:layout_constraintTop_toBottomOf="@id/textViewWentTitle"
+            app:layout_constraintTop_toBottomOf="@id/linearLayoutWent"
             android:textSize="@dimen/_15sdp"
             android:textColor="@color/white"
             android:fontFamily="@font/kalameh_bold"
@@ -77,7 +109,7 @@
             android:text="08:30"/>
 
 
-        <com.zarholding.zar.view.SleepTimePicker
+        <com.zarholding.zar.view.WentTimePicker
             android:id="@+id/timePicker"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -88,12 +120,16 @@
             app:layout_constraintTop_toBottomOf="@id/textViewWent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:progressBackgroundColor="#FBFBFB"
+            app:progressBackgroundColor="#2B313C"
             app:progressBgStrokeWidth="@dimen/_20sdp"
-            app:progressColor="#505a69"
+            app:progressColor="#FBFBFB"
             app:progressStrokeWidth="@dimen/_20sdp"
-            app:sleepLayoutId="@layout/layout_picker_sleep"
-            app:wakeLayoutId="@layout/layout_picker_wake"/>
+            app:wentLayoutId="@layout/layout_time_picker_went"
+            app:forthLayoutId="@layout/layout_time_picker_forth"
+            app:strokeTopShadowRadius="@dimen/_5sdp"
+            app:strokeTopShadowColor="@color/white"
+            app:strokeBottomShadowRadius="@dimen/_5sdp"
+            app:strokeBottomShadowColor="@color/white"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonCancel"

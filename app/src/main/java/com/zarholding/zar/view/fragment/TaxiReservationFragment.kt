@@ -14,9 +14,9 @@ import com.zar.core.tools.loadings.LoadingManager
 import com.zar.core.tools.manager.ThemeManager
 import com.zarholding.zar.database.dao.UserInfoDao
 import com.zarholding.zar.utility.OsmManager
+import com.zarholding.zar.view.WentTimePicker
 import com.zarholding.zar.view.activity.MainActivity
-import com.zarholding.zar.view.dialog.TimeMultiDialog
-import com.zarholding.zar.view.dialog.TimeSingleDialog
+import com.zarholding.zar.view.dialog.TimeDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -46,6 +46,8 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
 
     @Inject
     lateinit var userInfoDao: UserInfoDao
+
+    var timePickMode = WentTimePicker.PickerMode.WENT_FORTH
 
 
     //---------------------------------------------------------------------------------------------- onCreateView
@@ -97,23 +99,36 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
         initApplicatorTextView()
         initOriginSpinner()
         initDestinationSpinner()
-        binding.buttonWentTime.setOnClickListener {
-            TimeSingleDialog(requireContext(), click = object : TimeSingleDialog.Click{
-                override fun clickYes(time : String) {
-                    binding.buttonWentTime.text = time
-                }
-            }).show()
-        }
-        binding.buttonForthTime.setOnClickListener {
-            TimeMultiDialog(requireContext(), click = object : TimeMultiDialog.Click{
-                override fun clickYes(timeWent : String, timeForth : String) {
-                    binding.buttonWentTime.text = timeWent
-                    binding.buttonForthTime.text = timeForth
-                }
-            }).show()
-        }
+        binding.textViewWent.setOnClickListener { selectWentService() }
+        binding.textViewWentAndForth.setOnClickListener { selectWentForthServices() }
+
+
+        binding.buttonWentTime.setOnClickListener { showTimePickerDialog()}
+        binding.buttonForthTime.setOnClickListener { showTimePickerDialog() }
     }
     //---------------------------------------------------------------------------------------------- initView
+
+
+    //---------------------------------------------------------------------------------------------- selectWentService
+    private fun selectWentService() {
+        binding.textViewWent.setBackgroundResource(R.drawable.drawable_trip_select_button)
+        binding.textViewWentAndForth.setBackgroundResource(R.drawable.drawable_trip_unselect_button)
+        binding.textViewForthTimeTitle.visibility = View.INVISIBLE
+        binding.buttonForthTime.visibility = View.INVISIBLE
+        timePickMode = WentTimePicker.PickerMode.WENT
+    }
+    //---------------------------------------------------------------------------------------------- selectWentService
+
+
+    //---------------------------------------------------------------------------------------------- selectWentForthServices
+    private fun selectWentForthServices() {
+        binding.textViewWentAndForth.setBackgroundResource(R.drawable.drawable_trip_select_button)
+        binding.textViewWent.setBackgroundResource(R.drawable.drawable_trip_unselect_button)
+        binding.textViewForthTimeTitle.visibility = View.VISIBLE
+        binding.buttonForthTime.visibility = View.VISIBLE
+        timePickMode = WentTimePicker.PickerMode.WENT_FORTH
+    }
+    //---------------------------------------------------------------------------------------------- selectWentForthServices
 
 
     //---------------------------------------------------------------------------------------------- initApplicatorTextView
@@ -126,6 +141,32 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
         }
     }
     //---------------------------------------------------------------------------------------------- initApplicatorTextView
+
+
+    //---------------------------------------------------------------------------------------------- showTimePickerDialog
+    private fun showTimePickerDialog(){
+/*        TimeMultiDialog2(
+            timePickMode,
+            object : TimeMultiDialog2.Click {
+                override fun clickYes(timeWent: String, timeForth: String) {
+                    binding.buttonWentTime.text = timeWent
+                    if (timePickMode == WentTimePicker.PickerMode.WENT_FORTH)
+                        binding.buttonForthTime.text = timeForth
+                }
+            }).show(childFragmentManager, "Alert Dialog")*/
+
+
+        TimeDialog(requireContext(),
+            timePickMode,
+            click = object : TimeDialog.Click {
+                override fun clickYes(timeWent: String, timeForth: String) {
+                    binding.buttonWentTime.text = timeWent
+                    if (timePickMode == WentTimePicker.PickerMode.WENT_FORTH)
+                        binding.buttonForthTime.text = timeForth
+                }
+            }).show()
+    }
+    //---------------------------------------------------------------------------------------------- showTimePickerDialog
 
 
     //---------------------------------------------------------------------------------------------- initOriginSpinner
@@ -157,7 +198,6 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
             }
     }
     //---------------------------------------------------------------------------------------------- initOriginSpinner
-
 
 
     //---------------------------------------------------------------------------------------------- initDestinationSpinner

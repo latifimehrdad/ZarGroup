@@ -23,12 +23,18 @@ import java.util.*
 import kotlin.math.*
 
 
-class SleepTimePicker @JvmOverloads constructor(
+class WentTimePicker @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : ViewGroup(context, attrs, defStyleAttr) {
 
     init {
         init(context, attrs)
+    }
+
+    enum class PickerMode {
+        WENT,
+        FORTH,
+        WENT_FORTH
     }
 
     private lateinit var progressPaint: Paint
@@ -42,9 +48,7 @@ class SleepTimePicker @JvmOverloads constructor(
     private var divisionLength = 0
     private var divisionWidth = 0
     private val hourLabels = listOf(12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
-
     private lateinit var circleBounds: RectF
-
     private var radius: Float = 0F
     private var center = Point(0, 0)
     private var progressBottomShadowSize = 0
@@ -52,17 +56,19 @@ class SleepTimePicker @JvmOverloads constructor(
     private var strokeBottomShadowColor = Color.TRANSPARENT
     private var strokeTopShadowColor = Color.TRANSPARENT
     private var labelColor = Color.WHITE
-    private lateinit var sleepLayout: View
-    private lateinit var wakeLayout: View
-    private var sleepAngle = 30.0
-    private var wakeAngle = 225.0
-    private var draggingSleep = false
-    private var draggingWake = false
+    private lateinit var wentLayout: View
+    private lateinit var forthLayout: View
+    private var wentAngle = 30.0
+    private var forthAngle = 225.0
+    private var draggingwent = false
+    private var draggingforth = false
     private val stepMinutes = 15
     private val textRect = Rect()
     private val calendar = Calendar.getInstance()
+    private var wentLayoutId = 0
+    private var forthLayoutId = 0
 
-    var listener: ((bedTime: LocalTime, wakeTime: LocalTime) -> Unit)? = null
+    var listener: ((bedTime: LocalTime, forthTime: LocalTime) -> Unit)? = null
 
     var progressColor: Int
         @ColorInt
@@ -80,13 +86,14 @@ class SleepTimePicker @JvmOverloads constructor(
             invalidate()
         }
 
-    fun getBedTime() = computeBedTime()
+    fun getWentTime() = computeWentTime()
 
-    fun getWakeTime() = computeWakeTime()
+    fun getForthTime() = computeForthTime()
 
-    fun setTime(bedTime: LocalTime, wakeTime: LocalTime) {
-        sleepAngle = Utils.minutesToAngle(bedTime.hour * 60 + bedTime.minute)
-        wakeAngle = Utils.minutesToAngle(wakeTime.hour * 60 + wakeTime.minute)
+    fun setTime(wentTime: LocalTime, forthTime: LocalTime, pickerMode: PickerMode) {
+        wentAngle = Utils.minutesToAngle(wentTime.hour * 60 + wentTime.minute)
+        forthAngle = Utils.minutesToAngle(forthTime.hour * 60 + forthTime.minute)
+        WentTimePicker.pickerMode = pickerMode
         invalidate()
         notifyChanges()
     }
@@ -107,29 +114,40 @@ class SleepTimePicker @JvmOverloads constructor(
         var progressStrokeWidth = dp2px(DEFAULT_STROKE_WIDTH_DP)
         var progressBgStrokeWidth = dp2px(DEFAULT_STROKE_WIDTH_DP)
         var progressStrokeCap: Paint.Cap = Paint.Cap.ROUND
-        var sleepLayoutId = 0
-        var wakeLayoutId = 0
 
         if (attrs != null) {
-            val a = context.obtainStyledAttributes(attrs, R.styleable.SleepTimePicker)
+            val a = context.obtainStyledAttributes(attrs, R.styleable.wentTimePicker)
 
-            sleepLayoutId = a.getResourceId(R.styleable.SleepTimePicker_sleepLayoutId, 0)
-            wakeLayoutId = a.getResourceId(R.styleable.SleepTimePicker_wakeLayoutId, 0)
+            wentLayoutId = a.getResourceId(R.styleable.wentTimePicker_wentLayoutId, 0)
+            forthLayoutId = a.getResourceId(R.styleable.wentTimePicker_forthLayoutId, 0)
 
-            progressColor = a.getColor(R.styleable.SleepTimePicker_progressColor, progressColor)
+            progressColor = a.getColor(R.styleable.wentTimePicker_progressColor, progressColor)
             progressBackgroundColor =
-                a.getColor(R.styleable.SleepTimePicker_progressBackgroundColor, progressBackgroundColor)
-            divisionColor = a.getColor(R.styleable.SleepTimePicker_divisionColor, divisionColor)
+                a.getColor(
+                    R.styleable.wentTimePicker_progressBackgroundColor,
+                    progressBackgroundColor
+                )
+            divisionColor = a.getColor(R.styleable.wentTimePicker_divisionColor, divisionColor)
             progressStrokeWidth =
-                a.getDimensionPixelSize(R.styleable.SleepTimePicker_progressStrokeWidth, progressStrokeWidth)
-            progressBottomShadowSize = a.getDimensionPixelSize(R.styleable.SleepTimePicker_strokeBottomShadowRadius, 0)
-            progressTopShadowSize = a.getDimensionPixelSize(R.styleable.SleepTimePicker_strokeTopShadowRadius, 0)
+                a.getDimensionPixelSize(
+                    R.styleable.wentTimePicker_progressStrokeWidth,
+                    progressStrokeWidth
+                )
+            progressBottomShadowSize =
+                a.getDimensionPixelSize(R.styleable.wentTimePicker_strokeBottomShadowRadius, 0)
+            progressTopShadowSize =
+                a.getDimensionPixelSize(R.styleable.wentTimePicker_strokeTopShadowRadius, 0)
             progressBgStrokeWidth =
-                a.getDimensionPixelSize(R.styleable.SleepTimePicker_progressBgStrokeWidth, progressStrokeWidth)
-            strokeBottomShadowColor = a.getColor(R.styleable.SleepTimePicker_strokeBottomShadowColor, progressColor)
-            strokeTopShadowColor = a.getColor(R.styleable.SleepTimePicker_strokeTopShadowColor, progressColor)
-            labelColor = a.getColor(R.styleable.SleepTimePicker_labelColor, progressColor)
-            labelColor = a.getColor(R.styleable.SleepTimePicker_labelColor, progressColor)
+                a.getDimensionPixelSize(
+                    R.styleable.wentTimePicker_progressBgStrokeWidth,
+                    progressStrokeWidth
+                )
+            strokeBottomShadowColor =
+                a.getColor(R.styleable.wentTimePicker_strokeBottomShadowColor, progressColor)
+            strokeTopShadowColor =
+                a.getColor(R.styleable.wentTimePicker_strokeTopShadowColor, progressColor)
+            labelColor = a.getColor(R.styleable.wentTimePicker_labelColor, progressColor)
+            labelColor = a.getColor(R.styleable.wentTimePicker_labelColor, progressColor)
 
             progressStrokeCap = Paint.Cap.ROUND
 
@@ -152,22 +170,27 @@ class SleepTimePicker @JvmOverloads constructor(
         if (progressTopShadowSize > 0) {
             progressTopBlurPaint = Paint()
             progressTopBlurPaint!!.strokeCap = Paint.Cap.ROUND
-            progressTopBlurPaint!!.strokeWidth = BLUR_STROKE_RATIO * (progressTopShadowSize + progressStrokeWidth)
+            progressTopBlurPaint!!.strokeWidth =
+                BLUR_STROKE_RATIO * (progressTopShadowSize + progressStrokeWidth)
             progressTopBlurPaint!!.style = Paint.Style.STROKE
             progressTopBlurPaint!!.isAntiAlias = true
             val topBlurRadius = BLUR_RADIUS_RATIO * (progressTopShadowSize + progressBgStrokeWidth)
-            progressTopBlurPaint!!.maskFilter = BlurMaskFilter(topBlurRadius, BlurMaskFilter.Blur.NORMAL)
+            progressTopBlurPaint!!.maskFilter =
+                BlurMaskFilter(topBlurRadius, BlurMaskFilter.Blur.NORMAL)
             progressTopBlurPaint!!.color = strokeTopShadowColor
         }
 
         if (progressBottomShadowSize > 0) {
             progressBottomBlurPaint = Paint(0)
             progressBottomBlurPaint!!.strokeCap = Paint.Cap.ROUND
-            progressBottomBlurPaint!!.strokeWidth = BLUR_STROKE_RATIO * (progressBottomShadowSize + progressStrokeWidth)
+            progressBottomBlurPaint!!.strokeWidth =
+                BLUR_STROKE_RATIO * (progressBottomShadowSize + progressStrokeWidth)
             progressBottomBlurPaint!!.style = Paint.Style.STROKE
             progressBottomBlurPaint!!.isAntiAlias = true
-            val bottomBlurRadius = BLUR_RADIUS_RATIO * (progressBottomShadowSize + progressBgStrokeWidth)
-            progressBottomBlurPaint!!.maskFilter = BlurMaskFilter(bottomBlurRadius, BlurMaskFilter.Blur.NORMAL)
+            val bottomBlurRadius =
+                BLUR_RADIUS_RATIO * (progressBottomShadowSize + progressBgStrokeWidth)
+            progressBottomBlurPaint!!.maskFilter =
+                BlurMaskFilter(bottomBlurRadius, BlurMaskFilter.Blur.NORMAL)
             progressBottomBlurPaint!!.color = strokeBottomShadowColor
         }
 
@@ -186,10 +209,18 @@ class SleepTimePicker @JvmOverloads constructor(
         textPaint.color = labelColor
 
         val inflater = LayoutInflater.from(context)
-        sleepLayout = inflater.inflate(sleepLayoutId, this, false)
-        wakeLayout = inflater.inflate(wakeLayoutId, this, false)
-        addView(sleepLayout)
-        addView(wakeLayout)
+        wentLayout = inflater.inflate(wentLayoutId, this, false)
+        forthLayout = inflater.inflate(forthLayoutId, this, false)
+
+        when(pickerMode) {
+            PickerMode.WENT -> addView(wentLayout)
+            PickerMode.FORTH -> addView(forthLayout)
+            PickerMode.WENT_FORTH -> {
+                addView(wentLayout)
+                addView(forthLayout)
+            }
+        }
+
         circleBounds = RectF()
 
         setLayerType(View.LAYER_TYPE_SOFTWARE, null);
@@ -213,18 +244,24 @@ class SleepTimePicker @JvmOverloads constructor(
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        layoutView(sleepLayout, sleepAngle)
-        layoutView(wakeLayout, wakeAngle)
+        when(pickerMode) {
+            WentTimePicker.PickerMode.WENT -> layoutView(wentLayout, wentAngle)
+            WentTimePicker.PickerMode.FORTH -> layoutView(forthLayout, forthAngle)
+            WentTimePicker.PickerMode.WENT_FORTH -> {
+                layoutView(wentLayout, wentAngle)
+                layoutView(forthLayout, forthAngle)
+            }
+        }
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
         if (ev.action == MotionEvent.ACTION_DOWN) {
-            if (isTouchOnView(sleepLayout, ev)) {
-                draggingSleep = true
+            if (isTouchOnView(wentLayout, ev)) {
+                draggingwent = true
                 return true
             }
-            if (isTouchOnView(wakeLayout, ev)) {
-                draggingWake = true
+            if (isTouchOnView(forthLayout, ev)) {
+                draggingforth = true
                 return true
             }
         }
@@ -242,52 +279,52 @@ class SleepTimePicker @JvmOverloads constructor(
             }
             MotionEvent.ACTION_MOVE -> {
                 val touchAngleRad = atan2(center.y - y, x - center.x).toDouble()
-                if (draggingSleep) {
-                    val sleepAngleRad = Math.toRadians(sleepAngle)
-                    val diff = Math.toDegrees(angleBetweenVectors(sleepAngleRad, touchAngleRad))
-                    sleepAngle = to_0_720(sleepAngle + diff)
+                if (draggingwent) {
+                    val wentAngleRad = Math.toRadians(wentAngle)
+                    val diff = Math.toDegrees(angleBetweenVectors(wentAngleRad, touchAngleRad))
+                    wentAngle = to_0_720(wentAngle + diff)
                     requestLayout()
                     notifyChanges()
                     return true
-                } else if (draggingWake) {
-                    val wakeAngleRad = Math.toRadians(wakeAngle)
-                    val diff = Math.toDegrees(angleBetweenVectors(wakeAngleRad, touchAngleRad))
-                    wakeAngle = to_0_720(wakeAngle + diff)
+                } else if (draggingforth) {
+                    val forthAngleRad = Math.toRadians(forthAngle)
+                    val diff = Math.toDegrees(angleBetweenVectors(forthAngleRad, touchAngleRad))
+                    forthAngle = to_0_720(forthAngle + diff)
                     requestLayout()
                     notifyChanges()
                     return true
                 }
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                draggingSleep = false
-                draggingWake = false
+                draggingwent = false
+                draggingforth = false
             }
         }
         return super.onTouchEvent(ev)
     }
 
     override fun onDraw(canvas: Canvas) {
-        Timber.d("onDraw sleepAngle=$sleepAngle\nwakeAngle=$wakeAngle")
+        Timber.d("onDraw wentAngle=$wentAngle\nforthAngle=$forthAngle")
         drawProgressBackground(canvas)
         drawProgress(canvas)
         drawDivisions(canvas)
     }
 
     private fun notifyChanges() {
-        val computeBedTime = computeBedTime()
-        val computeWakeTime = computeWakeTime()
-        Timber.d("notifyChanges \n$computeBedTime \n$computeWakeTime")
-        listener?.invoke(computeBedTime, computeWakeTime)
+        val computeBedTime = computeWentTime()
+        val computeForthTime = computeForthTime()
+        Timber.d("notifyChanges \n$computeBedTime \n$computeForthTime")
+        listener?.invoke(computeBedTime, computeForthTime)
     }
 
-    private fun computeBedTime(): LocalTime {
-        val bedMins = snapMinutes(angleToMins(sleepAngle), stepMinutes)
-        return LocalTime.of((bedMins / 60) % 24, bedMins % 60)
+    private fun computeWentTime(): LocalTime {
+        val wentMin = snapMinutes(angleToMins(wentAngle), stepMinutes)
+        return LocalTime.of((wentMin / 60) % 24, wentMin % 60)
     }
 
-    private fun computeWakeTime(): LocalTime {
-        val wakeMins = snapMinutes(angleToMins(wakeAngle), stepMinutes)
-        return LocalTime.of((wakeMins / 60) % 24, wakeMins % 60)
+    private fun computeForthTime(): LocalTime {
+        val forthMin = snapMinutes(angleToMins(forthAngle), stepMinutes)
+        return LocalTime.of((forthMin / 60) % 24, forthMin % 60)
     }
 
     private fun layoutView(view: View, angle: Double) {
@@ -299,7 +336,7 @@ class SleepTimePicker @JvmOverloads constructor(
         val parentCenterY = height / 2
         val centerX = (parentCenterX + radius * cos(Math.toRadians(angle))).toInt()
         val centerY = (parentCenterY - radius * sin(Math.toRadians(angle))).toInt()
-        Timber.d("layoutWakeView radius= $radius $parentCenterX $parentCenterY $centerX $centerY")
+        Timber.d("layoutforthView radius= $radius $parentCenterX $parentCenterY $centerX $centerY")
         view.layout(
             (centerX - halfWidth),
             centerY - halfHeight,
@@ -309,8 +346,11 @@ class SleepTimePicker @JvmOverloads constructor(
     }
 
     private fun calculateBounds(w: Int, h: Int) {
-        val maxChildWidth = max(sleepLayout.measuredWidth, wakeLayout.measuredWidth)
-        val maxChildHeight = max(sleepLayout.measuredHeight, wakeLayout.measuredHeight)
+
+        val maxChildWidth = max(wentLayout.measuredWidth, forthLayout.measuredWidth)
+        val maxChildHeight = max(wentLayout.measuredHeight, forthLayout.measuredHeight)
+
+
         val maxChildSize = max(maxChildWidth, maxChildHeight)
         val offset = abs(progressBackgroundPaint.strokeWidth / 2 - maxChildSize / 2)
         val width = w - paddingStart - paddingEnd - maxChildSize - offset
@@ -341,15 +381,17 @@ class SleepTimePicker @JvmOverloads constructor(
     }
 
     private fun drawProgress(canvas: Canvas) {
-        val startAngle = -sleepAngle.toFloat()
-        val sweep = Utils.to_0_360(sleepAngle - wakeAngle).toFloat()
-        progressBottomBlurPaint?.let {
-            canvas.drawArc(circleBounds, startAngle, sweep, false, it)
+        if (pickerMode == PickerMode.WENT_FORTH) {
+            val startAngle = -wentAngle.toFloat()
+            val sweep = Utils.to_0_360(wentAngle - forthAngle).toFloat()
+            progressBottomBlurPaint?.let {
+                canvas.drawArc(circleBounds, startAngle, sweep, false, it)
+            }
+            progressTopBlurPaint?.let {
+                canvas.drawArc(circleBounds, startAngle, sweep, false, it)
+            }
+            canvas.drawArc(circleBounds, startAngle, sweep, false, progressPaint)
         }
-        progressTopBlurPaint?.let {
-            canvas.drawArc(circleBounds, startAngle, sweep, false, it)
-        }
-        canvas.drawArc(circleBounds, startAngle, sweep, false, progressPaint)
     }
 
     private fun drawDivisions(canvas: Canvas) {
@@ -360,15 +402,31 @@ class SleepTimePicker @JvmOverloads constructor(
             val radians = Math.toRadians(angle.toDouble())
             val bgStrokeWidth = progressBackgroundPaint.strokeWidth
             val startX = center.x + (radius - bgStrokeWidth / 2 - divisionOffset) * cos(radians)
-            val endX = center.x + (radius - bgStrokeWidth / 2 - divisionOffset - divisionLength) * cos(radians)
+            val endX =
+                center.x + (radius - bgStrokeWidth / 2 - divisionOffset - divisionLength) * cos(
+                    radians
+                )
             val startY = center.y + (radius - bgStrokeWidth / 2 - divisionOffset) * sin(radians)
-            val endY = center.y + (radius - bgStrokeWidth / 2 - divisionOffset - divisionLength) * sin(radians)
-            canvas.drawLine(startX.toFloat(), startY.toFloat(), endX.toFloat(), endY.toFloat(), divisionPaint)
+            val endY =
+                center.y + (radius - bgStrokeWidth / 2 - divisionOffset - divisionLength) * sin(
+                    radians
+                )
+            canvas.drawLine(
+                startX.toFloat(),
+                startY.toFloat(),
+                endX.toFloat(),
+                endY.toFloat(),
+                divisionPaint
+            )
 
+            val customTypeface = resources.getFont(R.font.kalameh_medium)
             val tmp = value.toString()
             textPaint.getTextBounds(tmp, 0, tmp.length, textRect)
-            val x = center.x + (radius - bgStrokeWidth / 2 - labelOffset) * cos(radians) - textRect.width() / 2
-            val y = (center.y + (radius - bgStrokeWidth / 2 - labelOffset) * sin(radians) + textRect.height() / 2)
+            textPaint.typeface = customTypeface
+            val x =
+                center.x + (radius - bgStrokeWidth / 2 - labelOffset) * cos(radians) - textRect.width() / 2
+            val y =
+                (center.y + (radius - bgStrokeWidth / 2 - labelOffset) * sin(radians) + textRect.height() / 2)
             canvas.drawText(tmp, x.toFloat(), y.toFloat(), textPaint)
         }
     }
@@ -379,7 +437,7 @@ class SleepTimePicker @JvmOverloads constructor(
     }
 
     companion object {
-
+        var pickerMode = PickerMode.WENT_FORTH
         private const val ANGLE_START_PROGRESS_BACKGROUND = 0
         private const val ANGLE_END_PROGRESS_BACKGROUND = 360
         private const val DEFAULT_STROKE_WIDTH_DP = 8F
