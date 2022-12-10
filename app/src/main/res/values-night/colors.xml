@@ -88,6 +88,8 @@
     <color name="rejectGradiantStartColor">#ff3636</color>
     <color name="rejectGradiantEndColor">#c80101</color>
 
+    <color name="layoutHintColor">#3C4868</color>
+
     <color name="mapLoadingBack">#80FFFFFF</color>
     <color name="positive">#02C076</color>
     <color name="negative">#F84960</color>

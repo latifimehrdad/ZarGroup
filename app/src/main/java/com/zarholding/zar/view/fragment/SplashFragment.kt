@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import com.zar.core.enums.EnumAuthorizationType
 import com.zar.core.enums.EnumErrorType
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zarholding.zar.database.dao.ArticleDao
@@ -98,6 +99,24 @@ class SplashFragment : Fragment(), RemoteErrorEmitter {
         binding.frameLayoutLogo.visibility = View.GONE
     }
     //---------------------------------------------------------------------------------------------- onError
+
+
+
+    //---------------------------------------------------------------------------------------------- unAuthorization
+    override fun unAuthorization(type: EnumAuthorizationType, message: String) {
+        CoroutineScope(IO).launch {
+            sharedPreferences
+                .edit()
+                .putString(CompanionValues.TOKEN, null)
+                .putString(CompanionValues.userName, null)
+                .putString(CompanionValues.passcode, null)
+                .apply()
+            userInfoDao.deleteAllRole()
+            gotoFragmentLogin()
+        }
+    }
+    //---------------------------------------------------------------------------------------------- unAuthorization
+
 
 
     //---------------------------------------------------------------------------------------------- checkUserIsLogged

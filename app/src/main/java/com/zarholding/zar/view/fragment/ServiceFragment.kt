@@ -9,7 +9,6 @@ import android.util.Size
 import android.view.*
 import android.widget.ImageView
 import android.widget.Spinner
-import android.widget.TextView
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
@@ -36,6 +35,7 @@ import com.zarholding.zar.view.dialog.ShowImageDialog
 import com.zarholding.zar.view.recycler.adapter.MyServiceAdapter
 import com.zarholding.zar.view.recycler.adapter.ServiceAdapter
 import com.zarholding.zar.view.adapter.SpinnerStringAdapter
+import com.zarholding.zar.view.dialog.ConfirmDialog
 import com.zarholding.zar.view.recycler.holder.MyServiceHolder
 import com.zarholding.zar.view.recycler.holder.ServiceHolder
 import com.zarholding.zar.viewmodel.TokenViewModel
@@ -282,13 +282,39 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
             imageClose.setOnClickListener { dialog.dismiss() }
             val buttonRegister = dialog.findViewById<MaterialButton>(R.id.buttonRegister)
             buttonRegister.setOnClickListener {
-                requestRegisterStation(item.id, item.stations[spinner.selectedItemPosition].id)
+                showDialogConfirmRegisterStation(
+                    item.commuteTripName,
+                    item.stations[spinner.selectedItemPosition].stationName,
+                    item.id,
+                    item.stations[spinner.selectedItemPosition].id)
                 dialog.dismiss()
             }
             dialog.show()
         }
     }
     //---------------------------------------------------------------------------------------------- showDialogRegisterStation
+
+
+    //---------------------------------------------------------------------------------------------- showDialogConfirmRegisterStation
+    private fun showDialogConfirmRegisterStation(
+        tripName: String?,
+        stationName: String?,
+        tripId: Int,
+        stationId: Int) {
+        val click = object : ConfirmDialog.Click {
+            override fun clickYes() {
+                requestRegisterStation(tripId, stationId)
+            }
+        }
+        ConfirmDialog(
+            requireContext(),
+            ConfirmDialog.ConfirmType.ADD,
+            getString(R.string.confirmForRegisterStation, stationName, tripName),
+            click
+        ).show()
+    }
+    //---------------------------------------------------------------------------------------------- showDialogConfirmRegisterStation
+
 
 
     //---------------------------------------------------------------------------------------------- requestRegisterStation
@@ -310,24 +336,17 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- showDialogDeleteRegisterStation
     private fun showDialogDeleteRegisterStation(item: TripModel) {
-        val dialog = DialogManager().createDialogHeightWrapContent(
-            requireContext(),
-            R.layout.dialog_confirmation,
-            Gravity.BOTTOM,
-            150
-        )
-        val textViewTitle = dialog.findViewById<TextView>(R.id.textViewTitle)
-        textViewTitle.text = resources.getString(R.string.confirmForDelete, item.myStationName)
-        val imageClose = dialog.findViewById<ImageView>(R.id.imageViewClose)
-        imageClose.setOnClickListener { dialog.dismiss() }
-        val buttonYes = dialog.findViewById<MaterialButton>(R.id.buttonYes)
-        buttonYes.setOnClickListener {
-            requestDeleteRegisterStation(item.myStationTripId)
-            dialog.dismiss()
+        val click = object : ConfirmDialog.Click {
+            override fun clickYes() {
+                requestDeleteRegisterStation(item.myStationTripId)
+            }
         }
-        val buttonNo = dialog.findViewById<MaterialButton>(R.id.buttonNo)
-        buttonNo.setOnClickListener { dialog.dismiss() }
-        dialog.show()
+        ConfirmDialog(
+            requireContext(),
+            ConfirmDialog.ConfirmType.DELETE,
+            getString(R.string.confirmForDelete, item.myStationName),
+            click
+        ).show()
     }
     //---------------------------------------------------------------------------------------------- showDialogDeleteRegisterStation
 

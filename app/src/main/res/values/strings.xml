@@ -66,6 +66,7 @@
     <string name="dateDot">تاریخ :</string>
     <string name="date">تاریخ</string>
     <string name="yes">بله</string>
+    <string name="confirm">تایید</string>
     <string name="wentTimeDot">ساعت حرکت :</string>
     <string name="wentTime">ساعت حرکت</string>
     <string name="forthTime">ساعت برگشت</string>
@@ -79,13 +80,20 @@
     <string name="rejectChecked">عدم تایید نشان شده ها</string>
     <string name="reTry">تلاش دوباره</string>
     <string name="chooseFromList">انتخاب از لیست</string>
+    <string name="passengers">مسافران</string>
+    <string name="passengersDot">مسافران :</string>
+    <string name="sendInformation">ارسال اطلاعات</string>
+    <string name="reasonOfTrip">علت سفر</string>
+    <string name="reasonOfTripDot">علت سفر :</string>
 
     <string name="requester">درخواست کننده : %1$s</string>
     <string name="setTripNameDriverStation">%1$s - %2$s - %3$s</string>
     <string name="personalCode">کد پرسنلی : %1$s</string>
     <string name="attendanceTime">ساعت حضور : %1$s</string>
     <string name="myStation">ایستگاه من : %1$s</string>
+    <string name="confirmForTripRequestRegister">آیا برای تایید درخواست رزرو سرویس های انتخابی مطمئن هستید؟</string>
     <string name="confirmForDelete">آیا برای حذف %1$s مطمئن هستید؟</string>
+    <string name="confirmForRegisterStation">آیا برای رزرو %1$s در سرویس %2$s مطمئن هستید؟</string>
 
     <string name="carEntityType">cars</string>
     <string name="driversEntityType">drivers</string>

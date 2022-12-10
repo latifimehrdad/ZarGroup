@@ -196,30 +196,27 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
     override fun unAuthorization(type: EnumAuthorizationType, message: String) {
         remoteErrorEmitter.unAuthorization(type, message)
         when (type) {
-            EnumAuthorizationType.UnAuthorization -> unAuthorization()
+            EnumAuthorizationType.UnAuthorization -> {
+                remoteErrorEmitter.unAuthorization(type, message)
+            }
             EnumAuthorizationType.UnAccess -> unAccess(message)
         }
     }
     //---------------------------------------------------------------------------------------------- unAuthorization
 
 
+
     //---------------------------------------------------------------------------------------------- unAuthorization
-    private fun unAuthorization() {
-        CoroutineScope(IO).launch {
-            sharedPreferences
-                .edit()
-                .putString(CompanionValues.TOKEN, null)
-                .putString(CompanionValues.userName, null)
-                .putString(CompanionValues.passcode, null)
-                .apply()
-            userInfoDao.deleteAllRole()
-            delay(500)
-            withContext(Main) {
-                gotoFragment(R.id.action_goto_SplashFragment)
-            }
-        }
+    private fun unAuthorization(message: String) {
+        val snack = Snackbar.make(binding.constraintLayoutParent, message, 5 * 1000)
+        snack.setBackgroundTint(resources.getColor(R.color.primaryColor, theme))
+        snack.setTextColor(resources.getColor(R.color.textViewColor3, theme))
+        snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
+        snack.setActionTextColor(resources.getColor(R.color.textViewColor1, theme))
+        snack.show()
     }
     //---------------------------------------------------------------------------------------------- unAuthorization
+
 
 
     //---------------------------------------------------------------------------------------------- unAccess

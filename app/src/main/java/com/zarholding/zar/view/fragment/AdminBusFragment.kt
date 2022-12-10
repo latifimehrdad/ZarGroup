@@ -15,6 +15,7 @@ import com.zarholding.zar.model.enum.EnumTripStatus
 import com.zarholding.zar.model.request.TripRequestRegisterStatusModel
 import com.zarholding.zar.model.response.trip.TripRequestRegisterModel
 import com.zarholding.zar.view.activity.MainActivity
+import com.zarholding.zar.view.dialog.ConfirmDialog
 import com.zarholding.zar.view.dialog.RejectReasonDialog
 import com.zarholding.zar.view.recycler.adapter.AdminBusAdapter
 import com.zarholding.zar.view.recycler.holder.AdminBusItemHolder
@@ -75,7 +76,7 @@ class AdminBusFragment : Fragment(), RemoteErrorEmitter {
     private fun setOnListener() {
 
         binding.linearLayoutConfirm.setOnClickListener {
-            requestConfirmAndRejectTripRequestRegister(EnumTripStatus.Done, null)
+            showDialogConfirm()
         }
 
         binding.linearLayoutReject.setOnClickListener {
@@ -161,6 +162,25 @@ class AdminBusFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- showDialogReasonOfReject
 
 
+
+    //---------------------------------------------------------------------------------------------- showDialogConfirm
+    private fun showDialogConfirm() {
+        val click = object : ConfirmDialog.Click {
+            override fun clickYes() {
+                requestConfirmAndRejectTripRequestRegister(EnumTripStatus.Done, null)
+            }
+        }
+        ConfirmDialog(
+            requireContext(),
+            ConfirmDialog.ConfirmType.ADD,
+            getString(R.string.confirmForTripRequestRegister),
+            click).show()
+    }
+    //---------------------------------------------------------------------------------------------- showDialogConfirm
+
+
+
+
     //---------------------------------------------------------------------------------------------- requestConfirmAndRejectTripRequestRegister
     private fun requestConfirmAndRejectTripRequestRegister(status: EnumTripStatus, reason: String?) {
         val chosen = adapter.getItems().filterList { choose }
@@ -193,6 +213,7 @@ class AdminBusFragment : Fragment(), RemoteErrorEmitter {
             }
     }
     //---------------------------------------------------------------------------------------------- requestConfirmAndRejectTripRequestRegister
+
 
 
     //---------------------------------------------------------------------------------------------- onDestroyView

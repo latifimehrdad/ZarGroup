@@ -116,14 +116,8 @@ class TimeDialog(
     //---------------------------------------------------------------------------------------------- initDialog
 
 
-    override fun dismiss() {
-        super.dismiss()
-        timePicker.setTime(
-            LocalTime.of(8, 0),
-            LocalTime.of(17, 0),
-            WentTimePicker.PickerMode.WENT_FORTH)
-    }
 
+    //---------------------------------------------------------------------------------------------- handleUpdate
     private fun handleUpdate(wentTime: LocalTime, forthTime: LocalTime) {
         val formatter = DateTimeFormatter.ofPattern("h:mm a", Locale.US)
         textViewForth.text = forthTime.format(formatter)
@@ -139,5 +133,20 @@ class TimeDialog(
         tvMins.text = minutes.toString()
         if (minutes > 0) llMins.visibility = View.VISIBLE else llMins.visibility = View.GONE*/
     }
+    //---------------------------------------------------------------------------------------------- handleUpdate
+
+
+
+    //---------------------------------------------------------------------------------------------- dismiss
+    override fun dismiss() {
+        super.dismiss()
+        timePicker.setTime(
+            LocalTime.of(8, 0),
+            LocalTime.of(17, 0),
+            WentTimePicker.PickerMode.WENT_FORTH)
+    }
+    //---------------------------------------------------------------------------------------------- dismiss
+
+
 
 }

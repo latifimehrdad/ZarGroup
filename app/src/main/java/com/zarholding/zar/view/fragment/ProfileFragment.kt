@@ -90,7 +90,11 @@ class ProfileFragment : Fragment(), RemoteErrorEmitter {
             }
 
         }
-        ConfirmDialog(requireContext(), "آیا برای خروج مطمئن هستید؟", click).show()
+        ConfirmDialog(
+            requireContext(),
+            ConfirmDialog.ConfirmType.DELETE,
+            "آیا برای خروج مطمئن هستید؟",
+            click).show()
 
     }
     //---------------------------------------------------------------------------------------------- logOut

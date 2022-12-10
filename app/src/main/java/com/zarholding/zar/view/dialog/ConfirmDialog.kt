@@ -8,13 +8,23 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.WindowManager
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.material.button.MaterialButton
 import zar.R
 
 class ConfirmDialog(
     context: Context,
+    private val type: ConfirmType,
     private val title : String,
     private val click: Click) : Dialog(context){
+
+
+    //---------------------------------------------------------------------------------------------- ConfirmType
+    enum class ConfirmType {
+        ADD,
+        DELETE
+    }
+    //---------------------------------------------------------------------------------------------- ConfirmType
 
 
     //---------------------------------------------------------------------------------------------- Click
@@ -50,9 +60,15 @@ class ConfirmDialog(
 
     //---------------------------------------------------------------------------------------------- initDialog
     private fun initDialog() {
+        val layoutHeader = this.findViewById<ConstraintLayout>(R.id.constraintLayoutHeader)
         val textViewTitle = this.findViewById<TextView>(R.id.textViewTitle)
         val buttonYes = this.findViewById<MaterialButton>(R.id.buttonYes)
         val buttonNo = this.findViewById<MaterialButton>(R.id.buttonNo)
+
+        when(type) {
+            ConfirmType.ADD -> layoutHeader.setBackgroundResource(R.drawable.drawable_confirm)
+            ConfirmType.DELETE -> layoutHeader.setBackgroundResource(R.drawable.drawable_reject)
+        }
 
         textViewTitle.text = title
 

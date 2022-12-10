@@ -2,7 +2,10 @@ package com.zarholding.zar.view.fragment
 
 import android.os.Bundle
 import android.view.*
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.skydoves.powerspinner.IconSpinnerAdapter
@@ -10,13 +13,17 @@ import com.skydoves.powerspinner.IconSpinnerItem
 import com.zar.core.enums.EnumAuthorizationType
 import com.zar.core.enums.EnumErrorType
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
-import com.zar.core.tools.loadings.LoadingManager
 import com.zar.core.tools.manager.ThemeManager
 import com.zarholding.zar.database.dao.UserInfoDao
+import com.zarholding.zar.model.other.AppModel
 import com.zarholding.zar.utility.OsmManager
 import com.zarholding.zar.view.WentTimePicker
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.view.dialog.TimeDialog
+import com.zarholding.zar.view.recycler.adapter.DashboardAppAdapter
+import com.zarholding.zar.view.recycler.adapter.PassengerAdapter
+import com.zarholding.zar.view.recycler.holder.DashboardItemHolder
+import com.zarholding.zar.view.recycler.holder.PassengerItemHolder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -38,8 +45,8 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
     private var _binding: FragmentTaxiBinding? = null
     private val binding get() = _binding!!
 
-    private val loadingManager = LoadingManager()
     private lateinit var osmManager: OsmManager
+    private lateinit var adapter : PassengerAdapter
 
     @Inject
     lateinit var themeManagers: ThemeManager
@@ -81,32 +88,46 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
         snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
         snack.setActionTextColor(resources.getColor(R.color.textViewColor1, requireContext().theme))
         snack.show()
-        loadingManager.stopLoadingRecycler()
     }
     //---------------------------------------------------------------------------------------------- onError
 
 
     //---------------------------------------------------------------------------------------------- unAuthorization
     override fun unAuthorization(type: EnumAuthorizationType, message: String) {
-        loadingManager.stopLoadingRecycler()
+
     }
     //---------------------------------------------------------------------------------------------- unAuthorization
 
 
+
     //---------------------------------------------------------------------------------------------- initView
     private fun initView() {
-
         initApplicatorTextView()
         initOriginSpinner()
         initDestinationSpinner()
         binding.textViewWent.setOnClickListener { selectWentService() }
         binding.textViewWentAndForth.setOnClickListener { selectWentForthServices() }
-
-
         binding.buttonWentTime.setOnClickListener { showTimePickerDialog()}
         binding.buttonForthTime.setOnClickListener { showTimePickerDialog() }
+        selectWentService()
+        backClickControl()
+        setPassengersAdapter()
     }
     //---------------------------------------------------------------------------------------------- initView
+
+
+
+    //---------------------------------------------------------------------------------------------- backClickControl
+    private fun backClickControl() {
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+
+                }
+            })
+    }
+    //---------------------------------------------------------------------------------------------- backClickControl
+
 
 
     //---------------------------------------------------------------------------------------------- selectWentService
@@ -229,6 +250,51 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
             }
     }
     //---------------------------------------------------------------------------------------------- initDestinationSpinner
+
+
+
+    //---------------------------------------------------------------------------------------------- setPassengersAdapter
+    private fun setPassengersAdapter() {
+        val apps: MutableList<AppModel> = mutableListOf()
+
+
+
+        apps.add(AppModel(R.drawable.icon_personnel, "مهرداد لطیفی 1 محمد لطیفی", 0))
+        apps.add(AppModel(R.drawable.icon_personnel, "علی سلیمانی", 0))
+        apps.add(AppModel(R.drawable.icon_personnel, "حامد آزاد", 0))
+        apps.add(AppModel(R.drawable.icon_personnel, "امیر رادمان نژاد", 0))
+        apps.add(AppModel(R.drawable.icon_personnel, "محمد امین قنبری", 0))
+        apps.add(AppModel(R.drawable.icon_personnel, "سعید اصغری", 0))
+
+
+        val click = object : PassengerItemHolder.Click {
+            override fun appClick(action: Int) {
+                apps.add(AppModel(R.drawable.icon_personnel, "مهسا داننده", 0))
+                adapter.notifyDataSetChanged()
+
+            }
+        }
+        adapter = PassengerAdapter(apps, click)
+        val gridLayoutManager = GridLayoutManager(
+            requireContext(),
+            2,
+            GridLayoutManager.VERTICAL,
+            false
+        )
+        gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup(){
+            override fun getSpanSize(position: Int): Int {
+                return if (position == apps.size-1)
+                    2
+                else
+                    1
+            }
+        }
+        binding.recyclerViewPassengers.layoutManager = gridLayoutManager
+        binding.recyclerViewPassengers.layoutDirection = View.LAYOUT_DIRECTION_RTL
+        binding.recyclerViewPassengers.adapter = adapter
+    }
+    //---------------------------------------------------------------------------------------------- setPassengersAdapter
+
 
 
     //---------------------------------------------------------------------------------------------- onDestroyView

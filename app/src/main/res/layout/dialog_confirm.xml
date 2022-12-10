@@ -1,24 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
-    
-    <data>
-        
-        <variable
-            name="title"
-            type="String" />
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:maxHeight="@dimen/_200sdp"
+    app:cardCornerRadius="@dimen/_10sdp"
+    android:layout_marginHorizontal="@dimen/_10sdp">
 
-        <variable
-            name="icon"
-            type="Integer" />
-    </data>
-
-    <androidx.cardview.widget.CardView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:maxHeight="@dimen/_200sdp"
-        app:cardCornerRadius="@dimen/_10sdp"
-        android:layout_marginHorizontal="@dimen/_10sdp">
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayoutHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@drawable/drawable_confirm">
+
+            <ImageView
+                android:id="@+id/imageViewClose"
+                android:layout_width="@dimen/_17sdp"
+                android:layout_height="@dimen/_17sdp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:src="@drawable/ic_close"
+                android:layout_marginVertical="@dimen/_5sdp"
+                android:layout_marginHorizontal="@dimen/_5sdp"
+                android:scaleType="fitEnd"
+                app:tint="@color/textViewColor1"
+                android:contentDescription="@string/closeDescription"
+                />
+
+            <TextView
+                android:id="@+id/textViewTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/imageViewClose"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginVertical="@dimen/_7sdp"
+                android:layout_marginHorizontal="@dimen/_5sdp"
+                android:textColor="@color/textViewColor1"
+                android:textSize="@dimen/_11sdp"
+                android:fontFamily="@font/kalameh_regular"
+                android:textStyle="bold"
+                android:shadowColor="@color/black"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -26,56 +59,15 @@
             android:orientation="vertical"
             android:padding="@dimen/_10sdp">
 
-            <ImageView
-                android:id="@+id/imageviewIcon"
-                android:layout_width="@dimen/_30sdp"
-                android:layout_height="@dimen/_30sdp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:src="@{icon}"
-                android:contentDescription="@string/iconDescription" />
-
-            <TextView
-                android:id="@+id/textViewTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/imageviewIcon"
-                android:textSize="@dimen/_10sdp"
-                android:fontFamily="@font/kalameh_bold"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:text="@{title}"
-                android:gravity="center"/>
-
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonYes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toEndOf="@id/buttonNo"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textViewTitle"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginVertical="@dimen/_15sdp"
-                android:minWidth="@dimen/_100sdp"
-                android:textSize="@dimen/_12sdp"
-                android:paddingTop="@dimen/_5sdp"
-                android:paddingBottom="@dimen/_5sdp"
-                android:fontFamily="@font/kalameh_semibold"
-                app:cornerRadius="@dimen/_5sdp"
-                android:textColor="@color/textViewColor1"
-                android:text='@string/yes'
-                android:backgroundTint="@color/positive"/>
-
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/buttonNo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/buttonYes"
-                app:layout_constraintTop_toTopOf="@id/buttonYes"
-                app:layout_constraintBottom_toBottomOf="@id/buttonYes"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/buttonNo"
                 android:layout_marginVertical="@dimen/_10sdp"
                 android:minWidth="@dimen/_100sdp"
                 android:textSize="@dimen/_12sdp"
@@ -83,13 +75,31 @@
                 android:paddingBottom="@dimen/_5sdp"
                 android:fontFamily="@font/kalameh_semibold"
                 app:cornerRadius="@dimen/_5sdp"
-                android:textColor="@color/textViewColor1"
-                android:text='@string/no'
-                android:backgroundTint="@color/negative"/>
+                android:textColor="@color/textViewColor2"
+                android:text='@string/confirm' />
+
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonNo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/buttonYes"
+                app:layout_constraintBottom_toBottomOf="@id/buttonYes"
+                app:layout_constraintStart_toEndOf="@id/buttonYes"
+                android:minWidth="@dimen/_100sdp"
+                android:textSize="@dimen/_12sdp"
+                android:paddingTop="@dimen/_5sdp"
+                android:paddingBottom="@dimen/_5sdp"
+                android:fontFamily="@font/kalameh_semibold"
+                app:cornerRadius="@dimen/_5sdp"
+                android:textColor="@color/textViewColor2"
+                android:text='@string/cancel' />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.cardview.widget.CardView>
+    </LinearLayout>
 
-</layout>
+</androidx.cardview.widget.CardView>
+

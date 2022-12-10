@@ -96,6 +96,7 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
                     context?.let {
                         ConfirmDialog(
                             it,
+                            ConfirmDialog.ConfirmType.DELETE,
                             getString(R.string.doYouWantToExitApp),
                             object : ConfirmDialog.Click {
                                 override fun clickYes() {
