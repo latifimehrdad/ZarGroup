@@ -1,144 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    android:layout_marginHorizontal="@dimen/_10sdp"
+    android:layout_marginVertical="@dimen/_10sdp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="@dimen/_20sdp"
+    app:elevation="30dp"
+    app:cardBackgroundColor="@color/dialogBackgroundColor">
 
-    <androidx.cardview.widget.CardView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintHeight_percent="0.7"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginHorizontal="@dimen/_10sdp"
-        android:layout_marginVertical="@dimen/_10sdp"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        app:cardCornerRadius="@dimen/_20sdp"
-        app:cardBackgroundColor="@color/dialogBackgroundColor">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <ImageView
+            android:id="@+id/imageViewClose"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="@dimen/_30sdp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:paddingTop="@dimen/_6sdp"
+            android:paddingBottom="@dimen/_6sdp"
+            android:paddingEnd="@dimen/_15sdp"
+            android:src="@drawable/ic_close"
+            android:scaleType="fitEnd"
+            app:tint="@color/textViewColor2"
+            android:background="@drawable/drawable_dialog_notify_header_gradiant"
+            android:contentDescription="@string/closeDescription"
+            tools:ignore="RtlSymmetry" />
 
-            <ImageView
-                android:id="@+id/imageViewClose"
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayoutSearch"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/imageViewClose"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginHorizontal="@dimen/_5sdp"
+            app:boxCornerRadiusBottomEnd="@dimen/_5sdp"
+            app:boxCornerRadiusBottomStart="@dimen/_5sdp"
+            app:boxCornerRadiusTopEnd="@dimen/_5sdp"
+            app:boxCornerRadiusTopStart="@dimen/_5sdp"
+            app:boxStrokeColor="@color/editTextBorder"
+            app:hintTextColor="@color/editTextBorder"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/textInputEditTextSearch"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_30sdp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:paddingTop="@dimen/_6sdp"
-                android:paddingBottom="@dimen/_6sdp"
-                android:paddingEnd="@dimen/_15sdp"
-                android:src="@drawable/ic_close"
-                android:scaleType="fitEnd"
-                app:tint="@color/textViewColor2"
-                android:background="@drawable/drawable_dialog_notify_header_gradiant"
-                android:contentDescription="@string/closeDescription"
-                tools:ignore="RtlSymmetry" />
-
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textInputLayoutSearch"
-                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/imageViewClose"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginHorizontal="@dimen/_5sdp"
-                app:boxCornerRadiusBottomEnd="@dimen/_5sdp"
-                app:boxCornerRadiusBottomStart="@dimen/_5sdp"
-                app:boxCornerRadiusTopEnd="@dimen/_5sdp"
-                app:boxCornerRadiusTopStart="@dimen/_5sdp"
-                app:boxStrokeColor="@color/editTextBorder"
-                app:hintTextColor="@color/editTextBorder"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                android:gravity="start|center_vertical"
+                android:hint="@string/userName"
+                android:inputType="number"
+                android:maxLength="20"
+                android:singleLine="true"
+                android:textSize="@dimen/_10sdp"
+                android:fontFamily="@font/kalameh_light"/>
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/textInputEditTextSearch"
-                    android:layout_width="match_parent"
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewPersonnel"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_300sdp"
+            android:nestedScrollingEnabled="true"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textInputLayoutSearch"
+            app:layout_constraintBottom_toTopOf="@id/frameLayout"/>
+
+        <FrameLayout
+            android:id="@+id/frameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:background="@color/notificationButtonShadowColor"
+            android:outlineProvider="background"
+            android:elevation="2dp">
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_1sdp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/materialButtonSelect"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:gravity="start|center_vertical"
-                    android:hint="@string/userName"
-                    android:inputType="number"
-                    android:maxLength="20"
-                    android:singleLine="true"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/materialButtonCancel"
+                    android:text="@string/confirm"
                     android:textSize="@dimen/_10sdp"
-                    android:fontFamily="@font/kalameh_light"/>
+                    android:fontFamily="@font/kalameh_semibold"
+                    android:background="@color/notificationButtonColor"
+                    app:backgroundTint="@color/notificationButtonColor"
+                    android:textColor="@color/textViewColor2"/>
 
-            </com.google.android.material.textfield.TextInputLayout>
-
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewPersonnel"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:nestedScrollingEnabled="true"
-                android:layout_marginTop="@dimen/_2sdp"
-                android:orientation="vertical"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textInputLayoutSearch"
-                app:layout_constraintBottom_toTopOf="@id/frameLayout"/>
-
-            <FrameLayout
-                android:id="@+id/frameLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                android:background="@color/notificationButtonShadowColor"
-                android:outlineProvider="background"
-                android:elevation="2dp">
-
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/materialButtonCancel"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_1sdp">
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/materialButtonSelect"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginStart="@dimen/_2sdp"
+                    android:text="@string/cancel"
+                    android:textSize="@dimen/_10sdp"
+                    android:background="@color/notificationButtonColor"
+                    app:backgroundTint="@color/notificationButtonColor"
+                    android:fontFamily="@font/kalameh_semibold"
+                    android:textColor="@color/textViewColor2" />
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/materialButtonSelect"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/materialButtonCancel"
-                        android:text="@string/confirm"
-                        android:textSize="@dimen/_10sdp"
-                        android:fontFamily="@font/kalameh_semibold"
-                        android:background="@color/notificationButtonColor"
-                        app:backgroundTint="@color/notificationButtonColor"
-                        android:textColor="@color/textViewColor2"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/materialButtonCancel"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/materialButtonSelect"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        android:layout_marginStart="@dimen/_2sdp"
-                        android:text="@string/cancel"
-                        android:textSize="@dimen/_10sdp"
-                        android:background="@color/notificationButtonColor"
-                        app:backgroundTint="@color/notificationButtonColor"
-                        android:fontFamily="@font/kalameh_semibold"
-                        android:textColor="@color/textViewColor2" />
+        </FrameLayout>
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-            </FrameLayout>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-    </androidx.cardview.widget.CardView>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

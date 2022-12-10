@@ -56,13 +56,12 @@ class PersonnelDialog(
         super.onViewCreated(view, savedInstanceState)
         val lp = WindowManager.LayoutParams()
         val window = dialog!!.window
-/*        val back = ColorDrawable(Color.TRANSPARENT)
+        val back = ColorDrawable(Color.TRANSPARENT)
         val inset = InsetDrawable(back, 50)
-        window!!.setBackgroundDrawable(inset)*/
+        window!!.setBackgroundDrawable(inset)
         lp.width = WindowManager.LayoutParams.MATCH_PARENT
-        lp.height = WindowManager.LayoutParams.MATCH_PARENT
-        lp.horizontalMargin = 1f
-        window?.attributes = lp
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT
+        window.attributes = lp
         binding.materialButtonSelect.setOnClickListener {
             requestGetUser()
         }
