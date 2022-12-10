@@ -16,7 +16,7 @@ class PassengerItemHolder(
 
     //---------------------------------------------------------------------------------------------- Click
     interface Click {
-        fun appClick(action: Int)
+        fun addClick()
     }
     //---------------------------------------------------------------------------------------------- Click
 
@@ -29,9 +29,8 @@ class PassengerItemHolder(
         else
             binding.linearLayoutAdd.visibility = View.GONE
         binding.cardViewAdd.setOnClickListener {
-            binding.powerSpinnerPassenger.visibility = View.VISIBLE
+            click.addClick()
         }
-
         binding.executePendingBindings()
     }
     //---------------------------------------------------------------------------------------------- bind

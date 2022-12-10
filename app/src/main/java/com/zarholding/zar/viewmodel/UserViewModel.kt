@@ -23,4 +23,11 @@ class UserViewModel @Inject constructor(private val repository: UserRepository) 
     //---------------------------------------------------------------------------------------------- requestUserPermission
 
 
+    //---------------------------------------------------------------------------------------------- requestGetUser
+    fun requestGetUser(
+        filters : String,
+        value : String,
+        token: String) = repository.requestGetUser(filters, value, token)
+    //---------------------------------------------------------------------------------------------- requestGetUser
+
 }

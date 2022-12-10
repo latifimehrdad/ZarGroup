@@ -23,4 +23,12 @@ class UserRepository @Inject constructor(private val api: ApiBPMS) {
     fun requestUserPermission(token: String) = apiCall(emitter) {api.requestUserPermission(token)}
     //---------------------------------------------------------------------------------------------- requestUserPermission
 
+
+    //---------------------------------------------------------------------------------------------- requestGetUser
+    fun requestGetUser(
+        filters : String,
+        value : String,
+        token: String) = apiCall(emitter) {api.requestGetUser("end", filters, value, token)}
+    //---------------------------------------------------------------------------------------------- requestGetUser
+
 }

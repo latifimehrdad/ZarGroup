@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.*
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
@@ -19,10 +18,9 @@ import com.zarholding.zar.model.other.AppModel
 import com.zarholding.zar.utility.OsmManager
 import com.zarholding.zar.view.WentTimePicker
 import com.zarholding.zar.view.activity.MainActivity
+import com.zarholding.zar.view.dialog.PersonnelDialog
 import com.zarholding.zar.view.dialog.TimeDialog
-import com.zarholding.zar.view.recycler.adapter.DashboardAppAdapter
 import com.zarholding.zar.view.recycler.adapter.PassengerAdapter
-import com.zarholding.zar.view.recycler.holder.DashboardItemHolder
 import com.zarholding.zar.view.recycler.holder.PassengerItemHolder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -268,10 +266,8 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
 
 
         val click = object : PassengerItemHolder.Click {
-            override fun appClick(action: Int) {
-                apps.add(AppModel(R.drawable.icon_personnel, "مهسا داننده", 0))
-                adapter.notifyDataSetChanged()
-
+            override fun addClick() {
+                showPersonnelDialog()
             }
         }
         adapter = PassengerAdapter(apps, click)
@@ -294,6 +290,19 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
         binding.recyclerViewPassengers.adapter = adapter
     }
     //---------------------------------------------------------------------------------------------- setPassengersAdapter
+
+
+
+    //---------------------------------------------------------------------------------------------- showPersonnelDialog
+    private fun showPersonnelDialog() {
+        val click = object : PersonnelDialog.Click {
+            override fun clickYes() {
+
+            }
+        }
+        PersonnelDialog(click).show(childFragmentManager, "personnel dialog")
+    }
+    //---------------------------------------------------------------------------------------------- showPersonnelDialog
 
 
 
