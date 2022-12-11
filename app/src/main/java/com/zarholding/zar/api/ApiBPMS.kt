@@ -45,4 +45,9 @@ interface ApiBPMS {
         @Header("Authorization") token : String
     ) : UserResponseModel
 
+    @GET("/errorcode")
+    suspend fun requestTestApi(
+        @Query("code") code : String
+    ) : LoginResponseModel
+
 }

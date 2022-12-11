@@ -23,6 +23,13 @@ import java.time.LocalDateTime
  * Created by m-latifi on 11/14/2022.
  */
 
+//-------------------------------------------------------------------------------------------------- setPersonnelNameCode
+@BindingAdapter("setPersonnelName", "setPersonnelCode")
+fun TextView.setPersonnelNameCode(name : String, code : String) {
+    text = context.getString(R.string.setTwoString, name, code)
+}
+//-------------------------------------------------------------------------------------------------- setPersonnelNameCode
+
 
 //-------------------------------------------------------------------------------------------------- setRequestReason
 @BindingAdapter("setRequestReason")
@@ -44,7 +51,7 @@ fun TextView.setRequester(userName : String) {
 //-------------------------------------------------------------------------------------------------- setRequester
 @BindingAdapter("setDriverName", "setCommuteTripName" ,"setStationName")
 fun TextView.setDriverAndStation(driverName : String, tripName : String , stationName : String) {
-    text = context.getString(R.string.setTripNameDriverStation, tripName, driverName, stationName)
+    text = context.getString(R.string.setThreeString, tripName, driverName, stationName)
 }
 //-------------------------------------------------------------------------------------------------- setRequester
 

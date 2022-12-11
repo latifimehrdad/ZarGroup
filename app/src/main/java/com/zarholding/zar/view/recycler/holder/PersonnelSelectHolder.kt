@@ -1,35 +1,26 @@
 package com.zarholding.zar.view.recycler.holder
 
-import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.zarholding.zar.database.entity.UserInfoEntity
-import zar.databinding.ItemPassengerBinding
+import zar.databinding.ItemPersonnelSelectBinding
 
-/**
- * Created by m-latifi on 11/14/2022.
- */
-
-class PassengerItemHolder(
-    private val binding: ItemPassengerBinding,
+class PersonnelSelectHolder(
+    private val binding: ItemPersonnelSelectBinding,
     private val click: Click
 ) : RecyclerView.ViewHolder(binding.root) {
 
     //---------------------------------------------------------------------------------------------- Click
     interface Click {
-        fun addClick()
+        fun select(item : UserInfoEntity)
     }
     //---------------------------------------------------------------------------------------------- Click
 
 
     //---------------------------------------------------------------------------------------------- bind
-    fun bind(item: UserInfoEntity, last : Boolean) {
+    fun bind(item : UserInfoEntity) {
         binding.item = item
-        if (last)
-            binding.linearLayoutAdd.visibility = View.VISIBLE
-        else
-            binding.linearLayoutAdd.visibility = View.GONE
-        binding.cardViewAdd.setOnClickListener {
-            click.addClick()
+        binding.root.setOnClickListener {
+            click.select(item)
         }
         binding.executePendingBindings()
     }

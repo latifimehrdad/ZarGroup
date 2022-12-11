@@ -195,41 +195,9 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- unAuthorization
     override fun unAuthorization(type: EnumAuthorizationType, message: String) {
         remoteErrorEmitter.unAuthorization(type, message)
-        when (type) {
-            EnumAuthorizationType.UnAuthorization -> {
-                remoteErrorEmitter.unAuthorization(type, message)
-            }
-            EnumAuthorizationType.UnAccess -> unAccess(message)
-        }
     }
     //---------------------------------------------------------------------------------------------- unAuthorization
 
-
-
-    //---------------------------------------------------------------------------------------------- unAuthorization
-    private fun unAuthorization(message: String) {
-        val snack = Snackbar.make(binding.constraintLayoutParent, message, 5 * 1000)
-        snack.setBackgroundTint(resources.getColor(R.color.primaryColor, theme))
-        snack.setTextColor(resources.getColor(R.color.textViewColor3, theme))
-        snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
-        snack.setActionTextColor(resources.getColor(R.color.textViewColor1, theme))
-        snack.show()
-    }
-    //---------------------------------------------------------------------------------------------- unAuthorization
-
-
-
-    //---------------------------------------------------------------------------------------------- unAccess
-    private fun unAccess(message: String) {
-        val snack = Snackbar.make(binding.constraintLayoutParent, message, 5 * 1000)
-        snack.setBackgroundTint(resources.getColor(R.color.primaryColor, theme))
-        snack.setTextColor(resources.getColor(R.color.textViewColor3, theme))
-        snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
-        snack.setActionTextColor(resources.getColor(R.color.textViewColor1, theme))
-        snack.show()
-        onBackPressedDispatcher.onBackPressed()
-    }
-    //---------------------------------------------------------------------------------------------- unAccess
 
 
     //---------------------------------------------------------------------------------------------- gotoFragment

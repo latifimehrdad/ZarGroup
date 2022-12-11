@@ -41,7 +41,7 @@
 
     <color name="dialogHeaderGradiantStartColor">#206cc9</color>
     <color name="dialogHeaderGradiantEndColor">#60a7ff</color>
-    <color name="dialogBackgroundColor">#D9484848</color>
+    <color name="dialogBackgroundColor">#484848</color>
     <color name="dialogHeaderGradiantEndColor2">#26206cc9</color>
 
     <color name="appComingSoon">#80000000</color>
@@ -72,8 +72,9 @@
 
     <color name="polyLineColor">#B33775F3</color>
 
-    <color name="recyclerLoadingShadow">#80FFFFFF</color>
+    <color name="recyclerLoadingShadow">#4DFFFFFF</color>
     <color name="recyclerLoadingBack">#33FFFFFF</color>
+    <color name="recyclerLoadingLightBack">#484848</color>
 
     <color name="dialogGradiantStartColor">#163c69</color>
     <color name="dialogGradiantEndColor">#2a69b7</color>

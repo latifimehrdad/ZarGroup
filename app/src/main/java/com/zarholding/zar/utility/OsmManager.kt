@@ -47,15 +47,21 @@ class OsmManager(private val map: MapView) {
         map.setMultiTouchControls(true)
         map.minZoomLevel = 9.0
         map.maxZoomLevel = 21.0
-        val mapController: IMapController = map.controller
-        mapController.setZoom(17.0)
-        val startPoint = GeoPoint(35.840378, 51.016217)
-        mapController.setCenter(startPoint)
+        moveCamera(GeoPoint(35.840378, 51.016217))
         if (theme == android.content.res.Configuration.UI_MODE_NIGHT_YES)
             map.overlayManager.tilesOverlay.setColorFilter(TilesOverlay.INVERT_COLORS) // dark
         map.onResume()
     }
     //---------------------------------------------------------------------------------------------- mapInitialize
+
+
+
+    //---------------------------------------------------------------------------------------------- removeMarker
+    fun removeMarkerAndMove(marker: Marker) {
+        map.overlays.remove(marker)
+        moveCamera(marker.position)
+    }
+    //---------------------------------------------------------------------------------------------- removeMarker
 
 
     //---------------------------------------------------------------------------------------------- measureDistance
@@ -84,10 +90,17 @@ class OsmManager(private val map: MapView) {
             if (i == 0 || lon < west) west = lon
             if (i == 0 || lon > east) east = lon
         }
-        north += 0.02
-        south -= 0.02
-        east += 0.02
-        west -= 0.02
+        if (points.size > 2) {
+            north += 0.02
+            south -= 0.02
+            east += 0.02
+            west -= 0.02
+        } else {
+            north += 0.002
+            south -= 0.002
+            east += 0.002
+            west -= 0.002
+        }
         return BoundingBox(north, east, south, west)
     }
     //---------------------------------------------------------------------------------------------- getBoundingBoxFromPoints
@@ -225,6 +238,7 @@ class OsmManager(private val map: MapView) {
         marker.position = position
         marker.setInfoWindow(infoWindows)
         map.overlayManager.add(marker)
+        map.invalidate()
         return marker
     }
     //---------------------------------------------------------------------------------------------- addMarker

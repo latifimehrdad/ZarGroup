@@ -18,4 +18,7 @@ class LoginRepository @Inject constructor(private val api: ApiBPMS) {
     fun requestLogin(login : LoginRequestModel) = apiCall(emitter){api.requestLogin(login)}
     //---------------------------------------------------------------------------------------------- requestLogin
 
+
+    fun requestTestApi(code : String) = apiCall(emitter){api.requestTestApi(code)}
+
 }

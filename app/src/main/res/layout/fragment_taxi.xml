@@ -46,6 +46,24 @@
                     tools:layout_editor_absoluteX="0dp"
                     tools:layout_editor_absoluteY="0dp" />
 
+                <View
+                    android:id="@+id/viewCenter"
+                    android:layout_width="1px"
+                    android:layout_height="1px"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+                <ImageView
+                    android:id="@+id/imageViewMarker"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_40sdp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/viewCenter"
+                    android:src="@drawable/icon_bus_marker"/>
+
                 <TextView
                     android:id="@+id/textViewLoading"
                     android:layout_width="match_parent"
@@ -254,7 +272,7 @@
                         android:drawableTint="@color/textViewColor1"
                         android:fontFamily="@font/kalameh_semibold"
                         android:minWidth="@dimen/_100sdp"
-                        android:text="0000/00/00"
+                        android:hint="@string/choose"
                         android:textColor="@color/textViewColor1"
                         android:textSize="@dimen/_9sdp"
                         app:cornerRadius="@dimen/_5sdp"
@@ -282,7 +300,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="@dimen/_5sdp"
                         android:fontFamily="@font/kalameh_semibold"
-                        android:text="00:00"
+                        android:hint="@string/choose"
                         android:textColor="@color/textViewColor1"
                         android:textSize="@dimen/_9sdp"
                         app:cornerRadius="@dimen/_5sdp"
@@ -311,7 +329,7 @@
                         android:layout_marginStart="@dimen/_15sdp"
                         android:layout_marginEnd="@dimen/_5sdp"
                         android:fontFamily="@font/kalameh_semibold"
-                        android:text="00:00"
+                        android:hint="@string/choose"
                         android:textColor="@color/textViewColor1"
                         android:textSize="@dimen/_9sdp"
                         app:cornerRadius="@dimen/_5sdp"
@@ -342,7 +360,8 @@
                         android:layout_marginTop="@dimen/_10sdp"
                         android:background="@drawable/drawable_spinner"
                         android:padding="@dimen/_5sdp"
-                        app:layout_constraintTop_toBottomOf="@id/buttonWentTime" />
+                        app:layout_constraintTop_toBottomOf="@id/buttonWentTime"
+                        tools:itemCount="2"/>
 
                     <TextView
                         android:layout_width="wrap_content"

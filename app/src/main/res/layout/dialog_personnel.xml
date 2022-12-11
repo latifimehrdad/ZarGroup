@@ -12,12 +12,13 @@
     android:layout_marginVertical="@dimen/_10sdp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardCornerRadius="@dimen/_20sdp"
-    app:elevation="30dp"
+    app:elevation="@dimen/_5sdp"
+    android:outlineSpotShadowColor="@color/primaryColor"
     app:cardBackgroundColor="@color/dialogBackgroundColor">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/_300sdp"
         android:orientation="vertical">
 
         <ImageView
@@ -60,7 +61,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="start|center_vertical"
                 android:hint="@string/userName"
-                android:inputType="number"
+                android:inputType="text"
                 android:maxLength="20"
                 android:singleLine="true"
                 android:textSize="@dimen/_10sdp"
@@ -72,65 +73,13 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewPersonnel"
             android:layout_width="0dp"
-            android:layout_height="@dimen/_300sdp"
-            android:nestedScrollingEnabled="true"
+            android:layout_height="0dp"
             android:layout_marginTop="@dimen/_2sdp"
-            android:orientation="vertical"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textInputLayoutSearch"
-            app:layout_constraintBottom_toTopOf="@id/frameLayout"/>
+            app:layout_constraintBottom_toBottomOf="parent" />
 
-        <FrameLayout
-            android:id="@+id/frameLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:background="@color/notificationButtonShadowColor"
-            android:outlineProvider="background"
-            android:elevation="2dp">
-
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_1sdp">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/materialButtonSelect"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/materialButtonCancel"
-                    android:text="@string/confirm"
-                    android:textSize="@dimen/_10sdp"
-                    android:fontFamily="@font/kalameh_semibold"
-                    android:background="@color/notificationButtonColor"
-                    app:backgroundTint="@color/notificationButtonColor"
-                    android:textColor="@color/textViewColor2"/>
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/materialButtonCancel"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/materialButtonSelect"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginStart="@dimen/_2sdp"
-                    android:text="@string/cancel"
-                    android:textSize="@dimen/_10sdp"
-                    android:background="@color/notificationButtonColor"
-                    app:backgroundTint="@color/notificationButtonColor"
-                    android:fontFamily="@font/kalameh_semibold"
-                    android:textColor="@color/textViewColor2" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -3,7 +3,7 @@ package com.zarholding.zar.view.recycler.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.zarholding.zar.model.other.AppModel
+import com.zarholding.zar.database.entity.UserInfoEntity
 import com.zarholding.zar.view.recycler.holder.PassengerItemHolder
 import zar.databinding.ItemPassengerBinding
 
@@ -12,7 +12,7 @@ import zar.databinding.ItemPassengerBinding
  */
 
 class PassengerAdapter(
-    private val apps: MutableList<AppModel>,
+    private val users: MutableList<UserInfoEntity>,
     private val click: PassengerItemHolder.Click
 ) : RecyclerView.Adapter<PassengerItemHolder>() {
 
@@ -33,13 +33,28 @@ class PassengerAdapter(
 
     //---------------------------------------------------------------------------------------------- onBindViewHolder
     override fun onBindViewHolder(holder: PassengerItemHolder, position: Int) {
-        holder.bind(apps[position], position == apps.size-1)
+        holder.bind(users[position], position == users.size-1)
     }
     //---------------------------------------------------------------------------------------------- onBindViewHolder
 
 
     //---------------------------------------------------------------------------------------------- getItemCount
-    override fun getItemCount() = apps.size
+    override fun getItemCount() = users.size
     //---------------------------------------------------------------------------------------------- getItemCount
+
+
+
+    //---------------------------------------------------------------------------------------------- addUser
+    fun addUser(item: UserInfoEntity) {
+        users.add(item)
+        notifyItemRangeChanged(0, users.size)
+    }
+    //---------------------------------------------------------------------------------------------- addUser
+
+
+
+    //---------------------------------------------------------------------------------------------- getList
+    fun getList() = users
+    //---------------------------------------------------------------------------------------------- getList
 
 }

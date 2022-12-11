@@ -25,6 +25,7 @@
     <string name="all">همه</string>
     <string name="yesterday">دیروز</string>
     <string name="today">امروز</string>
+    <string name="todayDate">تاریخ امروز</string>
     <string name="deleteAllNotification">حذف کل اعلانات</string>
     <string name="deleteChecked">حذف انتخاب شده ها</string>
     <string name="profile">پروفایل</string>
@@ -85,9 +86,11 @@
     <string name="sendInformation">ارسال اطلاعات</string>
     <string name="reasonOfTrip">علت سفر</string>
     <string name="reasonOfTripDot">علت سفر :</string>
-
+    <string name="duplicateInsert">این مورد قبلا ثبت شده است</string>
     <string name="requester">درخواست کننده : %1$s</string>
-    <string name="setTripNameDriverStation">%1$s - %2$s - %3$s</string>
+    <string name="setThreeString">%1$s - %2$s - %3$s</string>
+    <string name="setTwoString">%1$s - %2$s</string>
+    <string name="setDate">%1$s/%2$s/%3$s</string>
     <string name="personalCode">کد پرسنلی : %1$s</string>
     <string name="attendanceTime">ساعت حضور : %1$s</string>
     <string name="myStation">ایستگاه من : %1$s</string>
