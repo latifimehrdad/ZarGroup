@@ -47,13 +47,12 @@ class OsmManager(private val map: MapView) {
         map.setMultiTouchControls(true)
         map.minZoomLevel = 9.0
         map.maxZoomLevel = 21.0
-        moveCamera(GeoPoint(35.840378, 51.016217))
+        moveCamera(GeoPoint(35.90576170621037, 50.819428313684675))
         if (theme == android.content.res.Configuration.UI_MODE_NIGHT_YES)
             map.overlayManager.tilesOverlay.setColorFilter(TilesOverlay.INVERT_COLORS) // dark
         map.onResume()
     }
     //---------------------------------------------------------------------------------------------- mapInitialize
-
 
 
     //---------------------------------------------------------------------------------------------- removeMarker
@@ -90,17 +89,11 @@ class OsmManager(private val map: MapView) {
             if (i == 0 || lon < west) west = lon
             if (i == 0 || lon > east) east = lon
         }
-        if (points.size > 2) {
-            north += 0.02
-            south -= 0.02
-            east += 0.02
-            west -= 0.02
-        } else {
-            north += 0.002
-            south -= 0.002
-            east += 0.002
-            west -= 0.002
-        }
+        north += 0.02
+        south -= 0.02
+        east += 0.02
+        west -= 0.02
+
         return BoundingBox(north, east, south, west)
     }
     //---------------------------------------------------------------------------------------------- getBoundingBoxFromPoints
@@ -282,6 +275,16 @@ class OsmManager(private val map: MapView) {
         mapController.animateTo(geoPoint, 18.0, 1000)
     }
     //---------------------------------------------------------------------------------------------- moveCamera
+
+
+
+    //---------------------------------------------------------------------------------------------- moveCameraZoomUp
+    fun moveCameraZoomUp(geoPoint: GeoPoint) {
+        val mapController: IMapController = map.controller
+        val point = GeoPoint(geoPoint.latitude + 0.002, geoPoint.longitude + 0.002)
+        mapController.animateTo(point, 16.0, 1000)
+    }
+    //---------------------------------------------------------------------------------------------- moveCameraZoomUp
 
 
 /*

@@ -4,6 +4,7 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Size
 import android.view.*
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -19,6 +20,7 @@ import com.zar.core.tools.extensions.toSolarDate
 import com.zar.core.tools.manager.ThemeManager
 import com.zarholding.zar.database.dao.UserInfoDao
 import com.zarholding.zar.database.entity.UserInfoEntity
+import com.zarholding.zar.model.response.address.AddressModel
 import com.zarholding.zar.utility.OsmManager
 import com.zarholding.zar.utility.UnAuthorizationManager
 import com.zarholding.zar.view.WentTimePicker
@@ -27,9 +29,7 @@ import com.zarholding.zar.view.dialog.PersonnelDialog
 import com.zarholding.zar.view.dialog.TimeDialog
 import com.zarholding.zar.view.recycler.adapter.PassengerAdapter
 import com.zarholding.zar.view.recycler.holder.PassengerItemHolder
-import com.zarholding.zar.viewmodel.LoginViewModel
-import com.zarholding.zar.viewmodel.TokenViewModel
-import com.zarholding.zar.viewmodel.TripViewModel
+import com.zarholding.zar.viewmodel.AddressViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import ir.hamsaa.persiandatepicker.PersianDatePickerDialog
 import ir.hamsaa.persiandatepicker.api.PersianPickerDate
@@ -37,7 +37,6 @@ import ir.hamsaa.persiandatepicker.api.PersianPickerListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.osmdroid.util.GeoPoint
@@ -61,13 +60,16 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
     private lateinit var osmManager: OsmManager
     private lateinit var adapter: PassengerAdapter
 
-    private val loginViewModel: LoginViewModel by viewModels()
+    private val addressViewModel: AddressViewModel by viewModels()
 
     @Inject
     lateinit var themeManagers: ThemeManager
 
     @Inject
     lateinit var userInfoDao: UserInfoDao
+
+    @Inject
+    lateinit var unAuthorizationManager: UnAuthorizationManager
 
     var timePickMode = WentTimePicker.PickerMode.WENT_FORTH
 
@@ -89,7 +91,6 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
         }
     }
     //---------------------------------------------------------------------------------------------- OnBackPressedCallback
-
 
 
     //---------------------------------------------------------------------------------------------- onCreateView
@@ -130,7 +131,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
     override fun unAuthorization(type: EnumAuthorizationType, message: String) {
         binding.textViewLoading.visibility = View.GONE
         backClick.isEnabled = false
-        UnAuthorizationManager(activity,type,message,binding.constraintLayoutParent)
+        unAuthorizationManager.handel(activity, type, message, binding.constraintLayoutParent)
     }
     //---------------------------------------------------------------------------------------------- unAuthorization
 
@@ -151,7 +152,6 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- initView
 
 
-
     //---------------------------------------------------------------------------------------------- setListener
     private fun setListener() {
         binding.textViewWent.setOnClickListener { clickOnWentServiceTextView() }
@@ -160,14 +160,8 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
         binding.buttonForthTime.setOnClickListener { showTimePickerDialog() }
         binding.buttonDate.setOnClickListener { showDatePickerDialog() }
         binding.imageViewMarker.setOnClickListener { getCenterLocationOfMap() }
-        binding.buttonSendRequest.setOnClickListener {
-            loginViewModel.requestTestApi("401").observe(viewLifecycleOwner) {
-
-            }
-        }
     }
     //---------------------------------------------------------------------------------------------- setListener
-
 
 
     //---------------------------------------------------------------------------------------------- backClickControl
@@ -181,15 +175,75 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
     private fun getCenterLocationOfMap() {
         val center = binding.mapView.mapCenter
         binding.textViewLoading.visibility = View.VISIBLE
-        CoroutineScope(Main).launch {
-            delay(3000)
-            if (originMarker == null)
-                addOriginMarker(GeoPoint(center.latitude, center.longitude))
-            else if (destinationMarker == null)
-                addDestinationMarker(GeoPoint(center.latitude, center.longitude))
+        addressViewModel.getAddress(center).observe(viewLifecycleOwner) { response ->
+            response?.let { info ->
+                info.address?.let { address ->
+                    if (originMarker == null) {
+                        setAddressToTextview(address, binding.textViewOrigin)
+                        addOriginMarker(GeoPoint(center.latitude, center.longitude))
+                    } else if (destinationMarker == null) {
+                        setAddressToTextview(address, binding.textViewDestination)
+                        addDestinationMarker(GeoPoint(center.latitude, center.longitude))
+                    }
+                }
+            }
         }
     }
     //---------------------------------------------------------------------------------------------- getCenterLocationOfMap
+
+
+    //---------------------------------------------------------------------------------------------- setAddressToTextview
+    private fun setAddressToTextview(address: AddressModel, textView: TextView) {
+        var addressText = ""
+
+        var county = address.county
+        county = county?.replace("شهرستان", "")
+        county = county?.replace("شهر", "")
+        county = county?.trimStart()
+        county = county?.trimEnd()
+        if (county == null)
+            county = ""
+
+        var city = address.city
+        city = city?.replace("شهرستان", "")
+        city = city?.replace("شهر", "")
+        city = city?.trimStart()
+        city = city?.trimEnd()
+        if (city == null)
+            city = ""
+
+        var town = address.town
+        town = town?.replace("شهرستان", "")
+        town = town?.replace("شهر", "")
+        town = town?.trimStart()
+        town = town?.trimEnd()
+        if (town == null)
+            town = ""
+
+        addressText = if (city in county)
+            county
+        else if (county in city)
+            city
+        else
+            "$county , $city"
+
+        if (town !in addressText)
+            addressText += " , $town"
+
+
+        address.neighbourhood?.let {
+            addressText += " , $it"
+        }
+
+        address.road?.let {
+            addressText += " , $it"
+        }
+
+        textView.isSelected = true
+        textView.text = addressText
+        textView.setTextColor(resources.getColor(R.color.primaryColor, context?.theme))
+    }
+    //---------------------------------------------------------------------------------------------- setAddressToTextview
 
 
     //---------------------------------------------------------------------------------------------- clickOnWentServiceTextView
@@ -229,7 +283,8 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- showDatePickerDialog
     private fun showDatePickerDialog() {
         val persianDate = LocalDateTime.now().toSolarDate()!!
-        val typeface = Typeface.createFromAsset(requireContext().assets, "font/kalameh_medium.ttf")
+        val typeface =
+            Typeface.createFromAsset(requireContext().assets, "font/kalameh_medium.ttf")
         val picker = PersianDatePickerDialog(requireContext())
             .setPositiveButtonString(getString(R.string.choose))
             .setNegativeButton(getString(R.string.cancel))
@@ -254,7 +309,12 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
                 )
             )
             .setActionTextSize(20)
-            .setActionTextColor(resources.getColor(R.color.textViewColor2, requireContext().theme))
+            .setActionTextColor(
+                resources.getColor(
+                    R.color.textViewColor2,
+                    requireContext().theme
+                )
+            )
             .setTitleType(PersianDatePickerDialog.WEEKDAY_DAY_MONTH_YEAR)
             .setShowInBottomSheet(true)
             .setListener(object : PersianPickerListener {
@@ -306,7 +366,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
             lifecycleOwner = viewLifecycleOwner
 
             setOnSpinnerItemSelectedListener<IconSpinnerItem> { _, _, _, newItem ->
-                addOriginMarker(GeoPoint(35.2353, 51.12123))
+                addOriginMarker(GeoPoint(35.90576170621037, 50.819428313684675))
                 binding.powerSpinnerOrigin.setBackgroundResource(R.drawable.drawable_spinner_select)
                 binding.textViewOrigin.text = newItem.text
                 binding.textViewOrigin.setTextColor(
@@ -337,7 +397,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
                 LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             lifecycleOwner = viewLifecycleOwner
             setOnSpinnerItemSelectedListener<IconSpinnerItem> { _, _, _, newItem ->
-                addDestinationMarker(GeoPoint(35.2353, 51.12123))
+                addDestinationMarker(GeoPoint(35.82659993663358, 50.995642063037785))
                 binding.powerSpinnerDestination.setBackgroundResource(R.drawable.drawable_spinner_select)
                 binding.textViewDestination.text = newItem.text
                 binding.textViewDestination.setTextColor(
@@ -366,12 +426,14 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
             null
         )
         binding.imageViewMarker.setImageResource(R.drawable.icon_end_marker)
+        osmManager.moveCameraZoomUp(geoPoint)
     }
     //---------------------------------------------------------------------------------------------- addOriginMarker
 
 
     //---------------------------------------------------------------------------------------------- removeOriginMarker
     private fun removeOriginMarker() {
+        binding.textViewOrigin.isSelected = false
         osmManager.removeMarkerAndMove(originMarker!!)
         originMarker = null
         binding.imageViewMarker.setImageResource(R.drawable.icon_start_marker)
@@ -412,6 +474,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- removeDestinationMarker
     private fun removeDestinationMarker() {
+        binding.textViewDestination.isSelected = false
         osmManager.removeMarkerAndMove(destinationMarker!!)
         destinationMarker = null
         binding.imageViewMarker.visibility = View.VISIBLE

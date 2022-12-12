@@ -200,6 +200,26 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
 
 
 
+    //---------------------------------------------------------------------------------------------- gotoFirstFragment
+    fun gotoFirstFragment() {
+        CoroutineScope(IO).launch {
+            sharedPreferences
+                .edit()
+                .putString(CompanionValues.TOKEN, null)
+                .putString(CompanionValues.userName, null)
+                .putString(CompanionValues.passcode, null)
+                .apply()
+            userInfoDao.deleteAllRole()
+            delay(500)
+            withContext(Main) {
+                gotoFragment(R.id.action_goto_SplashFragment)
+            }
+        }
+    }
+    //---------------------------------------------------------------------------------------------- gotoFirstFragment
+
+
+
     //---------------------------------------------------------------------------------------------- gotoFragment
     private fun gotoFragment(fragment: Int) {
         navController?.navigate(fragment, null)

@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
+import com.zar.core.enums.EnumAuthorizationType
 import com.zar.core.enums.EnumErrorType
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zar.core.tools.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType
@@ -18,6 +19,7 @@ import com.zarholding.zar.database.dao.ArticleDao
 import com.zarholding.zar.database.entity.ArticleEntity
 import com.zarholding.zar.model.enum.EnumArticleType
 import com.zarholding.zar.model.other.AppModel
+import com.zarholding.zar.utility.UnAuthorizationManager
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.view.dialog.ArticleDetailDialog
 import com.zarholding.zar.view.dialog.ConfirmDialog
@@ -50,6 +52,8 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
     @Inject
     lateinit var articleDao: ArticleDao
 
+    @Inject
+    lateinit var unAuthorizationManager: UnAuthorizationManager
 
     //---------------------------------------------------------------------------------------------- onCreateView
     override fun onCreateView(
@@ -86,6 +90,16 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
         snack.show()
     }
     //---------------------------------------------------------------------------------------------- onError
+
+
+
+    //---------------------------------------------------------------------------------------------- unAuthorization
+    override fun unAuthorization(type: EnumAuthorizationType, message: String) {
+        unAuthorizationManager.handel(activity,type,message,binding.constraintLayoutParent)
+    }
+    //---------------------------------------------------------------------------------------------- unAuthorization
+
+
 
 
     //---------------------------------------------------------------------------------------------- backClickControl

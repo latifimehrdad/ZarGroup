@@ -19,6 +19,7 @@ import com.zarholding.zar.database.entity.RoleEntity
 import com.zarholding.zar.model.request.ArticleRequestModel
 import com.zarholding.zar.repository.UserRepository
 import com.zarholding.zar.utility.CompanionValues
+import com.zarholding.zar.utility.UnAuthorizationManager
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.viewmodel.ArticleViewModel
 import com.zarholding.zar.viewmodel.TokenViewModel
@@ -56,6 +57,9 @@ class SplashFragment : Fragment(), RemoteErrorEmitter {
 
     @Inject
     lateinit var roleDao: RoleDao
+
+    @Inject
+    lateinit var unAuthorizationManager: UnAuthorizationManager
 
     private lateinit var job: Job
     private val tokenViewModel: TokenViewModel by viewModels()
@@ -104,16 +108,7 @@ class SplashFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- unAuthorization
     override fun unAuthorization(type: EnumAuthorizationType, message: String) {
-        CoroutineScope(IO).launch {
-            sharedPreferences
-                .edit()
-                .putString(CompanionValues.TOKEN, null)
-                .putString(CompanionValues.userName, null)
-                .putString(CompanionValues.passcode, null)
-                .apply()
-            userInfoDao.deleteAllRole()
-            gotoFragmentLogin()
-        }
+        unAuthorizationManager.handel(activity,type,message,binding.constraintLayoutParent)
     }
     //---------------------------------------------------------------------------------------------- unAuthorization
 

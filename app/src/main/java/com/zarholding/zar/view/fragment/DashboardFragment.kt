@@ -8,15 +8,18 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.snackbar.Snackbar
+import com.zar.core.enums.EnumAuthorizationType
 import com.zar.core.enums.EnumErrorType
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zarholding.zar.model.other.AppModel
+import com.zarholding.zar.utility.UnAuthorizationManager
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.view.recycler.adapter.DashboardAppAdapter
 import com.zarholding.zar.view.recycler.holder.DashboardItemHolder
 import dagger.hilt.android.AndroidEntryPoint
 import zar.R
 import zar.databinding.FragmentDashboardBinding
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class DashboardFragment : Fragment(), RemoteErrorEmitter {
@@ -24,6 +27,8 @@ class DashboardFragment : Fragment(), RemoteErrorEmitter {
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
 
+    @Inject
+    lateinit var unAuthorizationManager: UnAuthorizationManager
 
     //---------------------------------------------------------------------------------------------- onCreateView
     override fun onCreateView(
@@ -59,6 +64,13 @@ class DashboardFragment : Fragment(), RemoteErrorEmitter {
     }
     //---------------------------------------------------------------------------------------------- onError
 
+
+
+    //---------------------------------------------------------------------------------------------- unAuthorization
+    override fun unAuthorization(type: EnumAuthorizationType, message: String) {
+        unAuthorizationManager.handel(activity,type,message,binding.constraintLayoutParent)
+    }
+    //---------------------------------------------------------------------------------------------- unAuthorization
 
 
 

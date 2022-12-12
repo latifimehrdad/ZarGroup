@@ -3,6 +3,7 @@ package com.zarholding.zar.api
 import com.zarholding.zar.model.request.ArticleRequestModel
 import com.zarholding.zar.model.request.RequestRegisterStationModel
 import com.zarholding.zar.model.request.TripRequestRegisterStatusModel
+import com.zarholding.zar.model.response.address.AddressResponseModel
 import com.zarholding.zar.model.response.article.ArticleResponseModel
 import com.zarholding.zar.model.response.trip.*
 import retrofit2.http.*
@@ -58,5 +59,11 @@ interface ApiSuperApp {
         @Body request : List<TripRequestRegisterStatusModel>,
         @Header("Authorization") token : String
     ) : TripRequestRegisterStatusResponseModel
+
+
+    @GET
+    suspend fun getAddress(
+        @Url url : String
+    ) : AddressResponseModel
 
 }

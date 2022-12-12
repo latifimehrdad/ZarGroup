@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zarholding.zar.api.ApiBPMS
 import com.zarholding.zar.api.ApiSuperApp
+import com.zarholding.zar.utility.UnAuthorizationManager
 import com.zarholding.zar.view.activity.MainActivity
 import dagger.Module
 import dagger.Provides
@@ -31,9 +32,7 @@ class Providers {
     @Provides
     @Singleton
     @Named("Normal")
-    fun provideBPMSUrl(): String {
-        return "http://192.168.50.153:8081"
-    }
+    fun provideBPMSUrl() = "http://192.168.50.153:8081"
     //---------------------------------------------------------------------------------------------- provideBPMSUrl
 
 
@@ -42,9 +41,7 @@ class Providers {
     //---------------------------------------------------------------------------------------------- provideRemoteErrorEmitter
     @Provides
     @Singleton
-    fun provideRemoteErrorEmitter() : RemoteErrorEmitter {
-        return MainActivity()
-    }
+    fun provideRemoteErrorEmitter() : RemoteErrorEmitter = MainActivity()
     //---------------------------------------------------------------------------------------------- provideRemoteErrorEmitter
 
 
@@ -52,9 +49,8 @@ class Providers {
     //---------------------------------------------------------------------------------------------- provideApiBPMS
     @Provides
     @Singleton
-    fun provideApiBPMS(@Named("Normal") retrofit: Retrofit): ApiBPMS {
-        return retrofit.create(ApiBPMS::class.java)
-    }
+    fun provideApiBPMS(@Named("Normal") retrofit: Retrofit) : ApiBPMS =
+        retrofit.create(ApiBPMS::class.java)
     //---------------------------------------------------------------------------------------------- provideApiBPMS
 
 
@@ -75,9 +71,15 @@ class Providers {
     //---------------------------------------------------------------------------------------------- provideApiSuperApp
     @Provides
     @Singleton
-    fun provideApiSuperApp(@Named("SuperApp") retrofit: Retrofit): ApiSuperApp {
-        return retrofit.create(ApiSuperApp::class.java)
-    }
+    fun provideApiSuperApp(@Named("SuperApp") retrofit: Retrofit) : ApiSuperApp =
+        retrofit.create(ApiSuperApp::class.java)
     //---------------------------------------------------------------------------------------------- provideApiSuperApp
+
+
+    //---------------------------------------------------------------------------------------------- provideUnAuthorization
+    @Provides
+    @Singleton
+    fun provideUnAuthorization() = UnAuthorizationManager()
+    //---------------------------------------------------------------------------------------------- provideUnAuthorization
 
 }

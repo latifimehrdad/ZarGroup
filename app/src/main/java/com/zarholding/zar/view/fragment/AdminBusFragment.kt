@@ -8,12 +8,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
+import com.zar.core.enums.EnumAuthorizationType
 import com.zar.core.enums.EnumErrorType
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zar.core.tools.loadings.LoadingManager
 import com.zarholding.zar.model.enum.EnumTripStatus
 import com.zarholding.zar.model.request.TripRequestRegisterStatusModel
 import com.zarholding.zar.model.response.trip.TripRequestRegisterModel
+import com.zarholding.zar.utility.UnAuthorizationManager
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.view.dialog.ConfirmDialog
 import com.zarholding.zar.view.dialog.RejectReasonDialog
@@ -25,12 +27,16 @@ import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.internal.filterList
 import zar.R
 import zar.databinding.FragmentAdminBusBinding
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class AdminBusFragment : Fragment(), RemoteErrorEmitter {
 
     private var _binding: FragmentAdminBusBinding? = null
     private val binding get() = _binding!!
+
+    @Inject
+    lateinit var unAuthorizationManager: UnAuthorizationManager
 
     private val tripViewModel: TripViewModel by viewModels()
     private val tokenViewModel: TokenViewModel by viewModels()
@@ -70,6 +76,15 @@ class AdminBusFragment : Fragment(), RemoteErrorEmitter {
         snack.show()
     }
     //---------------------------------------------------------------------------------------------- onError
+
+
+
+    //---------------------------------------------------------------------------------------------- unAuthorization
+    override fun unAuthorization(type: EnumAuthorizationType, message: String) {
+        unAuthorizationManager.handel(activity,type,message,binding.constraintLayoutParent)
+    }
+    //---------------------------------------------------------------------------------------------- unAuthorization
+
 
 
     //---------------------------------------------------------------------------------------------- setOnListener

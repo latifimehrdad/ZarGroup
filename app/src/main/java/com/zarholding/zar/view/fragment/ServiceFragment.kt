@@ -28,6 +28,7 @@ import com.zarholding.zar.model.request.RequestRegisterStationModel
 import com.zarholding.zar.model.response.trip.TripModel
 import com.zarholding.zar.utility.CompanionValues
 import com.zarholding.zar.utility.OsmManager
+import com.zarholding.zar.utility.UnAuthorizationManager
 import com.zarholding.zar.utility.signalr.RemoteSignalREmitter
 import com.zarholding.zar.utility.signalr.SignalRListener
 import com.zarholding.zar.view.activity.MainActivity
@@ -60,6 +61,9 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
 
     private var _binding: FragmentServiceBinding? = null
     private val binding get() = _binding!!
+
+    @Inject
+    lateinit var unAuthorizationManager: UnAuthorizationManager
 
     private val tripViewModel: TripViewModel by viewModels()
     private val tokenViewModel: TokenViewModel by viewModels()
@@ -124,6 +128,7 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- unAuthorization
     override fun unAuthorization(type: EnumAuthorizationType, message: String) {
         loadingManager.stopLoadingRecycler()
+        unAuthorizationManager.handel(activity,type,message,binding.constraintLayoutParent)
     }
     //---------------------------------------------------------------------------------------------- unAuthorization
 
