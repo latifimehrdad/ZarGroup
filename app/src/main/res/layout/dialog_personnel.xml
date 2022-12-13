@@ -13,13 +13,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardCornerRadius="@dimen/_20sdp"
     app:elevation="@dimen/_5sdp"
-    android:outlineSpotShadowColor="@color/primaryColor"
     app:cardBackgroundColor="@color/dialogBackgroundColor">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/_300sdp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@drawable/drawable_dialog_background">
 
         <ImageView
             android:id="@+id/imageViewClose"

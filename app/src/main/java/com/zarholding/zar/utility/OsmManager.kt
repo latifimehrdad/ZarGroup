@@ -12,6 +12,7 @@ import android.util.Log
 import android.util.Size
 import android.view.View
 import android.widget.TextView
+import com.zarholding.zar.model.response.address.AddressModel
 import com.zarholding.zar.model.response.trip.TripPointModel
 import com.zarholding.zardriver.model.response.TripStationModel
 import kotlinx.coroutines.*
@@ -285,6 +286,59 @@ class OsmManager(private val map: MapView) {
         mapController.animateTo(point, 16.0, 1000)
     }
     //---------------------------------------------------------------------------------------------- moveCameraZoomUp
+
+
+
+    //---------------------------------------------------------------------------------------------- setAddressToTextview
+    fun setAddressToTextview(address: AddressModel) : String {
+        var addressText: String
+
+        var county = address.county
+        county = county?.replace("شهرستان", "")
+        county = county?.replace("شهر", "")
+        county = county?.trimStart()
+        county = county?.trimEnd()
+        if (county == null)
+            county = ""
+
+        var city = address.city
+        city = city?.replace("شهرستان", "")
+        city = city?.replace("شهر", "")
+        city = city?.trimStart()
+        city = city?.trimEnd()
+        if (city == null)
+            city = ""
+
+        var town = address.town
+        town = town?.replace("شهرستان", "")
+        town = town?.replace("شهر", "")
+        town = town?.trimStart()
+        town = town?.trimEnd()
+        if (town == null)
+            town = ""
+
+        addressText = if (city in county)
+            county
+        else if (county in city)
+            city
+        else
+            "$county , $city"
+
+        if (town !in addressText)
+            addressText += " , $town"
+
+
+        address.neighbourhood?.let {
+            addressText += " , $it"
+        }
+
+        address.road?.let {
+            addressText += " , $it"
+        }
+
+        return addressText
+    }
+    //---------------------------------------------------------------------------------------------- setAddressToTextview
 
 
 /*

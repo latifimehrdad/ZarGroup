@@ -97,6 +97,9 @@
     <string name="confirmForTripRequestRegister">آیا برای تایید درخواست رزرو سرویس های انتخابی مطمئن هستید؟</string>
     <string name="confirmForDelete">آیا برای حذف %1$s مطمئن هستید؟</string>
     <string name="confirmForRegisterStation">آیا برای رزرو %1$s در سرویس %2$s مطمئن هستید؟</string>
+    <string name="confirmFavPlace">آیا برای اضافه کردن این مکان به لیست علاقه مندی ها مطمئن هستید؟</string>
+    <string name="enterPlaceName">یک نام کوتاه برای این محل وارد کنید</string>
+    <string name="placeName">نام محل</string>
 
     <string name="carEntityType">cars</string>
     <string name="driversEntityType">drivers</string>
@@ -113,6 +116,7 @@
     <string name="actionIsDone">عملیات با موفقیت انجام شد</string>
     <string name="chooseItemsIsEmpty">هیچ موردی انتخاب نشده اشت</string>
     <string name="pleaseEnterTheReason">لطفا دلیل را وارد نمایید</string>
+    <string name="pleaseEnterName">لطفا نام را وارد نمایید</string>
     <string name="reasonOfReject">علت عدم تایید :</string>
     <string name="reasonOfReject1">علت عدم تایید : %1$s</string>
     <string name="reasonText">متن علت</string>

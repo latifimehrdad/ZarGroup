@@ -25,7 +25,7 @@ import javax.inject.Singleton
 class Providers {
 
     companion object {
-        const val url = "http://192.168.50.153:9090"
+        const val url = "http://5.160.125.98:5081"
     }
 
     //---------------------------------------------------------------------------------------------- provideBPMSUrl
@@ -34,7 +34,6 @@ class Providers {
     @Named("Normal")
     fun provideBPMSUrl() = "http://192.168.50.153:8081"
     //---------------------------------------------------------------------------------------------- provideBPMSUrl
-
 
 
 
