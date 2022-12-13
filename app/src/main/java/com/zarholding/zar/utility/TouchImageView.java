@@ -5,7 +5,6 @@ import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 
@@ -93,11 +92,6 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
         });
     }
 
-/*    public void setMaxZoom(float x) {
-
-        maxScale = x;
-
-    }*/
 
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
 
@@ -196,7 +190,6 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
 
             int bmWidth = drawable.getIntrinsicWidth();
             int bmHeight = drawable.getIntrinsicHeight();
-            Log.d("bmSize", "bmWidth: " + bmWidth + " bmHeight : " + bmHeight);
             float scaleX = (float) viewWidth / (float) bmWidth;
             float scaleY = (float) viewHeight / (float) bmHeight;
             scale = Math.min(scaleX, scaleY);

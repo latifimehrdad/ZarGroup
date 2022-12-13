@@ -22,7 +22,6 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.RecyclerView
 import com.ahmadhamwi.tabsync.TabbedListMediator
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -60,20 +59,17 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
 
-    lateinit var binding: ActivityMainBinding
-    var navController: NavController? = null
-
-    @Inject
-    lateinit var themeManagers: ThemeManager
-
     @Inject
     lateinit var userInfoDao: UserInfoDao
-
     @Inject
     lateinit var roleManager: RoleManager
-
+    @Inject
+    lateinit var themeManagers: ThemeManager
     @Inject
     lateinit var sharedPreferences: SharedPreferences
+
+    lateinit var binding: ActivityMainBinding
+    private var navController: NavController? = null
 
 
     //---------------------------------------------------------------------------------------------- companion object
@@ -81,6 +77,22 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
         lateinit var remoteErrorEmitter: RemoteErrorEmitter
     }
     //---------------------------------------------------------------------------------------------- companion object
+
+
+
+    //---------------------------------------------------------------------------------------------- onError
+    override fun onError(errorType: EnumErrorType, message: String) {
+        remoteErrorEmitter.onError(errorType, message)
+    }
+    //---------------------------------------------------------------------------------------------- onError
+
+
+    //---------------------------------------------------------------------------------------------- unAuthorization
+    override fun unAuthorization(type: EnumAuthorizationType, message: String) {
+        remoteErrorEmitter.unAuthorization(type, message)
+    }
+    //---------------------------------------------------------------------------------------------- unAuthorization
+
 
 
     //---------------------------------------------------------------------------------------------- onCreate
@@ -94,15 +106,13 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- initView
     private fun initView() {
-        createNotificationChannel()
+        setAppTheme(themeManagers.applicationTheme())
+        setUserInfo()
         setListener()
         checkLocationPermission()
-        setUserInfo()
-        setAppTheme(themeManagers.applicationTheme())
-
+        createNotificationChannel()
 /*        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.deleteNotificationChannel(CompanionValues.channelId)*/
-
     }
     //---------------------------------------------------------------------------------------------- initView
 
@@ -110,12 +120,10 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
     //______________________________________________________________________________________________ setAppTheme
     private fun setAppTheme(theme: Int) {
         when (theme) {
-            Configuration.UI_MODE_NIGHT_YES -> AppCompatDelegate.setDefaultNightMode(
-                AppCompatDelegate.MODE_NIGHT_YES
-            )
-            Configuration.UI_MODE_NIGHT_NO -> AppCompatDelegate.setDefaultNightMode(
-                AppCompatDelegate.MODE_NIGHT_NO
-            )
+            Configuration.UI_MODE_NIGHT_YES ->
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            Configuration.UI_MODE_NIGHT_NO ->
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
     }
     //______________________________________________________________________________________________ setAppTheme
@@ -124,8 +132,8 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- setListener
     private fun setListener() {
 
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment?
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment?
         navController = navHostFragment?.navController
         navController?.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.label != null)
@@ -133,15 +141,7 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
         }
 
 
-        binding.imageViewNotification.setOnClickListener {
-            val position = binding.imageViewNotification.top +
-                    binding.imageViewNotification.measuredHeight
-            val dialog = DialogManager().createDialogHeightWrapContent(
-                this, R.layout.dialog_notification, Gravity.TOP, position
-            )
-            initNotification(dialog)
-            dialog.show()
-        }
+        binding.imageViewNotification.setOnClickListener { showNotificationDialog() }
 
 
         binding.imageViewProfile.setOnClickListener {
@@ -162,6 +162,20 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
 
     }
     //---------------------------------------------------------------------------------------------- setListener
+
+
+    //---------------------------------------------------------------------------------------------- showNotificationDialog
+    private fun showNotificationDialog() {
+        val position = binding.imageViewNotification.top +
+                binding.imageViewNotification.measuredHeight
+        val dialog = DialogManager().createDialogHeightWrapContent(
+            this, R.layout.dialog_notification, Gravity.TOP, position
+        )
+        initNotification(dialog)
+        dialog.show()
+    }
+    //---------------------------------------------------------------------------------------------- showNotificationDialog
+
 
 
     //---------------------------------------------------------------------------------------------- showAndHideBottomMenu
@@ -185,20 +199,6 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- showAndHideBottomMenu
 
 
-    //---------------------------------------------------------------------------------------------- onError
-    override fun onError(errorType: EnumErrorType, message: String) {
-        remoteErrorEmitter.onError(errorType, message)
-    }
-    //---------------------------------------------------------------------------------------------- onError
-
-
-    //---------------------------------------------------------------------------------------------- unAuthorization
-    override fun unAuthorization(type: EnumAuthorizationType, message: String) {
-        remoteErrorEmitter.unAuthorization(type, message)
-    }
-    //---------------------------------------------------------------------------------------------- unAuthorization
-
-
 
     //---------------------------------------------------------------------------------------------- gotoFirstFragment
     fun gotoFirstFragment() {
@@ -217,7 +217,6 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
         }
     }
     //---------------------------------------------------------------------------------------------- gotoFirstFragment
-
 
 
     //---------------------------------------------------------------------------------------------- gotoFragment

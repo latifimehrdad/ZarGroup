@@ -6,7 +6,6 @@ import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zarholding.zar.api.ApiSuperApp
 import com.zarholding.zar.model.response.address.AddressResponseModel
 import org.osmdroid.api.IGeoPoint
-import org.osmdroid.util.GeoPoint
 import javax.inject.Inject
 
 class AddressRepository @Inject constructor(private val api: ApiSuperApp) {

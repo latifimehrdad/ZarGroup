@@ -1,14 +1,11 @@
 package com.zarholding.zar.utility
 
-import android.content.Context
-import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Paint
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.location.Location
-import android.util.Log
 import android.util.Size
 import android.view.View
 import android.widget.TextView
@@ -16,7 +13,6 @@ import com.zarholding.zar.model.response.address.AddressModel
 import com.zarholding.zar.model.response.trip.TripPointModel
 import com.zarholding.zardriver.model.response.TripStationModel
 import kotlinx.coroutines.*
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import org.osmdroid.api.IMapController
 import org.osmdroid.bonuspack.routing.OSRMRoadManager
@@ -153,7 +149,7 @@ class OsmManager(private val map: MapView) {
         polyline.outlinePaint?.strokeWidth = 18.0f
         polyline.isGeodesic = true
         polyline.outlinePaint?.strokeCap = Paint.Cap.ROUND
-        withContext(Dispatchers.Main) {
+        withContext(Main) {
             map.overlays.add(polyline)
             val box = getBoundingBoxFromPoints(points)
             map.zoomToBoundingBox(box, true)
@@ -239,7 +235,7 @@ class OsmManager(private val map: MapView) {
 
 
     //---------------------------------------------------------------------------------------------- getInfoWindows
-    fun getInfoWindows(title: String?, content: String?): MarkerInfoWindow {
+    private fun getInfoWindows(title: String?, content: String?): MarkerInfoWindow {
         val infoWindow: MarkerInfoWindow =
             object : MarkerInfoWindow(R.layout.layout_marker_info, map) {
                 override fun onOpen(item: Any) {

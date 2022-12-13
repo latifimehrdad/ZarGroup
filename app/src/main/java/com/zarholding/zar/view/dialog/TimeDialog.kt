@@ -12,9 +12,9 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.google.android.material.button.MaterialButton
 import com.zarholding.zar.view.WentTimePicker
-import org.threeten.bp.LocalTime
-import org.threeten.bp.format.DateTimeFormatter
 import zar.R
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 class TimeDialog(

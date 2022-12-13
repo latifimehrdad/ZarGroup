@@ -1,7 +1,5 @@
 package com.zarholding.zar.utility.signalr;
 
-import android.util.Log;
-
 import com.microsoft.signalr.HubConnection;
 import com.microsoft.signalr.HubConnectionBuilder;
 import com.microsoft.signalr.HubConnectionState;
@@ -29,9 +27,10 @@ public class SignalRListener {
                 .create(url)
                 .build();
 
-        hubConnection.on("ReceiveDriverLocation", (serviceId, driverId, lat, lng) -> {
-            this.remoteSignalREmitter.onGetPoint(lat, lng);
-        }, String.class, Integer.class, String.class, String.class);
+        hubConnection.on(
+                "ReceiveDriverLocation",
+                (serviceId, driverId, lat, lng) -> this.remoteSignalREmitter.onGetPoint(lat, lng),
+                String.class, Integer.class, String.class, String.class);
 
 
         hubConnection.on("PreviousStationReached",
@@ -100,7 +99,6 @@ public class SignalRListener {
         String station = trip + "station" + stationId;
         groups.add(trip);
         groups.add(station);
-        Log.i("meri", "trip = " + trip + station);
         if (hubConnection.getConnectionState() == HubConnectionState.CONNECTED)
             hubConnection.send("RegisterToGroup", groups);
     }

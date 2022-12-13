@@ -9,15 +9,11 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.ColorInt
-import androidx.annotation.NonNull
-import androidx.annotation.Nullable
 import com.zarholding.zar.view.Utils.Companion.angleBetweenVectors
 import com.zarholding.zar.view.Utils.Companion.angleToMins
 import com.zarholding.zar.view.Utils.Companion.snapMinutes
 import com.zarholding.zar.view.Utils.Companion.to_0_720
-import org.threeten.bp.LocalTime
-import timber.log.Timber
+import java.time.LocalTime
 import zar.R
 import java.util.*
 import kotlin.math.*
@@ -64,27 +60,11 @@ class WentTimePicker @JvmOverloads constructor(
     private var draggingforth = false
     private val stepMinutes = 15
     private val textRect = Rect()
-    private val calendar = Calendar.getInstance()
     private var wentLayoutId = 0
     private var forthLayoutId = 0
 
     var listener: ((bedTime: LocalTime, forthTime: LocalTime) -> Unit)? = null
 
-    var progressColor: Int
-        @ColorInt
-        get() = progressPaint.color
-        set(@ColorInt color) {
-            progressPaint.color = color
-            invalidate()
-        }
-
-    var progressBackgroundColor: Int
-        @ColorInt
-        get() = progressBackgroundPaint.color
-        set(@ColorInt color) {
-            progressBackgroundPaint.color = color
-            invalidate()
-        }
 
     fun getWentTime() = computeWentTime()
 
@@ -98,11 +78,9 @@ class WentTimePicker @JvmOverloads constructor(
         notifyChanges()
     }
 
-    val progressStrokeWidth: Float
-        get() = progressPaint.strokeWidth
 
 
-    private fun init(@NonNull context: Context, @Nullable attrs: AttributeSet?) {
+    private fun init(context: Context, attrs: AttributeSet?) {
 
         divisionOffset = dp2px(DEFAULT_DIVISION_OFFSET_DP)
         divisionLength = dp2px(DEFAULT_DIVISION_LENGTH_DP)
@@ -223,18 +201,17 @@ class WentTimePicker @JvmOverloads constructor(
 
         circleBounds = RectF()
 
-        setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        setLayerType(View.LAYER_TYPE_SOFTWARE, null)
         setWillNotDraw(false)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        val measuredWidth = View.MeasureSpec.getSize(widthMeasureSpec)
-        val measuredHeight = View.MeasureSpec.getSize(heightMeasureSpec)
+        val measuredWidth = MeasureSpec.getSize(widthMeasureSpec)
+        val measuredHeight = MeasureSpec.getSize(heightMeasureSpec)
         measureChildren(widthMeasureSpec, heightMeasureSpec)
 
-        val smallestSide = Math.min(measuredWidth, measuredHeight)
-        Timber.d("onMeasure $smallestSide")
+        val smallestSide = measuredWidth.coerceAtMost(measuredHeight)
         setMeasuredDimension(smallestSide, smallestSide)
     }
 
@@ -245,9 +222,9 @@ class WentTimePicker @JvmOverloads constructor(
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         when(pickerMode) {
-            WentTimePicker.PickerMode.WENT -> layoutView(wentLayout, wentAngle)
-            WentTimePicker.PickerMode.FORTH -> layoutView(forthLayout, forthAngle)
-            WentTimePicker.PickerMode.WENT_FORTH -> {
+            PickerMode.WENT -> layoutView(wentLayout, wentAngle)
+            PickerMode.FORTH -> layoutView(forthLayout, forthAngle)
+            PickerMode.WENT_FORTH -> {
                 layoutView(wentLayout, wentAngle)
                 layoutView(forthLayout, forthAngle)
             }
@@ -304,7 +281,6 @@ class WentTimePicker @JvmOverloads constructor(
     }
 
     override fun onDraw(canvas: Canvas) {
-        Timber.d("onDraw wentAngle=$wentAngle\nforthAngle=$forthAngle")
         drawProgressBackground(canvas)
         drawProgress(canvas)
         drawDivisions(canvas)
@@ -313,7 +289,6 @@ class WentTimePicker @JvmOverloads constructor(
     private fun notifyChanges() {
         val computeBedTime = computeWentTime()
         val computeForthTime = computeForthTime()
-        Timber.d("notifyChanges \n$computeBedTime \n$computeForthTime")
         listener?.invoke(computeBedTime, computeForthTime)
     }
 
@@ -336,7 +311,6 @@ class WentTimePicker @JvmOverloads constructor(
         val parentCenterY = height / 2
         val centerX = (parentCenterX + radius * cos(Math.toRadians(angle))).toInt()
         val centerY = (parentCenterY - radius * sin(Math.toRadians(angle))).toInt()
-        Timber.d("layoutforthView radius= $radius $parentCenterX $parentCenterY $centerX $centerY")
         view.layout(
             (centerX - halfWidth),
             centerY - halfHeight,
@@ -372,7 +346,6 @@ class WentTimePicker @JvmOverloads constructor(
 
 
     private fun drawProgressBackground(canvas: Canvas) {
-        Timber.d("drawProgressBackground $circleBounds")
         canvas.drawArc(
             circleBounds, ANGLE_START_PROGRESS_BACKGROUND.toFloat(),
             ANGLE_END_PROGRESS_BACKGROUND.toFloat(),
@@ -398,7 +371,6 @@ class WentTimePicker @JvmOverloads constructor(
         val divisionAngle = 360 / hourLabels.size
         hourLabels.forEachIndexed { index, value ->
             val angle = (divisionAngle * index) - 90
-            Timber.d("drawDivisions $angle $value")
             val radians = Math.toRadians(angle.toDouble())
             val bgStrokeWidth = progressBackgroundPaint.strokeWidth
             val startX = center.x + (radius - bgStrokeWidth / 2 - divisionOffset) * cos(radians)

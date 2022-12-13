@@ -5,7 +5,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.zarholding.zar.database.entity.ArticleEntity
-import com.zarholding.zar.model.enum.EnumArticleType
 
 @Dao
 interface ArticleDao {

@@ -105,8 +105,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_margin="@dimen/_10sdp"
-                android:padding="@dimen/_5sdp">
+                android:layout_margin="@dimen/_7sdp">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/buttonSend"
@@ -118,8 +117,6 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     android:minWidth="@dimen/_80sdp"
                     android:textSize="@dimen/_12sdp"
-                    android:paddingTop="@dimen/_5sdp"
-                    android:paddingBottom="@dimen/_5sdp"
                     android:fontFamily="@font/kalameh_semibold"
                     app:cornerRadius="@dimen/_5sdp"
                     android:textColor="@color/textViewColor2"
@@ -135,8 +132,6 @@
                     app:layout_constraintBottom_toBottomOf="@id/buttonYes"
                     android:minWidth="@dimen/_80sdp"
                     android:textSize="@dimen/_12sdp"
-                    android:paddingTop="@dimen/_5sdp"
-                    android:paddingBottom="@dimen/_5sdp"
                     android:layout_marginStart="@dimen/_15sdp"
                     android:fontFamily="@font/kalameh_semibold"
                     app:cornerRadius="@dimen/_5sdp"

@@ -7,6 +7,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Gravity
 import android.view.WindowManager
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.material.button.MaterialButton
@@ -60,6 +61,7 @@ class ConfirmDialog(
 
     //---------------------------------------------------------------------------------------------- initDialog
     private fun initDialog() {
+        val imageViewClose = this.findViewById<ImageView>(R.id.imageViewClose)
         val layoutHeader = this.findViewById<ConstraintLayout>(R.id.constraintLayoutHeader)
         val textViewTitle = this.findViewById<TextView>(R.id.textViewTitle)
         val buttonYes = this.findViewById<MaterialButton>(R.id.buttonYes)
@@ -77,9 +79,9 @@ class ConfirmDialog(
             dismiss()
         }
 
-        buttonNo.setOnClickListener {
-            dismiss()
-        }
+        buttonNo.setOnClickListener { dismiss() }
+
+        imageViewClose.setOnClickListener { dismiss() }
     }
     //---------------------------------------------------------------------------------------------- initDialog
 
