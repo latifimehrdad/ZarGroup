@@ -2,8 +2,8 @@ package com.zarholding.zar.model.response.taxi
 
 import com.zarholding.zar.model.response.BaseResponseAbstractModel
 
-data class TaxiAddFavePlaceResponse(
+data class TaxiRemoveFavePlaceResponse(
     override val hasError: Boolean,
     override val message: String,
-    val data: TaxiFavPlaceModel?
+    val data: Boolean
 ) : BaseResponseAbstractModel()

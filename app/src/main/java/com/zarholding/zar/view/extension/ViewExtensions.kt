@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide
 import com.zar.core.tools.extensions.toSolarDate
 import com.zarholding.zar.hilt.Providers
 import com.zarholding.zar.model.enum.EnumTripStatus
+import com.zarholding.zar.model.response.address.AddressModel
 import com.zarholding.zardriver.model.response.TripStationModel
 import zar.R
 import java.time.LocalDateTime
@@ -22,6 +23,72 @@ import java.time.LocalDateTime
 /**
  * Created by m-latifi on 11/14/2022.
  */
+
+//-------------------------------------------------------------------------------------------------- AddressModel.getAddress()
+fun AddressModel.getAddress() : String {
+    var addressText: String
+
+    var county = county
+    county = county?.replace("شهرستان", "")
+    county = county?.replace("شهر", "")
+    county = county?.trimStart()
+    county = county?.trimEnd()
+    if (county == null)
+        county = ""
+
+    var city = city
+    city = city?.replace("شهرستان", "")
+    city = city?.replace("شهر", "")
+    city = city?.trimStart()
+    city = city?.trimEnd()
+    if (city == null)
+        city = ""
+
+    var town = town
+    town = town?.replace("شهرستان", "")
+    town = town?.replace("شهر", "")
+    town = town?.trimStart()
+    town = town?.trimEnd()
+    if (town == null)
+        town = ""
+
+    addressText = if (city in county)
+        county
+    else if (county in city)
+        city
+    else
+        "$county , $city"
+
+    if (town !in addressText)
+        addressText += " , $town"
+
+
+    neighbourhood?.let {
+        addressText += " , $it"
+    }
+
+    residential?.let {
+        addressText += " , $it"
+    }
+
+    road?.let {
+        addressText += " , $it"
+    }
+
+    return addressText
+}
+//-------------------------------------------------------------------------------------------------- AddressModel.getAddress()
+
+
+
+//-------------------------------------------------------------------------------------------------- setAddressToTextview
+@BindingAdapter("setAddressToTextview")
+fun TextView.setAddressToTextview(address : AddressModel) {
+    text = address.getAddress()
+}
+//-------------------------------------------------------------------------------------------------- setAddressToTextview
+
+
 
 //-------------------------------------------------------------------------------------------------- setPersonnelNameCode
 @BindingAdapter("setPersonnelName", "setPersonnelCode")

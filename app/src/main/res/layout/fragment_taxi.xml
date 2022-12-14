@@ -42,16 +42,18 @@
                 <org.osmdroid.views.MapView
                     android:id="@+id/mapView"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="0dp"
                     tools:layout_editor_absoluteX="0dp"
-                    tools:layout_editor_absoluteY="0dp" />
+                    tools:layout_editor_absoluteY="0dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/cardViewSearch"/>
 
                 <View
                     android:id="@+id/viewCenter"
                     android:layout_width="1px"
                     android:layout_height="1px"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/mapView"
+                    app:layout_constraintBottom_toBottomOf="@id/mapView"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -62,7 +64,8 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintBottom_toTopOf="@id/viewCenter"
-                    android:src="@drawable/icon_bus_marker"/>
+                    android:src="@drawable/icon_bus_marker"
+                    android:contentDescription="@string/markerDescription" />
 
                 <TextView
                     android:id="@+id/textViewLoading"
@@ -75,6 +78,31 @@
                     android:textColor="@color/textViewColor1"
                     android:textSize="@dimen/_12sdp"
                     android:visibility="gone" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardViewSearch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:cardBackgroundColor="@color/primaryColor">
+
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="@dimen/_11sdp"
+                        android:paddingVertical="@dimen/_5sdp"
+                        android:paddingHorizontal="@dimen/_10sdp"
+                        android:textColor="@color/appIconColor"
+                        android:text="@string/searchPlace"
+                        android:fontFamily="@font/kalameh_bold"
+                        android:textStyle="bold"
+                        app:drawableStartCompat="@drawable/ic_search"
+                        app:drawableTint="@color/appIconColor" />
+
+                </androidx.cardview.widget.CardView>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -95,22 +123,22 @@
             app:layout_constraintTop_toBottomOf="@id/cardViewMap">
 
             <TextView
-                android:id="@+id/textViewWentAndForth"
+                android:id="@+id/textViewReturning"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/drawable_trip_unselect_button"
                 android:fontFamily="@font/kalameh_semibold"
                 android:gravity="center"
                 android:paddingVertical="@dimen/_5sdp"
-                android:text="@string/backAndForth"
+                android:text="@string/returning"
                 android:textColor="@color/textViewColor1"
-                app:layout_constraintEnd_toStartOf="@id/textViewWent"
+                app:layout_constraintEnd_toStartOf="@id/textViewDeparture"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
 
             <TextView
-                android:id="@+id/textViewWent"
+                android:id="@+id/textViewDeparture"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_10sdp"
@@ -118,10 +146,10 @@
                 android:fontFamily="@font/kalameh_semibold"
                 android:gravity="center"
                 android:paddingVertical="@dimen/_5sdp"
-                android:text="@string/went"
+                android:text="@string/departure"
                 android:textColor="@color/textViewColor1"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/textViewWentAndForth"
+                app:layout_constraintStart_toEndOf="@id/textViewReturning"
                 app:layout_constraintTop_toTopOf="parent" />
 
 
@@ -131,7 +159,7 @@
                 android:layout_height="0dp"
                 android:layout_marginTop="@dimen/_2sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textViewWentAndForth">
+                app:layout_constraintTop_toBottomOf="@id/textViewReturning">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -171,7 +199,7 @@
                         app:spinner_divider_show="true"
                         app:spinner_divider_size="0.4dp"
                         app:spinner_item_height="46dp"
-                        app:spinner_popup_animation="bounce"
+                        app:spinner_popup_animation="dropdown"
                         app:spinner_popup_background="@color/dialogBackgroundColor"
                         app:spinner_popup_elevation="14dp" />
 
@@ -217,7 +245,8 @@
                         app:layout_constraintStart_toEndOf="@id/powerSpinnerOrigin"
                         android:layout_marginStart="@dimen/_5sdp"
                         android:src="@drawable/ic_favorite_outline"
-                        app:tint="@color/primaryColor" />
+                        app:tint="@color/primaryColor"
+                        android:contentDescription="@string/favDescription" />
 
                     <com.skydoves.powerspinner.PowerSpinnerView
                         android:id="@+id/powerSpinnerDestination"
@@ -242,7 +271,7 @@
                         app:spinner_divider_show="true"
                         app:spinner_divider_size="0.4dp"
                         app:spinner_item_height="46dp"
-                        app:spinner_popup_animation="bounce"
+                        app:spinner_popup_animation="dropdown"
                         app:spinner_popup_background="@color/dialogBackgroundColor"
                         app:spinner_popup_elevation="14dp" />
 
@@ -288,105 +317,192 @@
                         app:layout_constraintStart_toEndOf="@id/powerSpinnerDestination"
                         android:layout_marginStart="@dimen/_5sdp"
                         android:src="@drawable/ic_favorite_outline"
-                        app:tint="@color/primaryColor" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/buttonDate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/_5sdp"
-                        android:drawableTint="@color/textViewColor1"
-                        android:fontFamily="@font/kalameh_semibold"
-                        android:minWidth="@dimen/_100sdp"
-                        android:hint="@string/choose"
-                        android:textColor="@color/textViewColor1"
-                        android:textSize="@dimen/_9sdp"
-                        app:cornerRadius="@dimen/_5sdp"
-                        app:icon="@drawable/ic_date"
-                        app:layout_constraintEnd_toStartOf="@id/textViewTimeTitle"
-                        app:layout_constraintTop_toBottomOf="@id/powerSpinnerDestination" />
-
-                    <TextView
-                        android:id="@+id/textViewTimeTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/kalameh_semibold"
-                        android:text="@string/dateDot"
-                        android:textColor="@color/textViewColor1"
-                        android:textSize="@dimen/_10sdp"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="@id/buttonDate"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/buttonDate" />
+                        app:tint="@color/primaryColor"
+                        android:contentDescription="@string/favDescription" />
 
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/buttonForthTime"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/constraintLayoutReturn"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/_5sdp"
-                        android:fontFamily="@font/kalameh_semibold"
-                        android:hint="@string/choose"
-                        android:textColor="@color/textViewColor1"
-                        android:textSize="@dimen/_9sdp"
-                        app:cornerRadius="@dimen/_5sdp"
-                        app:layout_constraintEnd_toStartOf="@id/textViewForthTimeTitle"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/buttonDate" />
+                        app:layout_constraintTop_toBottomOf="@id/powerSpinnerDestination"
+                        app:layout_constraintEnd_toStartOf="@id/constraintLayoutDeparture"
+                        android:background="@drawable/drawable_spinner"
+                        android:padding="@dimen/_5sdp"
+                        android:layout_marginTop="@dimen/_20sdp">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/buttonReturnDate"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/_5sdp"
+                            android:fontFamily="@font/kalameh_semibold"
+                            android:minWidth="@dimen/_100sdp"
+                            android:hint="@string/choose"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:textColor="@color/textViewColor1"
+                            android:textSize="@dimen/_9sdp"
+                            app:cornerRadius="@dimen/_5sdp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/textViewTimeTitleReturn"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/textViewTimeTitleReturn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/kalameh_semibold"
+                            android:text="@string/dateDot"
+                            android:textColor="@color/textViewColor1"
+                            android:textSize="@dimen/_10sdp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="@id/buttonReturnDate"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@id/buttonReturnDate" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/buttonReturnTime"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/_5sdp"
+                            android:fontFamily="@font/kalameh_semibold"
+                            android:hint="@string/choose"
+                            android:textColor="@color/textViewColor1"
+                            android:textSize="@dimen/_9sdp"
+                            app:cornerRadius="@dimen/_5sdp"
+                            app:layout_constraintEnd_toStartOf="@id/textViewReturnTimeTitle"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/buttonReturnDate" />
+
+                        <TextView
+                            android:id="@+id/textViewReturnTimeTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/kalameh_semibold"
+                            android:text="@string/returnTimeDot"
+                            android:textColor="@color/textViewColor1"
+                            android:textSize="@dimen/_10sdp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="@id/buttonReturnTime"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/buttonReturnTime"
+                            app:layout_constraintTop_toTopOf="@id/buttonReturnTime" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <TextView
-                        android:id="@+id/textViewForthTimeTitle"
+                        android:id="@+id/textViewReturnTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/kalameh_semibold"
-                        android:text="@string/forthTimeDot"
-                        android:textColor="@color/textViewColor1"
-                        android:textSize="@dimen/_10sdp"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="@id/buttonForthTime"
-                        app:layout_constraintEnd_toStartOf="@id/buttonWentTime"
-                        app:layout_constraintStart_toEndOf="@id/buttonForthTime"
-                        app:layout_constraintTop_toTopOf="@id/buttonForthTime" />
+                        android:layout_marginEnd="@dimen/_10sdp"
+                        android:background="@drawable/drawable_layout_hint"
+                        android:fontFamily="@font/kalameh_light"
+                        android:paddingHorizontal="@dimen/_7sdp"
+                        android:text="@string/_return"
+                        android:textColor="@color/textViewFooter"
+                        android:textSize="@dimen/_8sdp"
+                        app:layout_constraintBottom_toTopOf="@id/constraintLayoutReturn"
+                        app:layout_constraintEnd_toEndOf="@id/constraintLayoutReturn"
+                        app:layout_constraintTop_toTopOf="@id/constraintLayoutReturn" />
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/buttonWentTime"
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/constraintLayoutDeparture"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_15sdp"
-                        android:layout_marginEnd="@dimen/_5sdp"
-                        android:fontFamily="@font/kalameh_semibold"
-                        android:hint="@string/choose"
-                        android:textColor="@color/textViewColor1"
-                        android:textSize="@dimen/_9sdp"
-                        app:cornerRadius="@dimen/_5sdp"
-                        app:layout_constraintBottom_toBottomOf="@id/buttonForthTime"
-                        app:layout_constraintEnd_toStartOf="@id/textViewWentTimeTitle"
-                        app:layout_constraintStart_toEndOf="@id/textViewForthTimeTitle"
-                        app:layout_constraintTop_toTopOf="@id/buttonForthTime" />
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/constraintLayoutReturn"
+                        app:layout_constraintStart_toEndOf="@id/constraintLayoutReturn"
+                        android:background="@drawable/drawable_spinner"
+                        android:padding="@dimen/_5sdp"
+                        android:layout_marginStart="@dimen/_10sdp">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/buttonDepartureDate"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/_5sdp"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:fontFamily="@font/kalameh_semibold"
+                            android:minWidth="@dimen/_100sdp"
+                            android:hint="@string/choose"
+                            android:textColor="@color/textViewColor1"
+                            android:textSize="@dimen/_9sdp"
+                            app:cornerRadius="@dimen/_5sdp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/textViewTimeTitle"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/textViewTimeTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/kalameh_semibold"
+                            android:text="@string/dateDot"
+                            android:textColor="@color/textViewColor1"
+                            android:textSize="@dimen/_10sdp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="@id/buttonDepartureDate"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@id/buttonDepartureDate" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/buttonDepartureTime"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/_5sdp"
+                            android:fontFamily="@font/kalameh_semibold"
+                            android:hint="@string/choose"
+                            android:textColor="@color/textViewColor1"
+                            android:textSize="@dimen/_9sdp"
+                            app:cornerRadius="@dimen/_5sdp"
+                            app:layout_constraintTop_toBottomOf="@id/buttonDepartureDate"
+                            app:layout_constraintEnd_toStartOf="@id/textViewDepartureTimeTitle"
+                            app:layout_constraintStart_toStartOf="parent" />
+
+                        <TextView
+                            android:id="@+id/textViewDepartureTimeTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/kalameh_semibold"
+                            android:text="@string/departureTimeDot"
+                            android:textColor="@color/textViewColor1"
+                            android:textSize="@dimen/_10sdp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="@id/buttonDepartureTime"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/buttonDepartureTime"
+                            app:layout_constraintTop_toTopOf="@id/buttonDepartureTime" />
+
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <TextView
-                        android:id="@+id/textViewWentTimeTitle"
+                        android:id="@+id/textViewDepartureTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/kalameh_semibold"
-                        android:text="@string/wentTimeDot"
-                        android:textColor="@color/textViewColor1"
-                        android:textSize="@dimen/_10sdp"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="@id/buttonForthTime"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/buttonWentTime"
-                        app:layout_constraintTop_toTopOf="@id/buttonForthTime" />
+                        android:layout_marginEnd="@dimen/_10sdp"
+                        android:background="@drawable/drawable_layout_hint"
+                        android:fontFamily="@font/kalameh_light"
+                        android:paddingHorizontal="@dimen/_7sdp"
+                        android:text="@string/departure"
+                        android:textColor="@color/textViewFooter"
+                        android:textSize="@dimen/_8sdp"
+                        app:layout_constraintBottom_toTopOf="@id/constraintLayoutDeparture"
+                        app:layout_constraintEnd_toEndOf="@id/constraintLayoutDeparture"
+                        app:layout_constraintTop_toTopOf="@id/constraintLayoutDeparture" />
+
 
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recyclerViewPassengers"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_10sdp"
+                        android:layout_marginTop="@dimen/_15sdp"
                         android:background="@drawable/drawable_spinner"
                         android:padding="@dimen/_5sdp"
-                        app:layout_constraintTop_toBottomOf="@id/buttonWentTime"
+                        app:layout_constraintTop_toBottomOf="@id/constraintLayoutReturn"
                         tools:itemCount="2"/>
 
                     <TextView

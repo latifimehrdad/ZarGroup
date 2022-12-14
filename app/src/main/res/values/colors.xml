@@ -74,7 +74,7 @@
 
     <color name="polyLineColor">#B33775F3</color>
 
-    <color name="recyclerLoadingShadow">#59DCDCDC</color>
+    <color name="recyclerLoadingShadow">#66D5D4D4</color>
     <color name="recyclerLoadingBack">#9906183A</color>
     <color name="recyclerLoadingLightBack">#FFFFFF</color>
 

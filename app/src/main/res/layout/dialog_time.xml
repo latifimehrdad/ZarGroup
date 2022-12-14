@@ -13,18 +13,18 @@
         android:padding="@dimen/_5sdp">
 
         <LinearLayout
-            android:id="@+id/linearLayoutForth"
+            android:id="@+id/linearLayoutReturn"
             android:layout_width="0dp"
             android:orientation="horizontal"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="@dimen/_10sdp"
-            app:layout_constraintEnd_toStartOf="@id/linearLayoutWent"
+            app:layout_constraintEnd_toStartOf="@id/linearLayoutDeparture"
             android:gravity="center">
 
             <TextView
-                android:id="@+id/textViewForthTile"
+                android:id="@+id/textViewReturnTile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_10sdp"
@@ -33,7 +33,7 @@
                 android:fontFamily="@font/kalameh_bold"
                 android:textStyle="bold"
                 android:gravity="center"
-                android:text="@string/forthTime"/>
+                android:text="@string/returnTime"/>
 
             <ImageView
                 android:layout_width="@dimen/_15sdp"
@@ -45,18 +45,18 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/linearLayoutWent"
+            android:id="@+id/linearLayoutDeparture"
             android:layout_width="0dp"
             android:orientation="horizontal"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="@dimen/_10sdp"
-            app:layout_constraintStart_toEndOf="@id/linearLayoutForth"
+            app:layout_constraintStart_toEndOf="@id/linearLayoutReturn"
             android:gravity="center">
 
             <TextView
-                android:id="@+id/textViewWentTitle"
+                android:id="@+id/textViewDepartureTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/_10sdp"
@@ -64,7 +64,7 @@
                 android:fontFamily="@font/kalameh_bold"
                 android:textStyle="bold"
                 android:gravity="center"
-                android:text="@string/wentTime"/>
+                android:text="@string/departureTime"/>
 
             <ImageView
                 android:layout_width="@dimen/_15sdp"
@@ -78,13 +78,13 @@
 
 
         <TextView
-            android:id="@+id/textViewForth"
+            android:id="@+id/textViewReturn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_10sdp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/textViewWent"
-            app:layout_constraintTop_toBottomOf="@id/linearLayoutWent"
+            app:layout_constraintEnd_toStartOf="@id/textViewDeparture"
+            app:layout_constraintTop_toBottomOf="@id/linearLayoutDeparture"
             android:textSize="@dimen/_15sdp"
             android:textColor="@color/white"
             android:fontFamily="@font/kalameh_bold"
@@ -94,13 +94,13 @@
 
 
         <TextView
-            android:id="@+id/textViewWent"
+            android:id="@+id/textViewDeparture"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="@dimen/_10sdp"
-            app:layout_constraintStart_toEndOf="@id/textViewForth"
-            app:layout_constraintTop_toBottomOf="@id/linearLayoutWent"
+            app:layout_constraintStart_toEndOf="@id/textViewReturn"
+            app:layout_constraintTop_toBottomOf="@id/linearLayoutDeparture"
             android:textSize="@dimen/_15sdp"
             android:textColor="@color/white"
             android:fontFamily="@font/kalameh_bold"
@@ -109,7 +109,7 @@
             android:text="08:30"/>
 
 
-        <com.zarholding.zar.view.WentTimePicker
+        <com.zarholding.zar.view.TimePicker
             android:id="@+id/timePicker"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -117,15 +117,15 @@
             android:layout_marginEnd="@dimen/_10sdp"
             app:divisionColor="#505a69"
             app:labelColor="#FBFBFB"
-            app:layout_constraintTop_toBottomOf="@id/textViewWent"
+            app:layout_constraintTop_toBottomOf="@id/textViewDeparture"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:progressBackgroundColor="#2B313C"
             app:progressBgStrokeWidth="@dimen/_20sdp"
             app:progressColor="#FBFBFB"
             app:progressStrokeWidth="@dimen/_20sdp"
-            app:wentLayoutId="@layout/layout_time_picker_went"
-            app:forthLayoutId="@layout/layout_time_picker_forth"
+            app:departureLayoutId="@layout/layout_time_picker_departure"
+            app:returnLayoutId="@layout/layout_time_picker_return"
             app:strokeTopShadowRadius="@dimen/_5sdp"
             app:strokeTopShadowColor="@color/white"
             app:strokeBottomShadowRadius="@dimen/_5sdp"

@@ -79,6 +79,8 @@ class PersonnelDialog(
     //---------------------------------------------------------------------------------------------- setListener
     private fun setListener() {
 
+        binding.imageViewClose.setOnClickListener { dismiss() }
+
         binding.textInputEditTextSearch.addTextChangedListener {
             job?.cancel()
             createJobForSearch(it.toString())

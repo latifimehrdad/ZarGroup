@@ -19,7 +19,7 @@ import java.util.*
 import kotlin.math.*
 
 
-class WentTimePicker @JvmOverloads constructor(
+class TimePicker @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : ViewGroup(context, attrs, defStyleAttr) {
 
@@ -28,9 +28,9 @@ class WentTimePicker @JvmOverloads constructor(
     }
 
     enum class PickerMode {
-        WENT,
-        FORTH,
-        WENT_FORTH
+        DEPARTURE,
+        RETURN,
+        RETURNING
     }
 
     private lateinit var progressPaint: Paint
@@ -52,28 +52,28 @@ class WentTimePicker @JvmOverloads constructor(
     private var strokeBottomShadowColor = Color.TRANSPARENT
     private var strokeTopShadowColor = Color.TRANSPARENT
     private var labelColor = Color.WHITE
-    private lateinit var wentLayout: View
-    private lateinit var forthLayout: View
-    private var wentAngle = 30.0
-    private var forthAngle = 225.0
-    private var draggingwent = false
-    private var draggingforth = false
+    private lateinit var departureLayout: View
+    private lateinit var returnLayout: View
+    private var departureAngle = 30.0
+    private var returnAngle = 225.0
+    private var draggingDeparture = false
+    private var draggingReturn = false
     private val stepMinutes = 15
     private val textRect = Rect()
-    private var wentLayoutId = 0
-    private var forthLayoutId = 0
+    private var departureLayoutId = 0
+    private var returnLayoutId = 0
 
-    var listener: ((bedTime: LocalTime, forthTime: LocalTime) -> Unit)? = null
+    var listener: ((departureTime: LocalTime, returnTime: LocalTime) -> Unit)? = null
 
 
-    fun getWentTime() = computeWentTime()
+    fun getDepartureTime() = computeDepartureTime()
 
-    fun getForthTime() = computeForthTime()
+    fun getReturnTime() = computeReturnTime()
 
-    fun setTime(wentTime: LocalTime, forthTime: LocalTime, pickerMode: PickerMode) {
-        wentAngle = Utils.minutesToAngle(wentTime.hour * 60 + wentTime.minute)
-        forthAngle = Utils.minutesToAngle(forthTime.hour * 60 + forthTime.minute)
-        WentTimePicker.pickerMode = pickerMode
+    fun setTime(departureTime: LocalTime, returnTime: LocalTime, pickerMode: PickerMode) {
+        departureAngle = Utils.minutesToAngle(departureTime.hour * 60 + departureTime.minute)
+        returnAngle = Utils.minutesToAngle(returnTime.hour * 60 + returnTime.minute)
+        TimePicker.pickerMode = pickerMode
         invalidate()
         notifyChanges()
     }
@@ -94,38 +94,38 @@ class WentTimePicker @JvmOverloads constructor(
         var progressStrokeCap: Paint.Cap = Paint.Cap.ROUND
 
         if (attrs != null) {
-            val a = context.obtainStyledAttributes(attrs, R.styleable.wentTimePicker)
+            val a = context.obtainStyledAttributes(attrs, R.styleable.TimePicker)
 
-            wentLayoutId = a.getResourceId(R.styleable.wentTimePicker_wentLayoutId, 0)
-            forthLayoutId = a.getResourceId(R.styleable.wentTimePicker_forthLayoutId, 0)
+            departureLayoutId = a.getResourceId(R.styleable.TimePicker_departureLayoutId, 0)
+            returnLayoutId = a.getResourceId(R.styleable.TimePicker_returnLayoutId, 0)
 
-            progressColor = a.getColor(R.styleable.wentTimePicker_progressColor, progressColor)
+            progressColor = a.getColor(R.styleable.TimePicker_progressColor, progressColor)
             progressBackgroundColor =
                 a.getColor(
-                    R.styleable.wentTimePicker_progressBackgroundColor,
+                    R.styleable.TimePicker_progressBackgroundColor,
                     progressBackgroundColor
                 )
-            divisionColor = a.getColor(R.styleable.wentTimePicker_divisionColor, divisionColor)
+            divisionColor = a.getColor(R.styleable.TimePicker_divisionColor, divisionColor)
             progressStrokeWidth =
                 a.getDimensionPixelSize(
-                    R.styleable.wentTimePicker_progressStrokeWidth,
+                    R.styleable.TimePicker_progressStrokeWidth,
                     progressStrokeWidth
                 )
             progressBottomShadowSize =
-                a.getDimensionPixelSize(R.styleable.wentTimePicker_strokeBottomShadowRadius, 0)
+                a.getDimensionPixelSize(R.styleable.TimePicker_strokeBottomShadowRadius, 0)
             progressTopShadowSize =
-                a.getDimensionPixelSize(R.styleable.wentTimePicker_strokeTopShadowRadius, 0)
+                a.getDimensionPixelSize(R.styleable.TimePicker_strokeTopShadowRadius, 0)
             progressBgStrokeWidth =
                 a.getDimensionPixelSize(
-                    R.styleable.wentTimePicker_progressBgStrokeWidth,
+                    R.styleable.TimePicker_progressBgStrokeWidth,
                     progressStrokeWidth
                 )
             strokeBottomShadowColor =
-                a.getColor(R.styleable.wentTimePicker_strokeBottomShadowColor, progressColor)
+                a.getColor(R.styleable.TimePicker_strokeBottomShadowColor, progressColor)
             strokeTopShadowColor =
-                a.getColor(R.styleable.wentTimePicker_strokeTopShadowColor, progressColor)
-            labelColor = a.getColor(R.styleable.wentTimePicker_labelColor, progressColor)
-            labelColor = a.getColor(R.styleable.wentTimePicker_labelColor, progressColor)
+                a.getColor(R.styleable.TimePicker_strokeTopShadowColor, progressColor)
+            labelColor = a.getColor(R.styleable.TimePicker_labelColor, progressColor)
+            labelColor = a.getColor(R.styleable.TimePicker_labelColor, progressColor)
 
             progressStrokeCap = Paint.Cap.ROUND
 
@@ -187,15 +187,15 @@ class WentTimePicker @JvmOverloads constructor(
         textPaint.color = labelColor
 
         val inflater = LayoutInflater.from(context)
-        wentLayout = inflater.inflate(wentLayoutId, this, false)
-        forthLayout = inflater.inflate(forthLayoutId, this, false)
+        departureLayout = inflater.inflate(departureLayoutId, this, false)
+        returnLayout = inflater.inflate(returnLayoutId, this, false)
 
         when(pickerMode) {
-            PickerMode.WENT -> addView(wentLayout)
-            PickerMode.FORTH -> addView(forthLayout)
-            PickerMode.WENT_FORTH -> {
-                addView(wentLayout)
-                addView(forthLayout)
+            PickerMode.DEPARTURE -> addView(departureLayout)
+            PickerMode.RETURN -> addView(returnLayout)
+            PickerMode.RETURNING -> {
+                addView(departureLayout)
+                addView(returnLayout)
             }
         }
 
@@ -222,23 +222,23 @@ class WentTimePicker @JvmOverloads constructor(
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         when(pickerMode) {
-            PickerMode.WENT -> layoutView(wentLayout, wentAngle)
-            PickerMode.FORTH -> layoutView(forthLayout, forthAngle)
-            PickerMode.WENT_FORTH -> {
-                layoutView(wentLayout, wentAngle)
-                layoutView(forthLayout, forthAngle)
+            PickerMode.DEPARTURE -> layoutView(departureLayout, departureAngle)
+            PickerMode.RETURN -> layoutView(returnLayout, returnAngle)
+            PickerMode.RETURNING -> {
+                layoutView(departureLayout, departureAngle)
+                layoutView(returnLayout, returnAngle)
             }
         }
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
         if (ev.action == MotionEvent.ACTION_DOWN) {
-            if (isTouchOnView(wentLayout, ev)) {
-                draggingwent = true
+            if (isTouchOnView(departureLayout, ev)) {
+                draggingDeparture = true
                 return true
             }
-            if (isTouchOnView(forthLayout, ev)) {
-                draggingforth = true
+            if (isTouchOnView(returnLayout, ev)) {
+                draggingReturn = true
                 return true
             }
         }
@@ -256,25 +256,25 @@ class WentTimePicker @JvmOverloads constructor(
             }
             MotionEvent.ACTION_MOVE -> {
                 val touchAngleRad = atan2(center.y - y, x - center.x).toDouble()
-                if (draggingwent) {
-                    val wentAngleRad = Math.toRadians(wentAngle)
-                    val diff = Math.toDegrees(angleBetweenVectors(wentAngleRad, touchAngleRad))
-                    wentAngle = to_0_720(wentAngle + diff)
+                if (draggingDeparture) {
+                    val departureAngleRad = Math.toRadians(departureAngle)
+                    val diff = Math.toDegrees(angleBetweenVectors(departureAngleRad, touchAngleRad))
+                    departureAngle = to_0_720(departureAngle + diff)
                     requestLayout()
                     notifyChanges()
                     return true
-                } else if (draggingforth) {
-                    val forthAngleRad = Math.toRadians(forthAngle)
-                    val diff = Math.toDegrees(angleBetweenVectors(forthAngleRad, touchAngleRad))
-                    forthAngle = to_0_720(forthAngle + diff)
+                } else if (draggingReturn) {
+                    val returnAngleRad = Math.toRadians(returnAngle)
+                    val diff = Math.toDegrees(angleBetweenVectors(returnAngleRad, touchAngleRad))
+                    returnAngle = to_0_720(returnAngle + diff)
                     requestLayout()
                     notifyChanges()
                     return true
                 }
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                draggingwent = false
-                draggingforth = false
+                draggingDeparture = false
+                draggingReturn = false
             }
         }
         return super.onTouchEvent(ev)
@@ -287,19 +287,19 @@ class WentTimePicker @JvmOverloads constructor(
     }
 
     private fun notifyChanges() {
-        val computeBedTime = computeWentTime()
-        val computeForthTime = computeForthTime()
-        listener?.invoke(computeBedTime, computeForthTime)
+        val computeBedTime = computeDepartureTime()
+        val computeReturnTime = computeReturnTime()
+        listener?.invoke(computeBedTime, computeReturnTime)
     }
 
-    private fun computeWentTime(): LocalTime {
-        val wentMin = snapMinutes(angleToMins(wentAngle), stepMinutes)
-        return LocalTime.of((wentMin / 60) % 24, wentMin % 60)
+    private fun computeDepartureTime(): LocalTime {
+        val departureMin = snapMinutes(angleToMins(departureAngle), stepMinutes)
+        return LocalTime.of((departureMin / 60) % 24, departureMin % 60)
     }
 
-    private fun computeForthTime(): LocalTime {
-        val forthMin = snapMinutes(angleToMins(forthAngle), stepMinutes)
-        return LocalTime.of((forthMin / 60) % 24, forthMin % 60)
+    private fun computeReturnTime(): LocalTime {
+        val returnMin = snapMinutes(angleToMins(returnAngle), stepMinutes)
+        return LocalTime.of((returnMin / 60) % 24, returnMin % 60)
     }
 
     private fun layoutView(view: View, angle: Double) {
@@ -321,8 +321,8 @@ class WentTimePicker @JvmOverloads constructor(
 
     private fun calculateBounds(w: Int, h: Int) {
 
-        val maxChildWidth = max(wentLayout.measuredWidth, forthLayout.measuredWidth)
-        val maxChildHeight = max(wentLayout.measuredHeight, forthLayout.measuredHeight)
+        val maxChildWidth = max(departureLayout.measuredWidth, returnLayout.measuredWidth)
+        val maxChildHeight = max(departureLayout.measuredHeight, returnLayout.measuredHeight)
 
 
         val maxChildSize = max(maxChildWidth, maxChildHeight)
@@ -354,9 +354,9 @@ class WentTimePicker @JvmOverloads constructor(
     }
 
     private fun drawProgress(canvas: Canvas) {
-        if (pickerMode == PickerMode.WENT_FORTH) {
-            val startAngle = -wentAngle.toFloat()
-            val sweep = Utils.to_0_360(wentAngle - forthAngle).toFloat()
+        if (pickerMode == PickerMode.RETURNING) {
+            val startAngle = -departureAngle.toFloat()
+            val sweep = Utils.to_0_360(departureAngle - returnAngle).toFloat()
             progressBottomBlurPaint?.let {
                 canvas.drawArc(circleBounds, startAngle, sweep, false, it)
             }
@@ -409,7 +409,7 @@ class WentTimePicker @JvmOverloads constructor(
     }
 
     companion object {
-        var pickerMode = PickerMode.WENT_FORTH
+        var pickerMode = PickerMode.RETURNING
         private const val ANGLE_START_PROGRESS_BACKGROUND = 0
         private const val ANGLE_END_PROGRESS_BACKGROUND = 360
         private const val DEFAULT_STROKE_WIDTH_DP = 8F

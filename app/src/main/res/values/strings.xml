@@ -58,8 +58,8 @@
     <string name="passcodeIsEmpty">رمز ورود را وارد نمایید</string>
     <string name="chooseStation">ایستگاه را انتخاب کنید</string>
     <string name="taxiReservation">درخواست آژانس</string>
-    <string name="went">رفت</string>
-    <string name="backAndForth">رفت و برگشت</string>
+    <string name="departure">رفت</string>
+    <string name="returning">رفت و برگشت</string>
     <string name="applicator">درخواست کننده : %1$s</string>
     <string name="doYouWantToExitApp">آیا برای خروج از برنامه مطمئن هستید؟</string>
     <string name="pleaseSelectPlaceOfOrigin">لطفا لوکیشن مبدا را انتخاب کنید</string>
@@ -68,14 +68,16 @@
     <string name="date">تاریخ</string>
     <string name="yes">بله</string>
     <string name="confirm">تایید</string>
-    <string name="wentTimeDot">ساعت حرکت :</string>
-    <string name="wentTime">ساعت حرکت</string>
-    <string name="forthTime">ساعت برگشت</string>
-    <string name="forthTimeDot">ساعت برگشت :</string>
+    <string name="departureTimeDot">ساعت حرکت :</string>
+    <string name="departureTime">ساعت حرکت</string>
+    <string name="_return">برگشت</string>
+    <string name="returnTime">ساعت برگشت</string>
+    <string name="returnTimeDot">ساعت برگشت :</string>
     <string name="choose">انتخاب</string>
     <string name="no">خیر</string>
     <string name="send">ارسال</string>
     <string name="cancel">انصراف</string>
+    <string name="searchLoadMore">جستجوی موارد بیشتر</string>
     <string name="showAllNews">مشاهده تمام خبرها</string>
     <string name="confirmChecked">تایید نشان شده ها</string>
     <string name="rejectChecked">عدم تایید نشان شده ها</string>
@@ -100,17 +102,23 @@
     <string name="confirmFavPlace">آیا برای اضافه کردن این مکان به لیست علاقه مندی ها مطمئن هستید؟</string>
     <string name="enterPlaceName">یک نام کوتاه برای این محل وارد کنید</string>
     <string name="placeName">نام محل</string>
-
+    <string name="destinationLocationSelected">شما مقصد را انتخاب کرده اید، لطفا مقصد را حذف کنید و دوباره تلاش کنید</string>
+    <string name="pleaseChooseLocation">لطفا یک مکان را انتخاب نمایید</string>
+    <string name="addressSuggestionHint">جستجوی خیابان، کوچه، …</string>
+    <string name="cityName">نام شهر</string>
     <string name="carEntityType">cars</string>
     <string name="driversEntityType">drivers</string>
     <string name="articlesEntityType">articles</string>
-
+    <string name="cityIsEmpty">لطفا شهر را وارد نمایید</string>
+    <string name="addressIsEmpty">لطفا آدرس را وارد نمایید</string>
     <string name="responseIsEmpty">اطلاعات دریافتی خالی می باشد</string>
     <string name="responseSlideIsEmpty">اسلاید های دریافتی خالی می باشد</string>
     <string name="responseArticleIsEmpty">خبرنامه های دریافتی خالی می باشد</string>
     <string name="responseUserInfoIsEmpty">اطلاعات کاربر خالی می باشد</string>
     <string name="messagePreviousStationReached">سرویس شما به ایستگاه قبلی رسید</string>
-
+    <string name="selectedDateIsThePast">تاریخ انتخاب شده در گذشته است</string>
+    <string name="selectedTimeIsThePast">ساعت انتخاب شده در گذشته است</string>
+    <string name="theReturnTimeIsBeforeTheDepartureTime">ساعت برگشت قبل از ساعت رفت است</string>
     <string name="biometricNoHardware">دستگاه شما فاقد سنسور اثر انگشت است</string>
     <string name="onAuthenticationError">اثر انگشت شما تایید نشد</string>
     <string name="actionIsDone">عملیات با موفقیت انجام شد</string>
@@ -120,7 +128,15 @@
     <string name="reasonOfReject">علت عدم تایید :</string>
     <string name="reasonOfReject1">علت عدم تایید : %1$s</string>
     <string name="reasonText">متن علت</string>
+    <string name="selectTheDepartureDate">تاریخ رفت را انتخاب کنید</string>
+    <string name="selectTheReturnDate">تاریخ برگشت را انتخاب کنید</string>
+    <string name="theReturnDateIsBeforeTheDepartureDate">تاریخ برگشت قبل از تاریخ رفت است</string>
+    <string name="searchPlace">جستجوی آدرس</string>
+    <string name="originLocationIsSelect">مبدا انتخاب شده است، برای تغییر آن دکمه برگشت را بزنید</string>
+    <string name="destinationLocationIsSelect">مقصد انتخاب شده است، برای تغییر آن دکمه برگشت را بزنید</string>
 
+    
+    
     <string name="logoDescription">logo</string>
     <string name="profileDescription">profile</string>
     <string name="notificationDescription">notification</string>
@@ -131,5 +147,8 @@
     <string name="showMoreDescription">show more</string>
     <string name="iconDescription">icon</string>
     <string name="plusDescription">plus</string>
+    <string name="searchDescription">search</string>
+    <string name="favDescription">favorite</string>
+    <string name="markerDescription">marker</string>
 
 </resources>

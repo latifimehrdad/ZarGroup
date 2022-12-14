@@ -1,8 +1,6 @@
 package com.zarholding.zar.utility
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Paint
+import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.location.Location
@@ -12,8 +10,8 @@ import android.widget.TextView
 import com.zarholding.zar.model.response.address.AddressModel
 import com.zarholding.zar.model.response.trip.TripPointModel
 import com.zarholding.zardriver.model.response.TripStationModel
-import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.withContext
 import org.osmdroid.api.IMapController
 import org.osmdroid.bonuspack.routing.OSRMRoadManager
 import org.osmdroid.bonuspack.routing.RoadManager
@@ -27,7 +25,10 @@ import org.osmdroid.views.overlay.Polyline
 import org.osmdroid.views.overlay.TilesOverlay
 import org.osmdroid.views.overlay.infowindow.MarkerInfoWindow
 import zar.R
-import kotlin.math.*
+import kotlin.math.PI
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
 
 
 /**
@@ -39,12 +40,77 @@ class OsmManager(private val map: MapView) {
 
     //---------------------------------------------------------------------------------------------- mapInitialize
     fun mapInitialize(theme: Int) {
+/*        val inverseMatrix = ColorMatrix(
+            floatArrayOf(
+                -1.0f, 0.0f, 0.0f, 0.0f, 255f,
+                0.0f, -1.0f, 0.0f, 0.0f, 255f,
+                0.0f, 0.0f, -1.0f, 0.0f, 255f,
+                0.0f, 0.0f, 0.0f, 1.0f, 0.0f
+            )
+        )
+
+        val destinationColor = Color.parseColor("#FF2A2A2A")
+        val lr = (255.0f - Color.red(destinationColor)) / 255.0f
+        val lg = (255.0f - Color.green(destinationColor)) / 255.0f
+        val lb = (255.0f - Color.blue(destinationColor)) / 255.0f
+        val grayscaleMatrix = ColorMatrix(
+            floatArrayOf(
+                lr, lg, lb, 0f, 0f,  //
+                lr, lg, lb, 0f, 0f,  //
+                lr, lg, lb, 0f, 0f, 0f, 0f, 0f, 0f, 255f
+            )
+        )
+        grayscaleMatrix.preConcat(inverseMatrix)
+        val dr = Color.red(destinationColor)
+        val dg = Color.green(destinationColor)
+        val db = Color.blue(destinationColor)
+        val drf = dr / 255f
+        val dgf = dg / 255f
+        val dbf = db / 255f
+        val tintMatrix = ColorMatrix(
+            floatArrayOf(
+                drf, 0f, 0f, 0f, 0f, 0f, dgf, 0f, 0f, 0f, 0f, 0f, dbf, 0f, 0f, 0f, 0f, 0f, 1f, 0f
+            )
+        )
+        tintMatrix.preConcat(grayscaleMatrix)
+        val lDestination = drf * lr + dgf * lg + dbf * lb
+        val scale = 1f - lDestination
+        val translate = 1 - scale * 0.5f
+        val scaleMatrix = ColorMatrix(
+            floatArrayOf(
+                scale,
+                0f,
+                0f,
+                0f,
+                dr * translate,
+                0f,
+                scale,
+                0f,
+                0f,
+                dg * translate,
+                0f,
+                0f,
+                scale,
+                0f,
+                db * translate,
+                0f,
+                0f,
+                0f,
+                1f,
+                0f
+            )
+        )
+        scaleMatrix.preConcat(tintMatrix)
+        val filter = ColorMatrixColorFilter(scaleMatrix)
+        map.overlayManager.tilesOverlay.setColorFilter(filter)*/
+
         Configuration.getInstance().userAgentValue = map.context.packageName
         map.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE)
         map.setMultiTouchControls(true)
-        map.minZoomLevel = 9.0
+        map.minZoomLevel = 5.0
         map.maxZoomLevel = 21.0
-        moveCamera(GeoPoint(35.90576170621037, 50.819428313684675))
+        map.controller.animateTo(GeoPoint(35.90576170621037, 50.819428313684675)
+        ,18.0,1)
         if (theme == android.content.res.Configuration.UI_MODE_NIGHT_YES)
             map.overlayManager.tilesOverlay.setColorFilter(TilesOverlay.INVERT_COLORS) // dark
         map.onResume()
@@ -282,59 +348,6 @@ class OsmManager(private val map: MapView) {
         mapController.animateTo(point, 16.0, 1000)
     }
     //---------------------------------------------------------------------------------------------- moveCameraZoomUp
-
-
-
-    //---------------------------------------------------------------------------------------------- setAddressToTextview
-    fun setAddressToTextview(address: AddressModel) : String {
-        var addressText: String
-
-        var county = address.county
-        county = county?.replace("شهرستان", "")
-        county = county?.replace("شهر", "")
-        county = county?.trimStart()
-        county = county?.trimEnd()
-        if (county == null)
-            county = ""
-
-        var city = address.city
-        city = city?.replace("شهرستان", "")
-        city = city?.replace("شهر", "")
-        city = city?.trimStart()
-        city = city?.trimEnd()
-        if (city == null)
-            city = ""
-
-        var town = address.town
-        town = town?.replace("شهرستان", "")
-        town = town?.replace("شهر", "")
-        town = town?.trimStart()
-        town = town?.trimEnd()
-        if (town == null)
-            town = ""
-
-        addressText = if (city in county)
-            county
-        else if (county in city)
-            city
-        else
-            "$county , $city"
-
-        if (town !in addressText)
-            addressText += " , $town"
-
-
-        address.neighbourhood?.let {
-            addressText += " , $it"
-        }
-
-        address.road?.let {
-            addressText += " , $it"
-        }
-
-        return addressText
-    }
-    //---------------------------------------------------------------------------------------------- setAddressToTextview
 
 
 /*

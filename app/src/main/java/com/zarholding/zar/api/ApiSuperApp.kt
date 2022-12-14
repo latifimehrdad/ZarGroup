@@ -5,11 +5,14 @@ import com.zarholding.zar.model.request.RequestRegisterStationModel
 import com.zarholding.zar.model.request.TaxiAddFavPlaceRequest
 import com.zarholding.zar.model.request.TripRequestRegisterStatusModel
 import com.zarholding.zar.model.response.address.AddressResponseModel
+import com.zarholding.zar.model.response.address.AddressSuggestionModel
 import com.zarholding.zar.model.response.article.ArticleResponseModel
 import com.zarholding.zar.model.response.taxi.TaxiAddFavePlaceResponse
 import com.zarholding.zar.model.response.taxi.TaxiFavPlaceResponse
+import com.zarholding.zar.model.response.taxi.TaxiRemoveFavePlaceResponse
 import com.zarholding.zar.model.response.trip.*
 import retrofit2.http.*
+
 
 /**
  * Created by m-latifi on 11/26/2022.
@@ -81,12 +84,18 @@ interface ApiSuperApp {
     suspend fun requestDeleteFavPlace(
         @Path("id") id : Int,
         @Header("Authorization") token : String
-    ) : TaxiAddFavePlaceResponse
+    ) : TaxiRemoveFavePlaceResponse
 
 
     @GET
-    suspend fun getAddress(
+    suspend fun requestGetAddress(
         @Url url : String
     ) : AddressResponseModel
+
+
+    @GET
+    suspend fun requestGetSuggestionAddress(
+        @Url url: String
+    ): List<AddressSuggestionModel>
 
 }

@@ -11,5 +11,6 @@ data class AddressModel(
     val country : String?,
     val road : String?,
     val building : String?,
-    val town : String?
+    val town : String?,
+    val residential : String?
 )

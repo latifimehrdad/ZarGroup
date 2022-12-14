@@ -2,6 +2,7 @@ package com.zarholding.zar.view.fragment
 
 import android.graphics.Typeface
 import android.os.Bundle
+import android.util.Log
 import android.util.Size
 import android.view.*
 import android.view.animation.AnimationUtils
@@ -11,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.skydoves.powerspinner.IconSpinnerAdapter
 import com.skydoves.powerspinner.IconSpinnerItem
@@ -24,15 +26,14 @@ import com.zarholding.zar.database.dao.UserInfoDao
 import com.zarholding.zar.database.entity.UserInfoEntity
 import com.zarholding.zar.model.request.TaxiAddFavPlaceRequest
 import com.zarholding.zar.model.response.address.AddressModel
+import com.zarholding.zar.model.response.address.AddressSuggestionModel
 import com.zarholding.zar.model.response.taxi.TaxiFavPlaceModel
 import com.zarholding.zar.utility.OsmManager
 import com.zarholding.zar.utility.UnAuthorizationManager
-import com.zarholding.zar.view.WentTimePicker
+import com.zarholding.zar.view.TimePicker
 import com.zarholding.zar.view.activity.MainActivity
-import com.zarholding.zar.view.dialog.ConfirmDialog
-import com.zarholding.zar.view.dialog.FavPlaceDialog
-import com.zarholding.zar.view.dialog.PersonnelDialog
-import com.zarholding.zar.view.dialog.TimeDialog
+import com.zarholding.zar.view.dialog.*
+import com.zarholding.zar.view.extension.getAddress
 import com.zarholding.zar.view.recycler.adapter.PassengerAdapter
 import com.zarholding.zar.view.recycler.holder.PassengerItemHolder
 import com.zarholding.zar.viewmodel.AddressViewModel
@@ -53,6 +54,7 @@ import zar.R
 import zar.databinding.FragmentTaxiBinding
 import javax.inject.Inject
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 
 /**
@@ -81,12 +83,12 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
     private val binding get() = _binding!!
     private lateinit var osmManager: OsmManager
     private lateinit var adapter: PassengerAdapter
-    private var timePickMode = WentTimePicker.PickerMode.WENT_FORTH
+    private var timePickMode = TimePicker.PickerMode.RETURNING
     private var originMarker: Marker? = null
     private var destinationMarker: Marker? = null
-    private var favPlace: List<TaxiFavPlaceModel>? = null
-    private var originFavPlaceModel : TaxiFavPlaceModel? = null
-    private var destinationFavPlaceModel : TaxiFavPlaceModel? = null
+    private var favPlace: MutableList<TaxiFavPlaceModel>? = null
+    private var originFavPlaceModel: TaxiFavPlaceModel? = null
+    private var destinationFavPlaceModel: TaxiFavPlaceModel? = null
     private var favPlaceType = FavPlaceType.NONE
 
     //---------------------------------------------------------------------------------------------- FavClick
@@ -163,10 +165,10 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
     private fun initView() {
         osmManager = OsmManager(binding.mapView)
         osmManager.mapInitialize(themeManagers.applicationTheme())
-        binding.imageViewMarker.setImageResource(R.drawable.icon_start_marker)
+        binding.imageViewMarker.setImageResource(R.drawable.ic_origin)
         setListener()
         setApplicatorNameToTextView()
-        clickOnWentServiceTextView()
+        clickOnDepartureServiceTextView()
         backClickControl()
         setPassengersAdapter()
         requestGetTaxiFavPlace()
@@ -176,14 +178,16 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- setListener
     private fun setListener() {
-        binding.textViewWent.setOnClickListener { clickOnWentServiceTextView() }
-        binding.textViewWentAndForth.setOnClickListener { clickOnWentAndForthServicesTextView() }
-        binding.buttonWentTime.setOnClickListener { showTimePickerDialog() }
-        binding.buttonForthTime.setOnClickListener { showTimePickerDialog() }
-        binding.buttonDate.setOnClickListener { showDatePickerDialog() }
+        binding.textViewDeparture.setOnClickListener { clickOnDepartureServiceTextView() }
+        binding.textViewReturning.setOnClickListener { clickOnReturningServicesTextView() }
+        binding.buttonDepartureTime.setOnClickListener { showTimePickerDialog() }
+        binding.buttonReturnTime.setOnClickListener { showTimePickerDialog() }
+        binding.buttonDepartureDate.setOnClickListener { showDatePickerDialog(binding.buttonDepartureDate) }
+        binding.buttonReturnDate.setOnClickListener { showDatePickerDialog(binding.buttonReturnDate) }
         binding.imageViewMarker.setOnClickListener { getCenterLocationOfMap() }
         binding.imageViewFavOrigin.setOnClickListener { clickImageviewFavOrigin() }
         binding.imageViewFavDestination.setOnClickListener { clickImageviewFavDestination() }
+        binding.cardViewSearch.setOnClickListener { showDialogSearchAddress() }
     }
     //---------------------------------------------------------------------------------------------- setListener
 
@@ -210,7 +214,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
                         onError(EnumErrorType.UNKNOWN, it.message)
                     else {
                         it.data?.let { items ->
-                            favPlace = items
+                            favPlace = items.toMutableList()
                             initOriginSpinner()
                             initDestinationSpinner()
                         }
@@ -224,7 +228,9 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- getCenterLocationOfMap
     private fun getCenterLocationOfMap() {
-        val center = binding.mapView.mapCenter
+        binding.powerSpinnerOrigin.dismiss()
+        binding.powerSpinnerDestination.dismiss()
+        val center = GeoPoint(binding.mapView.mapCenter.latitude, binding.mapView.mapCenter.longitude)
         binding.textViewLoading.visibility = View.VISIBLE
         addressViewModel.getAddress(center).observe(viewLifecycleOwner) { response ->
             response?.let { info ->
@@ -246,32 +252,32 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- setAddressToTextview
     private fun setAddressToTextview(address: AddressModel, textView: TextView) {
         textView.isSelected = true
-        textView.text = osmManager.setAddressToTextview(address)
+        textView.text = address.getAddress()
         textView.setTextColor(resources.getColor(R.color.primaryColor, context?.theme))
     }
     //---------------------------------------------------------------------------------------------- setAddressToTextview
 
 
-    //---------------------------------------------------------------------------------------------- clickOnWentServiceTextView
-    private fun clickOnWentServiceTextView() {
-        binding.textViewWent.setBackgroundResource(R.drawable.drawable_trip_select_button)
-        binding.textViewWentAndForth.setBackgroundResource(R.drawable.drawable_trip_unselect_button)
-        binding.textViewForthTimeTitle.visibility = View.INVISIBLE
-        binding.buttonForthTime.visibility = View.INVISIBLE
-        timePickMode = WentTimePicker.PickerMode.WENT
+    //---------------------------------------------------------------------------------------------- clickOnDepartureServiceTextView
+    private fun clickOnDepartureServiceTextView() {
+        binding.textViewDeparture.setBackgroundResource(R.drawable.drawable_trip_select_button)
+        binding.textViewReturning.setBackgroundResource(R.drawable.drawable_trip_unselect_button)
+        binding.constraintLayoutReturn.visibility = View.INVISIBLE
+        binding.textViewReturnTitle.visibility = View.INVISIBLE
+        timePickMode = TimePicker.PickerMode.DEPARTURE
     }
-    //---------------------------------------------------------------------------------------------- clickOnWentServiceTextView
+    //---------------------------------------------------------------------------------------------- clickOnDepartureServiceTextView
 
 
-    //---------------------------------------------------------------------------------------------- clickOnWentAndForthServicesTextView
-    private fun clickOnWentAndForthServicesTextView() {
-        binding.textViewWentAndForth.setBackgroundResource(R.drawable.drawable_trip_select_button)
-        binding.textViewWent.setBackgroundResource(R.drawable.drawable_trip_unselect_button)
-        binding.textViewForthTimeTitle.visibility = View.VISIBLE
-        binding.buttonForthTime.visibility = View.VISIBLE
-        timePickMode = WentTimePicker.PickerMode.WENT_FORTH
+    //---------------------------------------------------------------------------------------------- clickOnReturningServicesTextView
+    private fun clickOnReturningServicesTextView() {
+        binding.textViewReturning.setBackgroundResource(R.drawable.drawable_trip_select_button)
+        binding.textViewDeparture.setBackgroundResource(R.drawable.drawable_trip_unselect_button)
+        binding.constraintLayoutReturn.visibility = View.VISIBLE
+        binding.textViewReturnTitle.visibility = View.VISIBLE
+        timePickMode = TimePicker.PickerMode.RETURNING
     }
-    //---------------------------------------------------------------------------------------------- clickOnWentAndForthServicesTextView
+    //---------------------------------------------------------------------------------------------- clickOnReturningServicesTextView
 
 
     //---------------------------------------------------------------------------------------------- setApplicatorNameToTextView
@@ -287,7 +293,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
 
 
     //---------------------------------------------------------------------------------------------- showDatePickerDialog
-    private fun showDatePickerDialog() {
+    private fun showDatePickerDialog(button: MaterialButton) {
         val persianDate = LocalDateTime.now().toSolarDate()!!
         val typeface =
             Typeface.createFromAsset(requireContext().assets, "font/kalameh_medium.ttf")
@@ -299,7 +305,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
             .setAllButtonsTextSize(14)
             .setTypeFace(typeface)
             .setMinYear(persianDate.getYear())
-            .setMaxYear(PersianDatePickerDialog.THIS_YEAR)
+            .setMaxYear(persianDate.getYear() + 1)
             .setInitDate(persianDate.getYear(), persianDate.getMonth(), persianDate.getDay())
             .setBackgroundColor(
                 resources.getColor(
@@ -325,12 +331,20 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
             .setShowInBottomSheet(true)
             .setListener(object : PersianPickerListener {
                 override fun onDateSelected(persianPickerDate: PersianPickerDate) {
-                    binding.buttonDate.text = getString(
+                    val select = getString(
                         R.string.setDate,
                         persianPickerDate.persianYear.toString(),
-                        persianPickerDate.persianMonth.toString(),
-                        persianPickerDate.persianDay.toString()
+                        persianPickerDate.persianMonth.toString().padStart(2, '0'),
+                        persianPickerDate.persianDay.toString().padStart(2, '0')
                     )
+                    val today = persianDate.getSolarDate()
+                    if (select < today)
+                        onError(EnumErrorType.UNKNOWN, getString(R.string.selectedDateIsThePast))
+                    else {
+                        button.text = select
+                        binding.buttonDepartureTime.text = null
+                        binding.buttonReturnTime.text = null
+                    }
                 }
 
                 override fun onDismissed() {}
@@ -343,13 +357,48 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- showTimePickerDialog
     private fun showTimePickerDialog() {
+        if (binding.buttonDepartureDate.text.isNullOrEmpty()) {
+            onError(EnumErrorType.UNKNOWN, getString(R.string.selectTheDepartureDate))
+            return
+        }
+
+        if (timePickMode == TimePicker.PickerMode.RETURNING) {
+            if (binding.buttonReturnDate.text.isNullOrEmpty()) {
+                onError(EnumErrorType.UNKNOWN, getString(R.string.selectTheReturnDate))
+                return
+            }
+
+            if (binding.buttonReturnDate.text.toString() < binding.buttonDepartureDate.text.toString()) {
+                onError(EnumErrorType.UNKNOWN, getString(R.string.theReturnDateIsBeforeTheDepartureDate))
+                return
+            }
+        }
+
+
+
         TimeDialog(requireContext(),
             timePickMode,
             click = object : TimeDialog.Click {
-                override fun clickYes(timeWent: String, timeForth: String) {
-                    binding.buttonWentTime.text = timeWent
-                    if (timePickMode == WentTimePicker.PickerMode.WENT_FORTH)
-                        binding.buttonForthTime.text = timeForth
+                override fun clickYes(timeDeparture: String, timeReturn: String) {
+                    val time = LocalTime.now()
+                    val currentTime = time.hour.toString().padStart(2, '0') +
+                            ":" + time.minute.toString().padStart(2, '0')
+
+                    if (timeDeparture < currentTime) {
+                        onError(EnumErrorType.UNKNOWN, getString(R.string.selectedTimeIsThePast))
+                        return
+                    }
+                    binding.buttonDepartureTime.text = timeDeparture
+                    if (timePickMode == TimePicker.PickerMode.RETURNING) {
+                        if (binding.buttonReturnDate.text.toString() > binding.buttonDepartureDate.text.toString())
+                            binding.buttonReturnTime.text = timeReturn
+                        else {
+                            if (timeReturn < timeDeparture)
+                                onError(EnumErrorType.UNKNOWN, getString(R.string.theReturnTimeIsBeforeTheDepartureTime))
+                            else
+                                binding.buttonReturnTime.text = timeReturn
+                        }
+                    }
                 }
             }).show()
     }
@@ -408,7 +457,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
                 lifecycleOwner = viewLifecycleOwner
                 setOnSpinnerItemSelectedListener<IconSpinnerItem> { _, _, newIndex, newItem ->
                     destinationFavPlaceModel = it[newIndex]
-                    binding.imageViewFavOrigin.setImageResource(R.drawable.ic_favorite)
+                    binding.imageViewFavDestination.setImageResource(R.drawable.ic_favorite)
                     addDestinationMarker(GeoPoint(GeoPoint(it[newIndex].lat, it[newIndex].long)))
                     binding.powerSpinnerDestination.setBackgroundResource(R.drawable.drawable_spinner_select)
                     binding.textViewDestination.text = newItem.text
@@ -429,15 +478,15 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
     private fun addOriginMarker(geoPoint: GeoPoint) {
         binding.textViewLoading.visibility = View.GONE
         val icon = osmManager.createMarkerIconDrawable(
-            Size(100, 97),
-            R.drawable.icon_start_marker
+            Size(42, 87),
+            R.drawable.icon_marker_origin
         )
         originMarker = osmManager.addMarker(
             icon,
             geoPoint,
             null
         )
-        binding.imageViewMarker.setImageResource(R.drawable.icon_end_marker)
+        binding.imageViewMarker.setImageResource(R.drawable.ic_destination)
         osmManager.moveCameraZoomUp(geoPoint)
         binding.powerSpinnerOrigin.isEnabled = false
     }
@@ -453,7 +502,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
         originFavPlaceModel = null
         binding.powerSpinnerOrigin.isEnabled = true
         binding.imageViewFavOrigin.setImageResource(R.drawable.ic_favorite_outline)
-        binding.imageViewMarker.setImageResource(R.drawable.icon_start_marker)
+        binding.imageViewMarker.setImageResource(R.drawable.ic_origin)
         binding.powerSpinnerOrigin.clearSelectedItem()
         binding.powerSpinnerOrigin.showArrow = true
         binding.powerSpinnerOrigin.setBackgroundResource(R.drawable.drawable_spinner)
@@ -472,8 +521,8 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
     private fun addDestinationMarker(geoPoint: GeoPoint) {
         binding.textViewLoading.visibility = View.GONE
         val icon = osmManager.createMarkerIconDrawable(
-            Size(100, 97),
-            R.drawable.icon_end_marker
+            Size(42, 87),
+            R.drawable.icon_marker_destination
         )
         destinationMarker = osmManager.addMarker(
             icon,
@@ -501,7 +550,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
         osmManager.removeMarkerAndMove(destinationMarker!!)
         destinationMarker = null
         binding.imageViewMarker.visibility = View.VISIBLE
-        binding.imageViewMarker.setImageResource(R.drawable.icon_end_marker)
+        binding.imageViewMarker.setImageResource(R.drawable.ic_destination)
         binding.powerSpinnerDestination.clearSelectedItem()
         binding.powerSpinnerDestination.showArrow = true
         binding.powerSpinnerDestination.setBackgroundResource(R.drawable.drawable_spinner)
@@ -573,24 +622,37 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- clickImageviewFavOrigin
     private fun clickImageviewFavOrigin() {
-        favPlaceType = FavPlaceType.ORIGIN
-        originFavPlaceModel?.let {
-            showRemoveFromFavPlaceDialog(it.locationName, it.id)
+        originMarker?.let {
+            favPlaceType = FavPlaceType.ORIGIN
+            originFavPlaceModel?.let {
+                if (destinationFavPlaceModel == null)
+                    showRemoveFromFavPlaceDialog(it.locationName, it.id)
+                else
+                    onError(EnumErrorType.UNKNOWN, getString(R.string.destinationLocationSelected))
+            } ?: run {
+                showAddToFavPlaceDialog()
+            }
         } ?: run {
-            showAddToFavPlaceDialog()
+            onError(EnumErrorType.UNKNOWN, getString(R.string.pleaseChooseLocation))
         }
+
     }
     //---------------------------------------------------------------------------------------------- clickImageviewFavOrigin
 
 
     //---------------------------------------------------------------------------------------------- clickImageviewFavDestination
     private fun clickImageviewFavDestination() {
-        favPlaceType = FavPlaceType.DESTINATION
-        destinationFavPlaceModel?.let {
-            showRemoveFromFavPlaceDialog(it.locationName, it.id)
+        destinationMarker?.let {
+            favPlaceType = FavPlaceType.DESTINATION
+            destinationFavPlaceModel?.let {
+                showRemoveFromFavPlaceDialog(it.locationName, it.id)
+            } ?: run {
+                showAddToFavPlaceDialog()
+            }
         } ?: run {
-            showAddToFavPlaceDialog()
+            onError(EnumErrorType.UNKNOWN, getString(R.string.pleaseChooseLocation))
         }
+
     }
     //---------------------------------------------------------------------------------------------- clickImageviewFavDestination
 
@@ -632,16 +694,23 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
                     binding.imageViewFavDestination.clearAnimation()
                     response?.let { data ->
                         onError(EnumErrorType.UNKNOWN, data.message)
-                        if (!data.hasError && data.data) {
+                        if (!data.hasError) {
+                            data.data?.let { element ->
+                                if (favPlace == null)
+                                    favPlace = mutableListOf()
+                                favPlace!!.add(element)
+                                initOriginSpinner()
+                                initDestinationSpinner()
+                            }
                             when (favPlaceType) {
-                                FavPlaceType.ORIGIN ->  {
-                                    originFavPlaceModel = TaxiFavPlaceModel("",0.0,0.0,0,false,0,false,null, null,0,0)
+                                FavPlaceType.ORIGIN -> {
+                                    originFavPlaceModel = data.data
                                     binding
                                         .imageViewFavOrigin
                                         .setImageResource(R.drawable.ic_favorite)
                                 }
                                 FavPlaceType.DESTINATION -> {
-                                    destinationFavPlaceModel = TaxiFavPlaceModel("",0.0,0.0,0,false,0,false,null, null,0,0)
+                                    destinationFavPlaceModel = data.data
                                     binding
                                         .imageViewFavDestination
                                         .setImageResource(R.drawable.ic_favorite)
@@ -658,7 +727,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
 
 
     //---------------------------------------------------------------------------------------------- showRemoveFromFavPlaceDialog
-    private fun showRemoveFromFavPlaceDialog(placeName: String?, id : Int) {
+    private fun showRemoveFromFavPlaceDialog(placeName: String?, id: Int) {
         context?.let {
             val click = object : ConfirmDialog.Click {
                 override fun clickYes() {
@@ -669,14 +738,15 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
                 requireContext(),
                 ConfirmDialog.ConfirmType.DELETE,
                 getString(R.string.confirmForDelete, placeName),
-                click).show()
+                click
+            ).show()
         }
     }
     //---------------------------------------------------------------------------------------------- showRemoveFromFavPlaceDialog
 
 
     //---------------------------------------------------------------------------------------------- requestRemoveFavPlace
-    private fun requestRemoveFavPlace(id : Int) {
+    private fun requestRemoveFavPlace(id: Int) {
         val rotation = AnimationUtils.loadAnimation(requireContext(), R.anim.rotate_repeat)
         when (favPlaceType) {
             FavPlaceType.ORIGIN -> {
@@ -691,19 +761,36 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
             .observe(viewLifecycleOwner) { response ->
                 binding.imageViewFavOrigin.clearAnimation()
                 binding.imageViewFavDestination.clearAnimation()
-                response?.let { data ->
-                    onError(EnumErrorType.UNKNOWN, data.message)
-                    if (!data.hasError && data.data) {
+                response?.let { it ->
+                    onError(EnumErrorType.UNKNOWN, it.message)
+                    if (!it.hasError) {
                         when (favPlaceType) {
-                            FavPlaceType.ORIGIN ->  removeOriginMarker()
+                            FavPlaceType.ORIGIN -> removeOriginMarker()
                             FavPlaceType.DESTINATION -> removeDestinationMarker()
                             else -> {}
                         }
+                        favPlace?.removeIf { it.id == id }
+                        initOriginSpinner()
+                        initDestinationSpinner()
                     }
                 }
             }
     }
     //---------------------------------------------------------------------------------------------- requestRemoveFavPlace
+
+
+    //---------------------------------------------------------------------------------------------- showDialogSearchAddress
+    private fun showDialogSearchAddress() {
+        binding.editTextReason.clearFocus()
+        val selectItem = object : SearchAddressDialog.Click {
+            override fun select(item: AddressSuggestionModel) {
+                osmManager.moveCamera(GeoPoint(item.lat, item.lon))
+            }
+        }
+
+        SearchAddressDialog(selectItem).show(childFragmentManager, "search address")
+    }
+    //---------------------------------------------------------------------------------------------- showDialogSearchAddress
 
 
     //---------------------------------------------------------------------------------------------- onDestroyView

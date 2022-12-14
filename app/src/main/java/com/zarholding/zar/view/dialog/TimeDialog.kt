@@ -11,7 +11,7 @@ import android.view.WindowManager
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.google.android.material.button.MaterialButton
-import com.zarholding.zar.view.WentTimePicker
+import com.zarholding.zar.view.TimePicker
 import zar.R
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -19,16 +19,16 @@ import java.util.*
 
 class TimeDialog(
     context: Context,
-    private val pickerMode: WentTimePicker.PickerMode,
+    private val pickerMode: TimePicker.PickerMode,
     private val click: Click) : Dialog(context){
 
-    private lateinit var textViewWent : TextView
-    private lateinit var textViewForth : TextView
-    private lateinit var timePicker : WentTimePicker
+    private lateinit var textViewDeparture : TextView
+    private lateinit var textViewReturn : TextView
+    private lateinit var timePicker : TimePicker
 
     //---------------------------------------------------------------------------------------------- Click
     interface Click {
-        fun clickYes(timeWent : String, timeForth : String)
+        fun clickYes(timeDeparture : String, timeReturn : String)
     }
     //---------------------------------------------------------------------------------------------- Click
 
@@ -63,29 +63,29 @@ class TimeDialog(
     private fun initDialog() {
         val buttonConfirm = this.findViewById<MaterialButton>(R.id.buttonConfirm)
         val buttonCancel = this.findViewById<MaterialButton>(R.id.buttonCancel)
-        val linearLayoutWent = this.findViewById<LinearLayout>(R.id.linearLayoutWent)
-        val linearLayoutForth = this.findViewById<LinearLayout>(R.id.linearLayoutForth)
-        textViewWent = this.findViewById(R.id.textViewWent)
-        textViewForth = this.findViewById(R.id.textViewForth)
+        val linearLayoutDeparture = this.findViewById<LinearLayout>(R.id.linearLayoutDeparture)
+        val linearLayoutReturn = this.findViewById<LinearLayout>(R.id.linearLayoutReturn)
+        textViewDeparture = this.findViewById(R.id.textViewDeparture)
+        textViewReturn = this.findViewById(R.id.textViewReturn)
         timePicker = findViewById(R.id.timePicker)
         when(pickerMode) {
-            WentTimePicker.PickerMode.WENT -> {
-                linearLayoutForth.visibility = View.GONE
-                textViewForth.visibility = View.GONE
-                linearLayoutWent.visibility = View.VISIBLE
-                textViewWent.visibility = View.VISIBLE
+            TimePicker.PickerMode.DEPARTURE -> {
+                linearLayoutReturn.visibility = View.GONE
+                textViewReturn.visibility = View.GONE
+                linearLayoutDeparture.visibility = View.VISIBLE
+                textViewDeparture.visibility = View.VISIBLE
             }
-            WentTimePicker.PickerMode.FORTH -> {
-                linearLayoutWent.visibility = View.GONE
-                textViewWent.visibility = View.GONE
-                linearLayoutForth.visibility = View.VISIBLE
-                textViewForth.visibility = View.VISIBLE
+            TimePicker.PickerMode.RETURN -> {
+                linearLayoutDeparture.visibility = View.GONE
+                textViewDeparture.visibility = View.GONE
+                linearLayoutReturn.visibility = View.VISIBLE
+                textViewReturn.visibility = View.VISIBLE
             }
-            WentTimePicker.PickerMode.WENT_FORTH -> {
-                linearLayoutForth.visibility = View.VISIBLE
-                textViewForth.visibility = View.VISIBLE
-                linearLayoutWent.visibility = View.VISIBLE
-                textViewWent.visibility = View.VISIBLE
+            TimePicker.PickerMode.RETURNING -> {
+                linearLayoutReturn.visibility = View.VISIBLE
+                textViewReturn.visibility = View.VISIBLE
+                linearLayoutDeparture.visibility = View.VISIBLE
+                textViewDeparture.visibility = View.VISIBLE
             }
         }
 
@@ -94,18 +94,16 @@ class TimeDialog(
             LocalTime.of(17, 0),
             pickerMode)
 
-        handleUpdate(timePicker.getWentTime(), timePicker.getForthTime())
+        handleUpdate(timePicker.getDepartureTime(), timePicker.getReturnTime())
 
         timePicker.listener = { bedTime: LocalTime, wakeTime: LocalTime ->
             handleUpdate(bedTime, wakeTime)
         }
 
         buttonConfirm.setOnClickListener {
-/*            val hour = String.format("%02d", timePicker.hour)
-            val minute = String.format("%02d", timePicker.minute)*/
-            val formatter = DateTimeFormatter.ofPattern("hh:mm", Locale.US)
-            click.clickYes(timePicker.getWentTime().format(formatter),
-                timePicker.getForthTime().format(formatter))
+            val formatter = DateTimeFormatter.ofPattern("HH:mm", Locale.getDefault())
+            click.clickYes(timePicker.getDepartureTime().format(formatter),
+                timePicker.getReturnTime().format(formatter))
             this.cancel()
         }
 
@@ -118,10 +116,10 @@ class TimeDialog(
 
 
     //---------------------------------------------------------------------------------------------- handleUpdate
-    private fun handleUpdate(wentTime: LocalTime, forthTime: LocalTime) {
+    private fun handleUpdate(departureTime: LocalTime, returnTime: LocalTime) {
         val formatter = DateTimeFormatter.ofPattern("h:mm a", Locale.US)
-        textViewForth.text = forthTime.format(formatter)
-        textViewWent.text = wentTime.format(formatter)
+        textViewReturn.text = returnTime.format(formatter)
+        textViewDeparture.text = departureTime.format(formatter)
 
 /*        val bedDate = bedTime.atDate(LocalDate.now())
         var wakeDate = wakeTime.atDate(LocalDate.now())
@@ -143,7 +141,7 @@ class TimeDialog(
         timePicker.setTime(
             LocalTime.of(8, 0),
             LocalTime.of(17, 0),
-            WentTimePicker.PickerMode.WENT_FORTH)
+            TimePicker.PickerMode.RETURNING)
     }
     //---------------------------------------------------------------------------------------------- dismiss
 
