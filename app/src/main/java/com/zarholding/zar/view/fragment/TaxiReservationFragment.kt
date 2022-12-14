@@ -2,7 +2,6 @@ package com.zarholding.zar.view.fragment
 
 import android.graphics.Typeface
 import android.os.Bundle
-import android.util.Log
 import android.util.Size
 import android.view.*
 import android.view.animation.AnimationUtils
@@ -188,6 +187,24 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
         binding.imageViewFavOrigin.setOnClickListener { clickImageviewFavOrigin() }
         binding.imageViewFavDestination.setOnClickListener { clickImageviewFavDestination() }
         binding.cardViewSearch.setOnClickListener { showDialogSearchAddress() }
+
+        binding.powerSpinnerOrigin.setOnClickListener {
+            originMarker?.let {
+                ConfirmDialog(requireContext(),
+                ConfirmDialog.ConfirmType.ADD,
+                getString(R.string.originLocationIsSelect),
+                object : ConfirmDialog.Click{
+                    override fun clickYes() {
+                        activity?.onBackPressedDispatcher?.onBackPressed()
+                    }
+                }).show()
+            } ?: run {
+                if (binding.powerSpinnerOrigin.isShowing)
+                    binding.powerSpinnerOrigin.dismiss()
+                else
+                    binding.powerSpinnerOrigin.show()
+            }
+        }
     }
     //---------------------------------------------------------------------------------------------- setListener
 
@@ -488,7 +505,6 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
         )
         binding.imageViewMarker.setImageResource(R.drawable.ic_destination)
         osmManager.moveCameraZoomUp(geoPoint)
-        binding.powerSpinnerOrigin.isEnabled = false
     }
     //---------------------------------------------------------------------------------------------- addOriginMarker
 
@@ -500,7 +516,6 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
         originMarker = null
         binding.imageViewFavOrigin.visibility = View.VISIBLE
         originFavPlaceModel = null
-        binding.powerSpinnerOrigin.isEnabled = true
         binding.imageViewFavOrigin.setImageResource(R.drawable.ic_favorite_outline)
         binding.imageViewMarker.setImageResource(R.drawable.ic_origin)
         binding.powerSpinnerOrigin.clearSelectedItem()
