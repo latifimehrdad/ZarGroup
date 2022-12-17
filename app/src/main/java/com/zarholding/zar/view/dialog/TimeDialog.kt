@@ -11,7 +11,7 @@ import android.view.WindowManager
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.google.android.material.button.MaterialButton
-import com.zarholding.zar.view.TimePicker
+import com.zar.core.view.picker.time.ZarTimePicker
 import zar.R
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -19,12 +19,12 @@ import java.util.*
 
 class TimeDialog(
     context: Context,
-    private val pickerMode: TimePicker.PickerMode,
+    private val pickerMode: ZarTimePicker.PickerMode,
     private val click: Click) : Dialog(context){
 
     private lateinit var textViewDeparture : TextView
     private lateinit var textViewReturn : TextView
-    private lateinit var timePicker : TimePicker
+    private lateinit var timePicker : ZarTimePicker
 
     //---------------------------------------------------------------------------------------------- Click
     interface Click {
@@ -69,19 +69,19 @@ class TimeDialog(
         textViewReturn = this.findViewById(R.id.textViewReturn)
         timePicker = findViewById(R.id.timePicker)
         when(pickerMode) {
-            TimePicker.PickerMode.DEPARTURE -> {
+            ZarTimePicker.PickerMode.DEPARTURE -> {
                 linearLayoutReturn.visibility = View.GONE
                 textViewReturn.visibility = View.GONE
                 linearLayoutDeparture.visibility = View.VISIBLE
                 textViewDeparture.visibility = View.VISIBLE
             }
-            TimePicker.PickerMode.RETURN -> {
+            ZarTimePicker.PickerMode.RETURN -> {
                 linearLayoutDeparture.visibility = View.GONE
                 textViewDeparture.visibility = View.GONE
                 linearLayoutReturn.visibility = View.VISIBLE
                 textViewReturn.visibility = View.VISIBLE
             }
-            TimePicker.PickerMode.RETURNING -> {
+            ZarTimePicker.PickerMode.RETURNING -> {
                 linearLayoutReturn.visibility = View.VISIBLE
                 textViewReturn.visibility = View.VISIBLE
                 linearLayoutDeparture.visibility = View.VISIBLE
@@ -141,7 +141,7 @@ class TimeDialog(
         timePicker.setTime(
             LocalTime.of(8, 0),
             LocalTime.of(17, 0),
-            TimePicker.PickerMode.RETURNING)
+            ZarTimePicker.PickerMode.RETURNING)
     }
     //---------------------------------------------------------------------------------------------- dismiss
 

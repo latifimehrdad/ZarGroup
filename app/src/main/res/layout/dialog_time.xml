@@ -109,7 +109,7 @@
             android:text="08:30"/>
 
 
-        <com.zarholding.zar.view.TimePicker
+        <com.zar.core.view.picker.time.ZarTimePicker
             android:id="@+id/timePicker"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

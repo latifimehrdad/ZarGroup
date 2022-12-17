@@ -1,6 +1,5 @@
 package com.zarholding.zar.view.fragment
 
-import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Size
 import android.view.*
@@ -11,7 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.skydoves.powerspinner.IconSpinnerAdapter
 import com.skydoves.powerspinner.IconSpinnerItem
@@ -21,15 +19,19 @@ import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zar.core.tools.extensions.toSolarDate
 import com.zar.core.tools.loadings.LoadingManager
 import com.zar.core.tools.manager.ThemeManager
+import com.zar.core.view.picker.date.customviews.DateRangeCalendarView
+import com.zar.core.view.picker.date.dialog.DatePickerDialog
+import com.zar.core.view.picker.time.ZarTimePicker
 import com.zarholding.zar.database.dao.UserInfoDao
 import com.zarholding.zar.database.entity.UserInfoEntity
+import com.zarholding.zar.model.enum.EnumTaxiRequest
 import com.zarholding.zar.model.request.TaxiAddFavPlaceRequest
+import com.zarholding.zar.model.request.TaxiRequestModel
 import com.zarholding.zar.model.response.address.AddressModel
 import com.zarholding.zar.model.response.address.AddressSuggestionModel
 import com.zarholding.zar.model.response.taxi.TaxiFavPlaceModel
 import com.zarholding.zar.utility.OsmManager
 import com.zarholding.zar.utility.UnAuthorizationManager
-import com.zarholding.zar.view.TimePicker
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.view.dialog.*
 import com.zarholding.zar.view.extension.getAddress
@@ -39,9 +41,6 @@ import com.zarholding.zar.viewmodel.AddressViewModel
 import com.zarholding.zar.viewmodel.TaxiViewModel
 import com.zarholding.zar.viewmodel.TokenViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import ir.hamsaa.persiandatepicker.PersianDatePickerDialog
-import ir.hamsaa.persiandatepicker.api.PersianPickerDate
-import ir.hamsaa.persiandatepicker.api.PersianPickerListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -51,9 +50,9 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.Marker
 import zar.R
 import zar.databinding.FragmentTaxiBinding
-import javax.inject.Inject
-import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.LocalDateTime
+import javax.inject.Inject
 
 
 /**
@@ -62,6 +61,9 @@ import java.time.LocalTime
 
 @AndroidEntryPoint
 class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
+
+    private var _binding: FragmentTaxiBinding? = null
+    private val binding get() = _binding!!
 
     @Inject
     lateinit var themeManagers: ThemeManager
@@ -78,17 +80,16 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
 
 
     private val loadingManager = LoadingManager()
-    private var _binding: FragmentTaxiBinding? = null
-    private val binding get() = _binding!!
     private lateinit var osmManager: OsmManager
     private lateinit var adapter: PassengerAdapter
-    private var timePickMode = TimePicker.PickerMode.RETURNING
+    private var timePickMode = ZarTimePicker.PickerMode.RETURNING
     private var originMarker: Marker? = null
     private var destinationMarker: Marker? = null
     private var favPlace: MutableList<TaxiFavPlaceModel>? = null
     private var originFavPlaceModel: TaxiFavPlaceModel? = null
     private var destinationFavPlaceModel: TaxiFavPlaceModel? = null
     private var favPlaceType = FavPlaceType.NONE
+    private var loadingRequest = false
 
     //---------------------------------------------------------------------------------------------- FavClick
     enum class FavPlaceType {
@@ -146,6 +147,8 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
         snack.show()
         binding.textViewLoading.visibility = View.GONE
         loadingManager.stopLoadingView()
+        loadingRequest = false
+        binding.buttonSendRequest.text = getString(R.string.sendInformation)
     }
     //---------------------------------------------------------------------------------------------- onError
 
@@ -156,6 +159,8 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
         backClick.isEnabled = false
         loadingManager.stopLoadingView()
         unAuthorizationManager.handel(activity, type, message, binding.constraintLayoutParent)
+        loadingRequest = false
+        binding.buttonSendRequest.text = getString(R.string.sendInformation)
     }
     //---------------------------------------------------------------------------------------------- unAuthorization
 
@@ -181,30 +186,15 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
         binding.textViewReturning.setOnClickListener { clickOnReturningServicesTextView() }
         binding.buttonDepartureTime.setOnClickListener { showTimePickerDialog() }
         binding.buttonReturnTime.setOnClickListener { showTimePickerDialog() }
-        binding.buttonDepartureDate.setOnClickListener { showDatePickerDialog(binding.buttonDepartureDate) }
-        binding.buttonReturnDate.setOnClickListener { showDatePickerDialog(binding.buttonReturnDate) }
+        binding.buttonDepartureDate.setOnClickListener { showDatePickerDialog() }
+        binding.buttonReturnDate.setOnClickListener { showDatePickerDialog() }
         binding.imageViewMarker.setOnClickListener { getCenterLocationOfMap() }
         binding.imageViewFavOrigin.setOnClickListener { clickImageviewFavOrigin() }
         binding.imageViewFavDestination.setOnClickListener { clickImageviewFavDestination() }
         binding.cardViewSearch.setOnClickListener { showDialogSearchAddress() }
-
-        binding.powerSpinnerOrigin.setOnClickListener {
-            originMarker?.let {
-                ConfirmDialog(requireContext(),
-                ConfirmDialog.ConfirmType.ADD,
-                getString(R.string.originLocationIsSelect),
-                object : ConfirmDialog.Click{
-                    override fun clickYes() {
-                        activity?.onBackPressedDispatcher?.onBackPressed()
-                    }
-                }).show()
-            } ?: run {
-                if (binding.powerSpinnerOrigin.isShowing)
-                    binding.powerSpinnerOrigin.dismiss()
-                else
-                    binding.powerSpinnerOrigin.show()
-            }
-        }
+        binding.powerSpinnerOrigin.setOnClickListener { powerSpinnerOriginClick() }
+        binding.powerSpinnerDestination.setOnClickListener { powerSpinnerDestinationClick() }
+        binding.buttonSendRequest.setOnClickListener { requestTaxi() }
     }
     //---------------------------------------------------------------------------------------------- setListener
 
@@ -214,6 +204,48 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, backClick)
     }
     //---------------------------------------------------------------------------------------------- backClickControl
+
+
+    //---------------------------------------------------------------------------------------------- powerSpinnerOriginClick
+    private fun powerSpinnerOriginClick() {
+        originMarker?.let {
+            ConfirmDialog(requireContext(),
+                ConfirmDialog.ConfirmType.DELETE,
+                getString(R.string.originLocationIsSelect),
+                object : ConfirmDialog.Click {
+                    override fun clickYes() {
+                        activity?.onBackPressedDispatcher?.onBackPressed()
+                    }
+                }).show()
+        } ?: run {
+            if (binding.powerSpinnerOrigin.isShowing)
+                binding.powerSpinnerOrigin.dismiss()
+            else
+                binding.powerSpinnerOrigin.show()
+        }
+    }
+    //---------------------------------------------------------------------------------------------- powerSpinnerOriginClick
+
+
+    //---------------------------------------------------------------------------------------------- powerSpinnerDestinationClick
+    private fun powerSpinnerDestinationClick() {
+        destinationMarker?.let {
+            ConfirmDialog(requireContext(),
+                ConfirmDialog.ConfirmType.DELETE,
+                getString(R.string.destinationLocationIsSelect),
+                object : ConfirmDialog.Click {
+                    override fun clickYes() {
+                        activity?.onBackPressedDispatcher?.onBackPressed()
+                    }
+                }).show()
+        } ?: run {
+            if (binding.powerSpinnerDestination.isShowing)
+                binding.powerSpinnerDestination.dismiss()
+            else
+                binding.powerSpinnerDestination.show()
+        }
+    }
+    //---------------------------------------------------------------------------------------------- powerSpinnerDestinationClick
 
 
     //---------------------------------------------------------------------------------------------- requestGetTaxiFavPlace
@@ -247,7 +279,8 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
     private fun getCenterLocationOfMap() {
         binding.powerSpinnerOrigin.dismiss()
         binding.powerSpinnerDestination.dismiss()
-        val center = GeoPoint(binding.mapView.mapCenter.latitude, binding.mapView.mapCenter.longitude)
+        val center =
+            GeoPoint(binding.mapView.mapCenter.latitude, binding.mapView.mapCenter.longitude)
         binding.textViewLoading.visibility = View.VISIBLE
         addressViewModel.getAddress(center).observe(viewLifecycleOwner) { response ->
             response?.let { info ->
@@ -281,7 +314,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
         binding.textViewReturning.setBackgroundResource(R.drawable.drawable_trip_unselect_button)
         binding.constraintLayoutReturn.visibility = View.INVISIBLE
         binding.textViewReturnTitle.visibility = View.INVISIBLE
-        timePickMode = TimePicker.PickerMode.DEPARTURE
+        timePickMode = ZarTimePicker.PickerMode.DEPARTURE
     }
     //---------------------------------------------------------------------------------------------- clickOnDepartureServiceTextView
 
@@ -292,7 +325,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
         binding.textViewDeparture.setBackgroundResource(R.drawable.drawable_trip_unselect_button)
         binding.constraintLayoutReturn.visibility = View.VISIBLE
         binding.textViewReturnTitle.visibility = View.VISIBLE
-        timePickMode = TimePicker.PickerMode.RETURNING
+        timePickMode = ZarTimePicker.PickerMode.RETURNING
     }
     //---------------------------------------------------------------------------------------------- clickOnReturningServicesTextView
 
@@ -310,64 +343,70 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
 
 
     //---------------------------------------------------------------------------------------------- showDatePickerDialog
-    private fun showDatePickerDialog(button: MaterialButton) {
+    private fun showDatePickerDialog() {
+        if (context == null)
+            return
         val persianDate = LocalDateTime.now().toSolarDate()!!
-        val typeface =
-            Typeface.createFromAsset(requireContext().assets, "font/kalameh_medium.ttf")
-        val picker = PersianDatePickerDialog(requireContext())
-            .setPositiveButtonString(getString(R.string.choose))
-            .setNegativeButton(getString(R.string.cancel))
-            .setTodayButton(getString(R.string.todayDate))
-            .setTodayButtonVisible(true)
-            .setAllButtonsTextSize(14)
-            .setTypeFace(typeface)
-            .setMinYear(persianDate.getYear())
-            .setMaxYear(persianDate.getYear() + 1)
-            .setInitDate(persianDate.getYear(), persianDate.getMonth(), persianDate.getDay())
-            .setBackgroundColor(
-                resources.getColor(
-                    R.color.dialogBackgroundColor,
-                    requireContext().theme
-                )
-            )
-            .setTitleColor(resources.getColor(R.color.textViewColor2, requireContext().theme))
-            .setPickerBackgroundColor(
-                resources.getColor(
-                    R.color.dialogBackgroundColor,
-                    requireContext().theme
-                )
-            )
-            .setActionTextSize(20)
-            .setActionTextColor(
-                resources.getColor(
-                    R.color.textViewColor2,
-                    requireContext().theme
-                )
-            )
-            .setTitleType(PersianDatePickerDialog.WEEKDAY_DAY_MONTH_YEAR)
-            .setShowInBottomSheet(true)
-            .setListener(object : PersianPickerListener {
-                override fun onDateSelected(persianPickerDate: PersianPickerDate) {
-                    val select = getString(
-                        R.string.setDate,
-                        persianPickerDate.persianYear.toString(),
-                        persianPickerDate.persianMonth.toString().padStart(2, '0'),
-                        persianPickerDate.persianDay.toString().padStart(2, '0')
-                    )
-                    val today = persianDate.getSolarDate()
-                    if (select < today)
-                        onError(EnumErrorType.UNKNOWN, getString(R.string.selectedDateIsThePast))
-                    else {
-                        button.text = select
-                        binding.buttonDepartureTime.text = null
-                        binding.buttonReturnTime.text = null
-                    }
+        val datePickerDialog = DatePickerDialog(requireContext())
+        when (timePickMode) {
+            ZarTimePicker.PickerMode.DEPARTURE ->
+                datePickerDialog.selectionMode = DateRangeCalendarView.SelectionMode.Single
+            ZarTimePicker.PickerMode.RETURNING ->
+                datePickerDialog.selectionMode = DateRangeCalendarView.SelectionMode.Range
+            else -> {}
+        }
+        datePickerDialog.acceptButtonColor =
+            resources.getColor(R.color.datePickerConfirmButtonBackColor, requireContext().theme)
+        datePickerDialog.headerBackgroundColor =
+            resources.getColor(R.color.datePickerConfirmButtonBackColor, requireContext().theme)
+        datePickerDialog.headerTextColor =
+            resources.getColor(R.color.textViewColor1, requireContext().theme)
+        datePickerDialog.weekColor =
+            resources.getColor(R.color.buttonDisable, requireContext().theme)
+        datePickerDialog.disableDateColor =
+            resources.getColor(R.color.buttonDisable, requireContext().theme)
+        datePickerDialog.defaultDateColor =
+            resources.getColor(R.color.datePickerDateBackColor, requireContext().theme)
+        datePickerDialog.selectedDateCircleColor =
+            resources.getColor(R.color.datePickerConfirmButtonBackColor, requireContext().theme)
+        datePickerDialog.selectedDateColor =
+            resources.getColor(R.color.textViewColor1, requireContext().theme)
+        datePickerDialog.rangeDateColor =
+            resources.getColor(R.color.datePickerConfirmButtonBackColor, requireContext().theme)
+        datePickerDialog.rangeStripColor =
+            resources.getColor(R.color.datePickerRangeColor, requireContext().theme)
+        datePickerDialog.holidayColor =
+            resources.getColor(R.color.negative, requireContext().theme)
+        datePickerDialog.textSizeWeek = 12.0f
+        datePickerDialog.textSizeDate = 14.0f
+        datePickerDialog.textSizeTitle = 18.0f
+        datePickerDialog.setCanceledOnTouchOutside(true)
+        datePickerDialog.onSingleDateSelectedListener =
+            DatePickerDialog.OnSingleDateSelectedListener { startDate ->
+                val today = persianDate.getSolarDate()
+                if (startDate.persianShortDate < today)
+                    onError(EnumErrorType.UNKNOWN, getString(R.string.selectedDateIsThePast))
+                else {
+                    binding.buttonDepartureDate.text = startDate.persianShortDate
+                    binding.buttonDepartureTime.text = null
+                    binding.buttonReturnTime.text = null
                 }
+            }
+        datePickerDialog.onRangeDateSelectedListener =
+            DatePickerDialog.OnRangeDateSelectedListener { startDate, endDate ->
+                val today = persianDate.getSolarDate()
+                if (startDate.persianShortDate < today)
+                    onError(EnumErrorType.UNKNOWN, getString(R.string.selectedDateIsThePast))
+                else {
+                    binding.buttonDepartureDate.text = startDate.persianShortDate
+                    binding.buttonReturnDate.text = endDate.persianShortDate
+                    binding.buttonDepartureTime.text = null
+                    binding.buttonReturnTime.text = null
+                }
+            }
 
-                override fun onDismissed() {}
-            })
+        datePickerDialog.showDialog()
 
-        picker.show()
     }
     //---------------------------------------------------------------------------------------------- showDatePickerDialog
 
@@ -379,14 +418,17 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
             return
         }
 
-        if (timePickMode == TimePicker.PickerMode.RETURNING) {
+        if (timePickMode == ZarTimePicker.PickerMode.RETURNING) {
             if (binding.buttonReturnDate.text.isNullOrEmpty()) {
                 onError(EnumErrorType.UNKNOWN, getString(R.string.selectTheReturnDate))
                 return
             }
 
             if (binding.buttonReturnDate.text.toString() < binding.buttonDepartureDate.text.toString()) {
-                onError(EnumErrorType.UNKNOWN, getString(R.string.theReturnDateIsBeforeTheDepartureDate))
+                onError(
+                    EnumErrorType.UNKNOWN,
+                    getString(R.string.theReturnDateIsBeforeTheDepartureDate)
+                )
                 return
             }
         }
@@ -397,21 +439,31 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
             timePickMode,
             click = object : TimeDialog.Click {
                 override fun clickYes(timeDeparture: String, timeReturn: String) {
-                    val time = LocalTime.now()
-                    val currentTime = time.hour.toString().padStart(2, '0') +
-                            ":" + time.minute.toString().padStart(2, '0')
+                    val persianDate = LocalDateTime.now().toSolarDate()!!
+                    val today = persianDate.getSolarDate()
+                    if (binding.buttonDepartureDate.text.toString() == today) {
+                        val time = LocalTime.now()
+                        val currentTime = time.hour.toString().padStart(2, '0') +
+                                ":" + time.minute.toString().padStart(2, '0')
 
-                    if (timeDeparture < currentTime) {
-                        onError(EnumErrorType.UNKNOWN, getString(R.string.selectedTimeIsThePast))
-                        return
+                        if (timeDeparture < currentTime) {
+                            onError(
+                                EnumErrorType.UNKNOWN,
+                                getString(R.string.selectedTimeIsThePast)
+                            )
+                            return
+                        }
                     }
                     binding.buttonDepartureTime.text = timeDeparture
-                    if (timePickMode == TimePicker.PickerMode.RETURNING) {
+                    if (timePickMode == ZarTimePicker.PickerMode.RETURNING) {
                         if (binding.buttonReturnDate.text.toString() > binding.buttonDepartureDate.text.toString())
                             binding.buttonReturnTime.text = timeReturn
                         else {
                             if (timeReturn < timeDeparture)
-                                onError(EnumErrorType.UNKNOWN, getString(R.string.theReturnTimeIsBeforeTheDepartureTime))
+                                onError(
+                                    EnumErrorType.UNKNOWN,
+                                    getString(R.string.theReturnTimeIsBeforeTheDepartureTime)
+                                )
                             else
                                 binding.buttonReturnTime.text = timeReturn
                         }
@@ -443,7 +495,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
                     binding.imageViewFavOrigin.setImageResource(R.drawable.ic_favorite)
                     addOriginMarker(GeoPoint(it[newIndex].lat, it[newIndex].long))
                     binding.powerSpinnerOrigin.setBackgroundResource(R.drawable.drawable_spinner_select)
-                    binding.textViewOrigin.text = newItem.text
+                    binding.textViewOrigin.text = it[newIndex].locationAddress
                     binding.textViewOrigin.setTextColor(
                         resources.getColor(
                             R.color.primaryColor,
@@ -477,7 +529,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
                     binding.imageViewFavDestination.setImageResource(R.drawable.ic_favorite)
                     addDestinationMarker(GeoPoint(GeoPoint(it[newIndex].lat, it[newIndex].long)))
                     binding.powerSpinnerDestination.setBackgroundResource(R.drawable.drawable_spinner_select)
-                    binding.textViewDestination.text = newItem.text
+                    binding.textViewDestination.text = it[newIndex].locationAddress
                     binding.textViewDestination.setTextColor(
                         resources.getColor(
                             R.color.primaryColor,
@@ -550,7 +602,6 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
         points.add(destinationMarker!!.position)
         val box = osmManager.getBoundingBoxFromPoints(points)
         binding.mapView.zoomToBoundingBox(box, true)
-        binding.powerSpinnerDestination.isEnabled = false
     }
     //---------------------------------------------------------------------------------------------- addDestinationMarker
 
@@ -558,7 +609,6 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- removeDestinationMarker
     private fun removeDestinationMarker() {
         destinationFavPlaceModel = null
-        binding.powerSpinnerDestination.isEnabled = true
         binding.imageViewFavDestination.visibility = View.VISIBLE
         binding.imageViewFavDestination.setImageResource(R.drawable.ic_favorite_outline)
         binding.textViewDestination.isSelected = false
@@ -645,7 +695,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
                 else
                     onError(EnumErrorType.UNKNOWN, getString(R.string.destinationLocationSelected))
             } ?: run {
-                showAddToFavPlaceDialog()
+                showAddToFavPlaceDialog(binding.textViewOrigin.text.toString())
             }
         } ?: run {
             onError(EnumErrorType.UNKNOWN, getString(R.string.pleaseChooseLocation))
@@ -662,7 +712,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
             destinationFavPlaceModel?.let {
                 showRemoveFromFavPlaceDialog(it.locationName, it.id)
             } ?: run {
-                showAddToFavPlaceDialog()
+                showAddToFavPlaceDialog(binding.textViewDestination.text.toString())
             }
         } ?: run {
             onError(EnumErrorType.UNKNOWN, getString(R.string.pleaseChooseLocation))
@@ -673,11 +723,11 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
 
 
     //---------------------------------------------------------------------------------------------- showAddToFavPlaceDialog
-    private fun showAddToFavPlaceDialog() {
+    private fun showAddToFavPlaceDialog(placeAddress: String) {
         context?.let {
             val click = object : FavPlaceDialog.Click {
                 override fun clickSend(placeName: String) {
-                    requestAddFavPlace(placeName)
+                    requestAddFavPlace(placeName, placeAddress)
                 }
             }
             FavPlaceDialog(it, click).show()
@@ -687,7 +737,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
 
 
     //---------------------------------------------------------------------------------------------- requestAddFavPlace
-    private fun requestAddFavPlace(placeName: String) {
+    private fun requestAddFavPlace(placeName: String, placeAddress: String) {
         val rotation = AnimationUtils.loadAnimation(requireContext(), R.anim.rotate_repeat)
         var geoPoint: GeoPoint? = null
         when (favPlaceType) {
@@ -702,7 +752,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
             else -> {}
         }
         geoPoint?.let {
-            val request = TaxiAddFavPlaceRequest(placeName, it.latitude, it.longitude)
+            val request = TaxiAddFavPlaceRequest(placeName, placeAddress, it.latitude, it.longitude)
             taxiViewModel.requestAddFavPlace(request, tokenViewModel.getBearerToken())
                 .observe(viewLifecycleOwner) { response ->
                     binding.imageViewFavOrigin.clearAnimation()
@@ -806,6 +856,93 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
         SearchAddressDialog(selectItem).show(childFragmentManager, "search address")
     }
     //---------------------------------------------------------------------------------------------- showDialogSearchAddress
+
+
+    //---------------------------------------------------------------------------------------------- requestTaxi
+    private fun requestTaxi() {
+
+        if (checkValueBeforeRequest() && !loadingRequest) {
+            val passenger = adapter.getList().map { userInfoEntity -> userInfoEntity.id }
+
+            val request = TaxiRequestModel(
+                EnumTaxiRequest.OneWay,
+                binding.buttonDepartureDate.text.toString(),
+                binding.buttonDepartureTime.text.toString(),
+                originMarker!!.position.longitude,
+                originMarker!!.position.longitude,
+                binding.textViewOrigin.text.toString(),
+                destinationMarker!!.position.latitude,
+                destinationMarker!!.position.longitude,
+                binding.textViewReturning.text.toString(),
+                passenger,
+                binding.editTextReason.text.toString()
+            )
+
+            loadingRequest = true
+            binding.buttonSendRequest.text = getString(R.string.bePatient)
+            taxiViewModel.requestTaxi(request, tokenViewModel.getBearerToken())
+                .observe(viewLifecycleOwner) { response ->
+                    loadingRequest = false
+                    binding.buttonSendRequest.text = getString(R.string.sendInformation)
+                    response?.let {
+                        backClick.isEnabled = false
+                        onError(EnumErrorType.UNKNOWN, response.message)
+                        activity?.onBackPressedDispatcher?.onBackPressed()
+                    }
+                }
+        }
+    }
+    //---------------------------------------------------------------------------------------------- requestTaxi
+
+
+    //---------------------------------------------------------------------------------------------- checkValueBeforeRequest
+    private fun checkValueBeforeRequest(): Boolean {
+
+        if (context == null)
+            return false
+
+        if (originMarker == null) {
+            onError(EnumErrorType.UNKNOWN, getString(R.string.pleaseChooseOriginLocation))
+            return false
+        }
+
+        if (destinationMarker == null) {
+            onError(EnumErrorType.UNKNOWN, getString(R.string.pleaseChooseDestinationLocation))
+            return false
+        }
+
+        if (binding.buttonDepartureDate.text.toString().isEmpty()) {
+            onError(EnumErrorType.UNKNOWN, getString(R.string.selectTheDepartureDate))
+            return false
+        }
+
+        if (binding.buttonDepartureTime.text.toString().isEmpty()) {
+            onError(EnumErrorType.UNKNOWN, getString(R.string.selectTheDepartureTime))
+            return false
+        }
+
+        if (timePickMode == ZarTimePicker.PickerMode.RETURNING) {
+
+            if (binding.buttonReturnDate.text.toString().isEmpty()) {
+                onError(EnumErrorType.UNKNOWN, getString(R.string.selectTheReturnDate))
+                return false
+            }
+
+            if (binding.buttonReturnTime.text.toString().isEmpty()) {
+                onError(EnumErrorType.UNKNOWN, getString(R.string.selectTheReturnTime))
+                return false
+            }
+
+        }
+
+        if (adapter.getList().isEmpty()) {
+            onError(EnumErrorType.UNKNOWN, getString(R.string.pleaseSelectPassenger))
+            return false
+        }
+
+        return true
+    }
+    //---------------------------------------------------------------------------------------------- checkValueBeforeRequest
 
 
     //---------------------------------------------------------------------------------------------- onDestroyView

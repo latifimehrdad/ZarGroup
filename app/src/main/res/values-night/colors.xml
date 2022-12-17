@@ -98,4 +98,9 @@
 
     <color name="buttonDisable">#7A7A7A</color>
 
+
+    <color name="datePickerConfirmButtonBackColor">#206cc9</color>
+    <color name="datePickerDateBackColor">#ffb300</color>
+    <color name="datePickerRangeColor">#163c69</color>
+
 </resources>

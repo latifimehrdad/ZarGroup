@@ -1,16 +1,16 @@
 package com.zarholding.zar.api
 
-import com.zarholding.zar.model.request.ArticleRequestModel
-import com.zarholding.zar.model.request.RequestRegisterStationModel
-import com.zarholding.zar.model.request.TaxiAddFavPlaceRequest
-import com.zarholding.zar.model.request.TripRequestRegisterStatusModel
+import com.zarholding.zar.model.request.*
+import com.zarholding.zar.model.response.LoginResponseModel
 import com.zarholding.zar.model.response.address.AddressResponseModel
 import com.zarholding.zar.model.response.address.AddressSuggestionModel
 import com.zarholding.zar.model.response.article.ArticleResponseModel
 import com.zarholding.zar.model.response.taxi.TaxiAddFavePlaceResponse
 import com.zarholding.zar.model.response.taxi.TaxiFavPlaceResponse
 import com.zarholding.zar.model.response.taxi.TaxiRemoveFavePlaceResponse
+import com.zarholding.zar.model.response.taxi.TaxiRequestResponse
 import com.zarholding.zar.model.response.trip.*
+import com.zarholding.zar.model.response.user.UserInfoResponseModel
 import retrofit2.http.*
 
 
@@ -24,6 +24,15 @@ interface ApiSuperApp {
         const val api = "/Api"
         const val v1 = "$api/V1"
     }
+
+    @POST("${v1}/LogIn/login-users")
+    suspend fun requestLogin(@Body login : LoginRequestModel) : LoginResponseModel
+
+
+    @GET("${v1}/LogIn/login-userInfo")
+    suspend fun requestUserInfo(
+        @Header("Authorization") token : String
+    ) : UserInfoResponseModel
 
 
     @GET("$v1/PersonnelsRegisteredStation/list-registered-trip")
@@ -85,6 +94,13 @@ interface ApiSuperApp {
         @Path("id") id : Int,
         @Header("Authorization") token : String
     ) : TaxiRemoveFavePlaceResponse
+
+
+    @POST("$v1/CarRequest/Add-carrequest")
+    suspend fun requestTaxi(
+        @Body request : TaxiRequestModel,
+        @Header("Authorization") token : String
+    ) : TaxiRequestResponse
 
 
     @GET

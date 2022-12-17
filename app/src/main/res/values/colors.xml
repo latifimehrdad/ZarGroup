@@ -104,4 +104,8 @@
 
     <color name="transparent">#00000000</color>
 
+    <color name="datePickerConfirmButtonBackColor">#051b46</color>
+    <color name="datePickerDateBackColor">#051b46</color>
+    <color name="datePickerRangeColor">#73B3EA</color>
+
 </resources>

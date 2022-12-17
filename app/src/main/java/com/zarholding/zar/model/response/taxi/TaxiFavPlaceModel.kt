@@ -6,6 +6,7 @@ data class TaxiFavPlaceModel(
     val locationName : String?,
     val lat : Double,
     val long : Double,
+    val locationAddress : String?,
     val userId : Int,
     val isAll : Boolean,
     val id : Int,

@@ -128,12 +128,17 @@
     <string name="reasonOfReject">علت عدم تایید :</string>
     <string name="reasonOfReject1">علت عدم تایید : %1$s</string>
     <string name="reasonText">متن علت</string>
-    <string name="selectTheDepartureDate">تاریخ رفت را انتخاب کنید</string>
-    <string name="selectTheReturnDate">تاریخ برگشت را انتخاب کنید</string>
+    <string name="selectTheDepartureDate">لطفا تاریخ رفت را انتخاب نمایید</string>
+    <string name="selectTheReturnDate">لطفا تاریخ برگشت را انتخاب نمایید</string>
+    <string name="selectTheDepartureTime">لطفا ساعت رفت را انتخاب نمایید</string>
+    <string name="selectTheReturnTime">لطفا ساعت برگشت را انتخاب نمایید</string>
     <string name="theReturnDateIsBeforeTheDepartureDate">تاریخ برگشت قبل از تاریخ رفت است</string>
     <string name="searchPlace">جستجوی آدرس</string>
     <string name="originLocationIsSelect">مبدا انتخاب شده است، آیا میخواهید مبدا را تغییر بدهید؟</string>
     <string name="destinationLocationIsSelect">مقصد انتخاب شده است، برای تغییر آن دکمه برگشت را بزنید</string>
+    <string name="pleaseChooseOriginLocation">لطفا مبدا را انتخاب نمایید</string>
+    <string name="pleaseChooseDestinationLocation">لطفا مقصد را انتخاب نمایید</string>
+    <string name="pleaseSelectPassenger">لطفا حداقل 1 مسافر را انتخاب نمایید</string>
 
     
     

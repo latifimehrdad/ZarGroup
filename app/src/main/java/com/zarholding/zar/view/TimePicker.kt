@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import com.zar.core.view.picker.time.ZarTimePicker
 import com.zarholding.zar.view.Utils.Companion.angleBetweenVectors
 import com.zarholding.zar.view.Utils.Companion.angleToMins
 import com.zarholding.zar.view.Utils.Companion.snapMinutes
@@ -70,10 +71,10 @@ class TimePicker @JvmOverloads constructor(
 
     fun getReturnTime() = computeReturnTime()
 
-    fun setTime(departureTime: LocalTime, returnTime: LocalTime, pickerMode: PickerMode) {
+    fun setTime(departureTime: LocalTime, returnTime: LocalTime, pickerMode: ZarTimePicker.PickerMode) {
         departureAngle = Utils.minutesToAngle(departureTime.hour * 60 + departureTime.minute)
         returnAngle = Utils.minutesToAngle(returnTime.hour * 60 + returnTime.minute)
-        TimePicker.pickerMode = pickerMode
+        ZarTimePicker.pickerMode = pickerMode
         invalidate()
         notifyChanges()
     }
