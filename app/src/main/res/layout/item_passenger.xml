@@ -43,25 +43,15 @@
             android:layout_marginStart="@dimen/_5sdp"
             app:layout_constraintStart_toEndOf="@id/materialButtonTitle">
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardViewAdd"
+            <ImageView
+                android:id="@+id/imageViewAdd"
                 android:layout_width="@dimen/_25sdp"
                 android:layout_height="@dimen/_25sdp"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:cardBackgroundColor="@color/primaryColor"
-                app:cardCornerRadius="@dimen/_100sdp"
-                android:layout_marginStart="@dimen/_2sdp">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="@dimen/_5sdp"
-                    android:src="@drawable/ic_edit"
-                    android:contentDescription="@string/plusDescription" />
-
-            </androidx.cardview.widget.CardView>
+                android:src="@drawable/ic_add_peaple"
+                android:contentDescription="@string/plusDescription" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

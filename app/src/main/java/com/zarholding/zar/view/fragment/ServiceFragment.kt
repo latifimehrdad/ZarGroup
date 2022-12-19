@@ -39,7 +39,6 @@ import com.zarholding.zar.view.adapter.SpinnerStringAdapter
 import com.zarholding.zar.view.dialog.ConfirmDialog
 import com.zarholding.zar.view.recycler.holder.MyServiceHolder
 import com.zarholding.zar.view.recycler.holder.ServiceHolder
-import com.zarholding.zar.viewmodel.TokenViewModel
 import com.zarholding.zar.viewmodel.TripViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -65,9 +64,10 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
     @Inject
     lateinit var unAuthorizationManager: UnAuthorizationManager
 
+    @Inject
+    lateinit var loadingManager : LoadingManager
+
     private val tripViewModel: TripViewModel by viewModels()
-    private val tokenViewModel: TokenViewModel by viewModels()
-    private val loadingManager = LoadingManager()
     private lateinit var osmManager: OsmManager
     private var tripList: List<TripModel>? = null
     private var markerCar: Marker? = null
@@ -194,7 +194,7 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- requestGetAllTrips
     private fun requestGetAllTrips(tripSelect: TripSelect) {
         startLoading()
-        tripViewModel.requestGetAllTrips(tokenViewModel.getBearerToken())
+        tripViewModel.requestGetAllTrips()
             .observe(viewLifecycleOwner) { response ->
                 loadingManager.stopLoadingRecycler()
                 response?.let {
@@ -326,7 +326,7 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
     private fun requestRegisterStation(tripId: Int, stationId: Int) {
         startLoading()
         val requestModel = RequestRegisterStationModel(tripId, stationId)
-        tripViewModel.requestRegisterStation(requestModel, tokenViewModel.getBearerToken())
+        tripViewModel.requestRegisterStation(requestModel)
             .observe(viewLifecycleOwner) { response ->
                 loadingManager.stopLoadingRecycler()
                 response?.let {
@@ -359,7 +359,7 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- requestDeleteRegisterStation
     private fun requestDeleteRegisterStation(stationId: Int) {
         startLoading()
-        tripViewModel.requestDeleteRegisteredStation(stationId, tokenViewModel.getBearerToken())
+        tripViewModel.requestDeleteRegisteredStation(stationId)
             .observe(viewLifecycleOwner) { response ->
                 loadingManager.stopLoadingRecycler()
                 response?.let {
@@ -438,7 +438,7 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
             delay(2000)
             signalRListener = SignalRListener.getInstance(
                 remote,
-                tokenViewModel.getToken()
+                tripViewModel.getToken()
             )
             if (!signalRListener!!.isConnection)
                 signalRListener!!.startConnection()

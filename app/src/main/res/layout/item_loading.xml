@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:minHeight="@dimen/_150sdp"
     android:background="@color/recyclerLoadingBack">
 
 </androidx.constraintlayout.widget.ConstraintLayout>

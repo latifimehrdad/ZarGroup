@@ -133,7 +133,7 @@
                             android:maxLength="20"
                             android:singleLine="true"
                             android:textSize="@dimen/_10sdp"
-                            android:text="@={viewModel.passcode}"
+                            android:text="@={viewModel.password}"
                             android:fontFamily="@font/kalameh_light"/>
 
                     </com.google.android.material.textfield.TextInputLayout>

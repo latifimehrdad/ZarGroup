@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
@@ -15,7 +16,6 @@ import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zar.core.tools.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType
 import com.zar.core.tools.autoimageslider.SliderAnimations
 import com.zar.core.tools.autoimageslider.SliderView
-import com.zarholding.zar.database.dao.ArticleDao
 import com.zarholding.zar.database.entity.ArticleEntity
 import com.zarholding.zar.model.enum.EnumArticleType
 import com.zarholding.zar.model.other.AppModel
@@ -29,12 +29,8 @@ import com.zarholding.zar.view.recycler.adapter.NewsAdapter
 import com.zarholding.zar.view.recycler.adapter.RequestAdapter
 import com.zarholding.zar.view.recycler.holder.AppItemHolder
 import com.zarholding.zar.view.recycler.holder.NewsItemHolder
+import com.zarholding.zar.viewmodel.ArticleViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import zar.R
 import zar.databinding.FragmentHomeBinding
 import javax.inject.Inject
@@ -49,8 +45,7 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    @Inject
-    lateinit var articleDao: ArticleDao
+    private val articleViewModel: ArticleViewModel by viewModels()
 
     @Inject
     lateinit var unAuthorizationManager: UnAuthorizationManager
@@ -174,12 +169,8 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- getBannerFromDB
     private fun getBannerFromDB() {
-        CoroutineScope(IO).launch {
-            val banners = articleDao.getArticles(EnumArticleType.SlideShow.name)
-            withContext(Main) {
-                setBannerSlider(banners)
-            }
-        }
+        val banners = articleViewModel.getArticles(EnumArticleType.SlideShow)
+        setBannerSlider(banners)
     }
     //---------------------------------------------------------------------------------------------- getBannerFromDB
 
@@ -197,13 +188,8 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- initNews
     private fun initNews() {
-        CoroutineScope(IO).launch {
-            val news = articleDao.getArticles(EnumArticleType.Article.name)
-            withContext(Main) {
-                setNewsAdapter(news)
-            }
-        }
-
+        val news = articleViewModel.getArticles(EnumArticleType.Article)
+        setNewsAdapter(news)
     }
     //---------------------------------------------------------------------------------------------- initNews
 

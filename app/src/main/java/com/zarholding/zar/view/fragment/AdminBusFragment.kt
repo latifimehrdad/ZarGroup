@@ -21,7 +21,6 @@ import com.zarholding.zar.view.dialog.ConfirmDialog
 import com.zarholding.zar.view.dialog.RejectReasonDialog
 import com.zarholding.zar.view.recycler.adapter.AdminBusAdapter
 import com.zarholding.zar.view.recycler.holder.AdminBusItemHolder
-import com.zarholding.zar.viewmodel.TokenViewModel
 import com.zarholding.zar.viewmodel.TripViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.internal.filterList
@@ -38,9 +37,11 @@ class AdminBusFragment : Fragment(), RemoteErrorEmitter {
     @Inject
     lateinit var unAuthorizationManager: UnAuthorizationManager
 
+    @Inject
+    lateinit var loadingManager : LoadingManager
+
+
     private val tripViewModel: TripViewModel by viewModels()
-    private val tokenViewModel: TokenViewModel by viewModels()
-    private val loadingManager = LoadingManager()
     lateinit var adapter: AdminBusAdapter
 
 
@@ -105,7 +106,7 @@ class AdminBusFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- requestGetTripRequestRegister
     private fun requestGetTripRequestRegister() {
         startLoading()
-        tripViewModel.requestGetTripRequestRegister(tokenViewModel.getBearerToken())
+        tripViewModel.requestGetTripRequestRegister()
             .observe(viewLifecycleOwner) { response ->
                 loadingManager.stopLoadingRecycler()
                 response?.let {
@@ -214,9 +215,7 @@ class AdminBusFragment : Fragment(), RemoteErrorEmitter {
             )
 
         startLoading()
-        tripViewModel.requestConfirmAndRejectTripRequestRegister(
-            request,
-            tokenViewModel.getBearerToken())
+        tripViewModel.requestConfirmAndRejectTripRequestRegister(request)
             .observe(viewLifecycleOwner) { response ->
                 loadingManager.stopLoadingRecycler()
                 response?.let {

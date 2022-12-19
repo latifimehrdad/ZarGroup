@@ -8,7 +8,7 @@ import com.zarholding.zar.view.recycler.holder.PersonnelSelectHolder
 import zar.databinding.ItemPersonnelSelectBinding
 
 class PersonnelSelectAdapter(
-    private val items: List<UserInfoEntity>,
+    private val items: MutableList<UserInfoEntity>,
     private val click: PersonnelSelectHolder.Click
 ) : RecyclerView.Adapter<PersonnelSelectHolder>() {
 
@@ -37,5 +37,13 @@ class PersonnelSelectAdapter(
     override fun getItemCount() = items.size
     //---------------------------------------------------------------------------------------------- onBindViewHolder
 
+
+    //---------------------------------------------------------------------------------------------- addPerson
+    fun addPerson(list: List<UserInfoEntity>) {
+        val oldSize = items.size
+        items.addAll(list)
+        notifyItemRangeChanged(oldSize-1, items.size)
+    }
+    //---------------------------------------------------------------------------------------------- addPerson
 
 }

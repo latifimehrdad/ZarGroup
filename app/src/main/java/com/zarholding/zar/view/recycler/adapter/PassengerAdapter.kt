@@ -33,7 +33,7 @@ class PassengerAdapter(
 
     //---------------------------------------------------------------------------------------------- onBindViewHolder
     override fun onBindViewHolder(holder: PassengerItemHolder, position: Int) {
-        holder.bind(users[position], position == users.size-1)
+        holder.bind(users[position], position == users.size-1, position == 0)
     }
     //---------------------------------------------------------------------------------------------- onBindViewHolder
 
@@ -50,6 +50,15 @@ class PassengerAdapter(
         notifyItemRangeChanged(0, users.size)
     }
     //---------------------------------------------------------------------------------------------- addUser
+
+
+
+    //---------------------------------------------------------------------------------------------- deleteUser
+    fun deleteUser(item: UserInfoEntity) {
+        users.remove(item)
+        notifyItemRangeChanged(0, users.size)
+    }
+    //---------------------------------------------------------------------------------------------- deleteUser
 
 
 

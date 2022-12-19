@@ -42,7 +42,6 @@ class DashboardFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- onCreateView
 
 
-
     //---------------------------------------------------------------------------------------------- onViewCreated
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -50,7 +49,6 @@ class DashboardFragment : Fragment(), RemoteErrorEmitter {
         initView()
     }
     //---------------------------------------------------------------------------------------------- onViewCreated
-
 
 
     //---------------------------------------------------------------------------------------------- onError
@@ -65,13 +63,11 @@ class DashboardFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- onError
 
 
-
     //---------------------------------------------------------------------------------------------- unAuthorization
     override fun unAuthorization(type: EnumAuthorizationType, message: String) {
-        unAuthorizationManager.handel(activity,type,message,binding.constraintLayoutParent)
+        unAuthorizationManager.handel(activity, type, message, binding.constraintLayoutParent)
     }
     //---------------------------------------------------------------------------------------------- unAuthorization
-
 
 
     //---------------------------------------------------------------------------------------------- initView
@@ -87,7 +83,13 @@ class DashboardFragment : Fragment(), RemoteErrorEmitter {
             )
         )
 
-        apps.add(AppModel(R.drawable.ic_cab, getString(R.string.confirmAgency), 0))
+        apps.add(
+            AppModel(
+                R.drawable.ic_cab,
+                getString(R.string.confirmAgency),
+                R.id.action_DashboardFragment_to_AdminTaxiFragment
+            )
+        )
 
         apps.add(AppModel(R.drawable.icon_food_reservation, getString(R.string.foodReservation), 0))
         apps.add(AppModel(R.drawable.icon_gift_card, getString(R.string.giftCard), 0))

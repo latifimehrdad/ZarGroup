@@ -9,36 +9,33 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.zar.core.tools.loadings.LoadingManager
-import com.zarholding.zar.database.dao.UserInfoDao
+import androidx.recyclerview.widget.RecyclerView
 import com.zarholding.zar.database.entity.UserInfoEntity
+import com.zarholding.zar.utility.EndlessScrollListener
 import com.zarholding.zar.view.recycler.adapter.PersonnelSelectAdapter
 import com.zarholding.zar.view.recycler.holder.PersonnelSelectHolder
-import com.zarholding.zar.viewmodel.TokenViewModel
 import com.zarholding.zar.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import zar.R
 import zar.databinding.DialogPersonnelBinding
-import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class PersonnelDialog(
     private val chooseItem: Click
-) : DialogFragment(){
+) : DialogFragment() {
 
-    lateinit var binding : DialogPersonnelBinding
+    lateinit var binding: DialogPersonnelBinding
 
-    private val loadingManager = LoadingManager()
-    private val userViewModel : UserViewModel by viewModels()
-    private val tokenViewModel : TokenViewModel by viewModels()
+    private val userViewModel: UserViewModel by viewModels()
 
-    private var job : Job? = null
+    private var job: Job? = null
 
-    @Inject
-    lateinit var userInfoDao: UserInfoDao
+    var adapterPersonnel: PersonnelSelectAdapter? = null
+
+    var endlessScrollListener: EndlessScrollListener? = null
 
     //---------------------------------------------------------------------------------------------- Click
     interface Click {
@@ -75,13 +72,15 @@ class PersonnelDialog(
     //---------------------------------------------------------------------------------------------- onCreateView
 
 
-
     //---------------------------------------------------------------------------------------------- setListener
     private fun setListener() {
 
         binding.imageViewClose.setOnClickListener { dismiss() }
 
         binding.textInputEditTextSearch.addTextChangedListener {
+            adapterPersonnel = null
+            userViewModel.filterUser.PageNumber = 0
+            binding.recyclerViewPersonnel.adapter = null
             job?.cancel()
             createJobForSearch(it.toString())
         }
@@ -90,29 +89,28 @@ class PersonnelDialog(
     //---------------------------------------------------------------------------------------------- setListener
 
 
-
     //---------------------------------------------------------------------------------------------- createJobForSearch
-    private fun createJobForSearch(search : String) {
+    private fun createJobForSearch(search: String) {
         job = CoroutineScope(IO).launch {
             delay(800)
             withContext(Main) {
-                requestGetUser(search)
+                if (search.isNotEmpty())
+                    requestGetUser(search)
             }
         }
     }
     //---------------------------------------------------------------------------------------------- createJobForSearch
 
 
-
     //---------------------------------------------------------------------------------------------- requestGetUser
-    private fun requestGetUser(search : String) {
-        startLoading()
-        userViewModel.requestGetUser("fullName,userName", search, tokenViewModel.getBearerToken())
+    private fun requestGetUser(search: String) {
+        binding.textViewLoading.visibility = View.VISIBLE
+        userViewModel.requestGetUser(search)
             .observe(viewLifecycleOwner) { response ->
-                loadingManager.stopLoadingRecycler()
-                response?.let {data ->
+                binding.textViewLoading.visibility = View.GONE
+                response?.let { data ->
                     if (!data.hasError) {
-                        data.data?.let {item ->
+                        data.data?.let { item ->
                             item.items?.let {
                                 setPersonnelAdapter(it)
                             }
@@ -124,38 +122,49 @@ class PersonnelDialog(
     //---------------------------------------------------------------------------------------------- requestGetUser
 
 
-
     //---------------------------------------------------------------------------------------------- setPersonnelAdapter
-    private fun setPersonnelAdapter(items : List<UserInfoEntity>) {
-        val select = object : PersonnelSelectHolder.Click {
-            override fun select(item: UserInfoEntity) {
-                chooseItem.select(item)
-                dismiss()
+    private fun setPersonnelAdapter(items: List<UserInfoEntity>) {
+        adapterPersonnel?.let {
+            adapterPersonnel?.addPerson(items)
+            endlessScrollListener?.let {
+                it.setLoading(false)
+                if (items.isNullOrEmpty())
+                    binding.recyclerViewPersonnel.removeOnScrollListener(it)
             }
+        } ?: run {
+            val select = object : PersonnelSelectHolder.Click {
+                override fun select(item: UserInfoEntity) {
+                    chooseItem.select(item)
+                    dismiss()
+                }
+            }
+            adapterPersonnel = PersonnelSelectAdapter(items.toMutableList(), select)
+            val manager = LinearLayoutManager(
+                context,
+                LinearLayoutManager.VERTICAL,
+                false
+            )
+            endlessScrollListener = getEndlessScrollListener(manager)
+            binding.recyclerViewPersonnel.layoutManager = manager
+            binding.recyclerViewPersonnel.adapter = adapterPersonnel
+            binding.recyclerViewPersonnel.addOnScrollListener(endlessScrollListener!!)
         }
 
-        val adapter = PersonnelSelectAdapter(items,select)
-        val manager = LinearLayoutManager(
-            context,
-            LinearLayoutManager.VERTICAL,
-            false
-        )
-        binding.recyclerViewPersonnel.layoutManager = manager
-        binding.recyclerViewPersonnel.adapter = adapter
     }
     //---------------------------------------------------------------------------------------------- setPersonnelAdapter
 
 
-    //---------------------------------------------------------------------------------------------- startLoading
-    private fun startLoading() {
-        loadingManager.setRecyclerLoading(
-            binding.recyclerViewPersonnel,
-            R.layout.item_loading_light,
-            R.color.recyclerLoadingShadow,
-            1
-        )
+    //______________________________________________________________________________________________ getEndlessScrollListener
+    private fun getEndlessScrollListener(manager: LinearLayoutManager): EndlessScrollListener {
+        val endlessScrollListener = object : EndlessScrollListener(manager) {
+            override fun loadMoreItems() {
+                requestGetUser(userViewModel.filterUser.Search)
+            }
+        }
+        endlessScrollListener.setLoading(false)
+        return endlessScrollListener
     }
-    //---------------------------------------------------------------------------------------------- startLoading
+    //______________________________________________________________________________________________ getEndlessScrollListener
 
 
     //---------------------------------------------------------------------------------------------- dismiss

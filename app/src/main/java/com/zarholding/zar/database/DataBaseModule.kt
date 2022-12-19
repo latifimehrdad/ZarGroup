@@ -57,7 +57,7 @@ class DataBaseModule {
             context,
             AppDatabase::class.java,
             "zarholding"
-        ).build()
+        ).allowMainThreadQueries().build()
     }
     //---------------------------------------------------------------------------------------------- provideAppDatabase
 

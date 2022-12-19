@@ -20,6 +20,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import zar.R
 import zar.databinding.DialogSearchAddressBinding
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -29,7 +30,9 @@ class SearchAddressDialog(
 
     lateinit var binding: DialogSearchAddressBinding
 
-    private val loadingManager = LoadingManager()
+    @Inject
+    lateinit var loadingManager : LoadingManager
+
     private val addressViewModel: AddressViewModel by viewModels()
     private var job: Job? = null
     private var adapter : AddressSuggestionAdapter? = null

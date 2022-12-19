@@ -2,14 +2,15 @@ package com.zarholding.zar.repository
 
 import com.zar.core.tools.api.apiCall
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
-import com.zarholding.zar.api.ApiBPMS
+import com.zarholding.zar.api.ApiSuperApp
+import com.zarholding.zar.model.request.FilterUserRequestModel
 import javax.inject.Inject
 
 /**
  * Created by m-latifi on 11/26/2022.
  */
 
-class UserRepository @Inject constructor(private val api: ApiBPMS) {
+class UserRepository @Inject constructor(private val api: ApiSuperApp) {
 
     @Inject
     lateinit var emitter: RemoteErrorEmitter
@@ -26,9 +27,8 @@ class UserRepository @Inject constructor(private val api: ApiBPMS) {
 
     //---------------------------------------------------------------------------------------------- requestGetUser
     fun requestGetUser(
-        filters : String,
-        value : String,
-        token: String) = apiCall(emitter) {api.requestGetUser("end", filters, value, token)}
+        request : FilterUserRequestModel,
+        token: String) = apiCall(emitter) {api.requestGetUser(request, token)}
     //---------------------------------------------------------------------------------------------- requestGetUser
 
 }

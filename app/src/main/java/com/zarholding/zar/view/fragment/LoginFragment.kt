@@ -1,6 +1,5 @@
 package com.zarholding.zar.view.fragment
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,8 +12,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.zar.core.enums.EnumErrorType
 import com.zar.core.tools.BiometricTools
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
-import com.zarholding.zar.model.request.LoginRequestModel
-import com.zarholding.zar.utility.CompanionValues
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.view.extension.hideKeyboard
 import com.zarholding.zar.viewmodel.LoginViewModel
@@ -32,9 +29,6 @@ class LoginFragment : Fragment(), RemoteErrorEmitter {
 
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
-
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
 
     @Inject
     lateinit var biometricTools: BiometricTools
@@ -81,8 +75,7 @@ class LoginFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- initView
     private fun initView() {
 
-        val biometricEnable = sharedPreferences.getBoolean(CompanionValues.biometric, false)
-        if (biometricEnable)
+        if (loginViewModel.getBiometricEnable())
             binding.buttonFingerLogin.visibility = View.VISIBLE
         else
             binding.buttonFingerLogin.visibility = View.GONE
@@ -137,8 +130,7 @@ class LoginFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- fingerPrintClick
     private fun fingerPrintClick() {
-        loginViewModel.userName = sharedPreferences.getString(CompanionValues.userName, null)
-        loginViewModel.passcode = sharedPreferences.getString(CompanionValues.passcode, null)
+        loginViewModel.setUserNamePasswordFromSharePreferences()
         checkEmptyValueForLogin()
     }
     //---------------------------------------------------------------------------------------------- fingerPrintClick
@@ -154,7 +146,7 @@ class LoginFragment : Fragment(), RemoteErrorEmitter {
             binding.textInputLayoutUserName.error = getString(R.string.userNameIsEmpty)
             return
         }
-        if (loginViewModel.passcode.isNullOrEmpty()) {
+        if (loginViewModel.password.isNullOrEmpty()) {
             binding.textInputLayoutPasscode.error = getString(R.string.passcodeIsEmpty)
             return
         }
@@ -166,19 +158,13 @@ class LoginFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- requestLogin
     private fun requestLogin() {
         startLoading()
-        val model = LoginRequestModel(loginViewModel.userName!!, loginViewModel.passcode!!)
-        loginViewModel.requestLogin(model).observe(viewLifecycleOwner) { response ->
+        loginViewModel.requestLogin().observe(viewLifecycleOwner) { response ->
             stopLoading()
             response?.let {
                 if (it.hasError) {
                     onError(EnumErrorType.UNKNOWN, it.message)
                 } else {
-                    sharedPreferences
-                        .edit()
-                        .putString(CompanionValues.TOKEN, it.data)
-                        .putString(CompanionValues.userName, model.UserName)
-                        .putString(CompanionValues.passcode, model.Password)
-                        .apply()
+                    loginViewModel.saveUserNameAndPassword(it.data)
                     if (activity != null)
                         requireActivity().onBackPressedDispatcher.onBackPressed()
                 }

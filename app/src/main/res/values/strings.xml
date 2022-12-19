@@ -58,6 +58,8 @@
     <string name="passcodeIsEmpty">رمز ورود را وارد نمایید</string>
     <string name="chooseStation">ایستگاه را انتخاب کنید</string>
     <string name="taxiReservation">درخواست آژانس</string>
+    <string name="taxiReservationConfirm">تاییدیه آژانس</string>
+    <string name="receivingMoreItems">درحال دریافت موارد بیشتر</string>
     <string name="departure">رفت</string>
     <string name="returning">رفت و برگشت</string>
     <string name="applicator">درخواست کننده : %1$s</string>

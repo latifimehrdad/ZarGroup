@@ -6,6 +6,8 @@ data class TaxiRequestModel(
     val type : EnumTaxiRequest,
     val departureDate : String,
     val departureTime : String,
+    val returnDate : String?,
+    val returnTime : String?,
     val originLat : Double,
     val originLong : Double,
     val originAddress : String,
@@ -13,5 +15,7 @@ data class TaxiRequestModel(
     val destinationLong : Double,
     val destinationAddress : String,
     val passengers : List<Int>,
-    val travelReason : String
+    val travelReason : String,
+    val companyCode : String?,
+    val personnelJobKeyCode : String?
 )

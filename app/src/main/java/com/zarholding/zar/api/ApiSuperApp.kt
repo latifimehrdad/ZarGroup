@@ -11,6 +11,8 @@ import com.zarholding.zar.model.response.taxi.TaxiRemoveFavePlaceResponse
 import com.zarholding.zar.model.response.taxi.TaxiRequestResponse
 import com.zarholding.zar.model.response.trip.*
 import com.zarholding.zar.model.response.user.UserInfoResponseModel
+import com.zarholding.zar.model.response.user.UserPermissionResponseModel
+import com.zarholding.zar.model.response.user.UserResponseModel
 import retrofit2.http.*
 
 
@@ -33,6 +35,19 @@ interface ApiSuperApp {
     suspend fun requestUserInfo(
         @Header("Authorization") token : String
     ) : UserInfoResponseModel
+
+
+    @GET("${v1}/LogIn/get-persmissions")
+    suspend fun requestUserPermission(
+        @Header("Authorization") token : String
+    ) : UserPermissionResponseModel
+
+
+    @POST("${v1}/LogIn/get-filter-users")
+    suspend fun requestGetUser(
+        @Body request : FilterUserRequestModel,
+        @Header("Authorization") token : String
+    ) : UserResponseModel
 
 
     @GET("$v1/PersonnelsRegisteredStation/list-registered-trip")

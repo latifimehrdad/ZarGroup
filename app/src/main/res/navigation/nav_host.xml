@@ -78,6 +78,14 @@
         android:label="DashboardFragment">
 
         <action
+            android:id="@+id/action_DashboardFragment_to_AdminTaxiFragment"
+            app:destination="@id/AdminTaxiFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left" />
+
+        <action
             android:id="@+id/action_DashboardFragment_to_AdminBusFragment"
             app:destination="@id/AdminBusFragment"
             app:enterAnim="@anim/slide_in_left"
@@ -96,6 +104,12 @@
         android:id="@+id/TaxiReservationFragment"
         android:name="com.zarholding.zar.view.fragment.TaxiReservationFragment"
         android:label="TaxiReservationFragment"/>
+
+    <fragment
+        android:id="@+id/AdminTaxiFragment"
+        android:name="com.zarholding.zar.view.fragment.AdminTaxiFragment"
+        android:label="AdminTaxiFragment"/>
+
 
     <action
         android:id="@+id/action_goto_ProfileFragment"

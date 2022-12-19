@@ -1,6 +1,5 @@
 package com.zarholding.zar.view.fragment
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,17 +11,11 @@ import com.google.android.material.snackbar.Snackbar
 import com.zar.core.enums.EnumAuthorizationType
 import com.zar.core.enums.EnumErrorType
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
-import com.zarholding.zar.database.dao.ArticleDao
-import com.zarholding.zar.database.dao.RoleDao
-import com.zarholding.zar.database.dao.UserInfoDao
 import com.zarholding.zar.database.entity.RoleEntity
 import com.zarholding.zar.model.request.ArticleRequestModel
-import com.zarholding.zar.repository.UserRepository
-import com.zarholding.zar.utility.CompanionValues
 import com.zarholding.zar.utility.UnAuthorizationManager
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.viewmodel.ArticleViewModel
-import com.zarholding.zar.viewmodel.TokenViewModel
 import com.zarholding.zar.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -43,29 +36,13 @@ class SplashFragment : Fragment(), RemoteErrorEmitter {
     private var _binding: FragmentSplashBinding? = null
     private val binding get() = _binding!!
 
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
-
-    @Inject
-    lateinit var userRepository: UserRepository
-
-    @Inject
-    lateinit var articleDao: ArticleDao
-
-    @Inject
-    lateinit var userInfoDao: UserInfoDao
-
-    @Inject
-    lateinit var roleDao: RoleDao
+    private val userViewModel: UserViewModel by viewModels()
+    private val articleViewModel: ArticleViewModel by viewModels()
 
     @Inject
     lateinit var unAuthorizationManager: UnAuthorizationManager
 
     private lateinit var job: Job
-    private val tokenViewModel: TokenViewModel by viewModels()
-    private val userViewModel: UserViewModel by viewModels()
-    private val articleViewModel: ArticleViewModel by viewModels()
-
 
     //---------------------------------------------------------------------------------------------- onCreateView
     override fun onCreateView(
@@ -118,7 +95,7 @@ class SplashFragment : Fragment(), RemoteErrorEmitter {
     private fun checkUserIsLogged() {
         binding.buttonReTry.visibility = View.GONE
         binding.frameLayoutLogo.visibility = View.VISIBLE
-        val token = sharedPreferences.getString(CompanionValues.TOKEN, null)
+        val token = userViewModel.getToken()
         token?.let {
             gotoFragmentHome()
         } ?: gotoFragmentLogin()
@@ -152,20 +129,16 @@ class SplashFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- requestUserInfo
     private fun requestUserInfo() {
-        userViewModel.requestUserInfo(tokenViewModel.getBearerToken())
+        userViewModel.requestUserInfo()
             .observe(viewLifecycleOwner) { response ->
                 response?.let { userInfo ->
                     if (userInfo.hasError)
                         onError(EnumErrorType.UNKNOWN, userInfo.message)
                     else
                         userInfo.data?.let {
-                            CoroutineScope(IO).launch {
-                                userInfoDao.insertUserInfo(it)
-                                withContext(Main) {
-                                    (activity as MainActivity).setUserInfo()
-                                    requestUserPermission()
-                                }
-                            }
+                            userViewModel.insertUserInfo(it)
+                            (activity as MainActivity).setUserInfo()
+                            requestUserPermission()
                         } ?: run {
                             onError(
                                 EnumErrorType.UNKNOWN,
@@ -186,21 +159,16 @@ class SplashFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- requestUserPermission
     private fun requestUserPermission() {
-        userViewModel.requestUserPermission(tokenViewModel.getBearerToken())
+        userViewModel.requestUserPermission()
             .observe(viewLifecycleOwner) { response ->
                 response?.let { permissions ->
                     if (permissions.hasError)
                         onError(EnumErrorType.UNKNOWN, permissions.message)
                     else
                         permissions.data?.let { list ->
-                            val temp : List<RoleEntity> = list.map { RoleEntity(it) }
-                            CoroutineScope(IO).launch {
-                                roleDao.deleteAllRecord()
-                                roleDao.insert(temp)
-                                withContext(Main) {
-                                    requestGetSlideShow()
-                                }
-                            }
+                            val roles : List<RoleEntity> = list.map { RoleEntity(it) }
+                            userViewModel.insertUserRole(roles)
+                            requestGetSlideShow()
                         } ?: run {
                             requestGetSlideShow()
                         }
@@ -222,20 +190,15 @@ class SplashFragment : Fragment(), RemoteErrorEmitter {
             false,
             "SlideShow"
         )
-        articleViewModel.requestGetArticles(request, tokenViewModel.getBearerToken())
+        articleViewModel.requestGetArticles(request)
             .observe(viewLifecycleOwner) { response ->
                 response?.let { articleModels ->
                     if (articleModels.hasError)
                         onError(EnumErrorType.UNKNOWN, articleModels.message)
                     else
                         articleModels.data?.let { data ->
-                            CoroutineScope(IO).launch {
-                                for (item in data.items)
-                                    item?.let { articleDao.insertArticle(it) }
-                                withContext(Main) {
-                                    requestGetArticle()
-                                }
-                            }
+                            articleViewModel.insertArticle(data.items)
+                            requestGetArticle()
                         } ?: run {
                             onError(
                                 EnumErrorType.UNKNOWN,
@@ -262,21 +225,16 @@ class SplashFragment : Fragment(), RemoteErrorEmitter {
             false,
             "Article"
         )
-        articleViewModel.requestGetArticles(request, tokenViewModel.getBearerToken())
+        articleViewModel.requestGetArticles(request)
             .observe(viewLifecycleOwner) { response ->
                 response?.let { articleModels ->
                     if (articleModels.hasError)
                         onError(EnumErrorType.UNKNOWN, articleModels.message)
                     else
                         articleModels.data?.let { data ->
-                            CoroutineScope(IO).launch {
-                                for (item in data.items)
-                                    item?.let { articleDao.insertArticle(it) }
-                                withContext(Main) {
-                                    findNavController()
-                                        .navigate(R.id.action_splashFragment_to_HomeFragment)
-                                }
-                            }
+                            articleViewModel.insertArticle(data.items)
+                            findNavController()
+                                .navigate(R.id.action_splashFragment_to_HomeFragment)
                         } ?: run {
                             onError(
                                 EnumErrorType.UNKNOWN,

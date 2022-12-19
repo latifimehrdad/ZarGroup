@@ -17,18 +17,25 @@ class PassengerItemHolder(
     //---------------------------------------------------------------------------------------------- Click
     interface Click {
         fun addClick()
+        fun itemClick(item: UserInfoEntity)
     }
     //---------------------------------------------------------------------------------------------- Click
 
 
     //---------------------------------------------------------------------------------------------- bind
-    fun bind(item: UserInfoEntity, last : Boolean) {
+    fun bind(item: UserInfoEntity, last : Boolean, first : Boolean) {
         binding.item = item
         if (last)
             binding.linearLayoutAdd.visibility = View.VISIBLE
         else
             binding.linearLayoutAdd.visibility = View.GONE
-        binding.cardViewAdd.setOnClickListener {
+
+        if (first)
+            binding.materialButtonTitle.icon = null
+        else
+            binding.root.setOnClickListener { click.itemClick(item) }
+
+        binding.imageViewAdd.setOnClickListener {
             click.addClick()
         }
         binding.executePendingBindings()
