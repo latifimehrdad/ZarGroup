@@ -9,7 +9,6 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.zarholding.zar.database.entity.UserInfoEntity
 import com.zarholding.zar.utility.EndlessScrollListener
 import com.zarholding.zar.view.recycler.adapter.PersonnelSelectAdapter

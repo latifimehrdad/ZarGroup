@@ -35,6 +35,7 @@ import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.view.dialog.*
 import com.zarholding.zar.view.extension.getAddress
 import com.zarholding.zar.view.extension.hideKeyboard
+import com.zarholding.zar.view.extension.setApplicatorNameToTextView
 import com.zarholding.zar.view.recycler.adapter.PassengerAdapter
 import com.zarholding.zar.view.recycler.holder.PassengerItemHolder
 import com.zarholding.zar.viewmodel.AddressViewModel
@@ -306,7 +307,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- setApplicatorNameToTextView
     private fun setApplicatorNameToTextView() {
         val fullName = userViewModel.getUser()?.fullName
-        binding.textViewApplicator.text = getString(R.string.applicator, fullName)
+        binding.textViewApplicator.setApplicatorNameToTextView(fullName)
     }
     //---------------------------------------------------------------------------------------------- setApplicatorNameToTextView
 

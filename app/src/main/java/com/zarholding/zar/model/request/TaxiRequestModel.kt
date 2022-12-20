@@ -1,9 +1,9 @@
 package com.zarholding.zar.model.request
 
-import com.zarholding.zar.model.enum.EnumTaxiRequest
+import com.zarholding.zar.model.enum.EnumTaxiRequestType
 
 data class TaxiRequestModel(
-    val type : EnumTaxiRequest,
+    val type : EnumTaxiRequestType,
     val departureDate : String,
     val departureTime : String,
     val returnDate : String?,

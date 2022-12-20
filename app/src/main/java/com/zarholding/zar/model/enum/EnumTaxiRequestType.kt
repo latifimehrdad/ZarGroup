@@ -1,6 +1,6 @@
 package com.zarholding.zar.model.enum
 
-enum class EnumTaxiRequest {
+enum class EnumTaxiRequestType {
     OneWay,
     Return
 }

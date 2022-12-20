@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="item"
+            type="com.zarholding.zar.model.response.taxi.AdminTaxiRequestModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_10sdp"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@color/primaryColor"/>
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewIcon"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:cardCornerRadius="@dimen/_30sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_20sdp"
+            app:cardBackgroundColor="@color/primaryColor">
+
+            <ImageView
+                android:id="@+id/imageViewIcon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_person_avatar"
+                android:layout_margin="@dimen/_1sdp"
+                android:contentDescription="@string/iconNotificationDescription" />
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@id/cardViewIcon"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/cardViewIcon"
+            android:layout_marginEnd="@dimen/_5sdp"
+            android:padding="@dimen/_5sdp">
+
+            <TextView
+                android:id="@+id/textViewTimeElapse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:textSize="@dimen/_8sdp"
+                android:textColor="@color/textViewFooter"
+                android:fontFamily="@font/kalameh_regular"
+                app:setWaitingTimeToTextView="@{item.waitingTime}"/>
+
+            <TextView
+                android:id="@+id/textViewApplicatorName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/textViewTimeElapse"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:textColor="@color/textViewColor2"
+                android:textSize="@dimen/_9sdp"
+                android:fontFamily="@font/kalameh_regular"
+                android:maxLines="2"
+                android:textStyle="bold"
+                app:setApplicatorNameToTextView="@{item.requesterName}"/>
+
+            <TextView
+                android:id="@+id/textviewOriginDestinationAddressTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/textViewApplicatorName"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:textColor="@color/textViewColor2"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:textSize="@dimen/_9sdp"
+                android:textStyle="bold"
+                android:fontFamily="@font/kalameh_regular"
+                android:text="@string/originAndDestination"/>
+
+            <TextView
+                android:id="@+id/textviewOriginDestinationAddress"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/textviewOriginDestinationAddressTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/textviewOriginDestinationAddressTitle"
+                android:textSize="@dimen/_9sdp"
+                android:layout_marginEnd="@dimen/_2sdp"
+                android:textColor="@color/textViewColor2"
+                android:fontFamily="@font/kalameh_regular"
+                app:setOriginToTextView="@{item.originAddress}"
+                app:setDestinationToTextView="@{item.destinationAddress}"/>
+
+
+            <TextView
+                android:id="@+id/textviewOriginDestinationDateTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/textviewOriginDestinationAddress"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:textColor="@color/textViewColor2"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:textSize="@dimen/_9sdp"
+                android:textStyle="bold"
+                android:fontFamily="@font/kalameh_regular" />
+
+            <TextView
+                android:id="@+id/textviewOriginDestinationDate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/textviewOriginDestinationDateTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/textviewOriginDestinationDateTitle"
+                android:textSize="@dimen/_9sdp"
+                android:layout_marginEnd="@dimen/_2sdp"
+                android:gravity="end"
+                android:textColor="@color/textViewColor2"
+                android:fontFamily="@font/kalameh_regular"
+                app:setDepartureToTextView="@{item.departureDate}"
+                app:setReturnToTextView="@{item.returnDate}" />
+
+            <TextView
+                android:id="@+id/textviewOriginDestinationTimeTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/textviewOriginDestinationDateTitle"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:textColor="@color/textViewColor2"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:textSize="@dimen/_9sdp"
+                android:textStyle="bold"
+                android:fontFamily="@font/kalameh_regular" />
+
+            <TextView
+                android:id="@+id/textviewOriginDestinationTime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/textviewOriginDestinationTimeTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/textviewOriginDestinationTimeTitle"
+                android:textSize="@dimen/_9sdp"
+                android:layout_marginEnd="@dimen/_2sdp"
+                android:gravity="end"
+                android:textColor="@color/textViewColor2"
+                android:fontFamily="@font/kalameh_regular"
+                app:setDepartureToTextView="@{item.departureTime}"
+                app:setReturnToTextView="@{item.returnTime}" />
+
+
+            <TextView
+                android:id="@+id/textViewPassenger"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/textviewOriginDestinationTimeTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:textSize="@dimen/_8sdp"
+                android:textColor="@color/textViewFooter"
+                android:fontFamily="@font/kalameh_regular"
+                app:setPassengersToTextView="@{item.listPassengers}"/>
+
+
+            <TextView
+                android:id="@+id/textViewReason"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/textViewPassenger"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:textSize="@dimen/_8sdp"
+                android:textColor="@color/textViewFooter"
+                android:fontFamily="@font/kalameh_regular"
+                app:setReasonToTextView="@{item.travelReason}"/>
+
+
+            <TextView
+                android:id="@+id/textviewApprover"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/textViewReason"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:textColor="@color/textViewColor2"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:textSize="@dimen/_9sdp"
+                android:textStyle="bold"
+                android:fontFamily="@font/kalameh_regular"
+                android:text="@string/approver"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/textviewApprover"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/textviewApprover"
+                android:textSize="@dimen/_9sdp"
+                android:layout_marginEnd="@dimen/_2sdp"
+                android:textColor="@color/textViewColor2"
+                android:fontFamily="@font/kalameh_regular"
+                android:text="@{item.approverName}"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonYes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/textviewApprover"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/buttonNo"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginStart="@dimen/_10sdp"
+
+                android:textSize="@dimen/_10sdp"
+                android:textStyle="bold"
+                android:backgroundTint="@color/confirmGradiantStartColor"
+                android:fontFamily="@font/kalameh_semibold"
+                app:cornerRadius="@dimen/_5sdp"
+                android:textColor="@color/textViewColor1"
+                android:text='@string/confirm' />
+
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonNo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/buttonYes"
+                app:layout_constraintBottom_toBottomOf="@id/buttonYes"
+                app:layout_constraintEnd_toStartOf="@id/buttonYes"
+                android:textSize="@dimen/_10sdp"
+                android:backgroundTint="@color/rejectGradiantStartColor"
+                android:fontFamily="@font/kalameh_semibold"
+                android:textStyle="bold"
+                app:cornerRadius="@dimen/_5sdp"
+                android:textColor="@color/textViewColor1"
+                android:text='@string/cancel' />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</layout>

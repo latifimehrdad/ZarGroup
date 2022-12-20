@@ -13,5 +13,6 @@ class CompanionValues {
         const val biometric = "biometric"
         const val userName = "userName"
         const val passcode = "passcode"
+        const val adminTaxiType = "adminTaxiType"
     }
 }

@@ -5,12 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayoutMediator
 import com.zar.core.enums.EnumAuthorizationType
 import com.zar.core.enums.EnumErrorType
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
+import com.zarholding.zar.model.enum.EnumAdminTaxiType
+import com.zarholding.zar.utility.CompanionValues
 import com.zarholding.zar.utility.UnAuthorizationManager
 import com.zarholding.zar.view.activity.MainActivity
+import com.zarholding.zar.view.adapter.ViewPagerAdapter
+import com.zarholding.zar.viewmodel.AdminTaxiViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import zar.R
 import zar.databinding.FragmentAdminTaxiBinding
@@ -21,6 +27,8 @@ class AdminTaxiFragment : Fragment(), RemoteErrorEmitter {
 
     private var _binding: FragmentAdminTaxiBinding? = null
     private val binding get() = _binding!!
+
+    private val adminTaxiViewModel : AdminTaxiViewModel by viewModels()
 
     @Inject
     lateinit var unAuthorizationManager: UnAuthorizationManager
@@ -41,6 +49,8 @@ class AdminTaxiFragment : Fragment(), RemoteErrorEmitter {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner
+        setFragmentToViewPager()
+        observeLiveData()
     }
     //---------------------------------------------------------------------------------------------- onViewCreated
 
@@ -62,5 +72,51 @@ class AdminTaxiFragment : Fragment(), RemoteErrorEmitter {
         unAuthorizationManager.handel(activity, type, message, binding.constraintLayoutParent)
     }
     //---------------------------------------------------------------------------------------------- unAuthorization
+
+
+
+    //---------------------------------------------------------------------------------------------- setFragmentToViewPager
+    private fun setFragmentToViewPager() {
+        val adapter = ViewPagerAdapter(this@AdminTaxiFragment)
+        val requestBundle = Bundle()
+        val historyBundle = Bundle()
+        requestBundle.putString(CompanionValues.adminTaxiType, EnumAdminTaxiType.REQUEST.name)
+        historyBundle.putString(CompanionValues.adminTaxiType, EnumAdminTaxiType.HISTORY.name)
+        val requestFragment = AdminTaxiListFragment().apply {
+            arguments = requestBundle
+        }
+        val historyFragment = AdminTaxiListFragment().apply {
+            arguments = historyBundle
+        }
+        adapter.addFragment(requestFragment, getString(R.string.requests))
+        adapter.addFragment(historyFragment, getString(R.string.historyOfRequests))
+        binding.viewPager.adapter = adapter
+        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            tab.text = adapter.getTabTitle(position)
+        }.attach()
+
+    }
+    //---------------------------------------------------------------------------------------------- setFragmentToViewPager
+
+
+
+    private fun observeLiveData() {
+
+        AdminTaxiViewModel.requestTaxiLiveDate.observe(viewLifecycleOwner) {
+            binding.tabLayout.getTabAt(0)?.apply {
+                orCreateBadge
+                badge?.isVisible = true
+                badge?.number = it
+            }
+        }
+
+        AdminTaxiViewModel.myTaxiLiveDate.observe(viewLifecycleOwner) {
+            binding.tabLayout.getTabAt(1)?.apply {
+                orCreateBadge
+                badge?.isVisible = true
+                badge?.number = it
+            }
+        }
+    }
 
 }

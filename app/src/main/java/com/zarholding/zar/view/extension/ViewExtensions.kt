@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide
 import com.zar.core.tools.extensions.toSolarDate
 import com.zarholding.zar.hilt.Providers
 import com.zarholding.zar.model.enum.EnumTripStatus
+import com.zarholding.zar.model.response.PassengerModel
 import com.zarholding.zar.model.response.address.AddressModel
 import com.zarholding.zardriver.model.response.TripStationModel
 import zar.R
@@ -23,6 +24,7 @@ import java.time.LocalDateTime
 /**
  * Created by m-latifi on 11/14/2022.
  */
+
 
 //-------------------------------------------------------------------------------------------------- AddressModel.getAddress()
 fun AddressModel.getAddress() : String {
@@ -79,6 +81,77 @@ fun AddressModel.getAddress() : String {
 }
 //-------------------------------------------------------------------------------------------------- AddressModel.getAddress()
 
+
+
+//-------------------------------------------------------------------------------------------------- setOriginDestinationToTextView
+@BindingAdapter("setOriginToTextView", "setDestinationToTextView")
+fun TextView.setOriginDestinationToTextView(origin : String?, destination : String?) {
+    text = context.getString(R.string.setTwoStringSlash, origin, destination)
+}
+//-------------------------------------------------------------------------------------------------- setOriginDestinationToTextView
+
+
+
+//-------------------------------------------------------------------------------------------------- setDepartureReturnToTextView
+@BindingAdapter("setDepartureToTextView", "setReturnToTextView")
+fun TextView.setDepartureReturnToTextView(departure : String?, _return : String?) {
+    val temp = _return?.trimStart()
+    text = if (temp.isNullOrEmpty())
+        departure
+    else
+        context.getString(R.string.setTwoString, departure, _return)
+}
+//-------------------------------------------------------------------------------------------------- setDepartureReturnToTextView
+
+
+//-------------------------------------------------------------------------------------------------- setPassengersToTextView
+@BindingAdapter("setPassengersToTextView")
+fun TextView.setPassengersToTextView(passengers : List<PassengerModel>?) {
+    var title = context.getString(R.string.passengersDot)
+    passengers?.let {
+        for (i in passengers.indices)
+            title += if (i == passengers.size -1)
+                passengers[i].value
+            else
+                "${passengers[i].value} - "
+    }
+    text = title
+}
+//-------------------------------------------------------------------------------------------------- setPassengersToTextView
+
+
+
+//-------------------------------------------------------------------------------------------------- setWaitingTimeToTextView
+@BindingAdapter("setWaitingTimeToTextView")
+fun TextView.setWaitingTimeToTextView(time : Int) {
+    val title = if (time < 6)
+        "$time دقیقه پیش "
+    else {
+        val h = time / 60
+        "$h ساعت پیش "
+    }
+}
+//-------------------------------------------------------------------------------------------------- setWaitingTimeToTextView
+
+
+
+//-------------------------------------------------------------------------------------------------- setReasonToTextView
+@BindingAdapter("setReasonToTextView")
+fun TextView.setReasonToTextView(reason : String?) {
+    val title = context.getString(R.string.reasonOfTripDot) + " " + reason
+    text = title
+}
+//-------------------------------------------------------------------------------------------------- setReasonToTextView
+
+
+
+
+//-------------------------------------------------------------------------------------------------- setApplicatorNameToTextView
+@BindingAdapter("setApplicatorNameToTextView")
+fun TextView.setApplicatorNameToTextView(name : String?) {
+    text = context.getString(R.string.applicator, name)
+}
+//-------------------------------------------------------------------------------------------------- setApplicatorNameToTextView
 
 
 //-------------------------------------------------------------------------------------------------- setAddressToTextview

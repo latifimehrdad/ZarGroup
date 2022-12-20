@@ -36,4 +36,16 @@ class TaxiRepository @Inject constructor(private val api : ApiSuperApp) {
     //---------------------------------------------------------------------------------------------- requestTaxi
 
 
+    //---------------------------------------------------------------------------------------------- requestTaxiList
+    fun requestTaxiList(token : String) =
+        apiCall(emitter){api.requestTaxiList(token)}
+    //---------------------------------------------------------------------------------------------- requestTaxiList
+
+
+    //---------------------------------------------------------------------------------------------- requestMyTaxiRequestList
+    fun requestMyTaxiRequestList(token : String) =
+        apiCall(emitter){api.requestMyTaxiRequestList(token)}
+    //---------------------------------------------------------------------------------------------- requestMyTaxiRequestList
+
+
 }

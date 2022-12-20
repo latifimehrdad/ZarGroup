@@ -3,7 +3,7 @@ package com.zarholding.zar.viewmodel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.zar.core.view.picker.time.ZarTimePicker
-import com.zarholding.zar.model.enum.EnumTaxiRequest
+import com.zarholding.zar.model.enum.EnumTaxiRequestType
 import com.zarholding.zar.model.enum.FavPlaceType
 import com.zarholding.zar.model.request.TaxiAddFavPlaceRequest
 import com.zarholding.zar.model.request.TaxiRequestModel
@@ -28,7 +28,7 @@ class TaxiViewModel @Inject constructor(
     private var destinationMarker: Marker? = null
     private var favPlaceType = FavPlaceType.NONE
     private var timePickMode = ZarTimePicker.PickerMode.RETURNING
-    private var enumTaxiRequest = EnumTaxiRequest.OneWay
+    private var enumTaxiRequestType = EnumTaxiRequestType.OneWay
 
     //---------------------------------------------------------------------------------------------- requestGetTaxiFavPlace
     fun requestGetTaxiFavPlace() = repo.requestGetTaxiFavPlace(tokenRepository.getBearerToken())
@@ -145,10 +145,10 @@ class TaxiViewModel @Inject constructor(
     //---------------------------------------------------------------------------------------------- setTimePickMode
     fun setTimePickMode(timePickMode : ZarTimePicker.PickerMode) {
         this.timePickMode = timePickMode
-        enumTaxiRequest = if (timePickMode == ZarTimePicker.PickerMode.DEPARTURE)
-            EnumTaxiRequest.OneWay
+        enumTaxiRequestType = if (timePickMode == ZarTimePicker.PickerMode.DEPARTURE)
+            EnumTaxiRequestType.OneWay
         else
-            EnumTaxiRequest.Return
+            EnumTaxiRequestType.Return
     }
     //---------------------------------------------------------------------------------------------- setTimePickMode
 
@@ -159,6 +159,6 @@ class TaxiViewModel @Inject constructor(
 
 
     //---------------------------------------------------------------------------------------------- getEnumTaxiRequest
-    fun getEnumTaxiRequest() = enumTaxiRequest
+    fun getEnumTaxiRequest() = enumTaxiRequestType
     //---------------------------------------------------------------------------------------------- getEnumTaxiRequest
 }

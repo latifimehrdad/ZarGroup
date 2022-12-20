@@ -2,10 +2,12 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayoutParent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@drawable/drawable_home_gradiant">
 
         <TextView
             android:id="@+id/textViewService"
@@ -58,9 +60,14 @@
                         android:elevation="8dp"
                         app:tabIndicatorAnimationMode="elastic"
                         android:layoutDirection="rtl"
-                        app:tabTextAppearance="@style/tab_text"/>
+                        app:tabTextAppearance="@style/tab_text"
+                        android:background="@drawable/drawable_dialog_notify_header_gradiant"
+                        app:tabIndicatorColor="@color/textViewColor2"
+                        app:tabTextColor="@color/textViewFooter"
+                        app:tabSelectedTextColor="@color/textViewColor2"
+                        app:tabRippleColor="@color/dialogHeaderGradiantEndColor"/>
 
-                    <androidx.viewpager.widget.ViewPager
+                    <androidx.viewpager2.widget.ViewPager2
                         android:id="@+id/viewPager"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />

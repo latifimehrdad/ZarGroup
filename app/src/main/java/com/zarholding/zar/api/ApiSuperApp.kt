@@ -5,10 +5,7 @@ import com.zarholding.zar.model.response.LoginResponseModel
 import com.zarholding.zar.model.response.address.AddressResponseModel
 import com.zarholding.zar.model.response.address.AddressSuggestionModel
 import com.zarholding.zar.model.response.article.ArticleResponseModel
-import com.zarholding.zar.model.response.taxi.TaxiAddFavePlaceResponse
-import com.zarholding.zar.model.response.taxi.TaxiFavPlaceResponse
-import com.zarholding.zar.model.response.taxi.TaxiRemoveFavePlaceResponse
-import com.zarholding.zar.model.response.taxi.TaxiRequestResponse
+import com.zarholding.zar.model.response.taxi.*
 import com.zarholding.zar.model.response.trip.*
 import com.zarholding.zar.model.response.user.UserInfoResponseModel
 import com.zarholding.zar.model.response.user.UserPermissionResponseModel
@@ -116,6 +113,18 @@ interface ApiSuperApp {
         @Body request : TaxiRequestModel,
         @Header("Authorization") token : String
     ) : TaxiRequestResponse
+
+
+    @GET("$v1/CarRequest/get-mycarrequestlist")
+    suspend fun requestMyTaxiRequestList(
+        @Header("Authorization") token : String
+    ) : AdminTaxiRequestResponse
+
+
+    @GET("$v1/CarRequest/get-CarRequestlist")
+    suspend fun requestTaxiList(
+        @Header("Authorization") token : String
+    ) : AdminTaxiRequestResponse
 
 
     @GET

@@ -27,7 +27,7 @@ class UserViewModel @Inject constructor(
 ) : ViewModel() {
 
     private var pageNumber = 0
-    private val pageSize = 10
+    private val pageSize = 20
     val filterUser = FilterUserRequestModel(pageNumber, pageSize, "")
 
     //---------------------------------------------------------------------------------------------- requestUserInfo
