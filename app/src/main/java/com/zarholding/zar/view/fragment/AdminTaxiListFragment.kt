@@ -145,9 +145,11 @@ class AdminTaxiListFragment : Fragment(), RemoteErrorEmitter {
             return
         val click = object : TaxiHolder.Click {
             override fun accept(item: AdminTaxiRequestModel) {
+
             }
 
             override fun reject(item: AdminTaxiRequestModel) {
+
             }
 
         }
@@ -162,6 +164,7 @@ class AdminTaxiListFragment : Fragment(), RemoteErrorEmitter {
         binding.recyclerView.adapter = adapter
     }
     //---------------------------------------------------------------------------------------------- setTaxiRequestAdapter
+
 
 
 

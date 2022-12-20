@@ -171,8 +171,10 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
             val myService = tripList!!.filter { it.myStationTripId != 0 }
             if (myService.isNotEmpty())
                 setMyServiceAdapter(myService)
-            else
+            else {
+                onError(EnumErrorType.UNKNOWN, getString(R.string.userServiceIsEmpty))
                 selectListAllServices()
+            }
         }
     }
     //---------------------------------------------------------------------------------------------- selectMyService

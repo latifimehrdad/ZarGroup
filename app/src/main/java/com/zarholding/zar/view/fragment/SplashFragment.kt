@@ -145,11 +145,6 @@ class SplashFragment : Fragment(), RemoteErrorEmitter {
                                 resources.getString(R.string.responseUserInfoIsEmpty)
                             )
                         }
-                } ?: run {
-                    onError(
-                        EnumErrorType.UNKNOWN,
-                        resources.getString(R.string.responseUserInfoIsEmpty)
-                    )
                 }
             }
     }

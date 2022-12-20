@@ -60,7 +60,7 @@ dependencies {
     implementation 'org.slf4j:slf4j-jdk14:1.7.25'
     
 
-    implementation 'com.github.latifimehrdad:ZarCore:0.2.0'
+    implementation 'com.github.latifimehrdad:ZarCore:0.2.1'
 
     implementation("net.orandja.shadowlayout:shadowlayout:1.0.1")
 
