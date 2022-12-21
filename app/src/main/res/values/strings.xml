@@ -48,7 +48,7 @@
     <string name="deleteService">حذف سرویس</string>
     <string name="pendingForAccept">در انتظار تایید</string>
     <string name="confirmedByOfficial">تایید شده توسط اداری</string>
-    <string name="reject">رد شده</string>
+    <string name="reject">عدم تایید</string>
     <string name="dismiss">بستن</string>
     <string name="stations">ایستگاه ها</string>
     <string name="origin">مبدا</string>
@@ -107,6 +107,7 @@
     <string name="personalCode">کد پرسنلی : %1$s</string>
     <string name="attendanceTime">ساعت حضور : %1$s</string>
     <string name="myStation">ایستگاه من : %1$s</string>
+    <string name="confirmForTaxiRequestRegister">آیا برای تایید درخواست آژانس آقا/خانم %1$s مطمئن هستید؟</string>
     <string name="confirmForTripRequestRegister">آیا برای تایید درخواست رزرو سرویس های انتخابی مطمئن هستید؟</string>
     <string name="confirmForDelete">آیا برای حذف %1$s مطمئن هستید؟</string>
     <string name="confirmForRegisterStation">آیا برای رزرو %1$s در سرویس %2$s مطمئن هستید؟</string>

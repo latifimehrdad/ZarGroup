@@ -127,6 +127,13 @@ interface ApiSuperApp {
     ) : AdminTaxiRequestResponse
 
 
+    @POST("$v1/CarRequest/responeCarRequest")
+    suspend fun requestChangeStatusOfTaxiRequests(
+        @Body request : TaxiChangeStatusRequest,
+        @Header("Authorization") token : String
+    ) : TaxiRemoveFavePlaceResponse
+
+
     @GET
     suspend fun requestGetAddress(
         @Url url : String

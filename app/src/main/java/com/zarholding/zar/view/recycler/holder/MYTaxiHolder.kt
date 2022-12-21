@@ -54,6 +54,7 @@ class MYTaxiHolder(
                 binding.textViewStatus.text = context.getString(R.string.reject)
                 binding.textViewRejectReason.visibility = View.VISIBLE
             }
+            EnumTaxiRequestStatus.Confirmed -> {}
         }
 
         binding.executePendingBindings()

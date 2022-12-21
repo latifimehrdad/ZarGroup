@@ -4,6 +4,7 @@ import com.zar.core.tools.api.apiCall
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zarholding.zar.api.ApiSuperApp
 import com.zarholding.zar.model.request.TaxiAddFavPlaceRequest
+import com.zarholding.zar.model.request.TaxiChangeStatusRequest
 import com.zarholding.zar.model.request.TaxiRequestModel
 import javax.inject.Inject
 
@@ -47,5 +48,10 @@ class TaxiRepository @Inject constructor(private val api : ApiSuperApp) {
         apiCall(emitter){api.requestMyTaxiRequestList(token)}
     //---------------------------------------------------------------------------------------------- requestMyTaxiRequestList
 
+
+    //---------------------------------------------------------------------------------------------- requestChangeStatusOfTaxiRequests
+    fun requestChangeStatusOfTaxiRequests(request : TaxiChangeStatusRequest, token : String) =
+        apiCall(emitter){api.requestChangeStatusOfTaxiRequests(request, token)}
+    //---------------------------------------------------------------------------------------------- requestChangeStatusOfTaxiRequests
 
 }

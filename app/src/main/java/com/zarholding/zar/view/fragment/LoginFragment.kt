@@ -36,6 +36,7 @@ class LoginFragment : Fragment(), RemoteErrorEmitter {
     private val loginViewModel: LoginViewModel by viewModels()
 
 
+
     //---------------------------------------------------------------------------------------------- onCreateView
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -74,7 +75,6 @@ class LoginFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- initView
     private fun initView() {
-
         if (loginViewModel.getBiometricEnable())
             binding.buttonFingerLogin.visibility = View.VISIBLE
         else
@@ -88,7 +88,7 @@ class LoginFragment : Fragment(), RemoteErrorEmitter {
 
         binding
             .buttonLogin
-            .setOnClickListener { checkEmptyValueForLogin() }
+            .setOnClickListener { login(false) }
 
         binding
             .textInputEditTextUserName
@@ -103,6 +103,7 @@ class LoginFragment : Fragment(), RemoteErrorEmitter {
             .setOnClickListener { showBiometricDialog() }
     }
     //---------------------------------------------------------------------------------------------- setListener
+
 
 
     //---------------------------------------------------------------------------------------------- showBiometricDialog
@@ -130,37 +131,71 @@ class LoginFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- fingerPrintClick
     private fun fingerPrintClick() {
-        loginViewModel.setUserNamePasswordFromSharePreferences()
-        checkEmptyValueForLogin()
+        login(true)
     }
     //---------------------------------------------------------------------------------------------- fingerPrintClick
 
 
-    //---------------------------------------------------------------------------------------------- checkEmptyValueForLogin
-    private fun checkEmptyValueForLogin() {
 
+    //---------------------------------------------------------------------------------------------- observeUseNameEmptyLiveData
+    private fun observeUseNameEmptyLiveData() {
+        loginViewModel.useNameEmptyLiveData.observe(viewLifecycleOwner) {
+            if (it)
+                binding.textInputLayoutUserName.error = getString(R.string.userNameIsEmpty)
+            else
+                binding.textInputLayoutUserName.error = null
+            loginViewModel.useNameEmptyLiveData.removeObservers(viewLifecycleOwner)
+        }
+    }
+    //---------------------------------------------------------------------------------------------- observeUseNameEmptyLiveData
+
+
+    //---------------------------------------------------------------------------------------------- observePasswordEmptyLiveData
+    private fun observePasswordEmptyLiveData() {
+        loginViewModel.passwordEmptyLiveData.observe(viewLifecycleOwner) {
+            if (it)
+                binding.textInputLayoutPasscode.error = getString(R.string.passcodeIsEmpty)
+            else
+                binding.textInputLayoutPasscode.error = null
+            loginViewModel.passwordEmptyLiveData.removeObservers(viewLifecycleOwner)
+        }
+    }
+    //---------------------------------------------------------------------------------------------- observePasswordEmptyLiveData
+
+
+    //---------------------------------------------------------------------------------------------- observeLoadingLiveDate
+    private fun observeLoadingLiveDate() {
+        loginViewModel.loadingLiveDate.observe(viewLifecycleOwner) {
+            if (it)
+                startLoading()
+            else
+                stopLoading()
+            loginViewModel.loadingLiveDate.removeObservers(viewLifecycleOwner)
+        }
+    }
+    //---------------------------------------------------------------------------------------------- observeLoadingLiveDate
+
+
+
+    //---------------------------------------------------------------------------------------------- login
+    private fun login(fromFingerPrint : Boolean) {
         if (loginViewModel.loadingLiveDate.value == true)
             return
-
-        if (loginViewModel.userName.isNullOrEmpty()) {
-            binding.textInputLayoutUserName.error = getString(R.string.userNameIsEmpty)
-            return
-        }
-        if (loginViewModel.password.isNullOrEmpty()) {
-            binding.textInputLayoutPasscode.error = getString(R.string.passcodeIsEmpty)
-            return
-        }
-        requestLogin()
+        loginViewModel.login(fromFingerPrint)
+        observeUseNameEmptyLiveData()
+        observePasswordEmptyLiveData()
+        observeLoadingLiveDate()
+        observeResponseOfLoginRequestLiveDate()
     }
-    //---------------------------------------------------------------------------------------------- checkEmptyValueForLogin
+    //---------------------------------------------------------------------------------------------- login
 
 
-    //---------------------------------------------------------------------------------------------- requestLogin
-    private fun requestLogin() {
-        startLoading()
-        loginViewModel.requestLogin().observe(viewLifecycleOwner) { response ->
-            stopLoading()
-            response?.let {
+    //---------------------------------------------------------------------------------------------- observeResponseOfLoginRequestLiveDate
+    private fun observeResponseOfLoginRequestLiveDate() {
+        loginViewModel.responseOfLoginRequestLiveDate?.observe(viewLifecycleOwner) {
+            loginViewModel.loadingLiveDate.value = false
+            loginViewModel.responseOfLoginRequestLiveDate?.removeObservers(viewLifecycleOwner)
+            it?.let {
                 if (it.hasError) {
                     onError(EnumErrorType.UNKNOWN, it.message)
                 } else {
@@ -171,7 +206,7 @@ class LoginFragment : Fragment(), RemoteErrorEmitter {
             }
         }
     }
-    //---------------------------------------------------------------------------------------------- requestLogin
+    //---------------------------------------------------------------------------------------------- observeResponseOfLoginRequestLiveDate
 
 
     //---------------------------------------------------------------------------------------------- startLoading
@@ -181,7 +216,6 @@ class LoginFragment : Fragment(), RemoteErrorEmitter {
         binding.textInputLayoutPasscode.error = null
         binding.textInputEditTextUserName.isEnabled = false
         binding.textInputEditTextPasscode.isEnabled = false
-        loginViewModel.loadingLiveDate.value = true
     }
     //---------------------------------------------------------------------------------------------- startLoading
 
@@ -190,7 +224,6 @@ class LoginFragment : Fragment(), RemoteErrorEmitter {
     private fun stopLoading() {
         binding.textInputEditTextUserName.isEnabled = true
         binding.textInputEditTextPasscode.isEnabled = true
-        loginViewModel.loadingLiveDate.value = false
     }
     //---------------------------------------------------------------------------------------------- stopLoading
 

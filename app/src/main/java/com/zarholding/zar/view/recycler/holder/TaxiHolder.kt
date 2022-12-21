@@ -39,6 +39,9 @@ class TaxiHolder(
                 binding.root.resources.getString(R.string.departureReturnTime)
         }
 
+        binding.buttonReject.setOnClickListener { click.reject(item) }
+        binding.buttonConfirm.setOnClickListener { click.accept(item)}
+
         binding.executePendingBindings()
     }
     //---------------------------------------------------------------------------------------------- bind

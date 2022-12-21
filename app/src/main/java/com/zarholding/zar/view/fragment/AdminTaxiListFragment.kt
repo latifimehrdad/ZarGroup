@@ -13,10 +13,14 @@ import com.zar.core.enums.EnumErrorType
 import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zar.core.tools.loadings.LoadingManager
 import com.zarholding.zar.model.enum.EnumAdminTaxiType
+import com.zarholding.zar.model.enum.EnumTaxiRequestStatus
+import com.zarholding.zar.model.request.TaxiChangeStatusRequest
 import com.zarholding.zar.model.response.taxi.AdminTaxiRequestModel
 import com.zarholding.zar.utility.CompanionValues
 import com.zarholding.zar.utility.UnAuthorizationManager
 import com.zarholding.zar.view.activity.MainActivity
+import com.zarholding.zar.view.dialog.ConfirmDialog
+import com.zarholding.zar.view.dialog.RejectReasonDialog
 import com.zarholding.zar.view.recycler.adapter.MyTaxiAdapter
 import com.zarholding.zar.view.recycler.adapter.TaxiAdapter
 import com.zarholding.zar.view.recycler.holder.TaxiHolder
@@ -33,13 +37,13 @@ class AdminTaxiListFragment : Fragment(), RemoteErrorEmitter {
     private var _binding: FragmentAdminTaxiListBinding? = null
     private val binding get() = _binding!!
 
-    private val adminTaxiListViewModel : AdminTaxiListViewModel by viewModels()
+    private val adminTaxiListViewModel: AdminTaxiListViewModel by viewModels()
 
     @Inject
     lateinit var unAuthorizationManager: UnAuthorizationManager
 
     @Inject
-    lateinit var loadingManager : LoadingManager
+    lateinit var loadingManager: LoadingManager
 
 
     //---------------------------------------------------------------------------------------------- onCreateView
@@ -88,7 +92,6 @@ class AdminTaxiListFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- unAuthorization
 
 
-
     //---------------------------------------------------------------------------------------------- getTaxiList
     private fun getTaxiList() {
         adminTaxiListViewModel.getEnumAdminTaxiType()?.let {
@@ -99,7 +102,7 @@ class AdminTaxiListFragment : Fragment(), RemoteErrorEmitter {
                     if (response.hasError)
                         onError(EnumErrorType.UNKNOWN, response.message)
                     else response.data?.let { items ->
-                            setAdapter(items)
+                        setAdapter(items)
                     }
                 }
             }
@@ -108,10 +111,9 @@ class AdminTaxiListFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- getTaxiList
 
 
-
     //---------------------------------------------------------------------------------------------- setAdapter
-    private fun setAdapter(items : List<AdminTaxiRequestModel>){
-        when(adminTaxiListViewModel.getEnumAdminTaxiType()!!) {
+    private fun setAdapter(items: List<AdminTaxiRequestModel>) {
+        when (adminTaxiListViewModel.getEnumAdminTaxiType()!!) {
             EnumAdminTaxiType.REQUEST -> setTaxiRequestAdapter(items)
             EnumAdminTaxiType.HISTORY -> setMyTaxiRequestAdapter(items)
         }
@@ -119,9 +121,8 @@ class AdminTaxiListFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- setAdapter
 
 
-
     //---------------------------------------------------------------------------------------------- setMyTaxiRequestAdapter
-    private fun setMyTaxiRequestAdapter(items : List<AdminTaxiRequestModel>) {
+    private fun setMyTaxiRequestAdapter(items: List<AdminTaxiRequestModel>) {
         if (context == null)
             return
 
@@ -138,18 +139,17 @@ class AdminTaxiListFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- setMyTaxiRequestAdapter
 
 
-
     //---------------------------------------------------------------------------------------------- setTaxiRequestAdapter
-    private fun setTaxiRequestAdapter(items : List<AdminTaxiRequestModel>) {
+    private fun setTaxiRequestAdapter(items: List<AdminTaxiRequestModel>) {
         if (context == null)
             return
         val click = object : TaxiHolder.Click {
             override fun accept(item: AdminTaxiRequestModel) {
-
+                showDialogConfirm(item)
             }
 
             override fun reject(item: AdminTaxiRequestModel) {
-
+                showDialogReasonOfReject(item)
             }
 
         }
@@ -166,6 +166,63 @@ class AdminTaxiListFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- setTaxiRequestAdapter
 
 
+    //---------------------------------------------------------------------------------------------- showDialogReasonOfReject
+    private fun showDialogReasonOfReject(item: AdminTaxiRequestModel) {
+        val click = object : RejectReasonDialog.Click {
+            override fun clickSend(reason: String) {
+                val request = TaxiChangeStatusRequest(
+                    item.id,
+                    EnumTaxiRequestStatus.Reject,
+                    reason,
+                    item.personnelJobKeyCode!!,
+                    item.companyCode!!
+                )
+                requestChangeStatusOfTaxiRequests(request)
+            }
+        }
+        RejectReasonDialog(requireContext(), click).show()
+    }
+    //---------------------------------------------------------------------------------------------- showDialogReasonOfReject
+
+
+    //---------------------------------------------------------------------------------------------- showDialogConfirm
+    private fun showDialogConfirm(item: AdminTaxiRequestModel) {
+        val click = object : ConfirmDialog.Click {
+            override fun clickYes() {
+                val request = TaxiChangeStatusRequest(
+                    item.id,
+                    EnumTaxiRequestStatus.Confirmed,
+                    null,
+                    item.personnelJobKeyCode!!,
+                    item.companyCode!!
+                )
+                requestChangeStatusOfTaxiRequests(request)
+            }
+        }
+        ConfirmDialog(
+            requireContext(),
+            ConfirmDialog.ConfirmType.ADD,
+            getString(R.string.confirmForTaxiRequestRegister, item.requesterName),
+            click
+        ).show()
+    }
+    //---------------------------------------------------------------------------------------------- showDialogConfirm
+
+
+    //---------------------------------------------------------------------------------------------- requestChangeStatusOfTaxiRequests
+    private fun requestChangeStatusOfTaxiRequests(request: TaxiChangeStatusRequest) {
+        startLoading()
+        adminTaxiListViewModel.requestChangeStatusOfTaxiRequests(request)
+            .observe(viewLifecycleOwner) {
+                loadingManager.stopLoadingRecycler()
+                it?.let { response ->
+                    onError(EnumErrorType.UNKNOWN, response.message)
+                    getTaxiList()
+                }
+
+            }
+    }
+    //---------------------------------------------------------------------------------------------- requestChangeStatusOfTaxiRequests
 
 
     //---------------------------------------------------------------------------------------------- startLoading

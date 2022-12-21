@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.WindowManager
 import android.widget.EditText
+import android.widget.ImageView
 import com.google.android.material.button.MaterialButton
 import zar.R
 
@@ -52,6 +53,7 @@ class RejectReasonDialog(
         val editTextReason = this.findViewById<EditText>(R.id.editTextReason)
         val buttonSend = this.findViewById<MaterialButton>(R.id.buttonSend)
         val buttonCancel = this.findViewById<MaterialButton>(R.id.buttonCancel)
+        val imageViewClose = this.findViewById<ImageView>(R.id.imageViewClose)
 
         buttonSend.setOnClickListener {
             if (editTextReason.text.isNullOrEmpty()) {
@@ -63,6 +65,10 @@ class RejectReasonDialog(
         }
 
         buttonCancel.setOnClickListener {
+            dismiss()
+        }
+
+        imageViewClose.setOnClickListener {
             dismiss()
         }
     }

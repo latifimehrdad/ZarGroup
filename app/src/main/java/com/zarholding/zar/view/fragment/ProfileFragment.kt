@@ -93,6 +93,7 @@ class ProfileFragment : Fragment(), RemoteErrorEmitter {
 
         val click = object : ConfirmDialog.Click {
             override fun clickYes() {
+                userInfoDao.deleteAllRole()
                 sharedPreferences.edit().putString(CompanionValues.TOKEN, null).apply()
                 CoroutineScope(IO).launch {
                     delay(500)

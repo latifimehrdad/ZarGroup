@@ -117,46 +117,6 @@ class SettingFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- changeAppTheme
 
 
-/*
-    //---------------------------------------------------------------------------------------------- checkDeviceHasBiometric
-    private fun checkDeviceHasBiometric() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-            binding.layoutActiveFingerPrint.switchActive.isEnabled = false
-            return
-        }
-
-        val biometricManager = BiometricManager.from(requireContext())
-        when (biometricManager.canAuthenticate(BIOMETRIC_STRONG or DEVICE_CREDENTIAL)) {
-            BiometricManager.BIOMETRIC_SUCCESS -> {
-                showBiometricDialog()
-            }
-            BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> {
-                binding.layoutActiveFingerPrint.switchActive.isChecked = false
-                binding.layoutActiveFingerPrint.switchActive.isEnabled = false
-                onError(
-                    EnumErrorType.UNKNOWN,
-                    getString(R.string.biometricNoHardware)
-                )
-            }
-            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
-                binding.layoutActiveFingerPrint.switchActive.isChecked = false
-                val enrollIntent = Intent(Settings.ACTION_BIOMETRIC_ENROLL).apply {
-                    putExtra(
-                        Settings.EXTRA_BIOMETRIC_AUTHENTICATORS_ALLOWED,
-                        BIOMETRIC_STRONG or DEVICE_CREDENTIAL
-                    )
-                }
-                startActivity(enrollIntent)
-
-            }
-            else -> {
-
-            }
-        }
-    }
-    //---------------------------------------------------------------------------------------------- checkDeviceHasBiometric
-*/
-
 
     //---------------------------------------------------------------------------------------------- showBiometricDialog
     private fun showBiometricDialog() {

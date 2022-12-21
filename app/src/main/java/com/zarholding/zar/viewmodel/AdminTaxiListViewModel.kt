@@ -2,6 +2,7 @@ package com.zarholding.zar.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.zarholding.zar.model.enum.EnumAdminTaxiType
+import com.zarholding.zar.model.request.TaxiChangeStatusRequest
 import com.zarholding.zar.repository.TaxiRepository
 import com.zarholding.zar.repository.TokenRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -53,5 +54,12 @@ class AdminTaxiListViewModel @Inject constructor(
     private fun requestMyTaxiRequestList() =
         repository.requestMyTaxiRequestList(tokenRepository.getBearerToken())
     //---------------------------------------------------------------------------------------------- requestMyTaxiRequestList
+
+
+
+    //---------------------------------------------------------------------------------------------- requestChangeStatusOfTaxiRequests
+    fun requestChangeStatusOfTaxiRequests(request : TaxiChangeStatusRequest) =
+        repository.requestChangeStatusOfTaxiRequests(request, tokenRepository.getBearerToken())
+    //---------------------------------------------------------------------------------------------- requestChangeStatusOfTaxiRequests
 
 }

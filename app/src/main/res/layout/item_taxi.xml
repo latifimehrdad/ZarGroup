@@ -215,15 +215,14 @@
                 android:text="@{item.approverName}"/>
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/buttonYes"
+                android:id="@+id/buttonConfirm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@id/textviewApprover"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/buttonNo"
+                app:layout_constraintStart_toEndOf="@id/buttonReject"
                 android:layout_marginTop="@dimen/_10sdp"
                 android:layout_marginStart="@dimen/_10sdp"
-
                 android:textSize="@dimen/_10sdp"
                 android:textStyle="bold"
                 android:backgroundTint="@color/confirmGradiantStartColor"
@@ -234,20 +233,20 @@
 
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/buttonNo"
+                android:id="@+id/buttonReject"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/buttonYes"
-                app:layout_constraintBottom_toBottomOf="@id/buttonYes"
-                app:layout_constraintEnd_toStartOf="@id/buttonYes"
+                app:layout_constraintTop_toTopOf="@id/buttonConfirm"
+                app:layout_constraintBottom_toBottomOf="@id/buttonConfirm"
+                app:layout_constraintEnd_toStartOf="@id/buttonConfirm"
                 android:textSize="@dimen/_10sdp"
                 android:backgroundTint="@color/rejectGradiantStartColor"
                 android:fontFamily="@font/kalameh_semibold"
                 android:textStyle="bold"
                 app:cornerRadius="@dimen/_5sdp"
                 android:textColor="@color/textViewColor1"
-                android:text='@string/cancel' />
+                android:text='@string/reject' />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
