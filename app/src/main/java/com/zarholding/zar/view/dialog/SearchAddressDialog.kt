@@ -74,11 +74,12 @@ class SearchAddressDialog(
     //---------------------------------------------------------------------------------------------- onCreateView
 
 
+
     //---------------------------------------------------------------------------------------------- setListener
     private fun setListener() {
         binding.imageViewClose.setOnClickListener { dismiss() }
         binding.textInputEditTextAddress.addTextChangedListener { checkEmptyValueForSearch() }
-        binding.buttonLoadMore.setOnClickListener { requestGetUser(
+        binding.buttonLoadMore.setOnClickListener { requestGetSuggestionAddress(
             binding.textInputEditTextAddress.text.toString()) }
     }
     //---------------------------------------------------------------------------------------------- setListener
@@ -114,27 +115,31 @@ class SearchAddressDialog(
         job = CoroutineScope(IO).launch {
             delay(1000)
             withContext(Main) {
-                requestGetUser(address)
+                requestGetSuggestionAddress(address)
             }
         }
     }
     //---------------------------------------------------------------------------------------------- createJobForSearch
 
 
-    //---------------------------------------------------------------------------------------------- requestGetUser
-    private fun requestGetUser(
-        address: String
-    ) {
-        startLoading()
-        addressViewModel.requestGetSuggestionAddress(address, adapter?.getList())
-            .observe(viewLifecycleOwner) { response ->
-                stopLoading()
-                response?.let { items ->
-                    setAdapter(items)
-                }
-            }
+    //---------------------------------------------------------------------------------------------- observeAddressSuggestionLiveData
+    private fun observeAddressSuggestionLiveData() {
+        addressViewModel.addressSuggestionLiveData.removeObservers(viewLifecycleOwner)
+        addressViewModel.addressSuggestionLiveData.observe(viewLifecycleOwner) {
+            stopLoading()
+            setAdapter(it)
+        }
     }
-    //---------------------------------------------------------------------------------------------- requestGetUser
+    //---------------------------------------------------------------------------------------------- observeAddressSuggestionLiveData
+
+
+    //---------------------------------------------------------------------------------------------- requestGetSuggestionAddress
+    private fun requestGetSuggestionAddress(address: String) {
+        startLoading()
+        observeAddressSuggestionLiveData()
+        addressViewModel.requestGetSuggestionAddress(address, adapter?.getList())
+    }
+    //---------------------------------------------------------------------------------------------- requestGetSuggestionAddress
 
 
     //---------------------------------------------------------------------------------------------- setAdapter

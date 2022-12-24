@@ -1,14 +1,19 @@
 package com.zarholding.zar.viewmodel
 
 import android.content.SharedPreferences
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.zar.core.enums.EnumApiError
+import com.zar.core.models.ErrorApiModel
+import com.zar.core.tools.api.checkResponseError
 import com.zarholding.zar.model.request.LoginRequestModel
-import com.zarholding.zar.model.response.LoginResponseModel
 import com.zarholding.zar.repository.LoginRepository
 import com.zarholding.zar.utility.CompanionValues
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import retrofit2.Response
 import javax.inject.Inject
 
 /**
@@ -23,39 +28,62 @@ class LoginViewModel @Inject constructor(
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
-    val loadingLiveDate = MutableLiveData(false)
-    val useNameEmptyLiveData = MutableLiveData(false)
-    val passwordEmptyLiveData = MutableLiveData(false)
-    var responseOfLoginRequestLiveDate : LiveData<LoginResponseModel?>? = null
+    var loginLiveDate = MutableLiveData<String?>(null)
+    val errorLiveDate = MutableLiveData<ErrorApiModel>()
     var userName: String? = null
     var password: String? = null
+    private var job: Job? = null
 
 
-    //---------------------------------------------------------------------------------------------- login
-    fun login(fromFingerPrint : Boolean) {
-        if (fromFingerPrint)
-            setUserNamePasswordFromSharePreferences()
-        if (userName.isNullOrEmpty()) {
-            useNameEmptyLiveData.value = true
-            return
+    //---------------------------------------------------------------------------------------------- setError
+    private suspend fun setError(response: Response<*>?) {
+        withContext(Main) {
+            checkResponseError(response, errorLiveDate)
         }
-        useNameEmptyLiveData.value = false
-        if (password.isNullOrEmpty()) {
-            passwordEmptyLiveData.value = true
-            return
-        }
-        passwordEmptyLiveData.value = false
-        loadingLiveDate.value = true
-        requestLogin()
+        job?.cancel()
     }
-    //---------------------------------------------------------------------------------------------- login
+    //---------------------------------------------------------------------------------------------- setError
+
+
+
+    //---------------------------------------------------------------------------------------------- setError
+    private suspend fun setError(message : String) {
+        withContext(Main) {
+            errorLiveDate.value = ErrorApiModel(EnumApiError.Error, message)
+        }
+        job?.cancel()
+    }
+    //---------------------------------------------------------------------------------------------- setError
+
+
 
 
     //---------------------------------------------------------------------------------------------- requestLogin
-    private fun requestLogin() {
-        responseOfLoginRequestLiveDate = repository.requestLogin(LoginRequestModel(userName!!, password!!))
+    fun requestLogin() {
+
+        val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+            CoroutineScope(Main).launch {
+                throwable.localizedMessage?.let { setError(it) }
+            }
+        }
+
+        job = CoroutineScope(IO + exceptionHandler).launch {
+            val response = repository.requestLogin(LoginRequestModel(userName!!, password!!))
+            withContext(Main) {
+                if (response?.isSuccessful == true) {
+                    val loginResponse = response.body()
+                    loginResponse?.let {
+                        if (!it.hasError)
+                            saveUserNameAndPassword(it.data)
+                        setError(it.message)
+                    }
+                } else
+                    setError(response)
+            }
+        }
     }
     //---------------------------------------------------------------------------------------------- requestLogin
+
 
 
     //---------------------------------------------------------------------------------------------- getBiometricEnable
@@ -64,7 +92,7 @@ class LoginViewModel @Inject constructor(
 
 
     //---------------------------------------------------------------------------------------------- setUserNamePasswordFromSharePreferences
-    private fun setUserNamePasswordFromSharePreferences() {
+    fun setUserNamePasswordFromSharePreferences() {
         userName = sharedPreferences.getString(CompanionValues.userName, null)
         password = sharedPreferences.getString(CompanionValues.passcode, null)
     }
@@ -72,14 +100,23 @@ class LoginViewModel @Inject constructor(
 
 
     //---------------------------------------------------------------------------------------------- saveUserNameAndPassword
-    fun saveUserNameAndPassword(token : String?) {
+    private fun saveUserNameAndPassword(token : String?) {
         sharedPreferences
             .edit()
             .putString(CompanionValues.TOKEN, token)
             .putString(CompanionValues.userName, userName)
             .putString(CompanionValues.passcode, password)
             .apply()
+        loginLiveDate.value = token
     }
     //---------------------------------------------------------------------------------------------- saveUserNameAndPassword
+
+
+    //---------------------------------------------------------------------------------------------- onCleared
+    override fun onCleared() {
+        super.onCleared()
+        job?.cancel()
+    }
+    //---------------------------------------------------------------------------------------------- onCleared
 
 }

@@ -201,7 +201,7 @@ fun TextView.setDriverAndStation(driverName : String, tripName : String , statio
 fun CardView.setRegisterStationStatus(status : EnumTripStatus?){
     status?.let {
         when(status) {
-            EnumTripStatus.IsPending -> setCardBackgroundColor(context.resources.getColor(R.color.waiting, context.theme))
+            EnumTripStatus.Pending -> setCardBackgroundColor(context.resources.getColor(R.color.waiting, context.theme))
             EnumTripStatus.Done -> setCardBackgroundColor(context.resources.getColor(R.color.positive, context.theme))
             EnumTripStatus.Reject -> setCardBackgroundColor(context.resources.getColor(R.color.negative, context.theme))
         }
@@ -215,7 +215,7 @@ fun CardView.setRegisterStationStatus(status : EnumTripStatus?){
 fun TextView.setRegisterStationStatus(status : EnumTripStatus?){
     status?.let {
         text = when(status) {
-            EnumTripStatus.IsPending -> context.resources.getString(R.string.pendingForAccept)
+            EnumTripStatus.Pending -> context.resources.getString(R.string.pendingForAccept)
             EnumTripStatus.Done -> context.resources.getString(R.string.confirmedByOfficial)
             EnumTripStatus.Reject -> context.resources.getString(R.string.reject)
         }
@@ -229,7 +229,7 @@ fun TextView.setRegisterStationStatus(status : EnumTripStatus?){
 fun ImageView.setRegisterStationStatus(status : EnumTripStatus?){
     status?.let {
         when(status) {
-            EnumTripStatus.IsPending -> setImageResource(R.drawable.ic_pending)
+            EnumTripStatus.Pending -> setImageResource(R.drawable.ic_pending)
             EnumTripStatus.Done -> setImageResource(R.drawable.ic_check)
             EnumTripStatus.Reject -> setImageResource(R.drawable.ic_delete)
         }

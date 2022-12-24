@@ -28,9 +28,6 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.zar.core.enums.EnumAuthorizationType
-import com.zar.core.enums.EnumErrorType
-import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zar.core.tools.manager.DialogManager
 import com.zar.core.tools.manager.ThemeManager
 import com.zarholding.zar.database.dao.UserInfoDao
@@ -57,7 +54,7 @@ import javax.inject.Inject
  */
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
+class MainActivity : AppCompatActivity(){
 
     @Inject
     lateinit var userInfoDao: UserInfoDao
@@ -70,28 +67,6 @@ class MainActivity : AppCompatActivity(), RemoteErrorEmitter {
 
     lateinit var binding: ActivityMainBinding
     private var navController: NavController? = null
-
-
-    //---------------------------------------------------------------------------------------------- companion object
-    companion object {
-        lateinit var remoteErrorEmitter: RemoteErrorEmitter
-    }
-    //---------------------------------------------------------------------------------------------- companion object
-
-
-
-    //---------------------------------------------------------------------------------------------- onError
-    override fun onError(errorType: EnumErrorType, message: String) {
-        remoteErrorEmitter.onError(errorType, message)
-    }
-    //---------------------------------------------------------------------------------------------- onError
-
-
-    //---------------------------------------------------------------------------------------------- unAuthorization
-    override fun unAuthorization(type: EnumAuthorizationType, message: String) {
-        remoteErrorEmitter.unAuthorization(type, message)
-    }
-    //---------------------------------------------------------------------------------------------- unAuthorization
 
 
 

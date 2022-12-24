@@ -13,7 +13,7 @@ import com.zarholding.zar.database.entity.UserInfoEntity
 import com.zarholding.zar.utility.EndlessScrollListener
 import com.zarholding.zar.view.recycler.adapter.PersonnelSelectAdapter
 import com.zarholding.zar.view.recycler.holder.PersonnelSelectHolder
-import com.zarholding.zar.viewmodel.UserViewModel
+import com.zarholding.zar.viewmodel.PersonnelViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -28,7 +28,7 @@ class PersonnelDialog(
 
     lateinit var binding: DialogPersonnelBinding
 
-    private val userViewModel: UserViewModel by viewModels()
+    private val personnelViewModel: PersonnelViewModel by viewModels()
 
     private var job: Job? = null
 
@@ -78,7 +78,7 @@ class PersonnelDialog(
 
         binding.textInputEditTextSearch.addTextChangedListener {
             adapterPersonnel = null
-            userViewModel.filterUser.PageNumber = 0
+            personnelViewModel.getFilterUserRequestModel().PageNumber = 0
             binding.recyclerViewPersonnel.adapter = null
             job?.cancel()
             createJobForSearch(it.toString())
@@ -101,22 +101,22 @@ class PersonnelDialog(
     //---------------------------------------------------------------------------------------------- createJobForSearch
 
 
+
+    //---------------------------------------------------------------------------------------------- observeUserMutableLiveData
+    private fun observeUserMutableLiveData() {
+        personnelViewModel.userMutableLiveData.removeObservers(viewLifecycleOwner)
+        personnelViewModel.userMutableLiveData.observe(viewLifecycleOwner) {
+            setPersonnelAdapter(it)
+        }
+    }
+    //---------------------------------------------------------------------------------------------- observeUserMutableLiveData
+
+
     //---------------------------------------------------------------------------------------------- requestGetUser
     private fun requestGetUser(search: String) {
         binding.textViewLoading.visibility = View.VISIBLE
-        userViewModel.requestGetUser(search)
-            .observe(viewLifecycleOwner) { response ->
-                binding.textViewLoading.visibility = View.GONE
-                response?.let { data ->
-                    if (!data.hasError) {
-                        data.data?.let { item ->
-                            item.items?.let {
-                                setPersonnelAdapter(it)
-                            }
-                        }
-                    }
-                }
-            }
+        observeUserMutableLiveData()
+        personnelViewModel.requestGetUser(search)
     }
     //---------------------------------------------------------------------------------------------- requestGetUser
 
@@ -127,7 +127,7 @@ class PersonnelDialog(
             adapterPersonnel?.addPerson(items)
             endlessScrollListener?.let {
                 it.setLoading(false)
-                if (items.isNullOrEmpty())
+                if (items.isEmpty())
                     binding.recyclerViewPersonnel.removeOnScrollListener(it)
             }
         } ?: run {
@@ -157,7 +157,7 @@ class PersonnelDialog(
     private fun getEndlessScrollListener(manager: LinearLayoutManager): EndlessScrollListener {
         val endlessScrollListener = object : EndlessScrollListener(manager) {
             override fun loadMoreItems() {
-                requestGetUser(userViewModel.filterUser.Search)
+                requestGetUser(personnelViewModel.getFilterUserRequestModel().Search)
             }
         }
         endlessScrollListener.setLoading(false)

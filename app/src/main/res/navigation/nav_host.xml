@@ -38,9 +38,9 @@
         android:label="HomeFragment">
 
         <action
-            android:id="@+id/action_HomeFragment_to_ServiceFragment"
-            app:destination="@id/ServiceFragment"
-            app:popUpTo="@id/ServiceFragment"
+            android:id="@+id/action_HomeFragment_to_BusServiceFragment"
+            app:destination="@id/BusServiceFragment"
+            app:popUpTo="@id/BusServiceFragment"
             app:enterAnim="@anim/slide_in_left"
             app:exitAnim="@anim/slide_out_right"
             app:popEnterAnim="@anim/slide_in_right"
@@ -68,8 +68,8 @@
         android:label="SettingFragment" />
 
     <fragment
-        android:id="@+id/ServiceFragment"
-        android:name="com.zarholding.zar.view.fragment.ServiceFragment"
+        android:id="@+id/BusServiceFragment"
+        android:name="com.zarholding.zar.view.fragment.BusServiceFragment"
         android:label="ServiceFragment" />
 
     <fragment

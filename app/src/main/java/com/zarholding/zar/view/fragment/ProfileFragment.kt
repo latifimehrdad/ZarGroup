@@ -7,13 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.zar.core.enums.EnumAuthorizationType
-import com.zar.core.enums.EnumErrorType
-import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zarholding.zar.database.dao.UserInfoDao
 import com.zarholding.zar.utility.CompanionValues
-import com.zarholding.zar.utility.UnAuthorizationManager
-import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.view.dialog.ConfirmDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -28,7 +23,7 @@ import javax.inject.Inject
  */
 
 @AndroidEntryPoint
-class ProfileFragment : Fragment(), RemoteErrorEmitter {
+class ProfileFragment : Fragment(){
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
@@ -39,15 +34,12 @@ class ProfileFragment : Fragment(), RemoteErrorEmitter {
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
-    @Inject
-    lateinit var unAuthorizationManager: UnAuthorizationManager
 
     //---------------------------------------------------------------------------------------------- onCreateView
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        MainActivity.remoteErrorEmitter = this
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -62,21 +54,6 @@ class ProfileFragment : Fragment(), RemoteErrorEmitter {
         setUserInfo()
     }
     //---------------------------------------------------------------------------------------------- onViewCreated
-
-
-    //---------------------------------------------------------------------------------------------- onError
-    override fun onError(errorType: EnumErrorType, message: String) {
-
-    }
-    //---------------------------------------------------------------------------------------------- onError
-
-
-
-    //---------------------------------------------------------------------------------------------- unAuthorization
-    override fun unAuthorization(type: EnumAuthorizationType, message: String) {
-        unAuthorizationManager.handel(activity,type,message,binding.constraintLayoutParent)
-    }
-    //---------------------------------------------------------------------------------------------- unAuthorization
 
 
 

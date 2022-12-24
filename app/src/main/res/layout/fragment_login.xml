@@ -138,7 +138,7 @@
 
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.google.android.material.button.MaterialButton
+                    <com.zarholding.zar.view.custom.ZarButton
                         android:id="@+id/buttonLogin"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -152,7 +152,7 @@
                         android:fontFamily="@font/kalameh_semibold"
                         app:cornerRadius="@dimen/_5sdp"
                         android:textColor="@color/textViewColor2"
-                        android:text='@{viewModel.loadingLiveDate ? @string/bePatient : @string/enter}' />
+                        android:text='@string/enter' />
 
 
 

@@ -14,9 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.skydoves.powerspinner.IconSpinnerAdapter
 import com.skydoves.powerspinner.IconSpinnerItem
-import com.zar.core.enums.EnumAuthorizationType
-import com.zar.core.enums.EnumErrorType
-import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
+import com.zar.core.enums.EnumApiError
 import com.zar.core.tools.extensions.toSolarDate
 import com.zar.core.tools.loadings.LoadingManager
 import com.zar.core.tools.manager.ThemeManager
@@ -30,7 +28,6 @@ import com.zarholding.zar.model.request.TaxiRequestModel
 import com.zarholding.zar.model.response.address.AddressModel
 import com.zarholding.zar.model.response.address.AddressSuggestionModel
 import com.zarholding.zar.utility.OsmManager
-import com.zarholding.zar.utility.UnAuthorizationManager
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.view.dialog.*
 import com.zarholding.zar.view.extension.getAddress
@@ -38,9 +35,7 @@ import com.zarholding.zar.view.extension.hideKeyboard
 import com.zarholding.zar.view.extension.setApplicatorNameToTextView
 import com.zarholding.zar.view.recycler.adapter.PassengerAdapter
 import com.zarholding.zar.view.recycler.holder.PassengerItemHolder
-import com.zarholding.zar.viewmodel.AddressViewModel
-import com.zarholding.zar.viewmodel.TaxiViewModel
-import com.zarholding.zar.viewmodel.UserViewModel
+import com.zarholding.zar.viewmodel.TaxiReservationViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import org.osmdroid.util.GeoPoint
 import zar.R
@@ -55,23 +50,18 @@ import javax.inject.Inject
  */
 
 @AndroidEntryPoint
-class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
-
-    private var _binding: FragmentTaxiBinding? = null
-    private val binding get() = _binding!!
+class TaxiReservationFragment : Fragment() {
 
     @Inject
     lateinit var themeManagers: ThemeManager
 
     @Inject
-    lateinit var unAuthorizationManager: UnAuthorizationManager
-
-    @Inject
     lateinit var loadingManager: LoadingManager
 
-    private val addressViewModel: AddressViewModel by viewModels()
-    private val taxiViewModel: TaxiViewModel by viewModels()
-    private val userViewModel : UserViewModel by viewModels()
+    private var _binding: FragmentTaxiBinding? = null
+    private val binding get() = _binding!!
+
+    private val taxiReservationViewModel: TaxiReservationViewModel by viewModels()
 
     private lateinit var osmManager: OsmManager
     private lateinit var passengersAdapter: PassengerAdapter
@@ -79,9 +69,9 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- OnBackPressedCallback
     private val backClick = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            if (taxiViewModel.getDestinationMarker() != null)
+            if (taxiReservationViewModel.getDestinationMarker() != null)
                 removeDestinationMarker()
-            else if (taxiViewModel.getOriginMarker() != null)
+            else if (taxiReservationViewModel.getOriginMarker() != null)
                 removeOriginMarker()
             else {
                 this.isEnabled = false
@@ -97,7 +87,6 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        MainActivity.remoteErrorEmitter = this
         _binding = FragmentTaxiBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -108,14 +97,13 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner
-        binding.viewModel = taxiViewModel
         initView()
     }
     //---------------------------------------------------------------------------------------------- onViewCreated
 
 
-    //---------------------------------------------------------------------------------------------- onError
-    override fun onError(errorType: EnumErrorType, message: String) {
+    //---------------------------------------------------------------------------------------------- showMessage
+    private fun showMessage(message: String) {
         val snack = Snackbar.make(binding.constraintLayoutParent, message, 5 * 1000)
         snack.setBackgroundTint(resources.getColor(R.color.primaryColor, context?.theme))
         snack.setTextColor(resources.getColor(R.color.textViewColor3, context?.theme))
@@ -124,20 +112,25 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
         snack.show()
         binding.textViewLoading.visibility = View.GONE
         loadingManager.stopLoadingView()
-        taxiViewModel.loadingLiveDate.value = false
     }
-    //---------------------------------------------------------------------------------------------- onError
+    //---------------------------------------------------------------------------------------------- showMessage
 
 
-    //---------------------------------------------------------------------------------------------- unAuthorization
-    override fun unAuthorization(type: EnumAuthorizationType, message: String) {
-        binding.textViewLoading.visibility = View.GONE
-        backClick.isEnabled = false
-        loadingManager.stopLoadingView()
-        unAuthorizationManager.handel(activity, type, message, binding.constraintLayoutParent)
-        taxiViewModel.loadingLiveDate.value = false
+    //---------------------------------------------------------------------------------------------- observeLoginLiveDate
+    private fun observeErrorLiveDate() {
+        taxiReservationViewModel.errorLiveDate.removeObservers(viewLifecycleOwner)
+        taxiReservationViewModel.errorLiveDate.observe(viewLifecycleOwner) {
+            backClick.isEnabled = false
+            loadingManager.stopLoadingView()
+            showMessage(it.message)
+            when (it.type) {
+                EnumApiError.UnAuthorization -> (activity as MainActivity?)?.gotoFirstFragment()
+
+                else -> {}
+            }
+        }
     }
-    //---------------------------------------------------------------------------------------------- unAuthorization
+    //---------------------------------------------------------------------------------------------- observeLoginLiveDate
 
 
     //---------------------------------------------------------------------------------------------- initView
@@ -153,7 +146,6 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
         requestGetTaxiFavPlace()
     }
     //---------------------------------------------------------------------------------------------- initView
-
 
 
     //---------------------------------------------------------------------------------------------- setListener
@@ -180,7 +172,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
     private fun powerSpinnerOriginClick() {
         if (context == null)
             return
-        taxiViewModel.getOriginMarker()?.let {
+        taxiReservationViewModel.getOriginMarker()?.let {
             ConfirmDialog(requireContext(),
                 ConfirmDialog.ConfirmType.DELETE,
                 getString(R.string.originLocationIsSelect),
@@ -203,7 +195,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
     private fun powerSpinnerDestinationClick() {
         if (context == null)
             return
-        taxiViewModel.getDestinationMarker()?.let {
+        taxiReservationViewModel.getDestinationMarker()?.let {
             ConfirmDialog(requireContext(),
                 ConfirmDialog.ConfirmType.DELETE,
                 getString(R.string.destinationLocationIsSelect),
@@ -222,6 +214,17 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- powerSpinnerDestinationClick
 
 
+    //---------------------------------------------------------------------------------------------- observeFavePlaceLiveData
+    private fun observeFavePlaceLiveData() {
+        taxiReservationViewModel.setFavPlaceLiveData.removeObservers(viewLifecycleOwner)
+        taxiReservationViewModel.setFavPlaceLiveData.observe(viewLifecycleOwner) {
+            initOriginSpinner()
+            initDestinationSpinner()
+        }
+    }
+    //---------------------------------------------------------------------------------------------- observeFavePlaceLiveData
+
+
     //---------------------------------------------------------------------------------------------- requestGetTaxiFavPlace
     private fun requestGetTaxiFavPlace() {
         loadingManager.setViewLoading(
@@ -229,24 +232,32 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
             R.layout.item_loading,
             R.color.recyclerLoadingShadow
         )
-        taxiViewModel.requestGetTaxiFavPlace()
-            .observe(viewLifecycleOwner) { response ->
-                loadingManager.stopLoadingView()
-                response?.let {
-                    if (it.hasError)
-                        onError(EnumErrorType.UNKNOWN, it.message)
-                    else {
-                        it.data?.let { items ->
-                            taxiViewModel.setFavPlaceList(items)
-                            initOriginSpinner()
-                            initDestinationSpinner()
-                        }
-                    }
-                }
-
-            }
+        observeErrorLiveDate()
+        observeFavePlaceLiveData()
+        taxiReservationViewModel.requestGetTaxiFavPlace()
     }
     //---------------------------------------------------------------------------------------------- requestGetTaxiFavPlace
+
+
+
+    //---------------------------------------------------------------------------------------------- observeFavePlaceLiveData
+    private fun observeAddressLiveData() {
+        taxiReservationViewModel.addressLiveData.removeObservers(viewLifecycleOwner)
+        taxiReservationViewModel.addressLiveData.observe(viewLifecycleOwner) {
+            val center =
+                GeoPoint(binding.mapView.mapCenter.latitude, binding.mapView.mapCenter.longitude)
+            if (taxiReservationViewModel.getOriginMarker() == null) {
+                setAddressToTextview(it, binding.textViewOrigin)
+                addOriginMarker(GeoPoint(center.latitude, center.longitude))
+            } else if (taxiReservationViewModel.getDestinationMarker() == null) {
+                setAddressToTextview(it, binding.textViewDestination)
+                addDestinationMarker(GeoPoint(center.latitude, center.longitude))
+            }
+        }
+    }
+    //---------------------------------------------------------------------------------------------- observeFavePlaceLiveData
+
+
 
 
     //---------------------------------------------------------------------------------------------- getCenterLocationOfMap
@@ -256,19 +267,8 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
         val center =
             GeoPoint(binding.mapView.mapCenter.latitude, binding.mapView.mapCenter.longitude)
         binding.textViewLoading.visibility = View.VISIBLE
-        addressViewModel.getAddress(center).observe(viewLifecycleOwner) { response ->
-            response?.let { info ->
-                info.address?.let { address ->
-                    if (taxiViewModel.getOriginMarker() == null) {
-                        setAddressToTextview(address, binding.textViewOrigin)
-                        addOriginMarker(GeoPoint(center.latitude, center.longitude))
-                    } else if (taxiViewModel.getDestinationMarker() == null) {
-                        setAddressToTextview(address, binding.textViewDestination)
-                        addDestinationMarker(GeoPoint(center.latitude, center.longitude))
-                    }
-                }
-            }
-        }
+        observeAddressLiveData()
+        taxiReservationViewModel.getAddress(center)
     }
     //---------------------------------------------------------------------------------------------- getCenterLocationOfMap
 
@@ -288,7 +288,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
         binding.textViewReturning.setBackgroundResource(R.drawable.drawable_trip_unselect_button)
         binding.constraintLayoutReturn.visibility = View.INVISIBLE
         binding.textViewReturnTitle.visibility = View.INVISIBLE
-        taxiViewModel.setTimePickMode(ZarTimePicker.PickerMode.DEPARTURE)
+        taxiReservationViewModel.setTimePickMode(ZarTimePicker.PickerMode.DEPARTURE)
     }
     //---------------------------------------------------------------------------------------------- clickOnDepartureServiceTextView
 
@@ -299,14 +299,14 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
         binding.textViewDeparture.setBackgroundResource(R.drawable.drawable_trip_unselect_button)
         binding.constraintLayoutReturn.visibility = View.VISIBLE
         binding.textViewReturnTitle.visibility = View.VISIBLE
-        taxiViewModel.setTimePickMode(ZarTimePicker.PickerMode.RETURNING)
+        taxiReservationViewModel.setTimePickMode(ZarTimePicker.PickerMode.RETURNING)
     }
     //---------------------------------------------------------------------------------------------- clickOnReturningServicesTextView
 
 
     //---------------------------------------------------------------------------------------------- setApplicatorNameToTextView
     private fun setApplicatorNameToTextView() {
-        val fullName = userViewModel.getUser()?.fullName
+        val fullName = taxiReservationViewModel.getUser()?.fullName
         binding.textViewApplicator.setApplicatorNameToTextView(fullName)
     }
     //---------------------------------------------------------------------------------------------- setApplicatorNameToTextView
@@ -318,7 +318,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
             return
         val persianDate = LocalDateTime.now().toSolarDate()!!
         val datePickerDialog = DatePickerDialog(requireContext())
-        when (taxiViewModel.getTimePickMode()) {
+        when (taxiReservationViewModel.getTimePickMode()) {
             ZarTimePicker.PickerMode.DEPARTURE ->
                 datePickerDialog.selectionMode = DateRangeCalendarView.SelectionMode.Single
             ZarTimePicker.PickerMode.RETURNING ->
@@ -355,7 +355,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
             DatePickerDialog.OnSingleDateSelectedListener { startDate ->
                 val today = persianDate.getSolarDate()
                 if (startDate.persianShortDate < today)
-                    onError(EnumErrorType.UNKNOWN, getString(R.string.selectedDateIsThePast))
+                    showMessage(getString(R.string.selectedDateIsThePast))
                 else {
                     binding.buttonDepartureDate.text = startDate.persianShortDate
                     binding.buttonDepartureTime.text = null
@@ -366,7 +366,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
             DatePickerDialog.OnRangeDateSelectedListener { startDate, endDate ->
                 val today = persianDate.getSolarDate()
                 if (startDate.persianShortDate < today)
-                    onError(EnumErrorType.UNKNOWN, getString(R.string.selectedDateIsThePast))
+                    showMessage(getString(R.string.selectedDateIsThePast))
                 else {
                     binding.buttonDepartureDate.text = startDate.persianShortDate
                     binding.buttonReturnDate.text = endDate.persianShortDate
@@ -388,28 +388,25 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
             return
 
         if (binding.buttonDepartureDate.text.isNullOrEmpty()) {
-            onError(EnumErrorType.UNKNOWN, getString(R.string.selectTheDepartureDate))
+            showMessage(getString(R.string.selectTheDepartureDate))
             return
         }
 
-        if (taxiViewModel.getTimePickMode() == ZarTimePicker.PickerMode.RETURNING) {
+        if (taxiReservationViewModel.getTimePickMode() == ZarTimePicker.PickerMode.RETURNING) {
             if (binding.buttonReturnDate.text.isNullOrEmpty()) {
-                onError(EnumErrorType.UNKNOWN, getString(R.string.selectTheReturnDate))
+                showMessage(getString(R.string.selectTheReturnDate))
                 return
             }
 
             if (binding.buttonReturnDate.text.toString() < binding.buttonDepartureDate.text.toString()
             ) {
-                onError(
-                    EnumErrorType.UNKNOWN,
-                    getString(R.string.theReturnDateIsBeforeTheDepartureDate)
-                )
+                showMessage(getString(R.string.theReturnDateIsBeforeTheDepartureDate))
                 return
             }
         }
 
         TimeDialog(requireContext(),
-            taxiViewModel.getTimePickMode(),
+            taxiReservationViewModel.getTimePickMode(),
             click = object : TimeDialog.Click {
                 override fun clickYes(timeDeparture: String, timeReturn: String) {
                     val persianDate = LocalDateTime.now().toSolarDate()!!
@@ -420,23 +417,17 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
                                 ":" + time.minute.toString().padStart(2, '0')
 
                         if (timeDeparture < currentTime) {
-                            onError(
-                                EnumErrorType.UNKNOWN,
-                                getString(R.string.selectedTimeIsThePast)
-                            )
+                            showMessage(getString(R.string.selectedTimeIsThePast))
                             return
                         }
                     }
                     binding.buttonDepartureTime.text = timeDeparture
-                    if (taxiViewModel.getTimePickMode() == ZarTimePicker.PickerMode.RETURNING) {
+                    if (taxiReservationViewModel.getTimePickMode() == ZarTimePicker.PickerMode.RETURNING) {
                         if (binding.buttonReturnDate.text.toString() > binding.buttonDepartureDate.text.toString())
                             binding.buttonReturnTime.text = timeReturn
                         else {
                             if (timeReturn < timeDeparture)
-                                onError(
-                                    EnumErrorType.UNKNOWN,
-                                    getString(R.string.theReturnTimeIsBeforeTheDepartureTime)
-                                )
+                                showMessage(getString(R.string.theReturnTimeIsBeforeTheDepartureTime))
                             else
                                 binding.buttonReturnTime.text = timeReturn
                         }
@@ -449,7 +440,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- initOriginSpinner
     private fun initOriginSpinner() {
-        taxiViewModel.getFavPlaceList()?.let {
+        taxiReservationViewModel.getFavPlaceList()?.let {
             val items = it.map { taxiFavPlaceModel ->
                 taxiFavPlaceModel.locationName?.let { name ->
                     IconSpinnerItem(name)
@@ -464,7 +455,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
                 lifecycleOwner = viewLifecycleOwner
 
                 setOnSpinnerItemSelectedListener<IconSpinnerItem> { _, _, newIndex, _ ->
-                    taxiViewModel.setOriginFavPlaceModel(it[newIndex])
+                    taxiReservationViewModel.setOriginFavPlaceModel(it[newIndex])
                     binding.imageViewFavOrigin.setImageResource(R.drawable.ic_favorite)
                     addOriginMarker(GeoPoint(it[newIndex].lat, it[newIndex].long))
                     binding.powerSpinnerOrigin.setBackgroundResource(R.drawable.drawable_spinner_select)
@@ -485,7 +476,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- initDestinationSpinner
     private fun initDestinationSpinner() {
-        taxiViewModel.getFavPlaceList()?.let {
+        taxiReservationViewModel.getFavPlaceList()?.let {
             val items = it.map { taxiFavPlaceModel ->
                 taxiFavPlaceModel.locationName?.let { name ->
                     IconSpinnerItem(name)
@@ -498,7 +489,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
                     LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
                 lifecycleOwner = viewLifecycleOwner
                 setOnSpinnerItemSelectedListener<IconSpinnerItem> { _, _, newIndex, _ ->
-                    taxiViewModel.setDestinationFavPlaceModel(it[newIndex])
+                    taxiReservationViewModel.setDestinationFavPlaceModel(it[newIndex])
                     binding.imageViewFavDestination.setImageResource(R.drawable.ic_favorite)
                     addDestinationMarker(GeoPoint(GeoPoint(it[newIndex].lat, it[newIndex].long)))
                     binding.powerSpinnerDestination.setBackgroundResource(R.drawable.drawable_spinner_select)
@@ -523,11 +514,13 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
             Size(42, 87),
             R.drawable.icon_marker_origin
         )
-        taxiViewModel.setOriginMarker(osmManager.addMarker(
-            icon,
-            geoPoint,
-            null
-        ))
+        taxiReservationViewModel.setOriginMarker(
+            osmManager.addMarker(
+                icon,
+                geoPoint,
+                null
+            )
+        )
         binding.imageViewMarker.setImageResource(R.drawable.ic_destination)
         osmManager.moveCameraZoomUp(geoPoint)
     }
@@ -537,10 +530,10 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- removeOriginMarker
     private fun removeOriginMarker() {
         binding.textViewOrigin.isSelected = false
-        osmManager.removeMarkerAndMove(taxiViewModel.getOriginMarker()!!)
-        taxiViewModel.setOriginMarker(null)
+        osmManager.removeMarkerAndMove(taxiReservationViewModel.getOriginMarker()!!)
+        taxiReservationViewModel.setOriginMarker(null)
         binding.imageViewFavOrigin.visibility = View.VISIBLE
-        taxiViewModel.setOriginFavPlaceModel(null)
+        taxiReservationViewModel.setOriginFavPlaceModel(null)
         binding.imageViewFavOrigin.setImageResource(R.drawable.ic_favorite_outline)
         binding.imageViewMarker.setImageResource(R.drawable.ic_origin)
         binding.powerSpinnerOrigin.clearSelectedItem()
@@ -564,7 +557,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
             Size(42, 87),
             R.drawable.icon_marker_destination
         )
-        taxiViewModel.setDestinationMarker(
+        taxiReservationViewModel.setDestinationMarker(
             osmManager.addMarker(
                 icon,
                 geoPoint,
@@ -573,8 +566,8 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
         )
         binding.imageViewMarker.visibility = View.GONE
         val points = mutableListOf<GeoPoint>()
-        points.add(taxiViewModel.getOriginMarker()!!.position)
-        points.add(taxiViewModel.getDestinationMarker()!!.position)
+        points.add(taxiReservationViewModel.getOriginMarker()!!.position)
+        points.add(taxiReservationViewModel.getDestinationMarker()!!.position)
         val box = osmManager.getBoundingBoxFromPoints(points)
         binding.mapView.zoomToBoundingBox(box, true)
     }
@@ -583,12 +576,12 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- removeDestinationMarker
     private fun removeDestinationMarker() {
-        taxiViewModel.setDestinationFavPlaceModel(null)
+        taxiReservationViewModel.setDestinationFavPlaceModel(null)
         binding.imageViewFavDestination.visibility = View.VISIBLE
         binding.imageViewFavDestination.setImageResource(R.drawable.ic_favorite_outline)
         binding.textViewDestination.isSelected = false
-        osmManager.removeMarkerAndMove(taxiViewModel.getDestinationMarker()!!)
-        taxiViewModel.setDestinationMarker(null)
+        osmManager.removeMarkerAndMove(taxiReservationViewModel.getDestinationMarker()!!)
+        taxiReservationViewModel.setDestinationMarker(null)
         binding.imageViewMarker.visibility = View.VISIBLE
         binding.imageViewMarker.setImageResource(R.drawable.ic_destination)
         binding.powerSpinnerDestination.clearSelectedItem()
@@ -609,7 +602,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- setPassengersAdapter
     private fun setPassengersAdapter() {
         val users: MutableList<UserInfoEntity> = mutableListOf()
-        val user = userViewModel.getUser()
+        val user = taxiReservationViewModel.getUser()
         user?.let {
             users.add(it)
         }
@@ -672,7 +665,7 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
                 if (exist == null)
                     passengersAdapter.addUser(item)
                 else
-                    onError(EnumErrorType.UNKNOWN, getString(R.string.duplicateInsert))
+                    showMessage(getString(R.string.duplicateInsert))
             }
         }
         PersonnelDialog(click).show(childFragmentManager, "personnel dialog")
@@ -682,37 +675,35 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- clickImageviewFavOrigin
     private fun clickImageviewFavOrigin() {
-        taxiViewModel.getOriginMarker()?.let {
-            taxiViewModel.setFavPlaceType(FavPlaceType.ORIGIN)
-            taxiViewModel.getOriginFacPlaceModel()?.let {
-                if (taxiViewModel.getDestinationFavPlaceModel() == null)
+        taxiReservationViewModel.getOriginMarker()?.let {
+            taxiReservationViewModel.setFavPlaceType(FavPlaceType.ORIGIN)
+            taxiReservationViewModel.getOriginFacPlaceModel()?.let {
+                if (taxiReservationViewModel.getDestinationFavPlaceModel() == null)
                     showRemoveFromFavPlaceDialog(it.locationName, it.id)
                 else
-                    onError(EnumErrorType.UNKNOWN, getString(R.string.destinationLocationSelected))
+                    showMessage(getString(R.string.destinationLocationSelected))
             } ?: run {
                 showAddToFavPlaceDialog(binding.textViewOrigin.text.toString())
             }
         } ?: run {
-            onError(EnumErrorType.UNKNOWN, getString(R.string.pleaseChooseLocation))
+            showMessage(getString(R.string.pleaseChooseLocation))
         }
-
     }
     //---------------------------------------------------------------------------------------------- clickImageviewFavOrigin
 
 
     //---------------------------------------------------------------------------------------------- clickImageviewFavDestination
     private fun clickImageviewFavDestination() {
-        taxiViewModel.getDestinationMarker()?.let {
-            taxiViewModel.setFavPlaceType(FavPlaceType.DESTINATION)
-            taxiViewModel.getDestinationFavPlaceModel()?.let {
+        taxiReservationViewModel.getDestinationMarker()?.let {
+            taxiReservationViewModel.setFavPlaceType(FavPlaceType.DESTINATION)
+            taxiReservationViewModel.getDestinationFavPlaceModel()?.let {
                 showRemoveFromFavPlaceDialog(it.locationName, it.id)
             } ?: run {
                 showAddToFavPlaceDialog(binding.textViewDestination.text.toString())
             }
         } ?: run {
-            onError(EnumErrorType.UNKNOWN, getString(R.string.pleaseChooseLocation))
+            showMessage(getString(R.string.pleaseChooseLocation))
         }
-
     }
     //---------------------------------------------------------------------------------------------- clickImageviewFavDestination
 
@@ -731,55 +722,39 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- showAddToFavPlaceDialog
 
 
+    //---------------------------------------------------------------------------------------------- observeAddFavPlaceLiveData
+    private fun observeAddFavPlaceLiveData() {
+        taxiReservationViewModel.addFavPlaceLiveData.removeObservers(viewLifecycleOwner)
+        taxiReservationViewModel.addFavPlaceLiveData.observe(viewLifecycleOwner) {
+            initOriginSpinner()
+            initDestinationSpinner()
+        }
+    }
+    //---------------------------------------------------------------------------------------------- observeAddFavPlaceLiveData
+
+
+
     //---------------------------------------------------------------------------------------------- requestAddFavPlace
     private fun requestAddFavPlace(placeName: String, placeAddress: String) {
         if (context == null)
             return
         val rotation = AnimationUtils.loadAnimation(requireContext(), R.anim.rotate_repeat)
         var geoPoint: GeoPoint? = null
-        when (taxiViewModel.getFavPlaceType()) {
+        when (taxiReservationViewModel.getFavPlaceType()) {
             FavPlaceType.ORIGIN -> {
                 binding.imageViewFavOrigin.startAnimation(rotation)
-                geoPoint = GeoPoint(taxiViewModel.getOriginMarker()?.position)
+                geoPoint = GeoPoint(taxiReservationViewModel.getOriginMarker()?.position)
             }
             FavPlaceType.DESTINATION -> {
                 binding.imageViewFavDestination.startAnimation(rotation)
-                geoPoint = GeoPoint(taxiViewModel.getDestinationMarker()?.position)
+                geoPoint = GeoPoint(taxiReservationViewModel.getDestinationMarker()?.position)
             }
             else -> {}
         }
         geoPoint?.let {
+            observeAddFavPlaceLiveData()
             val request = TaxiAddFavPlaceRequest(placeName, placeAddress, it.latitude, it.longitude)
-            taxiViewModel.requestAddFavPlace(request)
-                .observe(viewLifecycleOwner) { response ->
-                    binding.imageViewFavOrigin.clearAnimation()
-                    binding.imageViewFavDestination.clearAnimation()
-                    response?.let { data ->
-                        onError(EnumErrorType.UNKNOWN, data.message)
-                        if (!data.hasError) {
-                            data.data?.let { element ->
-                                taxiViewModel.addToFavPlaceList(element)
-                                initOriginSpinner()
-                                initDestinationSpinner()
-                            }
-                            when (taxiViewModel.getFavPlaceType()) {
-                                FavPlaceType.ORIGIN -> {
-                                    taxiViewModel.setOriginFavPlaceModel(data.data)
-                                    binding
-                                        .imageViewFavOrigin
-                                        .setImageResource(R.drawable.ic_favorite)
-                                }
-                                FavPlaceType.DESTINATION -> {
-                                    taxiViewModel.setDestinationFavPlaceModel(data.data)
-                                    binding
-                                        .imageViewFavDestination
-                                        .setImageResource(R.drawable.ic_favorite)
-                                }
-                                else -> {}
-                            }
-                        }
-                    }
-                }
+            taxiReservationViewModel.requestAddFavPlace(request)
         }
 
     }
@@ -805,10 +780,22 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- showRemoveFromFavPlaceDialog
 
 
+    //---------------------------------------------------------------------------------------------- observeRemoveFavPlaceLiveData
+    private fun observeRemoveFavPlaceLiveData() {
+        taxiReservationViewModel.removeFavPlaceLiveData.removeObservers(viewLifecycleOwner)
+        taxiReservationViewModel.removeFavPlaceLiveData.observe(viewLifecycleOwner) {
+            initOriginSpinner()
+            initDestinationSpinner()
+        }
+    }
+    //---------------------------------------------------------------------------------------------- observeRemoveFavPlaceLiveData
+
+
+
     //---------------------------------------------------------------------------------------------- requestRemoveFavPlace
     private fun requestRemoveFavPlace(id: Int) {
         val rotation = AnimationUtils.loadAnimation(requireContext(), R.anim.rotate_repeat)
-        when (taxiViewModel.getFavPlaceType()) {
+        when (taxiReservationViewModel.getFavPlaceType()) {
             FavPlaceType.ORIGIN -> {
                 binding.imageViewFavOrigin.startAnimation(rotation)
             }
@@ -817,24 +804,8 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
             }
             else -> {}
         }
-        taxiViewModel.requestDeleteFavPlace(id)
-            .observe(viewLifecycleOwner) { response ->
-                binding.imageViewFavOrigin.clearAnimation()
-                binding.imageViewFavDestination.clearAnimation()
-                response?.let { it ->
-                    onError(EnumErrorType.UNKNOWN, it.message)
-                    if (!it.hasError) {
-                        when (taxiViewModel.getFavPlaceType()) {
-                            FavPlaceType.ORIGIN -> removeOriginMarker()
-                            FavPlaceType.DESTINATION -> removeDestinationMarker()
-                            else -> {}
-                        }
-                        taxiViewModel.removeItemInFavPlace(id)
-                        initOriginSpinner()
-                        initDestinationSpinner()
-                    }
-                }
-            }
+        observeRemoveFavPlaceLiveData()
+        taxiReservationViewModel.requestDeleteFavPlace(id)
     }
     //---------------------------------------------------------------------------------------------- requestRemoveFavPlace
 
@@ -853,39 +824,44 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- showDialogSearchAddress
 
 
+    //---------------------------------------------------------------------------------------------- observeSendRequestLiveData
+    private fun observeSendRequestLiveData() {
+        taxiReservationViewModel.sendRequestLiveData.removeObservers(viewLifecycleOwner)
+        taxiReservationViewModel.sendRequestLiveData.observe(viewLifecycleOwner) {
+            backClick.isEnabled = false
+            activity?.onBackPressedDispatcher?.onBackPressed()
+        }
+    }
+    //---------------------------------------------------------------------------------------------- observeSendRequestLiveData
+
+
+
     //---------------------------------------------------------------------------------------------- requestTaxi
     private fun requestTaxi() {
         hideKeyboard()
-        if (checkValueBeforeRequest() && taxiViewModel.loadingLiveDate.value == false) {
+        if (checkValueBeforeRequest() && !binding.buttonSendRequest.isLoading) {
             val passenger = passengersAdapter.getList().map { userInfoEntity -> userInfoEntity.id }
-            val user = userViewModel.getUser()
+            val user = taxiReservationViewModel.getUser()
             val request = TaxiRequestModel(
-                taxiViewModel.getEnumTaxiRequest(),
+                taxiReservationViewModel.getEnumTaxiRequest(),
                 binding.buttonDepartureDate.text.toString(),
                 binding.buttonDepartureTime.text.toString(),
                 binding.buttonReturnDate.text.toString(),
                 binding.buttonReturnTime.text.toString(),
-                taxiViewModel.getOriginMarker()!!.position.latitude,
-                taxiViewModel.getOriginMarker()!!.position.longitude,
+                taxiReservationViewModel.getOriginMarker()!!.position.latitude,
+                taxiReservationViewModel.getOriginMarker()!!.position.longitude,
                 binding.textViewOrigin.text.toString(),
-                taxiViewModel.getDestinationMarker()!!.position.latitude,
-                taxiViewModel.getDestinationMarker()!!.position.longitude,
+                taxiReservationViewModel.getDestinationMarker()!!.position.latitude,
+                taxiReservationViewModel.getDestinationMarker()!!.position.longitude,
                 binding.textViewDestination.text.toString(),
                 passenger,
                 binding.editTextReason.text.toString(),
                 user?.companyCode,
                 user?.personnelJobKeyCode
             )
-            taxiViewModel.loadingLiveDate.value = true
-            taxiViewModel.requestTaxi(request)
-                .observe(viewLifecycleOwner) { response ->
-                    taxiViewModel.loadingLiveDate.value = false
-                    response?.let {
-                        backClick.isEnabled = false
-                        onError(EnumErrorType.UNKNOWN, response.message)
-                        activity?.onBackPressedDispatcher?.onBackPressed()
-                    }
-                }
+            binding.buttonSendRequest.startLoading(getString(R.string.bePatient))
+            observeSendRequestLiveData()
+            taxiReservationViewModel.requestTaxi(request)
         }
     }
     //---------------------------------------------------------------------------------------------- requestTaxi
@@ -897,42 +873,42 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
         if (context == null)
             return false
 
-        if (taxiViewModel.getOriginMarker() == null) {
-            onError(EnumErrorType.UNKNOWN, getString(R.string.pleaseChooseOriginLocation))
+        if (taxiReservationViewModel.getOriginMarker() == null) {
+            showMessage(getString(R.string.pleaseChooseOriginLocation))
             return false
         }
 
-        if (taxiViewModel.getDestinationMarker() == null) {
-            onError(EnumErrorType.UNKNOWN, getString(R.string.pleaseChooseDestinationLocation))
+        if (taxiReservationViewModel.getDestinationMarker() == null) {
+            showMessage(getString(R.string.pleaseChooseDestinationLocation))
             return false
         }
 
         if (binding.buttonDepartureDate.text.toString().isEmpty()) {
-            onError(EnumErrorType.UNKNOWN, getString(R.string.selectTheDepartureDate))
+            showMessage(getString(R.string.selectTheDepartureDate))
             return false
         }
 
         if (binding.buttonDepartureTime.text.toString().isEmpty()) {
-            onError(EnumErrorType.UNKNOWN, getString(R.string.selectTheDepartureTime))
+            showMessage(getString(R.string.selectTheDepartureTime))
             return false
         }
 
-        if (taxiViewModel.getTimePickMode() == ZarTimePicker.PickerMode.RETURNING) {
+        if (taxiReservationViewModel.getTimePickMode() == ZarTimePicker.PickerMode.RETURNING) {
 
             if (binding.buttonReturnDate.text.toString().isEmpty()) {
-                onError(EnumErrorType.UNKNOWN, getString(R.string.selectTheReturnDate))
+                showMessage(getString(R.string.selectTheReturnDate))
                 return false
             }
 
             if (binding.buttonReturnTime.text.toString().isEmpty()) {
-                onError(EnumErrorType.UNKNOWN, getString(R.string.selectTheReturnTime))
+                showMessage(getString(R.string.selectTheReturnTime))
                 return false
             }
 
         }
 
         if (passengersAdapter.getList().isEmpty()) {
-            onError(EnumErrorType.UNKNOWN, getString(R.string.pleaseSelectPassenger))
+            showMessage(getString(R.string.pleaseSelectPassenger))
             return false
         }
 
@@ -974,6 +950,10 @@ class TaxiReservationFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- onDestroyView
     override fun onDestroyView() {
         super.onDestroyView()
+        taxiReservationViewModel.addFavPlaceLiveData.removeObservers(viewLifecycleOwner)
+        taxiReservationViewModel.setFavPlaceLiveData.removeObservers(viewLifecycleOwner)
+        taxiReservationViewModel.removeFavPlaceLiveData.removeObservers(viewLifecycleOwner)
+        taxiReservationViewModel.errorLiveDate.removeObservers(viewLifecycleOwner)
         binding.mapView.onPause()
         _binding = null
     }

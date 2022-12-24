@@ -8,16 +8,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
-import com.zar.core.enums.EnumAuthorizationType
-import com.zar.core.enums.EnumErrorType
-import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
+import com.zar.core.enums.EnumApiError
 import com.zar.core.tools.loadings.LoadingManager
 import com.zarholding.zar.model.enum.EnumAdminTaxiType
 import com.zarholding.zar.model.enum.EnumTaxiRequestStatus
 import com.zarholding.zar.model.request.TaxiChangeStatusRequest
 import com.zarholding.zar.model.response.taxi.AdminTaxiRequestModel
 import com.zarholding.zar.utility.CompanionValues
-import com.zarholding.zar.utility.UnAuthorizationManager
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.view.dialog.ConfirmDialog
 import com.zarholding.zar.view.dialog.RejectReasonDialog
@@ -32,18 +29,15 @@ import zar.databinding.FragmentAdminTaxiListBinding
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AdminTaxiListFragment : Fragment(), RemoteErrorEmitter {
+class AdminTaxiListFragment : Fragment(){
+
+    @Inject
+    lateinit var loadingManager: LoadingManager
 
     private var _binding: FragmentAdminTaxiListBinding? = null
     private val binding get() = _binding!!
 
     private val adminTaxiListViewModel: AdminTaxiListViewModel by viewModels()
-
-    @Inject
-    lateinit var unAuthorizationManager: UnAuthorizationManager
-
-    @Inject
-    lateinit var loadingManager: LoadingManager
 
 
     //---------------------------------------------------------------------------------------------- onCreateView
@@ -51,7 +45,6 @@ class AdminTaxiListFragment : Fragment(), RemoteErrorEmitter {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        MainActivity.remoteErrorEmitter = this
         _binding = FragmentAdminTaxiListBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -73,8 +66,8 @@ class AdminTaxiListFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- onViewCreated
 
 
-    //---------------------------------------------------------------------------------------------- onError
-    override fun onError(errorType: EnumErrorType, message: String) {
+    //---------------------------------------------------------------------------------------------- showMessage
+    private fun showMessage(message: String) {
         val snack = Snackbar.make(binding.constraintLayoutParent, message, 5 * 1000)
         snack.setBackgroundTint(resources.getColor(R.color.primaryColor, context?.theme))
         snack.setTextColor(resources.getColor(R.color.textViewColor3, context?.theme))
@@ -82,30 +75,42 @@ class AdminTaxiListFragment : Fragment(), RemoteErrorEmitter {
         snack.setActionTextColor(resources.getColor(R.color.textViewColor1, context?.theme))
         snack.show()
     }
-    //---------------------------------------------------------------------------------------------- onError
+    //---------------------------------------------------------------------------------------------- showMessage
 
 
-    //---------------------------------------------------------------------------------------------- unAuthorization
-    override fun unAuthorization(type: EnumAuthorizationType, message: String) {
-        unAuthorizationManager.handel(activity, type, message, binding.constraintLayoutParent)
+    //---------------------------------------------------------------------------------------------- observeLoginLiveDate
+    private fun observeErrorLiveDate() {
+        adminTaxiListViewModel.errorLiveDate.removeObservers(viewLifecycleOwner)
+        adminTaxiListViewModel.errorLiveDate.observe(viewLifecycleOwner) {
+            showMessage(it.message)
+            when(it.type) {
+                EnumApiError.UnAuthorization -> (activity as MainActivity?)?.gotoFirstFragment()
+                else -> {}
+            }
+        }
     }
-    //---------------------------------------------------------------------------------------------- unAuthorization
+    //---------------------------------------------------------------------------------------------- observeLoginLiveDate
+
+
+
+    //---------------------------------------------------------------------------------------------- observeTaxiRequestListLiveData
+    private fun observeTaxiRequestListLiveData() {
+        adminTaxiListViewModel.taxiRequestListLiveData.removeObservers(viewLifecycleOwner)
+        adminTaxiListViewModel.taxiRequestListLiveData.observe(viewLifecycleOwner) {
+            setAdapter(it)
+        }
+    }
+    //---------------------------------------------------------------------------------------------- observeTaxiRequestListLiveData
+
 
 
     //---------------------------------------------------------------------------------------------- getTaxiList
     private fun getTaxiList() {
         adminTaxiListViewModel.getEnumAdminTaxiType()?.let {
             startLoading()
-            adminTaxiListViewModel.getTaxiList().observe(viewLifecycleOwner) {
-                loadingManager.stopLoadingRecycler()
-                it?.let { response ->
-                    if (response.hasError)
-                        onError(EnumErrorType.UNKNOWN, response.message)
-                    else response.data?.let { items ->
-                        setAdapter(items)
-                    }
-                }
-            }
+            observeErrorLiveDate()
+            observeTaxiRequestListLiveData()
+            adminTaxiListViewModel.getTaxiList()
         }
     }
     //---------------------------------------------------------------------------------------------- getTaxiList
@@ -213,14 +218,6 @@ class AdminTaxiListFragment : Fragment(), RemoteErrorEmitter {
     private fun requestChangeStatusOfTaxiRequests(request: TaxiChangeStatusRequest) {
         startLoading()
         adminTaxiListViewModel.requestChangeStatusOfTaxiRequests(request)
-            .observe(viewLifecycleOwner) {
-                loadingManager.stopLoadingRecycler()
-                it?.let { response ->
-                    onError(EnumErrorType.UNKNOWN, response.message)
-                    getTaxiList()
-                }
-
-            }
     }
     //---------------------------------------------------------------------------------------------- requestChangeStatusOfTaxiRequests
 
@@ -235,6 +232,17 @@ class AdminTaxiListFragment : Fragment(), RemoteErrorEmitter {
         )
     }
     //---------------------------------------------------------------------------------------------- startLoading
+
+
+    //---------------------------------------------------------------------------------------------- onDestroyView
+    override fun onDestroyView() {
+        super.onDestroyView()
+        adminTaxiListViewModel.taxiRequestListLiveData.removeObservers(viewLifecycleOwner)
+        adminTaxiListViewModel.errorLiveDate.removeObservers(viewLifecycleOwner)
+        _binding = null
+    }
+    //---------------------------------------------------------------------------------------------- onDestroyView
+
 
 
 }

@@ -16,19 +16,15 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
-import com.zar.core.enums.EnumAuthorizationType
-import com.zar.core.enums.EnumErrorType
-import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
+import com.zar.core.enums.EnumApiError
 import com.zar.core.tools.loadings.LoadingManager
 import com.zar.core.tools.manager.DialogManager
 import com.zar.core.tools.manager.ThemeManager
 import com.zarholding.zar.model.enum.EnumTripStatus
 import com.zarholding.zar.model.other.ShowImageModel
-import com.zarholding.zar.model.request.RequestRegisterStationModel
 import com.zarholding.zar.model.response.trip.TripModel
 import com.zarholding.zar.utility.CompanionValues
 import com.zarholding.zar.utility.OsmManager
-import com.zarholding.zar.utility.UnAuthorizationManager
 import com.zarholding.zar.utility.signalr.RemoteSignalREmitter
 import com.zarholding.zar.utility.signalr.SignalRListener
 import com.zarholding.zar.view.activity.MainActivity
@@ -39,7 +35,7 @@ import com.zarholding.zar.view.adapter.SpinnerStringAdapter
 import com.zarholding.zar.view.dialog.ConfirmDialog
 import com.zarholding.zar.view.recycler.holder.MyServiceHolder
 import com.zarholding.zar.view.recycler.holder.ServiceHolder
-import com.zarholding.zar.viewmodel.TripViewModel
+import com.zarholding.zar.viewmodel.BusServiceViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -56,26 +52,26 @@ import javax.inject.Inject
  */
 
 @AndroidEntryPoint
-class ServiceFragment : Fragment(), RemoteErrorEmitter {
-
-    private var _binding: FragmentServiceBinding? = null
-    private val binding get() = _binding!!
-
-    @Inject
-    lateinit var unAuthorizationManager: UnAuthorizationManager
+class BusServiceFragment : Fragment(){
 
     @Inject
     lateinit var loadingManager : LoadingManager
 
-    private val tripViewModel: TripViewModel by viewModels()
+    private var _binding: FragmentServiceBinding? = null
+    private val binding get() = _binding!!
+
+    private val busServiceViewModel : BusServiceViewModel by viewModels()
+
+
     private lateinit var osmManager: OsmManager
-    private var tripList: List<TripModel>? = null
+
     private var markerCar: Marker? = null
     private var job : Job? = null
     private var signalRListener: SignalRListener? = null
     private var moveMap = false
     private var tripId = 0
     private var stationId = 0
+    private var selectedTripType = TripSelect.ALL
 
     @Inject
     lateinit var themeManagers: ThemeManager
@@ -93,7 +89,6 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        MainActivity.remoteErrorEmitter = this
         _binding = FragmentServiceBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -107,14 +102,16 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
         osmManager = OsmManager(binding.mapView)
         osmManager.mapInitialize(themeManagers.applicationTheme())
         setListener()
-        requestGetAllTrips(TripSelect.ALL)
+        selectedTripType = TripSelect.ALL
+        requestGetAllTrips()
     }
     //---------------------------------------------------------------------------------------------- onViewCreated
 
 
-    //---------------------------------------------------------------------------------------------- onError
-    override fun onError(errorType: EnumErrorType, message: String) {
-        val snack = Snackbar.make(binding.constraintLayoutParent, message, 5 * 1000)
+
+    //---------------------------------------------------------------------------------------------- showMessage
+    private fun showMessage(message: String) {
+        val snack = Snackbar.make(binding.constraintLayoutParent, message, 10 * 1000)
         snack.setBackgroundTint(resources.getColor(R.color.primaryColor, requireContext().theme))
         snack.setTextColor(resources.getColor(R.color.textViewColor3, requireContext().theme))
         snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
@@ -122,15 +119,8 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
         snack.show()
         loadingManager.stopLoadingRecycler()
     }
-    //---------------------------------------------------------------------------------------------- onError
+    //---------------------------------------------------------------------------------------------- showMessage
 
-
-    //---------------------------------------------------------------------------------------------- unAuthorization
-    override fun unAuthorization(type: EnumAuthorizationType, message: String) {
-        loadingManager.stopLoadingRecycler()
-        unAuthorizationManager.handel(activity,type,message,binding.constraintLayoutParent)
-    }
-    //---------------------------------------------------------------------------------------------- unAuthorization
 
 
     //---------------------------------------------------------------------------------------------- setListener
@@ -150,6 +140,21 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- setListener
 
 
+    //---------------------------------------------------------------------------------------------- observeLoginLiveDate
+    private fun observeErrorLiveDate() {
+        busServiceViewModel.errorLiveDate.removeObservers(viewLifecycleOwner)
+        busServiceViewModel.errorLiveDate.observe(viewLifecycleOwner) {
+            showMessage(it.message)
+            when(it.type) {
+                EnumApiError.UnAuthorization -> (activity as MainActivity?)?.gotoFirstFragment()
+                else -> {}
+            }
+        }
+    }
+    //---------------------------------------------------------------------------------------------- observeLoginLiveDate
+
+
+
     //---------------------------------------------------------------------------------------------- startLoading
     private fun startLoading() {
         loadingManager.setRecyclerLoading(
@@ -165,14 +170,13 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- selectMyService
     private fun selectMyService() {
         osmManager.clearOverlays()
-        tripList?.let {
+        busServiceViewModel.getMyTripList()?.let {
             binding.textViewMyService.setBackgroundResource(R.drawable.drawable_trip_select_button)
             binding.textViewListService.setBackgroundResource(R.drawable.drawable_trip_unselect_button)
-            val myService = tripList!!.filter { it.myStationTripId != 0 }
-            if (myService.isNotEmpty())
-                setMyServiceAdapter(myService)
+            if (it.isNotEmpty())
+                setMyServiceAdapter(it)
             else {
-                onError(EnumErrorType.UNKNOWN, getString(R.string.userServiceIsEmpty))
+                showMessage(getString(R.string.userServiceIsEmpty))
                 selectListAllServices()
             }
         }
@@ -183,35 +187,36 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- selectListAllServices
     private fun selectListAllServices() {
         osmManager.clearOverlays()
-        tripList?.let {
+        busServiceViewModel.getAllTripList()?.let {
             binding.textViewListService.setBackgroundResource(R.drawable.drawable_trip_select_button)
             binding.textViewMyService.setBackgroundResource(R.drawable.drawable_trip_unselect_button)
-            val myService = tripList!!.filter { it.myStationTripId == 0 }
-            setServiceAdapter(myService)
+            setServiceAdapter(it)
         }
     }
     //---------------------------------------------------------------------------------------------- selectListAllServices
 
 
-    //---------------------------------------------------------------------------------------------- requestGetAllTrips
-    private fun requestGetAllTrips(tripSelect: TripSelect) {
-        startLoading()
-        tripViewModel.requestGetAllTrips()
-            .observe(viewLifecycleOwner) { response ->
-                loadingManager.stopLoadingRecycler()
-                response?.let {
-                    if (it.hasError)
-                        onError(EnumErrorType.UNKNOWN, it.message)
-                    else
-                        it.data?.let { trips ->
-                            tripList = trips
-                            when (tripSelect) {
-                                TripSelect.ALL -> selectListAllServices()
-                                TripSelect.MY -> selectMyService()
-                            }
-                        }
-                }
+
+    //---------------------------------------------------------------------------------------------- observeTripModelLiveData
+    private fun observeTripModelLiveData() {
+        busServiceViewModel.tripModelLiveData.removeObservers(viewLifecycleOwner)
+        busServiceViewModel.tripModelLiveData.observe(viewLifecycleOwner) {
+            when (selectedTripType) {
+                TripSelect.ALL -> selectListAllServices()
+                TripSelect.MY -> selectMyService()
             }
+        }
+    }
+    //---------------------------------------------------------------------------------------------- observeTripModelLiveData
+
+
+
+    //---------------------------------------------------------------------------------------------- requestGetAllTrips
+    private fun requestGetAllTrips() {
+        startLoading()
+        observeTripModelLiveData()
+        observeErrorLiveDate()
+        busServiceViewModel.requestGetAllTrips()
     }
     //---------------------------------------------------------------------------------------------- requestGetAllTrips
 
@@ -327,16 +332,8 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- requestRegisterStation
     private fun requestRegisterStation(tripId: Int, stationId: Int) {
         startLoading()
-        val requestModel = RequestRegisterStationModel(tripId, stationId)
-        tripViewModel.requestRegisterStation(requestModel)
-            .observe(viewLifecycleOwner) { response ->
-                loadingManager.stopLoadingRecycler()
-                response?.let {
-                    onError(EnumErrorType.UNKNOWN, it.message)
-                    if (!it.hasError)
-                        requestGetAllTrips(TripSelect.MY)
-                }
-            }
+        selectedTripType = TripSelect.MY
+        busServiceViewModel.requestRegisterStation(tripId, stationId)
     }
     //---------------------------------------------------------------------------------------------- requestRegisterStation
 
@@ -361,15 +358,8 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- requestDeleteRegisterStation
     private fun requestDeleteRegisterStation(stationId: Int) {
         startLoading()
-        tripViewModel.requestDeleteRegisteredStation(stationId)
-            .observe(viewLifecycleOwner) { response ->
-                loadingManager.stopLoadingRecycler()
-                response?.let {
-                    onError(EnumErrorType.UNKNOWN, it.message)
-                    if (!it.hasError)
-                        requestGetAllTrips(TripSelect.MY)
-                }
-            }
+        selectedTripType = TripSelect.MY
+        busServiceViewModel.requestDeleteRegisteredStation(stationId)
     }
     //---------------------------------------------------------------------------------------------- requestDeleteRegisterStation
 
@@ -440,7 +430,7 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
             delay(2000)
             signalRListener = SignalRListener.getInstance(
                 remote,
-                tripViewModel.getToken()
+                busServiceViewModel.getToken()
             )
             if (!signalRListener!!.isConnection)
                 signalRListener!!.startConnection()
@@ -496,6 +486,8 @@ class ServiceFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- onDestroyView
     override fun onDestroyView() {
         super.onDestroyView()
+        busServiceViewModel.tripModelLiveData.removeObservers(viewLifecycleOwner)
+        busServiceViewModel.errorLiveDate.removeObservers(viewLifecycleOwner)
         signalRListener?.let {
             if (it.isConnection)
                 it.stopConnection()

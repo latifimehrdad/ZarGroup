@@ -10,12 +10,9 @@ import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
-import com.zar.core.enums.EnumErrorType
 import com.zar.core.tools.BiometricTools
-import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zar.core.tools.manager.ThemeManager
 import com.zarholding.zar.utility.CompanionValues
-import com.zarholding.zar.view.activity.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
@@ -30,7 +27,7 @@ import javax.inject.Inject
  */
 
 @AndroidEntryPoint
-class SettingFragment : Fragment(), RemoteErrorEmitter {
+class SettingFragment : Fragment(){
 
     private var _binding: FragmentSettingBinding? = null
     private val binding get() = _binding!!
@@ -49,7 +46,6 @@ class SettingFragment : Fragment(), RemoteErrorEmitter {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        MainActivity.remoteErrorEmitter = this
         _binding = FragmentSettingBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -68,7 +64,7 @@ class SettingFragment : Fragment(), RemoteErrorEmitter {
 
 
     //---------------------------------------------------------------------------------------------- onError
-    override fun onError(errorType: EnumErrorType, message: String) {
+    fun onError(message: String) {
         val snack = Snackbar.make(binding.constraintLayoutParent, message, 5 * 1000)
         snack.setBackgroundTint(resources.getColor(R.color.primaryColor, requireContext().theme))
         snack.setTextColor(resources.getColor(R.color.textViewColor3, requireContext().theme))
@@ -127,7 +123,7 @@ class SettingFragment : Fragment(), RemoteErrorEmitter {
             object : BiometricPrompt.AuthenticationCallback() {
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                     super.onAuthenticationError(errorCode, errString)
-                    onError(EnumErrorType.UNKNOWN, getString(R.string.onAuthenticationError))
+                    onError(getString(R.string.onAuthenticationError))
                     binding
                         .layoutActiveFingerPrint
                         .switchActive
@@ -153,7 +149,7 @@ class SettingFragment : Fragment(), RemoteErrorEmitter {
                     sharedPreferences.edit()
                         .putBoolean(CompanionValues.biometric, biometric)
                         .apply()
-                    onError(EnumErrorType.UNKNOWN, getString(R.string.actionIsDone))
+                    onError(getString(R.string.actionIsDone))
                 }
             })
         biometricTools.checkDeviceHasBiometric(biometricPrompt)

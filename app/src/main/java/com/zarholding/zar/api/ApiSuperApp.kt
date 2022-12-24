@@ -10,6 +10,7 @@ import com.zarholding.zar.model.response.trip.*
 import com.zarholding.zar.model.response.user.UserInfoResponseModel
 import com.zarholding.zar.model.response.user.UserPermissionResponseModel
 import com.zarholding.zar.model.response.user.UserResponseModel
+import retrofit2.Response
 import retrofit2.http.*
 
 
@@ -25,32 +26,32 @@ interface ApiSuperApp {
     }
 
     @POST("${v1}/LogIn/login-users")
-    suspend fun requestLogin(@Body login : LoginRequestModel) : LoginResponseModel
+    suspend fun requestLogin(@Body login : LoginRequestModel) : Response<LoginResponseModel>
 
 
     @GET("${v1}/LogIn/login-userInfo")
     suspend fun requestUserInfo(
         @Header("Authorization") token : String
-    ) : UserInfoResponseModel
+    ) : Response<UserInfoResponseModel>
 
 
     @GET("${v1}/LogIn/get-persmissions")
     suspend fun requestUserPermission(
         @Header("Authorization") token : String
-    ) : UserPermissionResponseModel
+    ) : Response<UserPermissionResponseModel>
 
 
     @POST("${v1}/LogIn/get-filter-users")
     suspend fun requestGetUser(
         @Body request : FilterUserRequestModel,
         @Header("Authorization") token : String
-    ) : UserResponseModel
+    ) : Response<UserResponseModel>
 
 
     @GET("$v1/PersonnelsRegisteredStation/list-registered-trip")
     suspend fun requestGetAllTrips(
         @Header("Authorization") token : String
-    ) : TripResponseModel
+    ) : Response<TripResponseModel>
 
 
 
@@ -58,91 +59,91 @@ interface ApiSuperApp {
     suspend fun requestRegisterStation(
         @Body registerStationModel: RequestRegisterStationModel,
         @Header("Authorization") token : String
-    ) : RegisterStationResponseModel
+    ) : Response<RegisterStationResponseModel>
 
 
     @GET("$v1/PersonnelsRegisteredStation/delete-register-station/{id}")
     suspend fun requestDeleteRegisteredStation(
         @Path("id") id : Int,
         @Header("Authorization") token : String
-    ) : DeleteRegisteredStationResponseModel
+    ) : Response<DeleteRegisteredStationResponseModel>
 
 
     @POST("$v1/Article/list-articles")
     suspend fun requestGetArticles(
         @Body articleRequestModel: ArticleRequestModel,
         @Header("Authorization") token : String
-    ) : ArticleResponseModel
+    ) : Response<ArticleResponseModel>
 
 
     @GET("$v1/personnelsRegisteredStation/list-request-registered-trip")
     suspend fun requestGetTripRequestRegister(
         @Header("Authorization") token : String
-    ) : TripRequestRegisterResponseModel
+    ) : Response<TripRequestRegisterResponseModel>
 
 
     @POST("$v1/personnelsRegisteredStation/response-request-registered-trip")
     suspend fun requestConfirmAndRejectTripRequestRegister(
         @Body request : List<TripRequestRegisterStatusModel>,
         @Header("Authorization") token : String
-    ) : TripRequestRegisterStatusResponseModel
+    ) : Response<TripRequestRegisterStatusResponseModel>
 
 
     @GET("$v1/CarRequest/get-favoritelocations")
     suspend fun requestGetTaxiFavPlace(
         @Header("Authorization") token: String
-    ) : TaxiFavPlaceResponse
+    ) : Response<TaxiFavPlaceResponse>
 
 
     @POST("$v1/CarRequest/Add-favoritelocations")
     suspend fun requestAddFavPlace(
         @Body request : TaxiAddFavPlaceRequest,
         @Header("Authorization") token: String
-    ) : TaxiAddFavePlaceResponse
+    ) : Response<TaxiAddFavePlaceResponse>
 
 
     @GET("$v1/CarRequest/delete-favoritelocations/{id}")
     suspend fun requestDeleteFavPlace(
         @Path("id") id : Int,
         @Header("Authorization") token : String
-    ) : TaxiRemoveFavePlaceResponse
+    ) : Response<TaxiRemoveFavePlaceResponse>
 
 
     @POST("$v1/CarRequest/Add-carrequest")
     suspend fun requestTaxi(
         @Body request : TaxiRequestModel,
         @Header("Authorization") token : String
-    ) : TaxiRequestResponse
+    ) : Response<TaxiRequestResponse>
 
 
     @GET("$v1/CarRequest/get-mycarrequestlist")
     suspend fun requestMyTaxiRequestList(
         @Header("Authorization") token : String
-    ) : AdminTaxiRequestResponse
+    ) : Response<AdminTaxiRequestResponse>
 
 
     @GET("$v1/CarRequest/get-CarRequestlist")
     suspend fun requestTaxiList(
         @Header("Authorization") token : String
-    ) : AdminTaxiRequestResponse
+    ) : Response<AdminTaxiRequestResponse>
 
 
     @POST("$v1/CarRequest/responeCarRequest")
     suspend fun requestChangeStatusOfTaxiRequests(
         @Body request : TaxiChangeStatusRequest,
         @Header("Authorization") token : String
-    ) : TaxiRemoveFavePlaceResponse
+    ) : Response<TaxiRemoveFavePlaceResponse>
 
 
     @GET
     suspend fun requestGetAddress(
         @Url url : String
-    ) : AddressResponseModel
+    ) : Response<AddressResponseModel>
 
 
     @GET
     suspend fun requestGetSuggestionAddress(
         @Url url: String
-    ): List<AddressSuggestionModel>
+    ): Response<List<AddressSuggestionModel>>
 
 }

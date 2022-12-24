@@ -8,22 +8,15 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
-import com.zar.core.enums.EnumAuthorizationType
-import com.zar.core.enums.EnumErrorType
-import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
-import com.zarholding.zar.database.entity.RoleEntity
-import com.zarholding.zar.model.request.ArticleRequestModel
-import com.zarholding.zar.utility.UnAuthorizationManager
+import com.zar.core.enums.EnumApiError
 import com.zarholding.zar.view.activity.MainActivity
-import com.zarholding.zar.viewmodel.ArticleViewModel
-import com.zarholding.zar.viewmodel.UserViewModel
+import com.zarholding.zar.viewmodel.SplashViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import zar.R
 import zar.databinding.FragmentSplashBinding
-import javax.inject.Inject
 
 /**
  * Created by m-latifi on 11/8/2022.
@@ -31,16 +24,12 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class SplashFragment : Fragment(), RemoteErrorEmitter {
+class SplashFragment : Fragment() {
 
     private var _binding: FragmentSplashBinding? = null
     private val binding get() = _binding!!
 
-    private val userViewModel: UserViewModel by viewModels()
-    private val articleViewModel: ArticleViewModel by viewModels()
-
-    @Inject
-    lateinit var unAuthorizationManager: UnAuthorizationManager
+    private val splashViewModel : SplashViewModel by viewModels()
 
     private lateinit var job: Job
 
@@ -49,7 +38,6 @@ class SplashFragment : Fragment(), RemoteErrorEmitter {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        MainActivity.remoteErrorEmitter = this
         _binding = FragmentSplashBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -60,42 +48,32 @@ class SplashFragment : Fragment(), RemoteErrorEmitter {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner
-        binding.buttonReTry.visibility = View.GONE
-        binding.frameLayoutLogo.visibility = View.VISIBLE
         binding.buttonReTry.setOnClickListener { checkUserIsLogged() }
         checkUserIsLogged()
     }
     //---------------------------------------------------------------------------------------------- onViewCreated
 
 
-    //---------------------------------------------------------------------------------------------- onError
-    override fun onError(errorType: EnumErrorType, message: String) {
+    //---------------------------------------------------------------------------------------------- showMessage
+    private fun showMessage(message: String) {
         val snack = Snackbar.make(binding.constraintLayoutParent, message, 10 * 1000)
         snack.setBackgroundTint(resources.getColor(R.color.primaryColor, requireContext().theme))
         snack.setTextColor(resources.getColor(R.color.textViewColor3, requireContext().theme))
         snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
         snack.setActionTextColor(resources.getColor(R.color.textViewColor1, requireContext().theme))
         snack.show()
-        binding.buttonReTry.visibility = View.VISIBLE
-        binding.frameLayoutLogo.visibility = View.GONE
+        stopLoading()
     }
-    //---------------------------------------------------------------------------------------------- onError
-
-
-
-    //---------------------------------------------------------------------------------------------- unAuthorization
-    override fun unAuthorization(type: EnumAuthorizationType, message: String) {
-        unAuthorizationManager.handel(activity,type,message,binding.constraintLayoutParent)
-    }
-    //---------------------------------------------------------------------------------------------- unAuthorization
+    //---------------------------------------------------------------------------------------------- showMessage
 
 
 
     //---------------------------------------------------------------------------------------------- checkUserIsLogged
     private fun checkUserIsLogged() {
-        binding.buttonReTry.visibility = View.GONE
-        binding.frameLayoutLogo.visibility = View.VISIBLE
-        val token = userViewModel.getToken()
+        if (binding.buttonReTry.isLoading)
+            return
+
+        val token = splashViewModel.getToken()
         token?.let {
             gotoFragmentHome()
         } ?: gotoFragmentLogin()
@@ -118,139 +96,81 @@ class SplashFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- gotoFragmentHome
     private fun gotoFragmentHome() {
         job = CoroutineScope(IO).launch {
-            delay(1000)
             withContext(Main) {
-                requestUserInfo()
+                requestGetData()
             }
         }
     }
     //---------------------------------------------------------------------------------------------- gotoFragmentHome
 
 
-    //---------------------------------------------------------------------------------------------- requestUserInfo
-    private fun requestUserInfo() {
-        userViewModel.requestUserInfo()
-            .observe(viewLifecycleOwner) { response ->
-                response?.let { userInfo ->
-                    if (userInfo.hasError)
-                        onError(EnumErrorType.UNKNOWN, userInfo.message)
-                    else
-                        userInfo.data?.let {
-                            userViewModel.insertUserInfo(it)
-                            (activity as MainActivity).setUserInfo()
-                            requestUserPermission()
-                        } ?: run {
-                            onError(
-                                EnumErrorType.UNKNOWN,
-                                resources.getString(R.string.responseUserInfoIsEmpty)
-                            )
-                        }
-                }
+
+
+    //---------------------------------------------------------------------------------------------- observeLoginLiveDate
+    private fun observeErrorLiveDate() {
+        splashViewModel.errorLiveDate.removeObservers(viewLifecycleOwner)
+        splashViewModel.errorLiveDate.observe(viewLifecycleOwner) {
+            stopLoading()
+            showMessage(it.message)
+            when(it.type) {
+                EnumApiError.UnAuthorization -> (activity as MainActivity?)?.gotoFirstFragment()
+                else -> {}
             }
+        }
     }
-    //---------------------------------------------------------------------------------------------- requestUserInfo
+    //---------------------------------------------------------------------------------------------- observeLoginLiveDate
 
 
 
-    //---------------------------------------------------------------------------------------------- requestUserPermission
-    private fun requestUserPermission() {
-        userViewModel.requestUserPermission()
-            .observe(viewLifecycleOwner) { response ->
-                response?.let { permissions ->
-                    if (permissions.hasError)
-                        onError(EnumErrorType.UNKNOWN, permissions.message)
-                    else
-                        permissions.data?.let { list ->
-                            val roles : List<RoleEntity> = list.map { RoleEntity(it) }
-                            userViewModel.insertUserRole(roles)
-                            requestGetSlideShow()
-                        } ?: run {
-                            requestGetSlideShow()
-                        }
-                } ?: run {
-                    requestGetSlideShow()
-                }
-            }
+    //---------------------------------------------------------------------------------------------- observeSuccessLiveDataLiveData
+    private fun observeSuccessLiveDataLiveData() {
+        splashViewModel.successLiveData.removeObservers(viewLifecycleOwner)
+        splashViewModel.successLiveData.observe(viewLifecycleOwner){
+            (activity as MainActivity).setUserInfo()
+            if (it)
+                findNavController()
+                    .navigate(R.id.action_splashFragment_to_HomeFragment)
+        }
     }
-    //---------------------------------------------------------------------------------------------- requestUserPermission
+    //---------------------------------------------------------------------------------------------- observeSuccessLiveDataLiveData
 
 
 
-    //---------------------------------------------------------------------------------------------- requestGetSlideShow
-    private fun requestGetSlideShow() {
-        val request = ArticleRequestModel(
-            1,
-            100,
-            "",
-            false,
-            "SlideShow"
-        )
-        articleViewModel.requestGetArticles(request)
-            .observe(viewLifecycleOwner) { response ->
-                response?.let { articleModels ->
-                    if (articleModels.hasError)
-                        onError(EnumErrorType.UNKNOWN, articleModels.message)
-                    else
-                        articleModels.data?.let { data ->
-                            articleViewModel.insertArticle(data.items)
-                            requestGetArticle()
-                        } ?: run {
-                            onError(
-                                EnumErrorType.UNKNOWN,
-                                resources.getString(R.string.responseSlideIsEmpty)
-                            )
-                        }
-                } ?: run {
-                    onError(
-                        EnumErrorType.UNKNOWN,
-                        resources.getString(R.string.responseSlideIsEmpty)
-                    )
-                }
-            }
+    //---------------------------------------------------------------------------------------------- requestGetData
+    private fun requestGetData() {
+        startLoading()
+        observeErrorLiveDate()
+        observeSuccessLiveDataLiveData()
+        splashViewModel.requestGetData()
     }
-    //---------------------------------------------------------------------------------------------- requestGetSlideShow
+    //---------------------------------------------------------------------------------------------- requestGetData
 
 
-    //---------------------------------------------------------------------------------------------- requestGetArticle
-    private fun requestGetArticle() {
-        val request = ArticleRequestModel(
-            1,
-            100,
-            "",
-            false,
-            "Article"
-        )
-        articleViewModel.requestGetArticles(request)
-            .observe(viewLifecycleOwner) { response ->
-                response?.let { articleModels ->
-                    if (articleModels.hasError)
-                        onError(EnumErrorType.UNKNOWN, articleModels.message)
-                    else
-                        articleModels.data?.let { data ->
-                            articleViewModel.insertArticle(data.items)
-                            findNavController()
-                                .navigate(R.id.action_splashFragment_to_HomeFragment)
-                        } ?: run {
-                            onError(
-                                EnumErrorType.UNKNOWN,
-                                resources.getString(R.string.responseArticleIsEmpty)
-                            )
-                        }
-                } ?: run {
-                    onError(
-                        EnumErrorType.UNKNOWN,
-                        resources.getString(R.string.responseArticleIsEmpty)
-                    )
-                }
-            }
+
+
+    //---------------------------------------------------------------------------------------------- startLoading
+    private fun startLoading() {
+        binding.buttonReTry.visibility = View.GONE
+        binding.buttonReTry.startLoading("")
     }
-    //---------------------------------------------------------------------------------------------- requestGetArticle
+    //---------------------------------------------------------------------------------------------- startLoading
+
+
+
+    //---------------------------------------------------------------------------------------------- stopLoading
+    private fun stopLoading() {
+        binding.buttonReTry.stopLoading()
+        binding.buttonReTry.visibility = View.VISIBLE
+    }
+    //---------------------------------------------------------------------------------------------- stopLoading
 
 
     //---------------------------------------------------------------------------------------------- onDestroyView
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()
+        splashViewModel.errorLiveDate.removeObservers(viewLifecycleOwner)
+        splashViewModel.successLiveData.removeObservers(viewLifecycleOwner)
         _binding = null
     }
     //---------------------------------------------------------------------------------------------- onDestroyView

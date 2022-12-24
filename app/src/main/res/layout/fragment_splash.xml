@@ -27,7 +27,7 @@
 
         </FrameLayout>
 
-        <com.google.android.material.button.MaterialButton
+        <com.zarholding.zar.view.custom.ZarButton
             android:id="@+id/buttonReTry"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -42,7 +42,8 @@
             android:fontFamily="@font/kalameh_semibold"
             app:cornerRadius="@dimen/_5sdp"
             android:textColor="@color/textViewColor2"
-            android:text="@string/reTry" />
+            android:text="@string/reTry"
+            android:visibility="gone"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

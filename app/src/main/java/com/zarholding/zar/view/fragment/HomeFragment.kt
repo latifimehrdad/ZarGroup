@@ -10,16 +10,12 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
-import com.zar.core.enums.EnumAuthorizationType
-import com.zar.core.enums.EnumErrorType
-import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zar.core.tools.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType
 import com.zar.core.tools.autoimageslider.SliderAnimations
 import com.zar.core.tools.autoimageslider.SliderView
 import com.zarholding.zar.database.entity.ArticleEntity
 import com.zarholding.zar.model.enum.EnumArticleType
 import com.zarholding.zar.model.other.AppModel
-import com.zarholding.zar.utility.UnAuthorizationManager
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.view.dialog.ArticleDetailDialog
 import com.zarholding.zar.view.dialog.ConfirmDialog
@@ -29,33 +25,29 @@ import com.zarholding.zar.view.recycler.adapter.NewsAdapter
 import com.zarholding.zar.view.recycler.adapter.RequestAdapter
 import com.zarholding.zar.view.recycler.holder.AppItemHolder
 import com.zarholding.zar.view.recycler.holder.NewsItemHolder
-import com.zarholding.zar.viewmodel.ArticleViewModel
+import com.zarholding.zar.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import zar.R
 import zar.databinding.FragmentHomeBinding
-import javax.inject.Inject
 
 /**
  * Created by m-latifi on 11/13/2022.
  */
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(), RemoteErrorEmitter {
+class HomeFragment : Fragment(){
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    private val articleViewModel: ArticleViewModel by viewModels()
+    private val homeViewModel: HomeViewModel by viewModels()
 
-    @Inject
-    lateinit var unAuthorizationManager: UnAuthorizationManager
 
     //---------------------------------------------------------------------------------------------- onCreateView
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        MainActivity.remoteErrorEmitter = this
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -76,7 +68,7 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
 
 
     //---------------------------------------------------------------------------------------------- onError
-    override fun onError(errorType: EnumErrorType, message: String) {
+    fun onError(message: String) {
         val snack = Snackbar.make(binding.constraintLayoutParent, message, 10 * 1000)
         snack.setBackgroundTint(resources.getColor(R.color.primaryColor, requireContext().theme))
         snack.setTextColor(resources.getColor(R.color.textViewColor3, requireContext().theme))
@@ -85,14 +77,6 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
         snack.show()
     }
     //---------------------------------------------------------------------------------------------- onError
-
-
-
-    //---------------------------------------------------------------------------------------------- unAuthorization
-    override fun unAuthorization(type: EnumAuthorizationType, message: String) {
-        unAuthorizationManager.handel(activity,type,message,binding.constraintLayoutParent)
-    }
-    //---------------------------------------------------------------------------------------------- unAuthorization
 
 
 
@@ -127,7 +111,7 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
             AppModel(
                 R.drawable.icon_trip,
                 getString(R.string.tripAndMap),
-                R.id.action_HomeFragment_to_ServiceFragment
+                R.id.action_HomeFragment_to_BusServiceFragment
             )
         )
         apps.add(
@@ -169,7 +153,7 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- getBannerFromDB
     private fun getBannerFromDB() {
-        val banners = articleViewModel.getArticles(EnumArticleType.SlideShow)
+        val banners = homeViewModel.getArticles(EnumArticleType.SlideShow)
         setBannerSlider(banners)
     }
     //---------------------------------------------------------------------------------------------- getBannerFromDB
@@ -188,7 +172,7 @@ class HomeFragment : Fragment(), RemoteErrorEmitter {
 
     //---------------------------------------------------------------------------------------------- initNews
     private fun initNews() {
-        val news = articleViewModel.getArticles(EnumArticleType.Article)
+        val news = homeViewModel.getArticles(EnumArticleType.Article)
         setNewsAdapter(news)
     }
     //---------------------------------------------------------------------------------------------- initNews

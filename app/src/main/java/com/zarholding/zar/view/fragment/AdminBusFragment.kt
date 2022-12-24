@@ -8,20 +8,17 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
-import com.zar.core.enums.EnumAuthorizationType
-import com.zar.core.enums.EnumErrorType
-import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
+import com.zar.core.enums.EnumApiError
 import com.zar.core.tools.loadings.LoadingManager
 import com.zarholding.zar.model.enum.EnumTripStatus
 import com.zarholding.zar.model.request.TripRequestRegisterStatusModel
 import com.zarholding.zar.model.response.trip.TripRequestRegisterModel
-import com.zarholding.zar.utility.UnAuthorizationManager
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.view.dialog.ConfirmDialog
 import com.zarholding.zar.view.dialog.RejectReasonDialog
 import com.zarholding.zar.view.recycler.adapter.AdminBusAdapter
 import com.zarholding.zar.view.recycler.holder.AdminBusItemHolder
-import com.zarholding.zar.viewmodel.TripViewModel
+import com.zarholding.zar.viewmodel.AdminBusServiceViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.internal.filterList
 import zar.R
@@ -29,19 +26,16 @@ import zar.databinding.FragmentAdminBusBinding
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AdminBusFragment : Fragment(), RemoteErrorEmitter {
-
-    private var _binding: FragmentAdminBusBinding? = null
-    private val binding get() = _binding!!
-
-    @Inject
-    lateinit var unAuthorizationManager: UnAuthorizationManager
+class AdminBusFragment : Fragment(){
 
     @Inject
     lateinit var loadingManager : LoadingManager
 
+    private var _binding: FragmentAdminBusBinding? = null
+    private val binding get() = _binding!!
 
-    private val tripViewModel: TripViewModel by viewModels()
+    private val adminBusViewModel : AdminBusServiceViewModel by viewModels()
+
     lateinit var adapter: AdminBusAdapter
 
 
@@ -50,7 +44,6 @@ class AdminBusFragment : Fragment(), RemoteErrorEmitter {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        MainActivity.remoteErrorEmitter = this
         _binding = FragmentAdminBusBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -67,24 +60,17 @@ class AdminBusFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- onViewCreated
 
 
-    //---------------------------------------------------------------------------------------------- onError
-    override fun onError(errorType: EnumErrorType, message: String) {
-        val snack = Snackbar.make(binding.constraintLayoutParent, message, 5 * 1000)
+    //---------------------------------------------------------------------------------------------- showMessage
+    private fun showMessage(message: String) {
+        val snack = Snackbar.make(binding.constraintLayoutParent, message, 10 * 1000)
         snack.setBackgroundTint(resources.getColor(R.color.primaryColor, requireContext().theme))
         snack.setTextColor(resources.getColor(R.color.textViewColor3, requireContext().theme))
         snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
         snack.setActionTextColor(resources.getColor(R.color.textViewColor1, requireContext().theme))
         snack.show()
+        loadingManager.stopLoadingRecycler()÷
     }
-    //---------------------------------------------------------------------------------------------- onError
-
-
-
-    //---------------------------------------------------------------------------------------------- unAuthorization
-    override fun unAuthorization(type: EnumAuthorizationType, message: String) {
-        unAuthorizationManager.handel(activity,type,message,binding.constraintLayoutParent)
-    }
-    //---------------------------------------------------------------------------------------------- unAuthorization
+    //---------------------------------------------------------------------------------------------- showMessage
 
 
 
@@ -103,21 +89,38 @@ class AdminBusFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- setOnListener
 
 
+    //---------------------------------------------------------------------------------------------- observeLoginLiveDate
+    private fun observeErrorLiveDate() {
+        adminBusViewModel.errorLiveDate.removeObservers(viewLifecycleOwner)
+        adminBusViewModel.errorLiveDate.observe(viewLifecycleOwner) {
+            showMessage(it.message)
+            when(it.type) {
+                EnumApiError.UnAuthorization -> (activity as MainActivity?)?.gotoFirstFragment()
+                else -> {}
+            }
+        }
+    }
+    //---------------------------------------------------------------------------------------------- observeLoginLiveDate
+
+
+
+
+    //---------------------------------------------------------------------------------------------- observeTripModelLiveData
+    private fun observeTripModelLiveData() {
+        adminBusViewModel.tripModelLiveData.removeObservers(viewLifecycleOwner)
+        adminBusViewModel.tripModelLiveData.observe(viewLifecycleOwner) {
+            setRequestAdapter(it)
+        }
+    }
+    //---------------------------------------------------------------------------------------------- observeTripModelLiveData
+
+
     //---------------------------------------------------------------------------------------------- requestGetTripRequestRegister
     private fun requestGetTripRequestRegister() {
         startLoading()
-        tripViewModel.requestGetTripRequestRegister()
-            .observe(viewLifecycleOwner) { response ->
-                loadingManager.stopLoadingRecycler()
-                response?.let {
-                    if (it.hasError)
-                        onError(EnumErrorType.UNKNOWN, it.message)
-                    else
-                        it.data?.let { trips ->
-                            setRequestAdapter(trips)
-                        }
-                }
-            }
+        observeTripModelLiveData()
+        observeErrorLiveDate()
+        adminBusViewModel.requestGetTripRequestRegister()
     }
     //---------------------------------------------------------------------------------------------- requestGetTripRequestRegister
 
@@ -201,7 +204,7 @@ class AdminBusFragment : Fragment(), RemoteErrorEmitter {
     private fun requestConfirmAndRejectTripRequestRegister(status: EnumTripStatus, reason: String?) {
         val chosen = adapter.getItems().filterList { choose }
         if (chosen.isEmpty()) {
-            onError(EnumErrorType.UNKNOWN, getString(R.string.chooseItemsIsEmpty))
+            showMessage(getString(R.string.chooseItemsIsEmpty))
             return
         }
         val request = mutableListOf<TripRequestRegisterStatusModel>()
@@ -215,16 +218,7 @@ class AdminBusFragment : Fragment(), RemoteErrorEmitter {
             )
 
         startLoading()
-        tripViewModel.requestConfirmAndRejectTripRequestRegister(request)
-            .observe(viewLifecycleOwner) { response ->
-                loadingManager.stopLoadingRecycler()
-                response?.let {
-                    if (it.hasError)
-                        onError(EnumErrorType.UNKNOWN, it.message)
-                    else
-                        requestGetTripRequestRegister()
-                }
-            }
+        adminBusViewModel.requestConfirmAndRejectTripRequestRegister(request)
     }
     //---------------------------------------------------------------------------------------------- requestConfirmAndRejectTripRequestRegister
 
@@ -233,6 +227,8 @@ class AdminBusFragment : Fragment(), RemoteErrorEmitter {
     //---------------------------------------------------------------------------------------------- onDestroyView
     override fun onDestroyView() {
         super.onDestroyView()
+        adminBusViewModel.tripModelLiveData.removeObservers(viewLifecycleOwner)
+        adminBusViewModel.errorLiveDate.removeObservers(viewLifecycleOwner)
         _binding = null
     }
     //---------------------------------------------------------------------------------------------- onDestroyView

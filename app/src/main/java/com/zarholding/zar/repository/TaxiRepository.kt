@@ -1,7 +1,6 @@
 package com.zarholding.zar.repository
 
 import com.zar.core.tools.api.apiCall
-import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zarholding.zar.api.ApiSuperApp
 import com.zarholding.zar.model.request.TaxiAddFavPlaceRequest
 import com.zarholding.zar.model.request.TaxiChangeStatusRequest
@@ -10,48 +9,47 @@ import javax.inject.Inject
 
 class TaxiRepository @Inject constructor(private val api : ApiSuperApp) {
 
-    @Inject lateinit var emitter: RemoteErrorEmitter
 
     //---------------------------------------------------------------------------------------------- requestGetTaxiFavPlace
-    fun requestGetTaxiFavPlace(token : String) = apiCall(emitter) {api.requestGetTaxiFavPlace(token)}
+    suspend fun requestGetTaxiFavPlace(token : String) =
+        apiCall{ api.requestGetTaxiFavPlace(token) }
     //---------------------------------------------------------------------------------------------- requestGetTaxiFavPlace
 
 
 
     //---------------------------------------------------------------------------------------------- requestAddFavPlace
-    fun requestAddFavPlace(request : TaxiAddFavPlaceRequest, token : String) =
-        apiCall(emitter){api.requestAddFavPlace(request, token)}
+    suspend fun requestAddFavPlace(request : TaxiAddFavPlaceRequest, token : String) =
+        apiCall{ api.requestAddFavPlace(request, token) }
     //---------------------------------------------------------------------------------------------- requestAddFavPlace
 
 
 
     //---------------------------------------------------------------------------------------------- requestDeleteFavPlace
-    fun requestDeleteFavPlace(id : Int, token : String) =
-        apiCall(emitter){api.requestDeleteFavPlace(id, token)}
+    suspend fun requestDeleteFavPlace(id : Int, token : String) =
+        apiCall{ api.requestDeleteFavPlace(id, token) }
     //---------------------------------------------------------------------------------------------- requestDeleteFavPlace
 
 
     //---------------------------------------------------------------------------------------------- requestTaxi
-    fun requestTaxi(request : TaxiRequestModel, token : String) =
-        apiCall(emitter){api.requestTaxi(request, token)}
+    suspend fun requestTaxi(request : TaxiRequestModel, token : String) =
+        apiCall{ api.requestTaxi(request, token) }
     //---------------------------------------------------------------------------------------------- requestTaxi
 
 
     //---------------------------------------------------------------------------------------------- requestTaxiList
-    fun requestTaxiList(token : String) =
-        apiCall(emitter){api.requestTaxiList(token)}
+    suspend fun requestTaxiList(token : String) = apiCall{api.requestTaxiList(token)}
     //---------------------------------------------------------------------------------------------- requestTaxiList
 
 
     //---------------------------------------------------------------------------------------------- requestMyTaxiRequestList
-    fun requestMyTaxiRequestList(token : String) =
-        apiCall(emitter){api.requestMyTaxiRequestList(token)}
+    suspend fun requestMyTaxiRequestList(token : String) =
+        apiCall{api.requestMyTaxiRequestList(token)}
     //---------------------------------------------------------------------------------------------- requestMyTaxiRequestList
 
 
     //---------------------------------------------------------------------------------------------- requestChangeStatusOfTaxiRequests
-    fun requestChangeStatusOfTaxiRequests(request : TaxiChangeStatusRequest, token : String) =
-        apiCall(emitter){api.requestChangeStatusOfTaxiRequests(request, token)}
+    suspend fun requestChangeStatusOfTaxiRequests(request : TaxiChangeStatusRequest, token : String) =
+        apiCall{api.requestChangeStatusOfTaxiRequests(request, token)}
     //---------------------------------------------------------------------------------------------- requestChangeStatusOfTaxiRequests
 
 }

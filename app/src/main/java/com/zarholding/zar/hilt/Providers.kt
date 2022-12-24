@@ -1,9 +1,6 @@
 package com.zarholding.zar.hilt
 
-import com.zar.core.tools.api.interfaces.RemoteErrorEmitter
 import com.zarholding.zar.api.ApiSuperApp
-import com.zarholding.zar.utility.UnAuthorizationManager
-import com.zarholding.zar.view.activity.MainActivity
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -35,14 +32,6 @@ class Providers {
 
 
 
-    //---------------------------------------------------------------------------------------------- provideRemoteErrorEmitter
-    @Provides
-    @Singleton
-    fun provideRemoteErrorEmitter() : RemoteErrorEmitter = MainActivity()
-    //---------------------------------------------------------------------------------------------- provideRemoteErrorEmitter
-
-
-
     //---------------------------------------------------------------------------------------------- provideApiBPMS
     @Provides
     @Singleton
@@ -50,12 +39,5 @@ class Providers {
         retrofit.create(ApiSuperApp::class.java)
     //---------------------------------------------------------------------------------------------- provideApiBPMS
 
-
-
-    //---------------------------------------------------------------------------------------------- provideUnAuthorization
-    @Provides
-    @Singleton
-    fun provideUnAuthorization() = UnAuthorizationManager()
-    //---------------------------------------------------------------------------------------------- provideUnAuthorization
 
 }

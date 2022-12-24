@@ -3,12 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-        <variable
-            name="viewModel"
-            type="com.zarholding.zar.viewmodel.TaxiViewModel" />
-    </data>
-
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
@@ -564,7 +558,7 @@
                         app:layout_constraintBottom_toTopOf="@id/editTextReason"
                         app:layout_constraintEnd_toEndOf="@id/editTextReason" />
 
-                    <com.google.android.material.button.MaterialButton
+                    <com.zarholding.zar.view.custom.ZarButton
                         android:id="@+id/buttonSendRequest"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -576,7 +570,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/editTextReason"
-                        android:text='@{viewModel.loadingLiveDate ? @string/bePatient : @string/sendInformation}'/>
+                        android:text='@string/sendInformation'/>
 
 
                 </androidx.constraintlayout.widget.ConstraintLayout>

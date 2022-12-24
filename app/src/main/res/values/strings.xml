@@ -35,7 +35,7 @@
     <string name="trainings">آموزش ها</string>
     <string name="logout">خروج از حساب کاربری</string>
     <string name="setting">تنظیمات</string>
-    <string name="userServiceIsEmpty">شما هیچ سرویسی را انتخاب نکرده اید</string>
+    <string name="userServiceIsEmpty">سرویس های شما خالی است</string>
     <string name="appSupportTeam">پشتیبانی نرم افزار هلدینگ زر</string>
     <string name="sendTicket">ارسال تیکت</string>
     <string name="activeDarkTheme">فعال کردن تم دارک</string>
