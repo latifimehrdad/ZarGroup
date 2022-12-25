@@ -16,6 +16,6 @@ data class TaxiRequestModel(
     val destinationAddress : String,
     val passengers : List<Int>,
     val travelReason : String,
-    val companyCode : String?,
+    val fromCompany : String?,
     val personnelJobKeyCode : String?
 )

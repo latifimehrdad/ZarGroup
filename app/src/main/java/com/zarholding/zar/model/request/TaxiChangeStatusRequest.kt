@@ -6,6 +6,6 @@ data class TaxiChangeStatusRequest(
     val Id : Int,
     val Status : EnumTaxiRequestStatus,
     val Reason : String?,
-    val PersonnelJobKeyCode : String,
-    val CompanyCode : String
+    val PersonnelJobKeyCode : String?,
+    val fromCompany : String?
 )

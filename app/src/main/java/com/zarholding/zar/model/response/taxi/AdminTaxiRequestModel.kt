@@ -27,7 +27,7 @@ data class AdminTaxiRequestModel(
     val rejectReason : String?,
     val approverId : Int,
     val personnelJobKeyCode : String?,
-    val companyCode : String?,
+    val fromCompany : String?,
     val approverName : String?,
     val waitingTime : Int
 )

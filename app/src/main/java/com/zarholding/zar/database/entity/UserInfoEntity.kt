@@ -9,6 +9,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "UserInfo")
 data class UserInfoEntity(
+    val isAdministrative : Boolean,
     val userName : String?,
     val fullName : String?,
     val personnelNumber : String?,

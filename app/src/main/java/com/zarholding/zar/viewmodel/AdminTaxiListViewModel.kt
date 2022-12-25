@@ -8,16 +8,19 @@ import com.zarholding.zar.model.enum.EnumAdminTaxiType
 import com.zarholding.zar.model.request.TaxiChangeStatusRequest
 import com.zarholding.zar.model.response.taxi.AdminTaxiRequestModel
 import com.zarholding.zar.repository.TaxiRepository
+import com.zarholding.zar.repository.UserRepository
 import com.zarholding.zar.utility.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import retrofit2.Response
 import javax.inject.Inject
 
 @HiltViewModel
 class AdminTaxiListViewModel @Inject constructor(
-    private val taxiRepository: TaxiRepository
+    private val taxiRepository: TaxiRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     private var enumAdminTaxiType: EnumAdminTaxiType? = null
@@ -28,7 +31,7 @@ class AdminTaxiListViewModel @Inject constructor(
 
     //---------------------------------------------------------------------------------------------- setError
     private suspend fun setError(response: Response<*>?) {
-        withContext(Dispatchers.Main) {
+        withContext(Main) {
             checkResponseError(response, errorLiveDate)
         }
         job?.cancel()
@@ -38,7 +41,7 @@ class AdminTaxiListViewModel @Inject constructor(
 
     //---------------------------------------------------------------------------------------------- setError
     private suspend fun setError(message: String) {
-        withContext(Dispatchers.Main) {
+        withContext(Main) {
             errorLiveDate.value = ErrorApiModel(EnumApiError.Error, message)
         }
         job?.cancel()
@@ -82,7 +85,9 @@ class AdminTaxiListViewModel @Inject constructor(
                         setError(it.message)
                     else {
                         it.data?.let {items ->
-                            taxiRequestListLiveData.value = items
+                            withContext(Main){
+                                taxiRequestListLiveData.value = items
+                            }
                         } ?: run {
                             setError("اطلاعات خالی است")
                         }
@@ -107,7 +112,9 @@ class AdminTaxiListViewModel @Inject constructor(
                         setError(it.message)
                     else {
                         it.data?.let {items ->
-                            taxiRequestListLiveData.value = items
+                            withContext(Main){
+                                taxiRequestListLiveData.value = items
+                            }
                         } ?: run {
                             setError("اطلاعات خالی است")
                         }
@@ -148,11 +155,20 @@ class AdminTaxiListViewModel @Inject constructor(
 
     //---------------------------------------------------------------------------------------------- exceptionHandler
     private fun exceptionHandler() = CoroutineExceptionHandler { _, throwable ->
-        CoroutineScope(Dispatchers.Main).launch {
+        CoroutineScope(Main).launch {
             throwable.localizedMessage?.let { setError(it) }
         }
     }
     //---------------------------------------------------------------------------------------------- exceptionHandler
+
+
+    //--------------------------------------
+    fun getUser() = userRepository.getUser()
+
+
+    //---------------------------------------------------------------------------------------------- isAdministrativeUser
+    fun isAdministrativeUser() = userRepository.getUser()?.isAdministrative
+    //---------------------------------------------------------------------------------------------- isAdministrativeUser
 
 
 

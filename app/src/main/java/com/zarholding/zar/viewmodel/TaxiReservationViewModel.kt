@@ -37,7 +37,7 @@ class TaxiReservationViewModel @Inject constructor(
     val setFavPlaceLiveData = SingleLiveEvent<Boolean>()
     val addFavPlaceLiveData = SingleLiveEvent<Boolean>()
     val removeFavPlaceLiveData = SingleLiveEvent<Boolean>()
-    val sendRequestLiveData = SingleLiveEvent<Boolean>()
+    val sendRequestLiveData = SingleLiveEvent<String>()
     val addressLiveData = SingleLiveEvent<AddressModel>()
     var companySelected : CompanyModel? = null
 
@@ -195,9 +195,10 @@ class TaxiReservationViewModel @Inject constructor(
             val response = taxiRepository.requestTaxi(request)
             if (response?.isSuccessful == true) {
                 response.body()?.let {
-                    setError(it.message)
                     if (!it.hasError)
-                        sendRequestLiveData.value = true
+                        withContext(Main) {
+                            sendRequestLiveData.value = it.message
+                        }
                 } ?: run {
                     setError("اطلاعات خالی است")
                 }

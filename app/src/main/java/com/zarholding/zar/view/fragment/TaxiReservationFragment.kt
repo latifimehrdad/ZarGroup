@@ -74,8 +74,16 @@ class TaxiReservationFragment : Fragment() {
             else if (taxiReservationViewModel.getOriginMarker() != null)
                 removeOriginMarker()
             else {
-                this.isEnabled = false
-                activity?.onBackPressedDispatcher?.onBackPressed()
+                if (binding.powerSpinnerOrigin.isShowing)
+                    binding.powerSpinnerOrigin.dismiss()
+                else if (binding.powerSpinnerDestination.isShowing)
+                    binding.powerSpinnerDestination.dismiss()
+                else if (binding.powerSpinnerCompany.isShowing)
+                    binding.powerSpinnerCompany.dismiss()
+                else {
+                    this.isEnabled = false
+                    activity?.onBackPressedDispatcher?.onBackPressed()
+                }
             }
         }
     }
@@ -228,6 +236,7 @@ class TaxiReservationFragment : Fragment() {
     //---------------------------------------------------------------------------------------------- observeSendRequestLiveData
     private fun observeSendRequestLiveData() {
         taxiReservationViewModel.sendRequestLiveData.observe(viewLifecycleOwner) {
+            showMessage(it)
             backClick.isEnabled = false
             activity?.onBackPressedDispatcher?.onBackPressed()
         }

@@ -166,6 +166,7 @@ class HomeFragment : Fragment(){
         binding.sliderViewBanner.setIndicatorAnimation(IndicatorAnimationType.WORM)
         binding.sliderViewBanner.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION)
         binding.sliderViewBanner.autoCycleDirection = SliderView.AUTO_CYCLE_DIRECTION_BACK_AND_FORTH
+        binding.sliderViewBanner.startAutoCycle()
     }
     //---------------------------------------------------------------------------------------------- setBannerSlider
 

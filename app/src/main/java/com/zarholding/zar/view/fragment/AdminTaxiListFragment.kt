@@ -29,7 +29,7 @@ import zar.databinding.FragmentAdminTaxiListBinding
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AdminTaxiListFragment : Fragment(){
+class AdminTaxiListFragment : Fragment() {
 
     @Inject
     lateinit var loadingManager: LoadingManager
@@ -76,6 +76,7 @@ class AdminTaxiListFragment : Fragment(){
         snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
         snack.setActionTextColor(resources.getColor(R.color.textViewColor1, context?.theme))
         snack.show()
+        loadingManager.stopLoadingRecycler()
     }
     //---------------------------------------------------------------------------------------------- showMessage
 
@@ -84,14 +85,13 @@ class AdminTaxiListFragment : Fragment(){
     private fun observeErrorLiveDate() {
         adminTaxiListViewModel.errorLiveDate.observe(viewLifecycleOwner) {
             showMessage(it.message)
-            when(it.type) {
+            when (it.type) {
                 EnumApiError.UnAuthorization -> (activity as MainActivity?)?.gotoFirstFragment()
                 else -> {}
             }
         }
     }
     //---------------------------------------------------------------------------------------------- observeLoginLiveDate
-
 
 
     //---------------------------------------------------------------------------------------------- observeTaxiRequestListLiveData
@@ -101,7 +101,6 @@ class AdminTaxiListFragment : Fragment(){
         }
     }
     //---------------------------------------------------------------------------------------------- observeTaxiRequestListLiveData
-
 
 
     //---------------------------------------------------------------------------------------------- getTaxiList
@@ -148,7 +147,10 @@ class AdminTaxiListFragment : Fragment(){
             return
         val click = object : TaxiHolder.Click {
             override fun accept(item: AdminTaxiRequestModel) {
-                showDialogConfirm(item)
+                if (adminTaxiListViewModel.isAdministrativeUser() == true)
+                    showDialogChooseDriver()
+                else
+                    showDialogConfirm(item)
             }
 
             override fun reject(item: AdminTaxiRequestModel) {
@@ -177,8 +179,8 @@ class AdminTaxiListFragment : Fragment(){
                     item.id,
                     EnumTaxiRequestStatus.Reject,
                     reason,
-                    item.personnelJobKeyCode!!,
-                    item.companyCode!!
+                    item.personnelJobKeyCode,
+                    item.fromCompany
                 )
                 requestChangeStatusOfTaxiRequests(request)
             }
@@ -188,18 +190,29 @@ class AdminTaxiListFragment : Fragment(){
     //---------------------------------------------------------------------------------------------- showDialogReasonOfReject
 
 
+
+    //---------------------------------------------------------------------------------------------- showDialogChooseDriver
+    private fun showDialogChooseDriver() {
+
+    }
+    //---------------------------------------------------------------------------------------------- showDialogChooseDriver
+
+
+
     //---------------------------------------------------------------------------------------------- showDialogConfirm
     private fun showDialogConfirm(item: AdminTaxiRequestModel) {
         val click = object : ConfirmDialog.Click {
             override fun clickYes() {
-                val request = TaxiChangeStatusRequest(
-                    item.id,
-                    EnumTaxiRequestStatus.Confirmed,
-                    null,
-                    item.personnelJobKeyCode!!,
-                    item.companyCode!!
-                )
-                requestChangeStatusOfTaxiRequests(request)
+                adminTaxiListViewModel.getUser()?.let {
+                    val request = TaxiChangeStatusRequest(
+                        item.id,
+                        EnumTaxiRequestStatus.Confirmed,
+                        null,
+                        it.personnelJobKeyCode,
+                        item.fromCompany
+                    )
+                    requestChangeStatusOfTaxiRequests(request)
+                }
             }
         }
         ConfirmDialog(
@@ -238,7 +251,6 @@ class AdminTaxiListFragment : Fragment(){
         _binding = null
     }
     //---------------------------------------------------------------------------------------------- onDestroyView
-
 
 
 }
