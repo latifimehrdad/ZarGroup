@@ -55,6 +55,8 @@ class AdminBusFragment : Fragment(){
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner
         setOnListener()
+        observeTripModelLiveData()
+        observeErrorLiveDate()
         requestGetTripRequestRegister()
     }
     //---------------------------------------------------------------------------------------------- onViewCreated
@@ -62,13 +64,13 @@ class AdminBusFragment : Fragment(){
 
     //---------------------------------------------------------------------------------------------- showMessage
     private fun showMessage(message: String) {
-        val snack = Snackbar.make(binding.constraintLayoutParent, message, 10 * 1000)
+        val snack = Snackbar.make(binding.constraintLayoutParent, message, 5 * 1000)
         snack.setBackgroundTint(resources.getColor(R.color.primaryColor, requireContext().theme))
         snack.setTextColor(resources.getColor(R.color.textViewColor3, requireContext().theme))
         snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
         snack.setActionTextColor(resources.getColor(R.color.textViewColor1, requireContext().theme))
         snack.show()
-        loadingManager.stopLoadingRecycler()÷
+        loadingManager.stopLoadingRecycler()
     }
     //---------------------------------------------------------------------------------------------- showMessage
 
@@ -91,7 +93,6 @@ class AdminBusFragment : Fragment(){
 
     //---------------------------------------------------------------------------------------------- observeLoginLiveDate
     private fun observeErrorLiveDate() {
-        adminBusViewModel.errorLiveDate.removeObservers(viewLifecycleOwner)
         adminBusViewModel.errorLiveDate.observe(viewLifecycleOwner) {
             showMessage(it.message)
             when(it.type) {
@@ -104,10 +105,8 @@ class AdminBusFragment : Fragment(){
 
 
 
-
     //---------------------------------------------------------------------------------------------- observeTripModelLiveData
     private fun observeTripModelLiveData() {
-        adminBusViewModel.tripModelLiveData.removeObservers(viewLifecycleOwner)
         adminBusViewModel.tripModelLiveData.observe(viewLifecycleOwner) {
             setRequestAdapter(it)
         }
@@ -118,8 +117,6 @@ class AdminBusFragment : Fragment(){
     //---------------------------------------------------------------------------------------------- requestGetTripRequestRegister
     private fun requestGetTripRequestRegister() {
         startLoading()
-        observeTripModelLiveData()
-        observeErrorLiveDate()
         adminBusViewModel.requestGetTripRequestRegister()
     }
     //---------------------------------------------------------------------------------------------- requestGetTripRequestRegister
@@ -186,7 +183,7 @@ class AdminBusFragment : Fragment(){
     private fun showDialogConfirm() {
         val click = object : ConfirmDialog.Click {
             override fun clickYes() {
-                requestConfirmAndRejectTripRequestRegister(EnumTripStatus.Done, null)
+                requestConfirmAndRejectTripRequestRegister(EnumTripStatus.Confirmed, null)
             }
         }
         ConfirmDialog(
@@ -227,8 +224,6 @@ class AdminBusFragment : Fragment(){
     //---------------------------------------------------------------------------------------------- onDestroyView
     override fun onDestroyView() {
         super.onDestroyView()
-        adminBusViewModel.tripModelLiveData.removeObservers(viewLifecycleOwner)
-        adminBusViewModel.errorLiveDate.removeObservers(viewLifecycleOwner)
         _binding = null
     }
     //---------------------------------------------------------------------------------------------- onDestroyView

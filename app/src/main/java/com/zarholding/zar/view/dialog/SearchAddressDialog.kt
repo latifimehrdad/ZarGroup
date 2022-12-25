@@ -70,6 +70,7 @@ class SearchAddressDialog(
         window.attributes = lp
         binding.linearLayoutLoading.visibility = View.GONE
         setListener()
+        observeAddressSuggestionLiveData()
     }
     //---------------------------------------------------------------------------------------------- onCreateView
 
@@ -124,7 +125,6 @@ class SearchAddressDialog(
 
     //---------------------------------------------------------------------------------------------- observeAddressSuggestionLiveData
     private fun observeAddressSuggestionLiveData() {
-        addressViewModel.addressSuggestionLiveData.removeObservers(viewLifecycleOwner)
         addressViewModel.addressSuggestionLiveData.observe(viewLifecycleOwner) {
             stopLoading()
             setAdapter(it)
@@ -136,7 +136,6 @@ class SearchAddressDialog(
     //---------------------------------------------------------------------------------------------- requestGetSuggestionAddress
     private fun requestGetSuggestionAddress(address: String) {
         startLoading()
-        observeAddressSuggestionLiveData()
         addressViewModel.requestGetSuggestionAddress(address, adapter?.getList())
     }
     //---------------------------------------------------------------------------------------------- requestGetSuggestionAddress

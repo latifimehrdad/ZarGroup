@@ -1,6 +1,5 @@
 package com.zarholding.zar.viewmodel
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.zar.core.enums.EnumApiError
 import com.zar.core.models.ErrorApiModel
@@ -9,6 +8,7 @@ import com.zarholding.zar.model.request.TripRequestRegisterStatusModel
 import com.zarholding.zar.model.response.trip.TripRequestRegisterModel
 import com.zarholding.zar.repository.TokenRepository
 import com.zarholding.zar.repository.TripRepository
+import com.zarholding.zar.utility.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -23,8 +23,8 @@ class AdminBusServiceViewModel @Inject constructor(
 ) : ViewModel() {
 
     private var job: Job? = null
-    val errorLiveDate = MutableLiveData<ErrorApiModel>()
-    val tripModelLiveData = MutableLiveData<List<TripRequestRegisterModel>>()
+    val errorLiveDate = SingleLiveEvent<ErrorApiModel>()
+    val tripModelLiveData = SingleLiveEvent<List<TripRequestRegisterModel>>()
 
 
     //---------------------------------------------------------------------------------------------- setError

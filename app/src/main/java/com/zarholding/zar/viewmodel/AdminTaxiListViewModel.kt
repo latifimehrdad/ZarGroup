@@ -1,6 +1,5 @@
 package com.zarholding.zar.viewmodel
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.zar.core.enums.EnumApiError
 import com.zar.core.models.ErrorApiModel
@@ -9,7 +8,7 @@ import com.zarholding.zar.model.enum.EnumAdminTaxiType
 import com.zarholding.zar.model.request.TaxiChangeStatusRequest
 import com.zarholding.zar.model.response.taxi.AdminTaxiRequestModel
 import com.zarholding.zar.repository.TaxiRepository
-import com.zarholding.zar.repository.TokenRepository
+import com.zarholding.zar.utility.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -21,31 +20,28 @@ class AdminTaxiListViewModel @Inject constructor(
     private val taxiRepository: TaxiRepository
 ) : ViewModel() {
 
-    @Inject
-    lateinit var tokenRepository: TokenRepository
-
     private var enumAdminTaxiType: EnumAdminTaxiType? = null
     private var job: Job? = null
-    val errorLiveDate = MutableLiveData<ErrorApiModel>()
-    val taxiRequestListLiveData = MutableLiveData<List<AdminTaxiRequestModel>>()
+    val errorLiveDate = SingleLiveEvent<ErrorApiModel>()
+    val taxiRequestListLiveData = SingleLiveEvent<List<AdminTaxiRequestModel>>()
 
 
     //---------------------------------------------------------------------------------------------- setError
     private suspend fun setError(response: Response<*>?) {
-        job?.cancel()
         withContext(Dispatchers.Main) {
             checkResponseError(response, errorLiveDate)
         }
+        job?.cancel()
     }
     //---------------------------------------------------------------------------------------------- setError
 
 
     //---------------------------------------------------------------------------------------------- setError
     private suspend fun setError(message: String) {
-        job?.cancel()
         withContext(Dispatchers.Main) {
             errorLiveDate.value = ErrorApiModel(EnumApiError.Error, message)
         }
+        job?.cancel()
     }
     //---------------------------------------------------------------------------------------------- setError
 
@@ -79,7 +75,7 @@ class AdminTaxiListViewModel @Inject constructor(
     //---------------------------------------------------------------------------------------------- requestTaxiList
     private fun requestTaxiList() {
         job = CoroutineScope(IO + exceptionHandler()) .launch {
-            val response = taxiRepository.requestTaxiList(tokenRepository.getBearerToken())
+            val response = taxiRepository.requestTaxiList()
             if (response?.isSuccessful == true) {
                 response.body()?.let {
                     if (it.hasError)
@@ -104,7 +100,7 @@ class AdminTaxiListViewModel @Inject constructor(
     //---------------------------------------------------------------------------------------------- requestMyTaxiRequestList
     private fun requestMyTaxiRequestList() {
         job = CoroutineScope(IO + exceptionHandler()) .launch {
-            val response = taxiRepository.requestMyTaxiRequestList(tokenRepository.getBearerToken())
+            val response = taxiRepository.requestMyTaxiRequestList()
             if (response?.isSuccessful == true) {
                 response.body()?.let {
                     if (it.hasError)
@@ -131,10 +127,7 @@ class AdminTaxiListViewModel @Inject constructor(
     //---------------------------------------------------------------------------------------------- requestChangeStatusOfTaxiRequests
     fun requestChangeStatusOfTaxiRequests(request : TaxiChangeStatusRequest) {
         CoroutineScope(IO + exceptionHandler()).launch {
-            val response = taxiRepository.requestChangeStatusOfTaxiRequests(
-                request,
-                tokenRepository.getBearerToken()
-            )
+            val response = taxiRepository.requestChangeStatusOfTaxiRequests(request)
             if (response?.isSuccessful == true) {
                 response.body()?.let {
                     if (it.hasError)

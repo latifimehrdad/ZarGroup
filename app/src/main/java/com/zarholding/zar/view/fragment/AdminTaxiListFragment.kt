@@ -58,6 +58,8 @@ class AdminTaxiListFragment : Fragment(){
         arguments?.let {
             adminTaxiListViewModel
                 .setEnumAdminTaxiType(it.getString(CompanionValues.adminTaxiType, null))
+            observeErrorLiveDate()
+            observeTaxiRequestListLiveData()
             getTaxiList()
         } ?: run {
             activity?.onBackPressedDispatcher?.onBackPressed()
@@ -80,7 +82,6 @@ class AdminTaxiListFragment : Fragment(){
 
     //---------------------------------------------------------------------------------------------- observeLoginLiveDate
     private fun observeErrorLiveDate() {
-        adminTaxiListViewModel.errorLiveDate.removeObservers(viewLifecycleOwner)
         adminTaxiListViewModel.errorLiveDate.observe(viewLifecycleOwner) {
             showMessage(it.message)
             when(it.type) {
@@ -95,7 +96,6 @@ class AdminTaxiListFragment : Fragment(){
 
     //---------------------------------------------------------------------------------------------- observeTaxiRequestListLiveData
     private fun observeTaxiRequestListLiveData() {
-        adminTaxiListViewModel.taxiRequestListLiveData.removeObservers(viewLifecycleOwner)
         adminTaxiListViewModel.taxiRequestListLiveData.observe(viewLifecycleOwner) {
             setAdapter(it)
         }
@@ -108,8 +108,6 @@ class AdminTaxiListFragment : Fragment(){
     private fun getTaxiList() {
         adminTaxiListViewModel.getEnumAdminTaxiType()?.let {
             startLoading()
-            observeErrorLiveDate()
-            observeTaxiRequestListLiveData()
             adminTaxiListViewModel.getTaxiList()
         }
     }
@@ -237,8 +235,6 @@ class AdminTaxiListFragment : Fragment(){
     //---------------------------------------------------------------------------------------------- onDestroyView
     override fun onDestroyView() {
         super.onDestroyView()
-        adminTaxiListViewModel.taxiRequestListLiveData.removeObservers(viewLifecycleOwner)
-        adminTaxiListViewModel.errorLiveDate.removeObservers(viewLifecycleOwner)
         _binding = null
     }
     //---------------------------------------------------------------------------------------------- onDestroyView

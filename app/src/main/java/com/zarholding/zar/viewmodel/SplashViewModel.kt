@@ -1,6 +1,5 @@
 package com.zarholding.zar.viewmodel
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.zar.core.enums.EnumApiError
 import com.zar.core.models.ErrorApiModel
@@ -12,6 +11,7 @@ import com.zarholding.zar.model.request.ArticleRequestModel
 import com.zarholding.zar.repository.ArticleRepository
 import com.zarholding.zar.repository.TokenRepository
 import com.zarholding.zar.repository.UserRepository
+import com.zarholding.zar.utility.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -27,8 +27,8 @@ class SplashViewModel @Inject constructor(
 ) : ViewModel(){
 
     private var job: Job? = null
-    val errorLiveDate = MutableLiveData<ErrorApiModel>()
-    val successLiveData = MutableLiveData(false)
+    val errorLiveDate = SingleLiveEvent<ErrorApiModel>()
+    val successLiveData = SingleLiveEvent<Boolean>()
 
     //---------------------------------------------------------------------------------------------- setError
     private suspend fun setError(response: Response<*>?) {
@@ -60,7 +60,9 @@ class SplashViewModel @Inject constructor(
 
     //---------------------------------------------------------------------------------------------- requestGetData
     fun requestGetData() {
+        job?.cancel()
         job = CoroutineScope(IO).launch {
+            delay(1000)
             requestUserInfo().join()
             requestUserPermission().join()
             val requestSlide = ArticleRequestModel(

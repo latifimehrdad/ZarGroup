@@ -202,7 +202,7 @@ fun CardView.setRegisterStationStatus(status : EnumTripStatus?){
     status?.let {
         when(status) {
             EnumTripStatus.Pending -> setCardBackgroundColor(context.resources.getColor(R.color.waiting, context.theme))
-            EnumTripStatus.Done -> setCardBackgroundColor(context.resources.getColor(R.color.positive, context.theme))
+            EnumTripStatus.Confirmed -> setCardBackgroundColor(context.resources.getColor(R.color.positive, context.theme))
             EnumTripStatus.Reject -> setCardBackgroundColor(context.resources.getColor(R.color.negative, context.theme))
         }
     }
@@ -216,7 +216,7 @@ fun TextView.setRegisterStationStatus(status : EnumTripStatus?){
     status?.let {
         text = when(status) {
             EnumTripStatus.Pending -> context.resources.getString(R.string.pendingForAccept)
-            EnumTripStatus.Done -> context.resources.getString(R.string.confirmedByOfficial)
+            EnumTripStatus.Confirmed -> context.resources.getString(R.string.confirmedByOfficial)
             EnumTripStatus.Reject -> context.resources.getString(R.string.reject)
         }
     }
@@ -230,7 +230,7 @@ fun ImageView.setRegisterStationStatus(status : EnumTripStatus?){
     status?.let {
         when(status) {
             EnumTripStatus.Pending -> setImageResource(R.drawable.ic_pending)
-            EnumTripStatus.Done -> setImageResource(R.drawable.ic_check)
+            EnumTripStatus.Confirmed -> setImageResource(R.drawable.ic_check)
             EnumTripStatus.Reject -> setImageResource(R.drawable.ic_delete)
         }
     }

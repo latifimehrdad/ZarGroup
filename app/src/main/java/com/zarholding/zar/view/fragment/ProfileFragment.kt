@@ -99,8 +99,8 @@ class ProfileFragment : Fragment(){
             withContext(Main) {
                 binding.textViewProfileName.text = user?.fullName
                 binding.textViewPersonalCode.text = resources
-                    .getString(R.string.personalCode, user?.personnelNumber.toString())
-                binding.textViewDegree.text = "از سرور نمیاد"
+                    .getString(R.string.personalCode, user?.personnelNumber?.toLong().toString())
+                binding.textViewDegree.text = user?.personnelJobKeyText.toString()
             }
         }
     }

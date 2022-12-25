@@ -1,7 +1,6 @@
 package com.zarholding.zar.viewmodel
 
 import android.content.SharedPreferences
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.zar.core.enums.EnumApiError
 import com.zar.core.models.ErrorApiModel
@@ -9,6 +8,7 @@ import com.zar.core.tools.api.checkResponseError
 import com.zarholding.zar.model.request.LoginRequestModel
 import com.zarholding.zar.repository.LoginRepository
 import com.zarholding.zar.utility.CompanionValues
+import com.zarholding.zar.utility.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -28,8 +28,8 @@ class LoginViewModel @Inject constructor(
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
-    var loginLiveDate = MutableLiveData<String?>(null)
-    val errorLiveDate = MutableLiveData<ErrorApiModel>()
+    var loginLiveDate = SingleLiveEvent<String?>()
+    val errorLiveDate = SingleLiveEvent<ErrorApiModel>()
     var userName: String? = null
     var password: String? = null
     private var job: Job? = null

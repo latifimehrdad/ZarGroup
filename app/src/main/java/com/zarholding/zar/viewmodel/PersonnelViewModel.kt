@@ -6,11 +6,14 @@ import com.zarholding.zar.database.entity.UserInfoEntity
 import com.zarholding.zar.model.request.FilterUserRequestModel
 import com.zarholding.zar.repository.TokenRepository
 import com.zarholding.zar.repository.UserRepository
+import com.zarholding.zar.utility.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 /**
@@ -24,7 +27,7 @@ class PersonnelViewModel @Inject constructor(
 ) : ViewModel() {
 
     private var job: Job? = null
-    val userMutableLiveData = MutableLiveData<List<UserInfoEntity>>()
+    val userMutableLiveData = SingleLiveEvent<List<UserInfoEntity>>()
 
     //---------------------------------------------------------------------------------------------- requestGetUser
     fun requestGetUser(search: String) {
@@ -35,7 +38,9 @@ class PersonnelViewModel @Inject constructor(
                     if (!it.hasError)
                         it.data?.let { models ->
                             models.items?.let { list ->
-                                userMutableLiveData.value = list
+                                withContext(Main){
+                                    userMutableLiveData.value = list
+                                }
                             }
                         }
                 }

@@ -62,6 +62,8 @@ class LoginFragment : Fragment(){
             binding.buttonFingerLogin.visibility = View.VISIBLE
         else
             binding.buttonFingerLogin.visibility = View.GONE
+        observeLoginLiveDate()
+        observeErrorLiveDate()
     }
     //---------------------------------------------------------------------------------------------- initView
 
@@ -69,7 +71,7 @@ class LoginFragment : Fragment(){
 
     //---------------------------------------------------------------------------------------------- showMessage
     private fun showMessage(message: String) {
-        val snack = Snackbar.make(binding.constraintLayoutParent, message, 10 * 1000)
+        val snack = Snackbar.make(binding.constraintLayoutParent, message, 5 * 1000)
         snack.setBackgroundTint(resources.getColor(R.color.primaryColor, requireContext().theme))
         snack.setTextColor(resources.getColor(R.color.textViewColor3, requireContext().theme))
         snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
@@ -78,6 +80,29 @@ class LoginFragment : Fragment(){
         stopLoading()
     }
     //---------------------------------------------------------------------------------------------- showMessage
+
+
+    //---------------------------------------------------------------------------------------------- observeLoginLiveDate
+    private fun observeLoginLiveDate() {
+        loginViewModel.loginLiveDate.observe(viewLifecycleOwner) {
+            it?.let {
+                if (activity != null)
+                    requireActivity().onBackPressedDispatcher.onBackPressed()
+            }
+        }
+    }
+    //---------------------------------------------------------------------------------------------- observeLoginLiveDate
+
+
+
+    //---------------------------------------------------------------------------------------------- observeErrorLiveDate
+    private fun observeErrorLiveDate() {
+        loginViewModel.errorLiveDate.observe(viewLifecycleOwner) {
+            binding.buttonLogin.stopLoading()
+            showMessage(it.message)
+        }
+    }
+    //---------------------------------------------------------------------------------------------- observeErrorLiveDate
 
 
 
@@ -146,8 +171,6 @@ class LoginFragment : Fragment(){
         if (checkEmpty()) {
             startLoading()
             loginViewModel.requestLogin()
-            observeLoginLiveDate()
-            observeErrorLiveDate()
         }
     }
     //---------------------------------------------------------------------------------------------- login
@@ -166,32 +189,6 @@ class LoginFragment : Fragment(){
         return true
     }
     //---------------------------------------------------------------------------------------------- checkEmpty
-
-
-    //---------------------------------------------------------------------------------------------- observeLoginLiveDate
-    private fun observeLoginLiveDate() {
-        loginViewModel.loginLiveDate.removeObservers(viewLifecycleOwner)
-        loginViewModel.loginLiveDate.observe(viewLifecycleOwner) {
-            it?.let {
-                if (activity != null)
-                    requireActivity().onBackPressedDispatcher.onBackPressed()
-            }
-        }
-    }
-    //---------------------------------------------------------------------------------------------- observeLoginLiveDate
-
-
-
-    //---------------------------------------------------------------------------------------------- observeLoginLiveDate
-    private fun observeErrorLiveDate() {
-        loginViewModel.errorLiveDate.removeObservers(viewLifecycleOwner)
-        loginViewModel.errorLiveDate.observe(viewLifecycleOwner) {
-            binding.buttonLogin.stopLoading()
-            showMessage(it.message)
-        }
-    }
-    //---------------------------------------------------------------------------------------------- observeLoginLiveDate
-
 
 
 
@@ -219,8 +216,6 @@ class LoginFragment : Fragment(){
     //---------------------------------------------------------------------------------------------- onDestroyView
     override fun onDestroyView() {
         super.onDestroyView()
-        loginViewModel.loginLiveDate.removeObservers(viewLifecycleOwner)
-        loginViewModel.errorLiveDate.removeObservers(viewLifecycleOwner)
         _binding = null
     }
     //---------------------------------------------------------------------------------------------- onDestroyView

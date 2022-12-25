@@ -112,7 +112,8 @@
                     <ImageView
                         android:id="@+id/imageviewTouch"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"/>
+                        android:layout_height="match_parent"
+                        android:contentDescription="@string/markerDescription" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -325,12 +326,40 @@
                         android:contentDescription="@string/favDescription" />
 
 
+                    <com.skydoves.powerspinner.PowerSpinnerView
+                        android:id="@+id/powerSpinnerCompany"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:background="@drawable/drawable_spinner"
+                        android:fontFamily="@font/kalameh_light"
+                        android:gravity="center"
+                        android:hint="@string/chooseFromList"
+                        android:padding="@dimen/_3sdp"
+                        android:textColor="@color/textViewColor2"
+                        android:textColorHint="@color/textViewFooter"
+                        android:textSize="@dimen/_10sdp"
+                        app:layout_constraintStart_toStartOf="@id/powerSpinnerOrigin"
+                        app:layout_constraintTop_toBottomOf="@id/powerSpinnerDestination"
+                        app:layout_constraintWidth_percent="0.35"
+                        app:spinner_arrow_gravity="start"
+                        app:spinner_arrow_padding="8dp"
+                        app:spinner_arrow_tint="@color/primaryColor"
+                        app:spinner_divider_color="@color/primaryColorVariant"
+                        app:spinner_divider_show="true"
+                        app:spinner_divider_size="0.4dp"
+                        app:spinner_item_height="46dp"
+                        app:spinner_popup_animation="dropdown"
+                        app:spinner_popup_background="@color/dialogBackgroundColor"
+                        app:spinner_popup_elevation="14dp" />
+
+
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/constraintLayoutReturn"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/powerSpinnerDestination"
+                        app:layout_constraintTop_toBottomOf="@id/powerSpinnerCompany"
                         app:layout_constraintEnd_toStartOf="@id/constraintLayoutDeparture"
                         android:background="@drawable/drawable_spinner"
                         android:padding="@dimen/_5sdp"

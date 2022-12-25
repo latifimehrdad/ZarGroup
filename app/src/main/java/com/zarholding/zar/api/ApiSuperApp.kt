@@ -5,6 +5,7 @@ import com.zarholding.zar.model.response.LoginResponseModel
 import com.zarholding.zar.model.response.address.AddressResponseModel
 import com.zarholding.zar.model.response.address.AddressSuggestionModel
 import com.zarholding.zar.model.response.article.ArticleResponseModel
+import com.zarholding.zar.model.response.company.CompanyResponse
 import com.zarholding.zar.model.response.taxi.*
 import com.zarholding.zar.model.response.trip.*
 import com.zarholding.zar.model.response.user.UserInfoResponseModel
@@ -133,6 +134,12 @@ interface ApiSuperApp {
         @Body request : TaxiChangeStatusRequest,
         @Header("Authorization") token : String
     ) : Response<TaxiRemoveFavePlaceResponse>
+
+
+    @GET("$v1/DropDown/get-companies")
+    suspend fun requestGetCompanies(
+        @Header("Authorization") token : String
+    ) : Response<CompanyResponse>
 
 
     @GET

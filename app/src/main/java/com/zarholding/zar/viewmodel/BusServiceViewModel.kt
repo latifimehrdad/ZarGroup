@@ -1,6 +1,5 @@
 package com.zarholding.zar.viewmodel
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.zar.core.enums.EnumApiError
 import com.zar.core.models.ErrorApiModel
@@ -9,6 +8,7 @@ import com.zarholding.zar.model.request.RequestRegisterStationModel
 import com.zarholding.zar.model.response.trip.TripModel
 import com.zarholding.zar.repository.TokenRepository
 import com.zarholding.zar.repository.TripRepository
+import com.zarholding.zar.utility.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -24,26 +24,26 @@ class BusServiceViewModel @Inject constructor(
 
     private var job: Job? = null
     private var tripList: List<TripModel>? = null
-    val errorLiveDate = MutableLiveData<ErrorApiModel>()
-    val tripModelLiveData = MutableLiveData<List<TripModel>?>()
+    val errorLiveDate = SingleLiveEvent<ErrorApiModel>()
+    val tripModelLiveData = SingleLiveEvent<List<TripModel>?>()
 
 
     //---------------------------------------------------------------------------------------------- setError
     private suspend fun setError(response: Response<*>?) {
-        job?.cancel()
         withContext(Main) {
             checkResponseError(response, errorLiveDate)
         }
+        job?.cancel()
     }
     //---------------------------------------------------------------------------------------------- setError
 
 
     //---------------------------------------------------------------------------------------------- setError
     private suspend fun setError(message: String) {
-        job?.cancel()
         withContext(Main) {
             errorLiveDate.value = ErrorApiModel(EnumApiError.Error, message)
         }
+        job?.cancel()
     }
     //---------------------------------------------------------------------------------------------- setError
 

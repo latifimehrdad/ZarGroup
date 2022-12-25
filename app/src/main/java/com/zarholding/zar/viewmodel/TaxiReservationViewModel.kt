@@ -1,6 +1,5 @@
 package com.zarholding.zar.viewmodel
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.zar.core.enums.EnumApiError
 import com.zar.core.models.ErrorApiModel
@@ -12,14 +11,14 @@ import com.zarholding.zar.model.enum.FavPlaceType
 import com.zarholding.zar.model.request.TaxiAddFavPlaceRequest
 import com.zarholding.zar.model.request.TaxiRequestModel
 import com.zarholding.zar.model.response.address.AddressModel
+import com.zarholding.zar.model.response.company.CompanyModel
 import com.zarholding.zar.model.response.taxi.TaxiFavPlaceModel
-import com.zarholding.zar.repository.AddressRepository
-import com.zarholding.zar.repository.TaxiRepository
-import com.zarholding.zar.repository.TokenRepository
-import com.zarholding.zar.repository.UserRepository
+import com.zarholding.zar.repository.*
+import com.zarholding.zar.utility.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.Marker
 import retrofit2.Response
@@ -30,17 +29,20 @@ class TaxiReservationViewModel @Inject constructor(
     private val taxiRepository: TaxiRepository,
     private val addressRepository: AddressRepository,
     private val userRepository: UserRepository,
-    private val tokenRepository: TokenRepository
+    private val companyRepository: CompanyRepository
 ) : ViewModel() {
 
     private var job: Job? = null
-    val errorLiveDate = MutableLiveData<ErrorApiModel>()
-    val setFavPlaceLiveData = MutableLiveData<Boolean>()
-    val addFavPlaceLiveData = MutableLiveData<Boolean>()
-    val removeFavPlaceLiveData = MutableLiveData<Boolean>()
-    val sendRequestLiveData = MutableLiveData<Boolean>()
-    val addressLiveData = MutableLiveData<AddressModel>()
-    private var favPlace: MutableList<TaxiFavPlaceModel>? = null
+    val errorLiveDate = SingleLiveEvent<ErrorApiModel>()
+    val setFavPlaceLiveData = SingleLiveEvent<Boolean>()
+    val addFavPlaceLiveData = SingleLiveEvent<Boolean>()
+    val removeFavPlaceLiveData = SingleLiveEvent<Boolean>()
+    val sendRequestLiveData = SingleLiveEvent<Boolean>()
+    val addressLiveData = SingleLiveEvent<AddressModel>()
+    var companySelected : CompanyModel? = null
+
+    private var favPlace : MutableList<TaxiFavPlaceModel>? = null
+    private var companies : MutableList<CompanyModel>? = null
     private var originFavPlaceModel: TaxiFavPlaceModel? = null
     private var destinationFavPlaceModel: TaxiFavPlaceModel? = null
     private var originMarker: Marker? = null
@@ -50,37 +52,76 @@ class TaxiReservationViewModel @Inject constructor(
     private var enumTaxiRequestType = EnumTaxiRequestType.OneWay
 
 
+
     //---------------------------------------------------------------------------------------------- setError
     private suspend fun setError(response: Response<*>?) {
-        job?.cancel()
-        withContext(Dispatchers.Main) {
+        withContext(Main) {
             checkResponseError(response, errorLiveDate)
         }
+        job?.cancel()
     }
     //---------------------------------------------------------------------------------------------- setError
 
 
     //---------------------------------------------------------------------------------------------- setError
     private suspend fun setError(message: String) {
-        job?.cancel()
-        withContext(Dispatchers.Main) {
+        withContext(Main) {
             errorLiveDate.value = ErrorApiModel(EnumApiError.Error, message)
         }
+        job?.cancel()
     }
     //---------------------------------------------------------------------------------------------- setError
 
 
+
+    //---------------------------------------------------------------------------------------------- getSpinnersData
+    fun getSpinnersData() {
+        job = CoroutineScope(IO).launch {
+            requestGetCompanies().join()
+            requestGetTaxiFavPlace().join()
+        }
+    }
+    //---------------------------------------------------------------------------------------------- getSpinnersData
+
+
+    //---------------------------------------------------------------------------------------------- requestGetCompanies
+    private fun requestGetCompanies() : Job {
+        return CoroutineScope(IO + exceptionHandler()).launch {
+            delay(1000)
+            val response = companyRepository.requestGetCompanies()
+            if (response?.isSuccessful == true) {
+                response.body()?.let {
+                    it.data?.let { items ->
+                        companies = items.items.toMutableList()
+                    }?: run {
+                        setError("اطلاعات خالی است")
+                    }
+                }?: run {
+                    setError("اطلاعات خالی است")
+                }
+            } else
+                setError(response)
+        }
+    }
+    //---------------------------------------------------------------------------------------------- requestGetCompanies
+
+
+
     //---------------------------------------------------------------------------------------------- requestGetTaxiFavPlace
-    fun requestGetTaxiFavPlace() {
-        job = CoroutineScope(IO + exceptionHandler()).launch {
-            val response = taxiRepository.requestGetTaxiFavPlace(tokenRepository.getBearerToken())
+    private fun requestGetTaxiFavPlace() : Job {
+         return CoroutineScope(IO + exceptionHandler()).launch {
+             delay(1000)
+            val response = taxiRepository.requestGetTaxiFavPlace()
             if (response?.isSuccessful == true) {
                 response.body()?.let {
                     if (it.hasError)
                         setError(it.message)
                     else
                         it.data?.let { items ->
-                            setFavPlaceList(items)
+                            favPlace = items.toMutableList()
+                            withContext(Main) {
+                                setFavPlaceLiveData.value = true
+                            }
                         } ?: run {
                             setError("اطلاعات خالی است")
                         }
@@ -92,13 +133,11 @@ class TaxiReservationViewModel @Inject constructor(
     //---------------------------------------------------------------------------------------------- requestGetTaxiFavPlace
 
 
+
     //---------------------------------------------------------------------------------------------- requestAddFavPlace
     fun requestAddFavPlace(request: TaxiAddFavPlaceRequest) {
         job = CoroutineScope(IO + exceptionHandler()).launch {
-            val response = taxiRepository.requestAddFavPlace(
-                request,
-                tokenRepository.getBearerToken()
-            )
+            val response = taxiRepository.requestAddFavPlace(request)
             if (response?.isSuccessful == true) {
                 response.body()?.let {
                     if (it.hasError)
@@ -114,7 +153,9 @@ class TaxiReservationViewModel @Inject constructor(
                                 }
                                 else -> {}
                             }
-                            addToFavPlaceList(item)
+                            withContext(Main) {
+                                addToFavPlaceList(item)
+                            }
                         } ?: run {
                             setError("اطلاعات خالی است")
                         }
@@ -129,16 +170,15 @@ class TaxiReservationViewModel @Inject constructor(
     //---------------------------------------------------------------------------------------------- requestDeleteFavPlace
     fun requestDeleteFavPlace(id: Int) {
         job = CoroutineScope(IO + exceptionHandler()).launch {
-            val response = taxiRepository.requestDeleteFavPlace(
-                id,
-                tokenRepository.getBearerToken()
-            )
+            val response = taxiRepository.requestDeleteFavPlace(id)
             if (response?.isSuccessful == true) {
                 response.body()?.let {
                     if (it.hasError)
                         setError(it.message)
                     else
-                        removeItemInFavPlace(id)
+                        withContext(Main) {
+                            removeItemInFavPlace(id)
+                        }
                 } ?: run {
                     setError("اطلاعات خالی است")
                 }
@@ -152,7 +192,7 @@ class TaxiReservationViewModel @Inject constructor(
     //---------------------------------------------------------------------------------------------- requestTaxi
     fun requestTaxi(request: TaxiRequestModel) {
         job = CoroutineScope(IO + exceptionHandler()).launch {
-            val response = taxiRepository.requestTaxi(request, tokenRepository.getBearerToken())
+            val response = taxiRepository.requestTaxi(request)
             if (response?.isSuccessful == true) {
                 response.body()?.let {
                     setError(it.message)
@@ -176,7 +216,9 @@ class TaxiReservationViewModel @Inject constructor(
             if (response?.isSuccessful == true) {
                 response.body()?.let {
                     it.address?.let { address ->
-                        addressLiveData.value = address
+                        withContext(Main){
+                            addressLiveData.value = address
+                        }
                     } ?: run {
                         setError("اطلاعات خالی است")
                     }
@@ -191,27 +233,18 @@ class TaxiReservationViewModel @Inject constructor(
 
 
 
-
-    //---------------------------------------------------------------------------------------------- setFavPlaceList
-    private fun setFavPlaceList(favPlace: List<TaxiFavPlaceModel>) {
-        this.favPlace = favPlace.toMutableList()
-        setFavPlaceLiveData.value = true
-    }
-    //---------------------------------------------------------------------------------------------- setFavPlaceList
-
-
     //---------------------------------------------------------------------------------------------- addToFavPlaceList
-    fun addToFavPlaceList(element: TaxiFavPlaceModel) {
+    private fun addToFavPlaceList(element: TaxiFavPlaceModel) {
         if (favPlace == null)
             favPlace = mutableListOf()
         favPlace!!.add(element)
-        addFavPlaceLiveData.value = true
+        addFavPlaceLiveData.postValue(true)
     }
     //---------------------------------------------------------------------------------------------- addToFavPlaceList
 
 
     //---------------------------------------------------------------------------------------------- removeItemInFavPlace
-    fun removeItemInFavPlace(id: Int) {
+    private fun removeItemInFavPlace(id: Int) {
         favPlace?.removeIf { it.id == id }
         removeFavPlaceLiveData.value = true
     }
@@ -221,6 +254,11 @@ class TaxiReservationViewModel @Inject constructor(
     //---------------------------------------------------------------------------------------------- getFavPlace
     fun getFavPlaceList() = favPlace
     //---------------------------------------------------------------------------------------------- getFavPlace
+
+
+    //---------------------------------------------------------------------------------------------- getCompaniesList
+    fun getCompaniesList() = companies
+    //---------------------------------------------------------------------------------------------- getCompaniesList
 
 
     //---------------------------------------------------------------------------------------------- setOriginFavPlaceModel
@@ -306,7 +344,7 @@ class TaxiReservationViewModel @Inject constructor(
 
     //---------------------------------------------------------------------------------------------- exceptionHandler
     private fun exceptionHandler() = CoroutineExceptionHandler { _, throwable ->
-        CoroutineScope(Dispatchers.Main).launch {
+        CoroutineScope(Main).launch {
             throwable.localizedMessage?.let { setError(it) }
         }
     }

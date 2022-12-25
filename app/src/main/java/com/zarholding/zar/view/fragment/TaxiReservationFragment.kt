@@ -116,10 +116,31 @@ class TaxiReservationFragment : Fragment() {
     //---------------------------------------------------------------------------------------------- showMessage
 
 
+    //---------------------------------------------------------------------------------------------- initView
+    private fun initView() {
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, backClick)
+        osmManager = OsmManager(binding.mapView)
+        osmManager.mapInitialize(themeManagers.applicationTheme())
+        binding.imageViewMarker.setImageResource(R.drawable.ic_origin)
+        setListener()
+        setApplicatorNameToTextView()
+        clickOnDepartureServiceTextView()
+        setPassengersAdapter()
+        getSpinnersData()
+        observeErrorLiveDate()
+        observeFavePlaceLiveData()
+        observeAddressLiveData()
+        observeAddFavPlaceLiveData()
+        observeRemoveFavPlaceLiveData()
+        observeSendRequestLiveData()
+    }
+    //---------------------------------------------------------------------------------------------- initView
+
+
     //---------------------------------------------------------------------------------------------- observeLoginLiveDate
     private fun observeErrorLiveDate() {
-        taxiReservationViewModel.errorLiveDate.removeObservers(viewLifecycleOwner)
         taxiReservationViewModel.errorLiveDate.observe(viewLifecycleOwner) {
+            binding.buttonSendRequest.stopLoading()
             backClick.isEnabled = false
             loadingManager.stopLoadingView()
             showMessage(it.message)
@@ -133,19 +154,85 @@ class TaxiReservationFragment : Fragment() {
     //---------------------------------------------------------------------------------------------- observeLoginLiveDate
 
 
-    //---------------------------------------------------------------------------------------------- initView
-    private fun initView() {
-        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, backClick)
-        osmManager = OsmManager(binding.mapView)
-        osmManager.mapInitialize(themeManagers.applicationTheme())
-        binding.imageViewMarker.setImageResource(R.drawable.ic_origin)
-        setListener()
-        setApplicatorNameToTextView()
-        clickOnDepartureServiceTextView()
-        setPassengersAdapter()
-        requestGetTaxiFavPlace()
+    //---------------------------------------------------------------------------------------------- observeFavePlaceLiveData
+    private fun observeFavePlaceLiveData() {
+        taxiReservationViewModel.setFavPlaceLiveData.observe(viewLifecycleOwner) {
+            loadingManager.stopLoadingView()
+            initOriginSpinner()
+            initDestinationSpinner()
+            initCompanySpinner()
+        }
     }
-    //---------------------------------------------------------------------------------------------- initView
+    //---------------------------------------------------------------------------------------------- observeFavePlaceLiveData
+
+
+    //---------------------------------------------------------------------------------------------- observeAddressLiveData
+    private fun observeAddressLiveData() {
+        taxiReservationViewModel.addressLiveData.observe(viewLifecycleOwner) {
+            val center =
+                GeoPoint(binding.mapView.mapCenter.latitude, binding.mapView.mapCenter.longitude)
+            if (taxiReservationViewModel.getOriginMarker() == null) {
+                setAddressToTextview(it, binding.textViewOrigin)
+                addOriginMarker(GeoPoint(center.latitude, center.longitude))
+            } else if (taxiReservationViewModel.getDestinationMarker() == null) {
+                setAddressToTextview(it, binding.textViewDestination)
+                addDestinationMarker(GeoPoint(center.latitude, center.longitude))
+            }
+        }
+    }
+    //---------------------------------------------------------------------------------------------- observeAddressLiveData
+
+
+    //---------------------------------------------------------------------------------------------- observeAddFavPlaceLiveData
+    private fun observeAddFavPlaceLiveData() {
+        taxiReservationViewModel.addFavPlaceLiveData.observe(viewLifecycleOwner) {
+            binding.imageViewFavOrigin.clearAnimation()
+            binding.imageViewFavDestination.clearAnimation()
+            when (taxiReservationViewModel.getFavPlaceType()) {
+                FavPlaceType.ORIGIN -> {
+                    binding
+                        .imageViewFavOrigin
+                        .setImageResource(R.drawable.ic_favorite)
+                }
+                FavPlaceType.DESTINATION -> {
+                    binding
+                        .imageViewFavDestination
+                        .setImageResource(R.drawable.ic_favorite)
+                }
+                else -> {}
+            }
+            initOriginSpinner()
+            initDestinationSpinner()
+        }
+    }
+    //---------------------------------------------------------------------------------------------- observeAddFavPlaceLiveData
+
+
+    //---------------------------------------------------------------------------------------------- observeRemoveFavPlaceLiveData
+    private fun observeRemoveFavPlaceLiveData() {
+        taxiReservationViewModel.removeFavPlaceLiveData.observe(viewLifecycleOwner) {
+            binding.imageViewFavOrigin.clearAnimation()
+            binding.imageViewFavDestination.clearAnimation()
+            when (taxiReservationViewModel.getFavPlaceType()) {
+                FavPlaceType.ORIGIN -> removeOriginMarker()
+                FavPlaceType.DESTINATION -> removeDestinationMarker()
+                else -> {}
+            }
+            initOriginSpinner()
+            initDestinationSpinner()
+        }
+    }
+    //---------------------------------------------------------------------------------------------- observeRemoveFavPlaceLiveData
+
+
+    //---------------------------------------------------------------------------------------------- observeSendRequestLiveData
+    private fun observeSendRequestLiveData() {
+        taxiReservationViewModel.sendRequestLiveData.observe(viewLifecycleOwner) {
+            backClick.isEnabled = false
+            activity?.onBackPressedDispatcher?.onBackPressed()
+        }
+    }
+    //---------------------------------------------------------------------------------------------- observeSendRequestLiveData
 
 
     //---------------------------------------------------------------------------------------------- setListener
@@ -163,6 +250,7 @@ class TaxiReservationFragment : Fragment() {
         binding.cardViewSearch.setOnClickListener { showDialogSearchAddress() }
         binding.powerSpinnerOrigin.setOnClickListener { powerSpinnerOriginClick() }
         binding.powerSpinnerDestination.setOnClickListener { powerSpinnerDestinationClick() }
+        binding.powerSpinnerCompany.setOnClickListener { powerSpinnerCompanyClick() }
         binding.buttonSendRequest.setOnClickListener { requestTaxi() }
     }
     //---------------------------------------------------------------------------------------------- setListener
@@ -214,50 +302,42 @@ class TaxiReservationFragment : Fragment() {
     //---------------------------------------------------------------------------------------------- powerSpinnerDestinationClick
 
 
-    //---------------------------------------------------------------------------------------------- observeFavePlaceLiveData
-    private fun observeFavePlaceLiveData() {
-        taxiReservationViewModel.setFavPlaceLiveData.removeObservers(viewLifecycleOwner)
-        taxiReservationViewModel.setFavPlaceLiveData.observe(viewLifecycleOwner) {
-            initOriginSpinner()
-            initDestinationSpinner()
+    //---------------------------------------------------------------------------------------------- powerSpinnerCompanyClick
+    private fun powerSpinnerCompanyClick() {
+        if (context == null)
+            return
+        taxiReservationViewModel.companySelected?.let {
+            ConfirmDialog(requireContext(),
+                ConfirmDialog.ConfirmType.DELETE,
+                getString(R.string.companyIsSelect),
+                object : ConfirmDialog.Click {
+                    override fun clickYes() {
+                        taxiReservationViewModel.companySelected = null
+                        binding.powerSpinnerCompany.clearSelectedItem()
+                        binding.powerSpinnerCompany.showArrow = true
+                        binding.powerSpinnerCompany.setBackgroundResource(R.drawable.drawable_spinner)
+                    }
+                }).show()
+        } ?: run {
+            if (binding.powerSpinnerCompany.isShowing)
+                binding.powerSpinnerCompany.dismiss()
+            else
+                binding.powerSpinnerCompany.show()
         }
     }
-    //---------------------------------------------------------------------------------------------- observeFavePlaceLiveData
+    //---------------------------------------------------------------------------------------------- powerSpinnerCompanyClick
 
 
-    //---------------------------------------------------------------------------------------------- requestGetTaxiFavPlace
-    private fun requestGetTaxiFavPlace() {
+    //---------------------------------------------------------------------------------------------- getSpinnersData
+    private fun getSpinnersData() {
         loadingManager.setViewLoading(
             binding.constraintLayoutFooter,
             R.layout.item_loading,
             R.color.recyclerLoadingShadow
         )
-        observeErrorLiveDate()
-        observeFavePlaceLiveData()
-        taxiReservationViewModel.requestGetTaxiFavPlace()
+        taxiReservationViewModel.getSpinnersData()
     }
-    //---------------------------------------------------------------------------------------------- requestGetTaxiFavPlace
-
-
-
-    //---------------------------------------------------------------------------------------------- observeFavePlaceLiveData
-    private fun observeAddressLiveData() {
-        taxiReservationViewModel.addressLiveData.removeObservers(viewLifecycleOwner)
-        taxiReservationViewModel.addressLiveData.observe(viewLifecycleOwner) {
-            val center =
-                GeoPoint(binding.mapView.mapCenter.latitude, binding.mapView.mapCenter.longitude)
-            if (taxiReservationViewModel.getOriginMarker() == null) {
-                setAddressToTextview(it, binding.textViewOrigin)
-                addOriginMarker(GeoPoint(center.latitude, center.longitude))
-            } else if (taxiReservationViewModel.getDestinationMarker() == null) {
-                setAddressToTextview(it, binding.textViewDestination)
-                addDestinationMarker(GeoPoint(center.latitude, center.longitude))
-            }
-        }
-    }
-    //---------------------------------------------------------------------------------------------- observeFavePlaceLiveData
-
-
+    //---------------------------------------------------------------------------------------------- getSpinnersData
 
 
     //---------------------------------------------------------------------------------------------- getCenterLocationOfMap
@@ -267,7 +347,6 @@ class TaxiReservationFragment : Fragment() {
         val center =
             GeoPoint(binding.mapView.mapCenter.latitude, binding.mapView.mapCenter.longitude)
         binding.textViewLoading.visibility = View.VISIBLE
-        observeAddressLiveData()
         taxiReservationViewModel.getAddress(center)
     }
     //---------------------------------------------------------------------------------------------- getCenterLocationOfMap
@@ -507,6 +586,31 @@ class TaxiReservationFragment : Fragment() {
     //---------------------------------------------------------------------------------------------- initDestinationSpinner
 
 
+    //---------------------------------------------------------------------------------------------- initCompanySpinner
+    private fun initCompanySpinner() {
+        taxiReservationViewModel.getCompaniesList()?.let {
+            val items = it.map { company ->
+                IconSpinnerItem(company.text)
+            }
+
+            binding.powerSpinnerCompany.apply {
+                setSpinnerAdapter(IconSpinnerAdapter(this))
+                setItems(items)
+                getSpinnerRecyclerView().layoutManager =
+                    LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+                lifecycleOwner = viewLifecycleOwner
+
+                setOnSpinnerItemSelectedListener<IconSpinnerItem> { _, _, newIndex, _ ->
+                    taxiReservationViewModel.companySelected = it[newIndex]
+                    binding.powerSpinnerCompany.setBackgroundResource(R.drawable.drawable_spinner_select)
+                }
+            }
+        }
+
+    }
+    //---------------------------------------------------------------------------------------------- initCompanySpinner
+
+
     //---------------------------------------------------------------------------------------------- addOriginMarker
     private fun addOriginMarker(geoPoint: GeoPoint) {
         binding.textViewLoading.visibility = View.GONE
@@ -722,18 +826,6 @@ class TaxiReservationFragment : Fragment() {
     //---------------------------------------------------------------------------------------------- showAddToFavPlaceDialog
 
 
-    //---------------------------------------------------------------------------------------------- observeAddFavPlaceLiveData
-    private fun observeAddFavPlaceLiveData() {
-        taxiReservationViewModel.addFavPlaceLiveData.removeObservers(viewLifecycleOwner)
-        taxiReservationViewModel.addFavPlaceLiveData.observe(viewLifecycleOwner) {
-            initOriginSpinner()
-            initDestinationSpinner()
-        }
-    }
-    //---------------------------------------------------------------------------------------------- observeAddFavPlaceLiveData
-
-
-
     //---------------------------------------------------------------------------------------------- requestAddFavPlace
     private fun requestAddFavPlace(placeName: String, placeAddress: String) {
         if (context == null)
@@ -752,7 +844,6 @@ class TaxiReservationFragment : Fragment() {
             else -> {}
         }
         geoPoint?.let {
-            observeAddFavPlaceLiveData()
             val request = TaxiAddFavPlaceRequest(placeName, placeAddress, it.latitude, it.longitude)
             taxiReservationViewModel.requestAddFavPlace(request)
         }
@@ -780,18 +871,6 @@ class TaxiReservationFragment : Fragment() {
     //---------------------------------------------------------------------------------------------- showRemoveFromFavPlaceDialog
 
 
-    //---------------------------------------------------------------------------------------------- observeRemoveFavPlaceLiveData
-    private fun observeRemoveFavPlaceLiveData() {
-        taxiReservationViewModel.removeFavPlaceLiveData.removeObservers(viewLifecycleOwner)
-        taxiReservationViewModel.removeFavPlaceLiveData.observe(viewLifecycleOwner) {
-            initOriginSpinner()
-            initDestinationSpinner()
-        }
-    }
-    //---------------------------------------------------------------------------------------------- observeRemoveFavPlaceLiveData
-
-
-
     //---------------------------------------------------------------------------------------------- requestRemoveFavPlace
     private fun requestRemoveFavPlace(id: Int) {
         val rotation = AnimationUtils.loadAnimation(requireContext(), R.anim.rotate_repeat)
@@ -804,7 +883,6 @@ class TaxiReservationFragment : Fragment() {
             }
             else -> {}
         }
-        observeRemoveFavPlaceLiveData()
         taxiReservationViewModel.requestDeleteFavPlace(id)
     }
     //---------------------------------------------------------------------------------------------- requestRemoveFavPlace
@@ -822,18 +900,6 @@ class TaxiReservationFragment : Fragment() {
         SearchAddressDialog(selectItem).show(childFragmentManager, "search address")
     }
     //---------------------------------------------------------------------------------------------- showDialogSearchAddress
-
-
-    //---------------------------------------------------------------------------------------------- observeSendRequestLiveData
-    private fun observeSendRequestLiveData() {
-        taxiReservationViewModel.sendRequestLiveData.removeObservers(viewLifecycleOwner)
-        taxiReservationViewModel.sendRequestLiveData.observe(viewLifecycleOwner) {
-            backClick.isEnabled = false
-            activity?.onBackPressedDispatcher?.onBackPressed()
-        }
-    }
-    //---------------------------------------------------------------------------------------------- observeSendRequestLiveData
-
 
 
     //---------------------------------------------------------------------------------------------- requestTaxi
@@ -856,11 +922,10 @@ class TaxiReservationFragment : Fragment() {
                 binding.textViewDestination.text.toString(),
                 passenger,
                 binding.editTextReason.text.toString(),
-                user?.companyCode,
+                taxiReservationViewModel.companySelected?.value,
                 user?.personnelJobKeyCode
             )
             binding.buttonSendRequest.startLoading(getString(R.string.bePatient))
-            observeSendRequestLiveData()
             taxiReservationViewModel.requestTaxi(request)
         }
     }
@@ -950,10 +1015,6 @@ class TaxiReservationFragment : Fragment() {
     //---------------------------------------------------------------------------------------------- onDestroyView
     override fun onDestroyView() {
         super.onDestroyView()
-        taxiReservationViewModel.addFavPlaceLiveData.removeObservers(viewLifecycleOwner)
-        taxiReservationViewModel.setFavPlaceLiveData.removeObservers(viewLifecycleOwner)
-        taxiReservationViewModel.removeFavPlaceLiveData.removeObservers(viewLifecycleOwner)
-        taxiReservationViewModel.errorLiveDate.removeObservers(viewLifecycleOwner)
         binding.mapView.onPause()
         _binding = null
     }

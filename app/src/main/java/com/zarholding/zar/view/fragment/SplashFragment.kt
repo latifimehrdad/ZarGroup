@@ -56,7 +56,7 @@ class SplashFragment : Fragment() {
 
     //---------------------------------------------------------------------------------------------- showMessage
     private fun showMessage(message: String) {
-        val snack = Snackbar.make(binding.constraintLayoutParent, message, 10 * 1000)
+        val snack = Snackbar.make(binding.constraintLayoutParent, message, 5 * 1000)
         snack.setBackgroundTint(resources.getColor(R.color.primaryColor, requireContext().theme))
         snack.setTextColor(resources.getColor(R.color.textViewColor3, requireContext().theme))
         snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
@@ -95,6 +95,8 @@ class SplashFragment : Fragment() {
 
     //---------------------------------------------------------------------------------------------- gotoFragmentHome
     private fun gotoFragmentHome() {
+        observeErrorLiveDate()
+        observeSuccessLiveDataLiveData()
         job = CoroutineScope(IO).launch {
             withContext(Main) {
                 requestGetData()
@@ -105,10 +107,8 @@ class SplashFragment : Fragment() {
 
 
 
-
     //---------------------------------------------------------------------------------------------- observeLoginLiveDate
     private fun observeErrorLiveDate() {
-        splashViewModel.errorLiveDate.removeObservers(viewLifecycleOwner)
         splashViewModel.errorLiveDate.observe(viewLifecycleOwner) {
             stopLoading()
             showMessage(it.message)
@@ -124,7 +124,6 @@ class SplashFragment : Fragment() {
 
     //---------------------------------------------------------------------------------------------- observeSuccessLiveDataLiveData
     private fun observeSuccessLiveDataLiveData() {
-        splashViewModel.successLiveData.removeObservers(viewLifecycleOwner)
         splashViewModel.successLiveData.observe(viewLifecycleOwner){
             (activity as MainActivity).setUserInfo()
             if (it)
@@ -139,8 +138,6 @@ class SplashFragment : Fragment() {
     //---------------------------------------------------------------------------------------------- requestGetData
     private fun requestGetData() {
         startLoading()
-        observeErrorLiveDate()
-        observeSuccessLiveDataLiveData()
         splashViewModel.requestGetData()
     }
     //---------------------------------------------------------------------------------------------- requestGetData
@@ -169,8 +166,6 @@ class SplashFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()
-        splashViewModel.errorLiveDate.removeObservers(viewLifecycleOwner)
-        splashViewModel.successLiveData.removeObservers(viewLifecycleOwner)
         _binding = null
     }
     //---------------------------------------------------------------------------------------------- onDestroyView

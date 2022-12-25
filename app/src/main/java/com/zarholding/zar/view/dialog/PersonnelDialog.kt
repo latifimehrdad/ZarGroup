@@ -67,6 +67,7 @@ class PersonnelDialog(
         lp.height = WindowManager.LayoutParams.WRAP_CONTENT
         window.attributes = lp
         setListener()
+        observeUserMutableLiveData()
     }
     //---------------------------------------------------------------------------------------------- onCreateView
 
@@ -104,8 +105,8 @@ class PersonnelDialog(
 
     //---------------------------------------------------------------------------------------------- observeUserMutableLiveData
     private fun observeUserMutableLiveData() {
-        personnelViewModel.userMutableLiveData.removeObservers(viewLifecycleOwner)
         personnelViewModel.userMutableLiveData.observe(viewLifecycleOwner) {
+            binding.textViewLoading.visibility = View.GONE
             setPersonnelAdapter(it)
         }
     }
@@ -115,7 +116,6 @@ class PersonnelDialog(
     //---------------------------------------------------------------------------------------------- requestGetUser
     private fun requestGetUser(search: String) {
         binding.textViewLoading.visibility = View.VISIBLE
-        observeUserMutableLiveData()
         personnelViewModel.requestGetUser(search)
     }
     //---------------------------------------------------------------------------------------------- requestGetUser

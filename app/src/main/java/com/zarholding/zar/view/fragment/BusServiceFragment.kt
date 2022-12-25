@@ -103,6 +103,8 @@ class BusServiceFragment : Fragment(){
         osmManager.mapInitialize(themeManagers.applicationTheme())
         setListener()
         selectedTripType = TripSelect.ALL
+        observeTripModelLiveData()
+        observeErrorLiveDate()
         requestGetAllTrips()
     }
     //---------------------------------------------------------------------------------------------- onViewCreated
@@ -111,7 +113,7 @@ class BusServiceFragment : Fragment(){
 
     //---------------------------------------------------------------------------------------------- showMessage
     private fun showMessage(message: String) {
-        val snack = Snackbar.make(binding.constraintLayoutParent, message, 10 * 1000)
+        val snack = Snackbar.make(binding.constraintLayoutParent, message, 5 * 1000)
         snack.setBackgroundTint(resources.getColor(R.color.primaryColor, requireContext().theme))
         snack.setTextColor(resources.getColor(R.color.textViewColor3, requireContext().theme))
         snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
@@ -142,7 +144,6 @@ class BusServiceFragment : Fragment(){
 
     //---------------------------------------------------------------------------------------------- observeLoginLiveDate
     private fun observeErrorLiveDate() {
-        busServiceViewModel.errorLiveDate.removeObservers(viewLifecycleOwner)
         busServiceViewModel.errorLiveDate.observe(viewLifecycleOwner) {
             showMessage(it.message)
             when(it.type) {
@@ -199,7 +200,6 @@ class BusServiceFragment : Fragment(){
 
     //---------------------------------------------------------------------------------------------- observeTripModelLiveData
     private fun observeTripModelLiveData() {
-        busServiceViewModel.tripModelLiveData.removeObservers(viewLifecycleOwner)
         busServiceViewModel.tripModelLiveData.observe(viewLifecycleOwner) {
             when (selectedTripType) {
                 TripSelect.ALL -> selectListAllServices()
@@ -214,8 +214,6 @@ class BusServiceFragment : Fragment(){
     //---------------------------------------------------------------------------------------------- requestGetAllTrips
     private fun requestGetAllTrips() {
         startLoading()
-        observeTripModelLiveData()
-        observeErrorLiveDate()
         busServiceViewModel.requestGetAllTrips()
     }
     //---------------------------------------------------------------------------------------------- requestGetAllTrips
@@ -389,7 +387,7 @@ class BusServiceFragment : Fragment(){
         }
 
 
-        if (tripSelect == TripSelect.MY && item.myStationTripStatus == EnumTripStatus.Done)
+        if (tripSelect == TripSelect.MY && item.myStationTripStatus == EnumTripStatus.Confirmed)
             startSignalR()
     }
     //---------------------------------------------------------------------------------------------- drawRoadOnMap
@@ -486,8 +484,6 @@ class BusServiceFragment : Fragment(){
     //---------------------------------------------------------------------------------------------- onDestroyView
     override fun onDestroyView() {
         super.onDestroyView()
-        busServiceViewModel.tripModelLiveData.removeObservers(viewLifecycleOwner)
-        busServiceViewModel.errorLiveDate.removeObservers(viewLifecycleOwner)
         signalRListener?.let {
             if (it.isConnection)
                 it.stopConnection()
