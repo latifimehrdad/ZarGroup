@@ -226,8 +226,7 @@
             android:layout_marginHorizontal="@dimen/_10sdp"
             android:orientation="horizontal"
             android:gravity="center"
-            android:padding="@dimen/_4sdp"
-            android:background="@drawable/drawable_confirm">
+            android:padding="@dimen/_4sdp">
 
             <TextView
                 android:id="@+id/textViewRejectReason"
@@ -236,10 +235,10 @@
                 android:layout_weight="1"
                 android:textColor="@color/textViewColor1"
                 android:textSize="@dimen/_9sdp"
-                android:lines="1"
+                android:maxLines="2"
                 android:fontFamily="@font/kalameh_medium"
                 android:shadowColor="@color/black"
-                android:layout_marginEnd="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/_2sdp"
                 android:text="@{item.rejectReason}"/>
 
             <TextView

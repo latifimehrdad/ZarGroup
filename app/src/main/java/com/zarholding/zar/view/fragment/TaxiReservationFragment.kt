@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
@@ -27,6 +28,7 @@ import com.zarholding.zar.model.request.TaxiAddFavPlaceRequest
 import com.zarholding.zar.model.request.TaxiRequestModel
 import com.zarholding.zar.model.response.address.AddressModel
 import com.zarholding.zar.model.response.address.AddressSuggestionModel
+import com.zarholding.zar.utility.CompanionValues
 import com.zarholding.zar.utility.OsmManager
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.view.dialog.*
@@ -130,6 +132,7 @@ class TaxiReservationFragment : Fragment() {
         osmManager = OsmManager(binding.mapView)
         osmManager.mapInitialize(themeManagers.applicationTheme())
         binding.imageViewMarker.setImageResource(R.drawable.ic_origin)
+        binding.textViewChooseLocation.text = getString(R.string.pleaseSelectPlaceOfOrigin)
         setListener()
         setApplicatorNameToTextView()
         clickOnDepartureServiceTextView()
@@ -247,6 +250,7 @@ class TaxiReservationFragment : Fragment() {
     //---------------------------------------------------------------------------------------------- setListener
     private fun setListener() {
         fixMapScrolling()
+        binding.materialButtonMyRequest.setOnClickListener { gotoMyRequestHistory() }
         binding.textViewDeparture.setOnClickListener { clickOnDepartureServiceTextView() }
         binding.textViewReturning.setOnClickListener { clickOnReturningServicesTextView() }
         binding.buttonDepartureTime.setOnClickListener { showTimePickerDialog() }
@@ -254,15 +258,27 @@ class TaxiReservationFragment : Fragment() {
         binding.buttonDepartureDate.setOnClickListener { showDatePickerDialog() }
         binding.buttonReturnDate.setOnClickListener { showDatePickerDialog() }
         binding.imageViewMarker.setOnClickListener { getCenterLocationOfMap() }
+        binding.textViewChooseLocation.setOnClickListener { getCenterLocationOfMap() }
         binding.imageViewFavOrigin.setOnClickListener { clickImageviewFavOrigin() }
         binding.imageViewFavDestination.setOnClickListener { clickImageviewFavDestination() }
-        binding.cardViewSearch.setOnClickListener { showDialogSearchAddress() }
+        binding.textViewSearch.setOnClickListener { showDialogSearchAddress() }
         binding.powerSpinnerOrigin.setOnClickListener { powerSpinnerOriginClick() }
         binding.powerSpinnerDestination.setOnClickListener { powerSpinnerDestinationClick() }
         binding.powerSpinnerCompany.setOnClickListener { powerSpinnerCompanyClick() }
         binding.buttonSendRequest.setOnClickListener { requestTaxi() }
     }
     //---------------------------------------------------------------------------------------------- setListener
+
+
+    //---------------------------------------------------------------------------------------------- gotoMyRequestHistory
+    private fun gotoMyRequestHistory() {
+        val bundle = Bundle()
+        bundle.putBoolean(CompanionValues.myRequest, true)
+        findNavController()
+            .navigate(R.id.action_TaxiReservationFragment_to_AdminTaxiFragment, bundle)
+    }
+    //---------------------------------------------------------------------------------------------- gotoMyRequestHistory
+
 
 
     //---------------------------------------------------------------------------------------------- powerSpinnerOriginClick
@@ -624,7 +640,7 @@ class TaxiReservationFragment : Fragment() {
     private fun addOriginMarker(geoPoint: GeoPoint) {
         binding.textViewLoading.visibility = View.GONE
         val icon = osmManager.createMarkerIconDrawable(
-            Size(42, 87),
+            Size(143, 85),
             R.drawable.icon_marker_origin
         )
         taxiReservationViewModel.setOriginMarker(
@@ -634,7 +650,8 @@ class TaxiReservationFragment : Fragment() {
                 null
             )
         )
-        binding.imageViewMarker.setImageResource(R.drawable.ic_destination)
+        binding.textViewChooseLocation.text = getString(R.string.pleaseSelectPlaceOfDestination)
+        binding.imageViewMarker.setImageResource(R.drawable.ic_origin)
         osmManager.moveCameraZoomUp(geoPoint)
     }
     //---------------------------------------------------------------------------------------------- addOriginMarker
@@ -649,6 +666,7 @@ class TaxiReservationFragment : Fragment() {
         taxiReservationViewModel.setOriginFavPlaceModel(null)
         binding.imageViewFavOrigin.setImageResource(R.drawable.ic_favorite_outline)
         binding.imageViewMarker.setImageResource(R.drawable.ic_origin)
+        binding.textViewChooseLocation.text = getString(R.string.pleaseSelectPlaceOfOrigin)
         binding.powerSpinnerOrigin.clearSelectedItem()
         binding.powerSpinnerOrigin.showArrow = true
         binding.powerSpinnerOrigin.setBackgroundResource(R.drawable.drawable_spinner)
@@ -667,7 +685,7 @@ class TaxiReservationFragment : Fragment() {
     private fun addDestinationMarker(geoPoint: GeoPoint) {
         binding.textViewLoading.visibility = View.GONE
         val icon = osmManager.createMarkerIconDrawable(
-            Size(42, 87),
+            Size(143, 85),
             R.drawable.icon_marker_destination
         )
         taxiReservationViewModel.setDestinationMarker(
@@ -678,6 +696,8 @@ class TaxiReservationFragment : Fragment() {
             )
         )
         binding.imageViewMarker.visibility = View.GONE
+        binding.textViewChooseLocation.visibility = View.GONE
+        binding.textViewSearch.visibility = View.GONE
         val points = mutableListOf<GeoPoint>()
         points.add(taxiReservationViewModel.getOriginMarker()!!.position)
         points.add(taxiReservationViewModel.getDestinationMarker()!!.position)
@@ -696,7 +716,10 @@ class TaxiReservationFragment : Fragment() {
         osmManager.removeMarkerAndMove(taxiReservationViewModel.getDestinationMarker()!!)
         taxiReservationViewModel.setDestinationMarker(null)
         binding.imageViewMarker.visibility = View.VISIBLE
-        binding.imageViewMarker.setImageResource(R.drawable.ic_destination)
+        binding.imageViewMarker.setImageResource(R.drawable.ic_origin)
+        binding.textViewChooseLocation.text = getString(R.string.pleaseSelectPlaceOfDestination)
+        binding.textViewChooseLocation.visibility = View.VISIBLE
+        binding.textViewSearch.visibility = View.VISIBLE
         binding.powerSpinnerDestination.clearSelectedItem()
         binding.powerSpinnerDestination.showArrow = true
         binding.powerSpinnerDestination.setBackgroundResource(R.drawable.drawable_spinner)

@@ -15,6 +15,11 @@
     <string name="confirmAgency">تاییدیه آژانس</string>
     <string name="personnelList">لیست پرسنل</string>
     <string name="foodReservation">رزرو غذا</string>
+    <string name="taxiReservationDot">رزرو تاکسی :</string>
+    <string name="chooseTaxiType">انتخاب نوع تاکسی :</string>
+    <string name="chooseTaxiDriver">انتخاب راننده :</string>
+    <string name="companyDriver">راننده شرکت</string>
+    <string name="agencyDriver">راننده آژانس</string>
     <string name="giftCard">بن کارت</string>
     <string name="comingSoon">به زودی</string>
     <string name="view">مشاهده</string>
@@ -49,6 +54,7 @@
     <string name="pendingForAccept">در انتظار تایید</string>
     <string name="confirmedByOfficial">تایید شده توسط اداری</string>
     <string name="reject">عدم تایید</string>
+    <string name="rejected">عدم تایید به دلیل</string>
     <string name="dismiss">بستن</string>
     <string name="stations">ایستگاه ها</string>
     <string name="origin">مبدا</string>
@@ -63,12 +69,14 @@
     <string name="receivingMoreItems">درحال دریافت موارد بیشتر</string>
     <string name="requests">درخواست ها</string>
     <string name="historyOfRequests">تاریخچه درخواست ها</string>
+    <string name="myRequests">درخواست های من</string>
     <string name="departure">رفت</string>
     <string name="returning">رفت و برگشت</string>
     <string name="applicator">درخواست کننده : %1$s</string>
     <string name="doYouWantToExitApp">آیا برای خروج از برنامه مطمئن هستید؟</string>
     <string name="pleaseSelectPlaceOfOrigin">لطفا لوکیشن مبدا را انتخاب کنید</string>
     <string name="pleaseSelectPlaceOfDestination">لطفا لوکیشن مقصد را انتخاب کنید</string>
+    <string name="pleaseSelectDriver">لطفا راننده را انتخاب کنید</string>
     <string name="originAndDestination">مبدا - مقصد : </string>
     <string name="approver">تصویب کننده :</string>
     <string name="departureDate">تاریخ رفت : </string>
@@ -78,6 +86,7 @@
     <string name="date">تاریخ</string>
     <string name="yes">بله</string>
     <string name="confirm">تایید</string>
+    <string name="confirmed">تایید شده</string>
     <string name="departureTimeDot">ساعت رفت :</string>
     <string name="departureTime">ساعت رفت</string>
     <string name="_return">برگشت</string>
@@ -107,6 +116,7 @@
     <string name="personalCode">کد پرسنلی : %1$s</string>
     <string name="attendanceTime">ساعت حضور : %1$s</string>
     <string name="myStation">ایستگاه من : %1$s</string>
+    <string name="taxiRequestIsConfirm">درخواست سرویس آقا/خانم %1$s تایید شد.</string>
     <string name="confirmForTaxiRequestRegister">آیا برای تایید درخواست آژانس آقا/خانم %1$s مطمئن هستید؟</string>
     <string name="confirmForTripRequestRegister">آیا برای تایید درخواست رزرو سرویس های انتخابی مطمئن هستید؟</string>
     <string name="confirmForDelete">آیا برای حذف %1$s مطمئن هستید؟</string>
@@ -146,12 +156,14 @@
     <string name="selectTheReturnTime">لطفا ساعت برگشت را انتخاب نمایید</string>
     <string name="theReturnDateIsBeforeTheDepartureDate">تاریخ برگشت قبل از تاریخ رفت است</string>
     <string name="searchPlace">جستجوی آدرس</string>
+    <string name="pleaseSelectCompany">لطفا شرکت را انتخاب کنید</string>
     <string name="companyIsSelect">شرکت انتخاب شده است، آیا میخواهید آنرا تغییر دهید؟</string>
     <string name="originLocationIsSelect">مبدا انتخاب شده است، آیا میخواهید مبدا را تغییر بدهید؟</string>
     <string name="destinationLocationIsSelect">مقصد انتخاب شده است، برای تغییر آن دکمه برگشت را بزنید</string>
     <string name="pleaseChooseOriginLocation">لطفا مبدا را انتخاب نمایید</string>
     <string name="pleaseChooseDestinationLocation">لطفا مقصد را انتخاب نمایید</string>
     <string name="pleaseSelectPassenger">لطفا حداقل 1 مسافر را انتخاب نمایید</string>
+    <string name="pleaseCompleteFollowingSteps">لطفا مراحل زیر را تکمیل کنید</string>
 
     
     

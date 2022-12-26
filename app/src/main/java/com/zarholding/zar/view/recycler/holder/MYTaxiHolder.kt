@@ -42,19 +42,19 @@ class MYTaxiHolder(
                 binding.textViewStatus.text = context.getString(R.string.pendingForAccept)
                 binding.textViewRejectReason.visibility = View.GONE
             }
-            EnumTaxiRequestStatus.Confirm -> {
+            EnumTaxiRequestStatus.Confirm,
+            EnumTaxiRequestStatus.Confirmed-> {
                 binding.linearLayoutStatus.background =
                     ContextCompat.getDrawable(binding.root.context, R.drawable.drawable_confirm)
-                binding.textViewStatus.text = context.getString(R.string.confirm)
+                binding.textViewStatus.text = context.getString(R.string.confirmed)
                 binding.textViewRejectReason.visibility = View.GONE
             }
             EnumTaxiRequestStatus.Reject -> {
                 binding.linearLayoutStatus.background =
                     ContextCompat.getDrawable(binding.root.context, R.drawable.drawable_reject)
-                binding.textViewStatus.text = context.getString(R.string.reject)
+                binding.textViewStatus.text = context.getString(R.string.rejected)
                 binding.textViewRejectReason.visibility = View.VISIBLE
             }
-            EnumTaxiRequestStatus.Confirmed -> {}
         }
 
         binding.executePendingBindings()

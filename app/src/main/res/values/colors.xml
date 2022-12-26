@@ -76,6 +76,7 @@
 
     <color name="recyclerLoadingShadow">#66D5D4D4</color>
     <color name="recyclerLoadingBack">#9906183A</color>
+    <color name="viewLoadingBack">#A0A0A0</color>
     <color name="recyclerLoadingLightBack">#FFFFFF</color>
 
     <color name="mapLoadingBack">#9906183A</color>

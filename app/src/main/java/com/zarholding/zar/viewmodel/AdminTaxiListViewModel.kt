@@ -5,6 +5,7 @@ import com.zar.core.enums.EnumApiError
 import com.zar.core.models.ErrorApiModel
 import com.zar.core.tools.api.checkResponseError
 import com.zarholding.zar.model.enum.EnumAdminTaxiType
+import com.zarholding.zar.model.request.AssignDriverRequest
 import com.zarholding.zar.model.request.TaxiChangeStatusRequest
 import com.zarholding.zar.model.response.taxi.AdminTaxiRequestModel
 import com.zarholding.zar.repository.TaxiRepository
@@ -55,6 +56,7 @@ class AdminTaxiListViewModel @Inject constructor(
         when (type) {
             EnumAdminTaxiType.REQUEST.name -> enumAdminTaxiType = EnumAdminTaxiType.REQUEST
             EnumAdminTaxiType.HISTORY.name -> enumAdminTaxiType = EnumAdminTaxiType.HISTORY
+            EnumAdminTaxiType.MY.name -> enumAdminTaxiType = EnumAdminTaxiType.MY
         }
     }
     //---------------------------------------------------------------------------------------------- setEnumAdminTaxiType
@@ -68,8 +70,9 @@ class AdminTaxiListViewModel @Inject constructor(
 
     //---------------------------------------------------------------------------------------------- getTaxiList
     fun getTaxiList() = when(enumAdminTaxiType!!) {
+        EnumAdminTaxiType.MY -> requestMyTaxiRequestList()
         EnumAdminTaxiType.REQUEST ->  requestTaxiList()
-        EnumAdminTaxiType.HISTORY -> requestMyTaxiRequestList()
+        EnumAdminTaxiType.HISTORY -> {}
     }
     //---------------------------------------------------------------------------------------------- getTaxiList
 
@@ -133,7 +136,7 @@ class AdminTaxiListViewModel @Inject constructor(
 
     //---------------------------------------------------------------------------------------------- requestChangeStatusOfTaxiRequests
     fun requestChangeStatusOfTaxiRequests(request : TaxiChangeStatusRequest) {
-        CoroutineScope(IO + exceptionHandler()).launch {
+        job = CoroutineScope(IO + exceptionHandler()).launch {
             val response = taxiRepository.requestChangeStatusOfTaxiRequests(request)
             if (response?.isSuccessful == true) {
                 response.body()?.let {
@@ -153,6 +156,7 @@ class AdminTaxiListViewModel @Inject constructor(
     //---------------------------------------------------------------------------------------------- requestChangeStatusOfTaxiRequests
 
 
+
     //---------------------------------------------------------------------------------------------- exceptionHandler
     private fun exceptionHandler() = CoroutineExceptionHandler { _, throwable ->
         CoroutineScope(Main).launch {
@@ -162,13 +166,20 @@ class AdminTaxiListViewModel @Inject constructor(
     //---------------------------------------------------------------------------------------------- exceptionHandler
 
 
-    //--------------------------------------
+    //---------------------------------------------------------------------------------------------- userRepository
     fun getUser() = userRepository.getUser()
+    //---------------------------------------------------------------------------------------------- userRepository
+
 
 
     //---------------------------------------------------------------------------------------------- isAdministrativeUser
-    fun isAdministrativeUser() = userRepository.getUser()?.isAdministrative
+    fun isAdministrativeUser() = userRepository.isAdministrativeUser()
     //---------------------------------------------------------------------------------------------- isAdministrativeUser
+
+
+    //---------------------------------------------------------------------------------------------- isDriver
+    fun isDriver() = userRepository.isDriver()
+    //---------------------------------------------------------------------------------------------- isDriver
 
 
 

@@ -2,9 +2,9 @@ package com.zarholding.zar.repository
 
 import com.zar.core.tools.api.apiCall
 import com.zarholding.zar.api.ApiSuperApp
-import com.zarholding.zar.model.request.TaxiAddFavPlaceRequest
-import com.zarholding.zar.model.request.TaxiChangeStatusRequest
-import com.zarholding.zar.model.request.TaxiRequestModel
+import com.zarholding.zar.model.request.*
+import com.zarholding.zar.model.response.taxi.AdminTaxiRequestResponse
+import retrofit2.Response
 import javax.inject.Inject
 
 class TaxiRepository @Inject constructor(
@@ -12,6 +12,9 @@ class TaxiRepository @Inject constructor(
     private val tokenRepository: TokenRepository
 ) {
 
+    private var pageNumber = 0
+    private val pageSize = 3
+    val request = OnlyPagingListRequest(pageNumber, pageSize)
 
     //---------------------------------------------------------------------------------------------- requestGetTaxiFavPlace
     suspend fun requestGetTaxiFavPlace() =
@@ -44,8 +47,10 @@ class TaxiRepository @Inject constructor(
 
 
     //---------------------------------------------------------------------------------------------- requestMyTaxiRequestList
-    suspend fun requestMyTaxiRequestList() =
-        apiCall { api.requestMyTaxiRequestList(tokenRepository.getBearerToken()) }
+    suspend fun requestMyTaxiRequestList() : Response<AdminTaxiRequestResponse>? {
+        request.PageNumber++
+        return apiCall { api.requestMyTaxiRequestList(request, tokenRepository.getBearerToken()) }
+    }
     //---------------------------------------------------------------------------------------------- requestMyTaxiRequestList
 
 
@@ -53,5 +58,11 @@ class TaxiRepository @Inject constructor(
     suspend fun requestChangeStatusOfTaxiRequests(request: TaxiChangeStatusRequest) =
         apiCall { api.requestChangeStatusOfTaxiRequests(request, tokenRepository.getBearerToken()) }
     //---------------------------------------------------------------------------------------------- requestChangeStatusOfTaxiRequests
+
+
+    //---------------------------------------------------------------------------------------------- requestAssignDriverToRequest
+    suspend fun requestAssignDriverToRequest(request: AssignDriverRequest) =
+        apiCall { api.requestAssignDriverToRequest(request, tokenRepository.getBearerToken()) }
+    //---------------------------------------------------------------------------------------------- requestAssignDriverToRequest
 
 }

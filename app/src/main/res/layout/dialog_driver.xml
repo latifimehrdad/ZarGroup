@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:maxHeight="@dimen/_200sdp"
+    app:cardCornerRadius="@dimen/_20sdp"
+    android:layout_marginHorizontal="@dimen/_10sdp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/drawable_dialog_background">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayoutHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@drawable/drawable_confirm">
+
+            <ImageView
+                android:id="@+id/imageViewClose"
+                android:layout_width="@dimen/_17sdp"
+                android:layout_height="@dimen/_17sdp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:src="@drawable/ic_close"
+                android:layout_marginVertical="@dimen/_5sdp"
+                android:layout_marginHorizontal="@dimen/_5sdp"
+                android:scaleType="fitEnd"
+                app:tint="@color/textViewColor1"
+                android:contentDescription="@string/closeDescription"
+                />
+
+            <TextView
+                android:id="@+id/textViewTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/imageViewClose"
+                android:layout_marginVertical="@dimen/_7sdp"
+                android:layout_marginHorizontal="@dimen/_5sdp"
+                android:textColor="@color/textViewColor1"
+                android:textSize="@dimen/_11sdp"
+                android:fontFamily="@font/kalameh_regular"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:shadowColor="@color/black"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginVertical="@dimen/_7sdp"
+                android:layout_marginHorizontal="@dimen/_5sdp"
+                android:textColor="@color/textViewColor1"
+                android:textSize="@dimen/_11sdp"
+                android:fontFamily="@font/kalameh_regular"
+                android:textStyle="bold"
+                android:shadowColor="@color/black"
+                android:gravity="center"
+                android:text="@string/pleaseCompleteFollowingSteps"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayoutParent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/_5sdp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayoutContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_margin="@dimen/_5sdp"
+                app:layout_constraintTop_toTopOf="parent"
+                android:padding="@dimen/_10sdp"
+                android:background="@drawable/drawable_spinner">
+
+                <TextView
+                    android:id="@+id/textViewTaxi"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/_10sdp"
+                    android:textColor="@color/textViewColor2"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/kalameh_semibold"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:text="@string/taxiReservationDot"/>
+
+                <com.skydoves.powerspinner.PowerSpinnerView
+                    android:id="@+id/powerSpinnerType"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/_25sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@drawable/drawable_spinner"
+                    android:fontFamily="@font/kalameh_light"
+                    android:gravity="center"
+                    android:hint="@string/chooseFromList"
+                    android:padding="@dimen/_3sdp"
+                    android:textColor="@color/textViewColor2"
+                    android:textColorHint="@color/textViewFooter"
+                    android:textSize="@dimen/_10sdp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/textViewTaxi"
+                    app:layout_constraintEnd_toStartOf="@id/textViewType"
+                    android:layout_marginEnd="@dimen/_5sdp"
+                    app:spinner_arrow_gravity="start"
+                    app:spinner_arrow_padding="8dp"
+                    app:spinner_arrow_tint="@color/primaryColor"
+                    app:spinner_divider_color="@color/primaryColorVariant"
+                    app:spinner_divider_show="true"
+                    app:spinner_divider_size="0.4dp"
+                    app:spinner_item_height="46dp"
+                    app:spinner_popup_animation="dropdown"
+                    app:spinner_popup_background="@color/dialogBackgroundColor"
+                    app:spinner_popup_elevation="14dp" />
+
+                <TextView
+                    android:id="@+id/textViewType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/_9sdp"
+                    android:textColor="@color/textViewColor2"
+                    android:fontFamily="@font/kalameh_semibold"
+                    app:layout_constraintTop_toTopOf="@id/powerSpinnerType"
+                    app:layout_constraintBottom_toBottomOf="@id/powerSpinnerType"
+                    app:layout_constraintEnd_toStartOf="@id/textViewTaxi"
+                    android:text="@string/chooseTaxiType"/>
+
+
+                <com.skydoves.powerspinner.PowerSpinnerView
+                    android:id="@+id/powerSpinnerDriver"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/_25sdp"
+                    android:layout_marginTop="@dimen/_7sdp"
+                    android:background="@drawable/drawable_spinner"
+                    android:fontFamily="@font/kalameh_light"
+                    android:gravity="center"
+                    android:hint="@string/chooseFromList"
+                    android:padding="@dimen/_3sdp"
+                    android:textColor="@color/textViewColor2"
+                    android:textColorHint="@color/textViewFooter"
+                    android:textSize="@dimen/_10sdp"
+                    app:layout_constraintStart_toStartOf="@id/powerSpinnerType"
+                    app:layout_constraintTop_toBottomOf="@id/powerSpinnerType"
+                    app:layout_constraintEnd_toEndOf="@id/powerSpinnerType"
+                    app:spinner_arrow_gravity="start"
+                    app:spinner_arrow_padding="8dp"
+                    app:spinner_arrow_tint="@color/primaryColor"
+                    app:spinner_divider_color="@color/primaryColorVariant"
+                    app:spinner_divider_show="true"
+                    app:spinner_divider_size="0.4dp"
+                    app:spinner_item_height="46dp"
+                    app:spinner_popup_animation="dropdown"
+                    app:spinner_popup_background="@color/dialogBackgroundColor"
+                    app:spinner_popup_elevation="14dp" />
+
+                <TextView
+                    android:id="@+id/textViewDriver"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/_9sdp"
+                    android:textColor="@color/textViewColor2"
+                    android:fontFamily="@font/kalameh_semibold"
+                    app:layout_constraintTop_toTopOf="@id/powerSpinnerDriver"
+                    app:layout_constraintBottom_toBottomOf="@id/powerSpinnerDriver"
+                    app:layout_constraintStart_toStartOf="@id/textViewType"
+                    android:text="@string/chooseTaxiDriver"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.zarholding.zar.view.custom.ZarButton
+                android:id="@+id/buttonYes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/constraintLayoutContent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/buttonNo"
+                android:layout_marginVertical="@dimen/_10sdp"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:minWidth="@dimen/_90sdp"
+                android:textSize="@dimen/_12sdp"
+                android:fontFamily="@font/kalameh_semibold"
+                app:cornerRadius="@dimen/_5sdp"
+                android:textColor="@color/textViewColor2"
+                android:text='@string/confirm' />
+
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonNo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/buttonYes"
+                app:layout_constraintBottom_toBottomOf="@id/buttonYes"
+                app:layout_constraintStart_toEndOf="@id/buttonYes"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:minWidth="@dimen/_90sdp"
+                android:textSize="@dimen/_12sdp"
+                android:fontFamily="@font/kalameh_semibold"
+                app:cornerRadius="@dimen/_5sdp"
+                android:textColor="@color/textViewColor2"
+                android:text='@string/cancel' />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
+

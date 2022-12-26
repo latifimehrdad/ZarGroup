@@ -23,6 +23,7 @@ class AdminTaxiFragment : Fragment(){
     private val binding get() = _binding!!
 
     private val adminTaxiViewModel : AdminTaxiViewModel by viewModels()
+    private var isMyRequest = false
 
 
     //---------------------------------------------------------------------------------------------- onCreateView
@@ -40,6 +41,7 @@ class AdminTaxiFragment : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner
+        isMyRequest = arguments?.getBoolean(CompanionValues.myRequest, false)?:false
         setFragmentToViewPager()
         observeLiveData()
     }
@@ -61,10 +63,50 @@ class AdminTaxiFragment : Fragment(){
 
     //---------------------------------------------------------------------------------------------- setFragmentToViewPager
     private fun setFragmentToViewPager() {
+        if (isMyRequest)
+            setFragmentMyRequestHistory()
+        else
+            setFragmentRequest()
+    }
+    //---------------------------------------------------------------------------------------------- setFragmentToViewPager
+
+
+    //---------------------------------------------------------------------------------------------- setFragmentRequest
+    private fun setFragmentRequest() {
+        if (adminTaxiViewModel.isAdministrative())
+            setAdministrativeFragment()
+        else
+            setNotAdministrativeFragment()
+    }
+    //---------------------------------------------------------------------------------------------- setFragmentRequest
+
+
+
+    //---------------------------------------------------------------------------------------------- setFragmentMyRequestHistory
+    private fun setFragmentMyRequestHistory() {
+        val adapter = ViewPagerAdapter(this@AdminTaxiFragment)
+        val myRequestBundle = Bundle()
+        myRequestBundle.putString(CompanionValues.adminTaxiType, EnumAdminTaxiType.MY.name)
+        val myRequestFragment = AdminTaxiListFragment().apply {
+            arguments = myRequestBundle
+        }
+        adapter.addFragment(myRequestFragment, getString(R.string.myRequests))
+        binding.viewPager.adapter = adapter
+        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            tab.text = adapter.getTabTitle(position)
+        }.attach()
+    }
+    //---------------------------------------------------------------------------------------------- setFragmentMyRequestHistory
+
+
+
+    //---------------------------------------------------------------------------------------------- setAdministrativeFragment
+    private fun setAdministrativeFragment() {
         val adapter = ViewPagerAdapter(this@AdminTaxiFragment)
         val requestBundle = Bundle()
         val historyBundle = Bundle()
         requestBundle.putString(CompanionValues.adminTaxiType, EnumAdminTaxiType.REQUEST.name)
+        requestBundle.putBoolean(CompanionValues.isDriver, false)
         historyBundle.putString(CompanionValues.adminTaxiType, EnumAdminTaxiType.HISTORY.name)
         val requestFragment = AdminTaxiListFragment().apply {
             arguments = requestBundle
@@ -78,12 +120,32 @@ class AdminTaxiFragment : Fragment(){
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = adapter.getTabTitle(position)
         }.attach()
-
     }
-    //---------------------------------------------------------------------------------------------- setFragmentToViewPager
+    //---------------------------------------------------------------------------------------------- setAdministrativeFragment
 
 
 
+    //---------------------------------------------------------------------------------------------- setNotAdministrativeFragment
+    private fun setNotAdministrativeFragment() {
+        val adapter = ViewPagerAdapter(this@AdminTaxiFragment)
+        val requestBundle = Bundle()
+        requestBundle.putString(CompanionValues.adminTaxiType, EnumAdminTaxiType.REQUEST.name)
+        requestBundle.putBoolean(CompanionValues.isDriver, adminTaxiViewModel.isAdministrative())
+        val requestFragment = AdminTaxiListFragment().apply {
+            arguments = requestBundle
+        }
+        adapter.addFragment(requestFragment, getString(R.string.requests))
+        binding.viewPager.adapter = adapter
+        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            tab.text = adapter.getTabTitle(position)
+        }.attach()
+    }
+    //---------------------------------------------------------------------------------------------- setNotAdministrativeFragment
+
+
+
+
+    //---------------------------------------------------------------------------------------------- observeLiveData
     private fun observeLiveData() {
 
         AdminTaxiViewModel.requestTaxiLiveDate.observe(viewLifecycleOwner) {
@@ -102,5 +164,6 @@ class AdminTaxiFragment : Fragment(){
             }
         }
     }
+    //---------------------------------------------------------------------------------------------- observeLiveData
 
 }

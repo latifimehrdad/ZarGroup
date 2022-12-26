@@ -74,6 +74,7 @@
 
     <color name="recyclerLoadingShadow">#4DFFFFFF</color>
     <color name="recyclerLoadingBack">#33FFFFFF</color>
+    <color name="viewLoadingBack">#787878</color>
     <color name="recyclerLoadingLightBack">#484848</color>
 
     <color name="dialogGradiantStartColor">#163c69</color>

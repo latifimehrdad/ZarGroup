@@ -103,7 +103,17 @@
     <fragment
         android:id="@+id/TaxiReservationFragment"
         android:name="com.zarholding.zar.view.fragment.TaxiReservationFragment"
-        android:label="TaxiReservationFragment"/>
+        android:label="TaxiReservationFragment">
+
+        <action
+            android:id="@+id/action_TaxiReservationFragment_to_AdminTaxiFragment"
+            app:destination="@id/AdminTaxiFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/AdminTaxiFragment"
