@@ -121,13 +121,14 @@ interface ApiSuperApp {
 
     @POST("$v1/CarRequest/get-mycarrequestlist")
     suspend fun requestMyTaxiRequestList(
-        @Body request : OnlyPagingListRequest,
+        @Body request : AdminTaxiListRequest,
         @Header("Authorization") token : String
     ) : Response<AdminTaxiRequestResponse>
 
 
-    @GET("$v1/CarRequest/get-CarRequestlist")
+    @POST("$v1/CarRequest/get-CarRequestlist")
     suspend fun requestTaxiList(
+        @Body request : AdminTaxiListRequest,
         @Header("Authorization") token : String
     ) : Response<AdminTaxiRequestResponse>
 

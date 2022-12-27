@@ -5,7 +5,7 @@ import com.zar.core.enums.EnumApiError
 import com.zar.core.models.ErrorApiModel
 import com.zar.core.tools.api.checkResponseError
 import com.zarholding.zar.model.enum.EnumAdminTaxiType
-import com.zarholding.zar.model.request.AssignDriverRequest
+import com.zarholding.zar.model.enum.EnumPersonnelType
 import com.zarholding.zar.model.request.TaxiChangeStatusRequest
 import com.zarholding.zar.model.response.taxi.AdminTaxiRequestModel
 import com.zarholding.zar.repository.TaxiRepository
@@ -62,9 +62,17 @@ class AdminTaxiListViewModel @Inject constructor(
     //---------------------------------------------------------------------------------------------- setEnumAdminTaxiType
 
 
+
+
     //---------------------------------------------------------------------------------------------- getEnumAdminTaxiType
     fun getEnumAdminTaxiType() = enumAdminTaxiType
     //---------------------------------------------------------------------------------------------- getEnumAdminTaxiType
+
+
+
+    //---------------------------------------------------------------------------------------------- getUserType
+    fun getUserType() = userRepository.getUserType()
+    //---------------------------------------------------------------------------------------------- getUserType
 
 
 
@@ -72,7 +80,7 @@ class AdminTaxiListViewModel @Inject constructor(
     fun getTaxiList() = when(enumAdminTaxiType!!) {
         EnumAdminTaxiType.MY -> requestMyTaxiRequestList()
         EnumAdminTaxiType.REQUEST ->  requestTaxiList()
-        EnumAdminTaxiType.HISTORY -> {}
+        EnumAdminTaxiType.HISTORY -> requestHistoryTaxiList()
     }
     //---------------------------------------------------------------------------------------------- getTaxiList
 
@@ -81,7 +89,11 @@ class AdminTaxiListViewModel @Inject constructor(
     //---------------------------------------------------------------------------------------------- requestTaxiList
     private fun requestTaxiList() {
         job = CoroutineScope(IO + exceptionHandler()) .launch {
-            val response = taxiRepository.requestTaxiList()
+            val type = if (getUserType() == EnumPersonnelType.Driver)
+                EnumPersonnelType.Driver
+            else
+                EnumPersonnelType.Personnel
+            val response = taxiRepository.requestTaxiList(type)
             if (response?.isSuccessful == true) {
                 response.body()?.let {
                     if (it.hasError)
@@ -103,6 +115,35 @@ class AdminTaxiListViewModel @Inject constructor(
         }
     }
     //---------------------------------------------------------------------------------------------- requestTaxiList
+
+
+
+    //---------------------------------------------------------------------------------------------- requestHistoryTaxiList
+    private fun requestHistoryTaxiList() {
+        job = CoroutineScope(IO + exceptionHandler()) .launch {
+            val response = taxiRepository.requestTaxiList(getUserType())
+            if (response?.isSuccessful == true) {
+                response.body()?.let {
+                    if (it.hasError)
+                        setError(it.message)
+                    else {
+                        it.data?.let {items ->
+                            withContext(Main){
+                                taxiRequestListLiveData.value = items
+                            }
+                        } ?: run {
+                            setError("اطلاعات خالی است")
+                        }
+                    }
+                } ?: run {
+                    setError("اطلاعات خالی است")
+                }
+            } else
+                setError(response)
+        }
+    }
+    //---------------------------------------------------------------------------------------------- requestHistoryTaxiList
+
 
 
     //---------------------------------------------------------------------------------------------- requestMyTaxiRequestList
@@ -171,16 +212,11 @@ class AdminTaxiListViewModel @Inject constructor(
     //---------------------------------------------------------------------------------------------- userRepository
 
 
-
-    //---------------------------------------------------------------------------------------------- isAdministrativeUser
-    fun isAdministrativeUser() = userRepository.isAdministrativeUser()
-    //---------------------------------------------------------------------------------------------- isAdministrativeUser
-
-
-    //---------------------------------------------------------------------------------------------- isDriver
-    fun isDriver() = userRepository.isDriver()
-    //---------------------------------------------------------------------------------------------- isDriver
-
+    //---------------------------------------------------------------------------------------------- setPageNumberToZero
+    fun setPageNumberToZero() {
+        taxiRepository.request.PageNumber = 0
+    }
+    //---------------------------------------------------------------------------------------------- setPageNumberToZero
 
 
     //---------------------------------------------------------------------------------------------- onCleared

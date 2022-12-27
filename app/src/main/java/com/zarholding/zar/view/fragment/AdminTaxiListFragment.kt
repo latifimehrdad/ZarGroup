@@ -11,6 +11,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.zar.core.enums.EnumApiError
 import com.zar.core.tools.loadings.LoadingManager
 import com.zarholding.zar.model.enum.EnumAdminTaxiType
+import com.zarholding.zar.model.enum.EnumPersonnelType
 import com.zarholding.zar.model.enum.EnumTaxiRequestStatus
 import com.zarholding.zar.model.request.TaxiChangeStatusRequest
 import com.zarholding.zar.model.response.taxi.AdminTaxiRequestModel
@@ -41,10 +42,10 @@ class AdminTaxiListFragment : Fragment() {
 
     private val adminTaxiListViewModel: AdminTaxiListViewModel by viewModels()
 
-    private var myTaxiRequestAdapter : MyTaxiAdapter? = null
-    private var adminTaxiRequestAdapter : AdminTaxiRequestAdapter? = null
+    private var myTaxiRequestAdapter: MyTaxiAdapter? = null
+    private var adminTaxiRequestAdapter: AdminTaxiRequestAdapter? = null
 
-    var endlessScrollListener: EndlessScrollListener? = null
+    private var endlessScrollListener: EndlessScrollListener? = null
 
 
     //---------------------------------------------------------------------------------------------- onCreateView
@@ -125,9 +126,10 @@ class AdminTaxiListFragment : Fragment() {
     //---------------------------------------------------------------------------------------------- setAdapter
     private fun setAdapter(items: List<AdminTaxiRequestModel>) {
         when (adminTaxiListViewModel.getEnumAdminTaxiType()!!) {
-            EnumAdminTaxiType.MY -> setMyTaxiRequestAdapter(items)
+            EnumAdminTaxiType.MY,
+            EnumAdminTaxiType.HISTORY
+            -> setMyTaxiRequestAdapter(items)
             EnumAdminTaxiType.REQUEST -> setTaxiRequestAdapter(items)
-            EnumAdminTaxiType.HISTORY -> {}
         }
     }
     //---------------------------------------------------------------------------------------------- setAdapter
@@ -137,8 +139,9 @@ class AdminTaxiListFragment : Fragment() {
     private fun setMyTaxiRequestAdapter(items: List<AdminTaxiRequestModel>) {
         if (context == null)
             return
-        AdminTaxiViewModel.myTaxiLiveDate.value = items.size
         myTaxiRequestAdapter?.let { adapter ->
+            val count = AdminTaxiViewModel.myTaxiLiveDate.value ?: run { 0 }
+            AdminTaxiViewModel.myTaxiLiveDate.value = count + items.size
             adapter.addRequest(items)
             endlessScrollListener?.let {
                 it.setLoading(false)
@@ -146,6 +149,7 @@ class AdminTaxiListFragment : Fragment() {
                     binding.recyclerView.removeOnScrollListener(it)
             }
         } ?: run {
+            AdminTaxiViewModel.myTaxiLiveDate.value = items.size
             myTaxiRequestAdapter = MyTaxiAdapter(items.toMutableList())
             val manager = LinearLayoutManager(
                 requireContext(),
@@ -161,13 +165,13 @@ class AdminTaxiListFragment : Fragment() {
     //---------------------------------------------------------------------------------------------- setMyTaxiRequestAdapter
 
 
-
     //---------------------------------------------------------------------------------------------- setTaxiRequestAdapter
     private fun setTaxiRequestAdapter(items: List<AdminTaxiRequestModel>) {
         if (context == null)
             return
-        AdminTaxiViewModel.requestTaxiLiveDate.value = items.size
         adminTaxiRequestAdapter?.let { adapter ->
+            val count = AdminTaxiViewModel.requestTaxiLiveDate.value ?: run { 0 }
+            AdminTaxiViewModel.requestTaxiLiveDate.value = count + items.size
             adapter.addRequest(items)
             endlessScrollListener?.let {
                 it.setLoading(false)
@@ -177,10 +181,10 @@ class AdminTaxiListFragment : Fragment() {
         } ?: run {
             val click = object : AdminTaxiRequestHolder.Click {
                 override fun accept(item: AdminTaxiRequestModel) {
-                    if (adminTaxiListViewModel.isAdministrativeUser())
-                        showDialogChooseDriver(item)
-                    else
-                        showDialogConfirm(item)
+                    when (adminTaxiListViewModel.getUserType()) {
+                        EnumPersonnelType.Administrative -> showDialogChooseDriver(item)
+                        else -> showDialogConfirm(item)
+                    }
                 }
 
                 override fun reject(item: AdminTaxiRequestModel) {
@@ -188,8 +192,11 @@ class AdminTaxiListFragment : Fragment() {
                 }
 
             }
-            adminTaxiRequestAdapter = AdminTaxiRequestAdapter(items.toMutableList(),
-                click, adminTaxiListViewModel.isDriver())
+            AdminTaxiViewModel.requestTaxiLiveDate.value = items.size
+            adminTaxiRequestAdapter = AdminTaxiRequestAdapter(
+                items.toMutableList(),
+                click, adminTaxiListViewModel.getUserType()
+            )
             val manager = LinearLayoutManager(
                 requireContext(),
                 LinearLayoutManager.VERTICAL,
@@ -202,7 +209,6 @@ class AdminTaxiListFragment : Fragment() {
         }
     }
     //---------------------------------------------------------------------------------------------- setTaxiRequestAdapter
-
 
 
     //______________________________________________________________________________________________ getEndlessScrollListener
@@ -219,7 +225,6 @@ class AdminTaxiListFragment : Fragment() {
     //______________________________________________________________________________________________ getEndlessScrollListener
 
 
-
     //---------------------------------------------------------------------------------------------- showDialogReasonOfReject
     private fun showDialogReasonOfReject(item: AdminTaxiRequestModel) {
         val click = object : RejectReasonDialog.Click {
@@ -231,6 +236,8 @@ class AdminTaxiListFragment : Fragment() {
                     item.personnelJobKeyCode,
                     item.fromCompany
                 )
+                adminTaxiRequestAdapter = null
+                endlessScrollListener = null
                 requestChangeStatusOfTaxiRequests(request)
             }
         }
@@ -239,11 +246,13 @@ class AdminTaxiListFragment : Fragment() {
     //---------------------------------------------------------------------------------------------- showDialogReasonOfReject
 
 
-
     //---------------------------------------------------------------------------------------------- showDialogChooseDriver
     private fun showDialogChooseDriver(item: AdminTaxiRequestModel) {
         val click = object : DriverDialog.Click {
-            override fun clickYes(message : String) {
+            override fun clickYes(message: String) {
+                adminTaxiRequestAdapter = null
+                endlessScrollListener = null
+                adminTaxiListViewModel.setPageNumberToZero()
                 showMessage(message)
                 getTaxiList()
             }
@@ -251,7 +260,6 @@ class AdminTaxiListFragment : Fragment() {
         DriverDialog(click, item).show(childFragmentManager, "driver")
     }
     //---------------------------------------------------------------------------------------------- showDialogChooseDriver
-
 
 
     //---------------------------------------------------------------------------------------------- showDialogConfirm
@@ -266,6 +274,8 @@ class AdminTaxiListFragment : Fragment() {
                         it.personnelJobKeyCode,
                         item.fromCompany
                     )
+                    adminTaxiRequestAdapter = null
+                    endlessScrollListener = null
                     requestChangeStatusOfTaxiRequests(request)
                 } ?: run {
                     (activity as MainActivity?)?.gotoFirstFragment()
@@ -305,6 +315,11 @@ class AdminTaxiListFragment : Fragment() {
     //---------------------------------------------------------------------------------------------- onDestroyView
     override fun onDestroyView() {
         super.onDestroyView()
+        adminTaxiListViewModel.setPageNumberToZero()
+        AdminTaxiViewModel.requestTaxiLiveDate.value = 0
+        AdminTaxiViewModel.myTaxiLiveDate.value = 0
+        adminTaxiRequestAdapter = null
+        endlessScrollListener = null
         _binding = null
     }
     //---------------------------------------------------------------------------------------------- onDestroyView

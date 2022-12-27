@@ -3,6 +3,7 @@ package com.zarholding.zar.view.recycler.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.zarholding.zar.model.enum.EnumPersonnelType
 import com.zarholding.zar.model.response.taxi.AdminTaxiRequestModel
 import com.zarholding.zar.view.recycler.holder.AdminTaxiRequestHolder
 import zar.databinding.ItemAdminTaxiRequestBinding
@@ -10,7 +11,7 @@ import zar.databinding.ItemAdminTaxiRequestBinding
 class AdminTaxiRequestAdapter(
     private val items: MutableList<AdminTaxiRequestModel>,
     private val click: AdminTaxiRequestHolder.Click,
-    private val isDriver : Boolean
+    private val userType : EnumPersonnelType
 ) : RecyclerView.Adapter<AdminTaxiRequestHolder>() {
 
     private var layoutInflater: LayoutInflater? = null
@@ -30,7 +31,7 @@ class AdminTaxiRequestAdapter(
 
     //---------------------------------------------------------------------------------------------- onBindViewHolder
     override fun onBindViewHolder(holder: AdminTaxiRequestHolder, position: Int) {
-        holder.bind(items[position], isDriver)
+        holder.bind(items[position], userType)
     }
     //---------------------------------------------------------------------------------------------- onBindViewHolder
 

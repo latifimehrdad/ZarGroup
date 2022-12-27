@@ -82,6 +82,14 @@ fun AddressModel.getAddress() : String {
 //-------------------------------------------------------------------------------------------------- AddressModel.getAddress()
 
 
+//-------------------------------------------------------------------------------------------------- setCommuteTripAndDriverName
+@BindingAdapter("setCommuteTripName" , "setDriverName")
+fun TextView.setCommuteTripAndDriverName(commuteTripName : String?, driverName: String?) {
+  text = context.getString(R.string.setTwoString, commuteTripName, driverName)
+}
+//-------------------------------------------------------------------------------------------------- setCommuteTripAndDriverName
+
+
 
 //-------------------------------------------------------------------------------------------------- setOriginDestinationToTextView
 @BindingAdapter("setOriginToTextView", "setDestinationToTextView")

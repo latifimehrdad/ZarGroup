@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import com.zarholding.zar.model.enum.EnumAdminTaxiType
+import com.zarholding.zar.model.enum.EnumPersonnelType
 import com.zarholding.zar.utility.CompanionValues
 import com.zarholding.zar.view.adapter.ViewPagerAdapter
 import com.zarholding.zar.viewmodel.AdminTaxiViewModel
@@ -17,12 +18,12 @@ import zar.R
 import zar.databinding.FragmentAdminTaxiBinding
 
 @AndroidEntryPoint
-class AdminTaxiFragment : Fragment(){
+class AdminTaxiFragment : Fragment() {
 
     private var _binding: FragmentAdminTaxiBinding? = null
     private val binding get() = _binding!!
 
-    private val adminTaxiViewModel : AdminTaxiViewModel by viewModels()
+    private val adminTaxiViewModel: AdminTaxiViewModel by viewModels()
     private var isMyRequest = false
 
 
@@ -41,7 +42,7 @@ class AdminTaxiFragment : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner
-        isMyRequest = arguments?.getBoolean(CompanionValues.myRequest, false)?:false
+        isMyRequest = arguments?.getBoolean(CompanionValues.myRequest, false) ?: false
         setFragmentToViewPager()
         observeLiveData()
     }
@@ -60,7 +61,6 @@ class AdminTaxiFragment : Fragment(){
     //---------------------------------------------------------------------------------------------- showMessage
 
 
-
     //---------------------------------------------------------------------------------------------- setFragmentToViewPager
     private fun setFragmentToViewPager() {
         if (isMyRequest)
@@ -73,13 +73,12 @@ class AdminTaxiFragment : Fragment(){
 
     //---------------------------------------------------------------------------------------------- setFragmentRequest
     private fun setFragmentRequest() {
-        if (adminTaxiViewModel.isAdministrative())
-            setAdministrativeFragment()
-        else
-            setNotAdministrativeFragment()
+        when(adminTaxiViewModel.getUserType()) {
+            EnumPersonnelType.Administrative -> setAdministrativeFragment()
+            else -> setNotAdministrativeFragment()
+        }
     }
     //---------------------------------------------------------------------------------------------- setFragmentRequest
-
 
 
     //---------------------------------------------------------------------------------------------- setFragmentMyRequestHistory
@@ -99,14 +98,12 @@ class AdminTaxiFragment : Fragment(){
     //---------------------------------------------------------------------------------------------- setFragmentMyRequestHistory
 
 
-
     //---------------------------------------------------------------------------------------------- setAdministrativeFragment
     private fun setAdministrativeFragment() {
         val adapter = ViewPagerAdapter(this@AdminTaxiFragment)
         val requestBundle = Bundle()
         val historyBundle = Bundle()
         requestBundle.putString(CompanionValues.adminTaxiType, EnumAdminTaxiType.REQUEST.name)
-        requestBundle.putBoolean(CompanionValues.isDriver, false)
         historyBundle.putString(CompanionValues.adminTaxiType, EnumAdminTaxiType.HISTORY.name)
         val requestFragment = AdminTaxiListFragment().apply {
             arguments = requestBundle
@@ -124,25 +121,33 @@ class AdminTaxiFragment : Fragment(){
     //---------------------------------------------------------------------------------------------- setAdministrativeFragment
 
 
-
     //---------------------------------------------------------------------------------------------- setNotAdministrativeFragment
     private fun setNotAdministrativeFragment() {
         val adapter = ViewPagerAdapter(this@AdminTaxiFragment)
         val requestBundle = Bundle()
         requestBundle.putString(CompanionValues.adminTaxiType, EnumAdminTaxiType.REQUEST.name)
-        requestBundle.putBoolean(CompanionValues.isDriver, adminTaxiViewModel.isAdministrative())
+        var myRequestFragment: AdminTaxiListFragment? = null
+        if (adminTaxiViewModel.getUserType() != EnumPersonnelType.Driver) {
+            val myRequestBundle = Bundle()
+            myRequestBundle.putString(CompanionValues.adminTaxiType, EnumAdminTaxiType.MY.name)
+            myRequestFragment = AdminTaxiListFragment().apply {
+                arguments = myRequestBundle
+            }
+        }
         val requestFragment = AdminTaxiListFragment().apply {
             arguments = requestBundle
         }
         adapter.addFragment(requestFragment, getString(R.string.requests))
+        myRequestFragment?.let {
+            adapter.addFragment(myRequestFragment, getString(R.string.myRequests))
+        }
         binding.viewPager.adapter = adapter
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = adapter.getTabTitle(position)
         }.attach()
+
     }
     //---------------------------------------------------------------------------------------------- setNotAdministrativeFragment
-
-
 
 
     //---------------------------------------------------------------------------------------------- observeLiveData

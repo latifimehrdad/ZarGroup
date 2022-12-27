@@ -76,7 +76,8 @@
             android:fontFamily="@font/kalameh_semibold"
             android:textSize="@dimen/_10sdp"
             android:lines="2"
-            android:text="@{item.commuteTripName}"/>
+            app:setCommuteTripName="@{item.commuteTripName}"
+            app:setDriverName="@{item.commuteDriverName}" />
 
         <TextView
             android:id="@+id/textViewDirection"

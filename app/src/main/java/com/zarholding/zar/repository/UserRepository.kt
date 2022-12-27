@@ -7,6 +7,7 @@ import com.zarholding.zar.database.dao.RoleDao
 import com.zarholding.zar.database.dao.UserInfoDao
 import com.zarholding.zar.database.entity.RoleEntity
 import com.zarholding.zar.database.entity.UserInfoEntity
+import com.zarholding.zar.model.enum.EnumPersonnelType
 import com.zarholding.zar.model.request.FilterUserRequestModel
 import com.zarholding.zar.model.response.user.UserResponseModel
 import retrofit2.Response
@@ -63,15 +64,10 @@ class UserRepository @Inject constructor(
     //---------------------------------------------------------------------------------------------- getUser
 
 
-    //---------------------------------------------------------------------------------------------- isAdministrativeUser
-    fun isAdministrativeUser() = getUser()?.isAdministrative?:false
-    //---------------------------------------------------------------------------------------------- isAdministrativeUser
-
-
-    //---------------------------------------------------------------------------------------------- isDriver
-    fun isDriver() = getUser()?.isDriver?:false
-    //---------------------------------------------------------------------------------------------- isDriver
-
+    //---------------------------------------------------------------------------------------------- getUserType
+    fun getUserType() = getUser()?.userType?.
+    let { enumValueOf(it)} ?: run { EnumPersonnelType.Personnel }
+    //---------------------------------------------------------------------------------------------- getUserType
 
 
     //---------------------------------------------------------------------------------------------- insertUserRole
