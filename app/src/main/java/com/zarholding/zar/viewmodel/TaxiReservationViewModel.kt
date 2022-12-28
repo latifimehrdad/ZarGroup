@@ -14,6 +14,7 @@ import com.zarholding.zar.model.response.address.AddressModel
 import com.zarholding.zar.model.response.company.CompanyModel
 import com.zarholding.zar.model.response.taxi.TaxiFavPlaceModel
 import com.zarholding.zar.repository.*
+import com.zarholding.zar.utility.RoleManager
 import com.zarholding.zar.utility.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
@@ -29,7 +30,8 @@ class TaxiReservationViewModel @Inject constructor(
     private val taxiRepository: TaxiRepository,
     private val addressRepository: AddressRepository,
     private val userRepository: UserRepository,
-    private val companyRepository: CompanyRepository
+    private val companyRepository: CompanyRepository,
+    private val roleManager: RoleManager
 ) : ViewModel() {
 
     private var job: Job? = null
@@ -358,6 +360,14 @@ class TaxiReservationViewModel @Inject constructor(
         return userRepository.getUser()
     }
     //---------------------------------------------------------------------------------------------- getUser
+
+
+
+
+    //---------------------------------------------------------------------------------------------- isDisableDaysAgo
+    fun isDisableDaysAgo() = roleManager.isDisableDaysAgo()
+    //---------------------------------------------------------------------------------------------- isDisableDaysAgo
+
 
 
 

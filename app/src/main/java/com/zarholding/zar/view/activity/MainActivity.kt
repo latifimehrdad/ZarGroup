@@ -238,7 +238,7 @@ class MainActivity : AppCompatActivity(){
                 binding.textViewProfileName.text = user?.fullName
                 binding.textViewPersonalCode.text = resources
                     .getString(R.string.personalCode, user?.personnelNumber.toString())
-                if (roleManager.getAdminRole(user?.roles))
+                if (roleManager.getAdminRole())
                     binding.imageViewAdmin.visibility = View.VISIBLE
                 else
                     binding.imageViewAdmin.visibility = View.GONE

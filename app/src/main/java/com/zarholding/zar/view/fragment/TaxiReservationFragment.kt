@@ -280,7 +280,6 @@ class TaxiReservationFragment : Fragment() {
     //---------------------------------------------------------------------------------------------- gotoMyRequestHistory
 
 
-
     //---------------------------------------------------------------------------------------------- powerSpinnerOriginClick
     private fun powerSpinnerOriginClick() {
         if (context == null)
@@ -429,6 +428,7 @@ class TaxiReservationFragment : Fragment() {
                 datePickerDialog.selectionMode = DateRangeCalendarView.SelectionMode.Range
             else -> {}
         }
+        datePickerDialog.isDisableDaysAgo = taxiReservationViewModel.isDisableDaysAgo()
         datePickerDialog.acceptButtonColor =
             resources.getColor(R.color.datePickerConfirmButtonBackColor, requireContext().theme)
         datePickerDialog.headerBackgroundColor =
@@ -457,26 +457,16 @@ class TaxiReservationFragment : Fragment() {
         datePickerDialog.setCanceledOnTouchOutside(true)
         datePickerDialog.onSingleDateSelectedListener =
             DatePickerDialog.OnSingleDateSelectedListener { startDate ->
-                val today = persianDate.getSolarDate()
-                if (startDate.persianShortDate < today)
-                    showMessage(getString(R.string.selectedDateIsThePast))
-                else {
-                    binding.buttonDepartureDate.text = startDate.persianShortDate
-                    binding.buttonDepartureTime.text = null
-                    binding.buttonReturnTime.text = null
-                }
+                binding.buttonDepartureDate.text = startDate.persianShortDate
+                binding.buttonDepartureTime.text = null
+                binding.buttonReturnTime.text = null
             }
         datePickerDialog.onRangeDateSelectedListener =
             DatePickerDialog.OnRangeDateSelectedListener { startDate, endDate ->
-                val today = persianDate.getSolarDate()
-                if (startDate.persianShortDate < today)
-                    showMessage(getString(R.string.selectedDateIsThePast))
-                else {
-                    binding.buttonDepartureDate.text = startDate.persianShortDate
-                    binding.buttonReturnDate.text = endDate.persianShortDate
-                    binding.buttonDepartureTime.text = null
-                    binding.buttonReturnTime.text = null
-                }
+                binding.buttonDepartureDate.text = startDate.persianShortDate
+                binding.buttonReturnDate.text = endDate.persianShortDate
+                binding.buttonDepartureTime.text = null
+                binding.buttonReturnTime.text = null
             }
 
         datePickerDialog.showDialog()
@@ -513,16 +503,18 @@ class TaxiReservationFragment : Fragment() {
             taxiReservationViewModel.getTimePickMode(),
             click = object : TimeDialog.Click {
                 override fun clickYes(timeDeparture: String, timeReturn: String) {
-                    val persianDate = LocalDateTime.now().toSolarDate()!!
-                    val today = persianDate.getSolarDate()
-                    if (binding.buttonDepartureDate.text.toString() == today) {
-                        val time = LocalTime.now()
-                        val currentTime = time.hour.toString().padStart(2, '0') +
-                                ":" + time.minute.toString().padStart(2, '0')
+                    if (taxiReservationViewModel.isDisableDaysAgo()) {
+                        val persianDate = LocalDateTime.now().toSolarDate()!!
+                        val today = persianDate.getSolarDate()
+                        if (binding.buttonDepartureDate.text.toString() == today) {
+                            val time = LocalTime.now()
+                            val currentTime = time.hour.toString().padStart(2, '0') +
+                                    ":" + time.minute.toString().padStart(2, '0')
 
-                        if (timeDeparture < currentTime) {
-                            showMessage(getString(R.string.selectedTimeIsThePast))
-                            return
+                            if (timeDeparture < currentTime) {
+                                showMessage(getString(R.string.selectedTimeIsThePast))
+                                return
+                            }
                         }
                     }
                     binding.buttonDepartureTime.text = timeDeparture
