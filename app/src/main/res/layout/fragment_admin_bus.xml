@@ -17,7 +17,7 @@
             android:layout_marginTop="@dimen/_5sdp"
             android:layout_marginEnd="@dimen/_10sdp"
             android:fontFamily="@font/kalameh_regular"
-            android:text="@string/confirmTripAndMap"
+            android:text="@string/service"
             android:textColor="@color/textViewColor2"
             android:textSize="@dimen/_11sdp"
             app:layout_constraintEnd_toEndOf="parent"

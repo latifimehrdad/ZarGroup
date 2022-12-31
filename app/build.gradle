@@ -56,7 +56,7 @@ dependencies {
 
 
     //SignalR
-    implementation 'com.microsoft.signalr:signalr:1.0.0'
+    implementation 'com.microsoft.signalr:signalr:5.0.5'
     implementation 'org.slf4j:slf4j-jdk14:1.7.25'
     
 
@@ -76,5 +76,7 @@ dependencies {
     kapt 'com.github.bumptech.glide:compiler:4.12.0'
 
     implementation "com.github.skydoves:powerspinner:1.2.4"
+
+    implementation "androidx.work:work-runtime-ktx:2.3.4"
 
 }

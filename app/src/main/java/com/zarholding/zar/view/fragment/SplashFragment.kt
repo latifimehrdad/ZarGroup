@@ -1,5 +1,6 @@
 package com.zarholding.zar.view.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.zar.core.enums.EnumApiError
+import com.zarholding.zar.background.ZarNotificationService
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.viewmodel.SplashViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -107,6 +109,14 @@ class SplashFragment : Fragment() {
 
 
 
+    //---------------------------------------------------------------------------------------------- startServiceNotificationBackground
+    private fun startServiceNotificationBackground() {
+        requireContext().startService(Intent(requireContext(), ZarNotificationService::class.java))
+    }
+    //---------------------------------------------------------------------------------------------- startServiceNotificationBackground
+
+
+
     //---------------------------------------------------------------------------------------------- observeLoginLiveDate
     private fun observeErrorLiveDate() {
         splashViewModel.errorLiveDate.observe(viewLifecycleOwner) {
@@ -126,6 +136,7 @@ class SplashFragment : Fragment() {
     private fun observeSuccessLiveDataLiveData() {
         splashViewModel.successLiveData.observe(viewLifecycleOwner){
             (activity as MainActivity).setUserInfo()
+            startServiceNotificationBackground()
             if (it)
                 findNavController()
                     .navigate(R.id.action_splashFragment_to_HomeFragment)

@@ -17,8 +17,8 @@
             android:id="@+id/imageViewShowMore"
             android:layout_width="@dimen/_30sdp"
             android:layout_height="@dimen/_30sdp"
-            app:layout_constraintTop_toTopOf="@id/cardViewImage"
-            app:layout_constraintBottom_toBottomOf="@id/cardViewImage"
+            app:layout_constraintTop_toTopOf="@id/textViewTitle"
+            app:layout_constraintBottom_toBottomOf="@id/textViewDirection"
             app:layout_constraintStart_toStartOf="parent"
             android:src="@drawable/ic_show_more"
             android:contentDescription="@string/showMoreDescription" />

@@ -3,6 +3,7 @@ package com.zarholding.zar.utility.signalr;
 import com.microsoft.signalr.HubConnection;
 import com.microsoft.signalr.HubConnectionBuilder;
 import com.microsoft.signalr.HubConnectionState;
+import com.zarholding.zar.model.notification_signalr.NotificationSignalrModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
 
 public class SignalRListener {
 
-//    private static SignalRListener instance;
+    //    private static SignalRListener instance;
     private final HubConnection hubConnection;
     private final RemoteSignalREmitter remoteSignalREmitter;
     private Thread thread;
@@ -35,6 +36,12 @@ public class SignalRListener {
 
         hubConnection.on("PreviousStationReached",
                 this.remoteSignalREmitter::onPreviousStationReached, String.class);
+
+
+        hubConnection.on("ReceiveMessage",
+                this.remoteSignalREmitter::onReceiveMessage,
+                String.class ,
+                NotificationSignalrModel.class);
 
     }
     //---------------------------------------------------------------------------------------------- SignalRListener
@@ -92,9 +99,9 @@ public class SignalRListener {
     //---------------------------------------------------------------------------------------------- isConnection
 
 
-    //---------------------------------------------------------------------------------------------- registerToGroup
-    public void registerToGroup(Integer tripId, Integer stationId) {
-        List<String> groups =new ArrayList<>();
+    //---------------------------------------------------------------------------------------------- registerToGroupForService
+    public void registerToGroupForService(Integer tripId, Integer stationId) {
+        List<String> groups = new ArrayList<>();
         String trip = "trip" + tripId;
         String station = trip + "station" + stationId;
         groups.add(trip);
@@ -102,7 +109,25 @@ public class SignalRListener {
         if (hubConnection.getConnectionState() == HubConnectionState.CONNECTED)
             hubConnection.send("RegisterToGroup", groups);
     }
-    //---------------------------------------------------------------------------------------------- registerToGroup
+    //---------------------------------------------------------------------------------------------- registerToGroupForService
+
+
+    //---------------------------------------------------------------------------------------------- registerToGroupForNotification
+    public void registerToGroupForNotification(String userId) {
+        List<String> groups = new ArrayList<>();
+        groups.add(userId);
+        if (hubConnection.getConnectionState() == HubConnectionState.CONNECTED)
+            hubConnection.send("RegisterToGroup", groups);
+    }
+    //---------------------------------------------------------------------------------------------- registerToGroupForNotification
+
+
+    //---------------------------------------------------------------------------------------------- notificationReceived
+    public void notificationReceived(Integer id) {
+        if (hubConnection.getConnectionState() == HubConnectionState.CONNECTED)
+            hubConnection.send("NotificationReceived", id);
+    }
+    //---------------------------------------------------------------------------------------------- notificationReceived
 
 
     //---------------------------------------------------------------------------------------------- interruptThread

@@ -28,6 +28,7 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.zar.core.tools.loadings.LoadingManager
 import com.zar.core.tools.manager.DialogManager
 import com.zar.core.tools.manager.ThemeManager
 import com.zarholding.zar.database.dao.UserInfoDao
@@ -64,6 +65,9 @@ class MainActivity : AppCompatActivity(){
     lateinit var themeManagers: ThemeManager
     @Inject
     lateinit var sharedPreferences: SharedPreferences
+
+    @Inject
+    lateinit var loadingManager: LoadingManager
 
     lateinit var binding: ActivityMainBinding
     private var navController: NavController? = null
@@ -273,6 +277,18 @@ class MainActivity : AppCompatActivity(){
     //---------------------------------------------------------------------------------------------- createNotificationChannel
 
 
+
+/*
+    //---------------------------------------------------------------------------------------------- startServiceBackground
+    private fun startServiceBackground() {
+        startService(Intent(this, ZarNotificationService::class.java))
+    }
+    //---------------------------------------------------------------------------------------------- startServiceBackground
+*/
+
+
+
+
     private fun initNotification(dialog: Dialog) {
 
         dialog.setCancelable(true)
@@ -280,10 +296,17 @@ class MainActivity : AppCompatActivity(){
         val recyclerView = dialog.findViewById<RecyclerView>(R.id.recyclerViewNotification)
         val imageViewClose = dialog.findViewById<ImageView>(R.id.imageViewClose)
 
+        loadingManager.setRecyclerLoading(
+            recyclerView,
+            R.layout.item_loading,
+            R.color.recyclerLoadingShadow,
+            1
+        )
+
         imageViewClose.setOnClickListener {
             dialog.dismiss()
         }
-
+/*
         val categories = mutableListOf(
             NotificationCategoryModel(
                 "امروز",
@@ -331,7 +354,7 @@ class MainActivity : AppCompatActivity(){
             tabLayout,
             categories.indices.toList(),
             true
-        ).attach()
+        ).attach()*/
 
     }
 

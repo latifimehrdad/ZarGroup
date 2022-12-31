@@ -49,7 +49,7 @@ class DashboardFragment : Fragment(){
         apps.add(
             AppModel(
                 R.drawable.ic_bus_transport,
-                getString(R.string.confirmTripAndMap),
+                getString(R.string.service),
                 R.id.action_DashboardFragment_to_AdminBusFragment
             )
         )
@@ -57,7 +57,7 @@ class DashboardFragment : Fragment(){
         apps.add(
             AppModel(
                 R.drawable.ic_cab,
-                getString(R.string.confirmAgency),
+                getString(R.string.agency),
                 R.id.action_DashboardFragment_to_AdminTaxiFragment
             )
         )

@@ -1,5 +1,6 @@
 package com.zarholding.zar.view.fragment
 
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.zarholding.zar.background.ZarNotificationService
 import com.zarholding.zar.database.dao.UserInfoDao
 import com.zarholding.zar.utility.CompanionValues
 import com.zarholding.zar.view.dialog.ConfirmDialog
@@ -73,6 +75,8 @@ class ProfileFragment : Fragment(){
                 userInfoDao.deleteAllRole()
                 sharedPreferences.edit().putString(CompanionValues.TOKEN, null).apply()
                 CoroutineScope(IO).launch {
+                    requireActivity().stopService(Intent(requireActivity(),
+                        ZarNotificationService::class.java))
                     delay(500)
                     withContext(Main) {
                         findNavController().navigate(R.id.action_goto_SplashFragment)

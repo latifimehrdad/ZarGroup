@@ -11,8 +11,8 @@
     <string name="home">صفحه اصلی</string>
     <string name="tripAndMap">سرویس و نقشه</string>
     <string name="adminPanel">پنل مدیریت</string>
-    <string name="confirmTripAndMap">تاییدیه سرویس</string>
-    <string name="confirmAgency">تاییدیه آژانس</string>
+    <string name="service">سرویس</string>
+    <string name="agency">آژانس</string>
     <string name="personnelList">لیست پرسنل</string>
     <string name="foodReservation">رزرو غذا</string>
     <string name="taxiReservationDot">رزرو تاکسی :</string>

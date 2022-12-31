@@ -365,6 +365,17 @@ class BusServiceFragment : Fragment(){
     //---------------------------------------------------------------------------------------------- drawRoadOnMap
     private fun drawRoadOnMap(item: TripModel, tripSelect: TripSelect) {
 
+        if (binding.textViewLoading.visibility == View.VISIBLE) {
+            val snack = Snackbar.make(binding.constraintLayoutParent,
+                getString(R.string.bePatientToLoadMap), 5 * 1000)
+            snack.setBackgroundTint(resources.getColor(R.color.primaryColor, requireContext().theme))
+            snack.setTextColor(resources.getColor(R.color.textViewColor3, requireContext().theme))
+            snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
+            snack.setActionTextColor(resources.getColor(R.color.textViewColor1, requireContext().theme))
+            snack.show()
+            return
+        }
+
         tripId = item.id
         stationId = item.myStationTripId
 
@@ -399,7 +410,7 @@ class BusServiceFragment : Fragment(){
             override fun onConnectToSignalR() {
                 signalRListener?.let {
                     if (it.isConnection)
-                        it.registerToGroup(tripId, stationId)
+                        it.registerToGroupForService(tripId, stationId)
                 }
             }
 

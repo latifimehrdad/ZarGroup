@@ -246,14 +246,11 @@ fun ImageView.setRegisterStationStatus(status : EnumTripStatus?){
 //-------------------------------------------------------------------------------------------------- setRegisterStationStatus
 
 
-
-
 //-------------------------------------------------------------------------------------------------- setMyStation
 @BindingAdapter("setMyStation","setArriveTime")
 fun TextView.setMyStation(myStation : String?, arriveTime : String?) {
-    text = context.getString(R.string.myStation, myStation) +
-            " \n " +
-            context.getString(R.string.attendanceTime, arriveTime)
+    val title = "${context.getString(R.string.myStation, myStation)} - $arriveTime"
+    text = title
 }
 //-------------------------------------------------------------------------------------------------- setMyStation
 
