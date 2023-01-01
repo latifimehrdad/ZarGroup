@@ -9,6 +9,7 @@ import com.zarholding.zar.database.entity.RoleEntity
 import com.zarholding.zar.database.entity.UserInfoEntity
 import com.zarholding.zar.model.request.ArticleRequestModel
 import com.zarholding.zar.repository.ArticleRepository
+import com.zarholding.zar.repository.NotificationRepository
 import com.zarholding.zar.repository.TokenRepository
 import com.zarholding.zar.repository.UserRepository
 import com.zarholding.zar.utility.SingleLiveEvent
@@ -23,12 +24,13 @@ import javax.inject.Inject
 class SplashViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val articleRepository : ArticleRepository,
-    private val tokenRepository: TokenRepository
+    private val tokenRepository: TokenRepository,
+    private val notificationRepository: NotificationRepository
 ) : ViewModel(){
 
     private var job: Job? = null
     val errorLiveDate = SingleLiveEvent<ErrorApiModel>()
-    val successLiveData = SingleLiveEvent<Boolean>()
+    val successLiveData = SingleLiveEvent<Int>()
 
     //---------------------------------------------------------------------------------------------- setError
     private suspend fun setError(response: Response<*>?) {
@@ -81,6 +83,7 @@ class SplashViewModel @Inject constructor(
                 "Article"
             )
             requestGetArticles(requestArticle).join()
+            requestGetNotificationUnreadCount().join()
         }
 
     }
@@ -160,10 +163,6 @@ class SplashViewModel @Inject constructor(
                     else {
                         it.data?.let { articles ->
                             insertArticle(articles.items)
-                            if (request.ArticleType == "Article")
-                                withContext(Main) {
-                                    successLiveData.value = true
-                                }
                         } ?: run {
                             setError("اطلاعات خالی است")
                         }
@@ -177,6 +176,24 @@ class SplashViewModel @Inject constructor(
         }
     }
     //---------------------------------------------------------------------------------------------- requestGetArticles
+
+
+
+    //---------------------------------------------------------------------------------------------- requestGetNotificationUnreadCount
+    private fun requestGetNotificationUnreadCount() : Job  {
+        return CoroutineScope(IO + exceptionHandler()).launch {
+            delay(1000)
+            val response = notificationRepository.requestGetNotificationUnreadCount()
+            if (response?.isSuccessful == true) {
+                response.body()?.let {
+                    withContext(Main){
+                        successLiveData.value = it.data
+                    }
+                }
+            }
+        }
+    }
+    //---------------------------------------------------------------------------------------------- requestGetNotificationUnreadCount
 
 
 

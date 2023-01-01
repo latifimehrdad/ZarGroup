@@ -8,6 +8,7 @@ import com.zarholding.zar.model.response.address.AddressSuggestionModel
 import com.zarholding.zar.model.response.article.ArticleResponseModel
 import com.zarholding.zar.model.response.company.CompanyResponse
 import com.zarholding.zar.model.response.driver.DriverResponse
+import com.zarholding.zar.model.response.notification.NotificationUnreadResponse
 import com.zarholding.zar.model.response.taxi.*
 import com.zarholding.zar.model.response.trip.*
 import com.zarholding.zar.model.response.user.UserInfoResponseModel
@@ -34,6 +35,13 @@ interface ApiSuperApp {
 
     @GET("${v1}/LogIn/login-userInfo")
     suspend fun requestUserInfo(
+        @Header("Authorization") token : String
+    ) : Response<UserInfoResponseModel>
+
+
+    @GET("${v1}/LogIn/login-userInfo/{id}")
+    suspend fun requestUserInfo(
+        @Path("id") id : Int,
         @Header("Authorization") token : String
     ) : Response<UserInfoResponseModel>
 
@@ -159,6 +167,13 @@ interface ApiSuperApp {
         @Query("companyCode") companyCode : String?,
         @Header("Authorization") token : String
     ) : Response<DriverResponse>
+
+
+    @GET("$v1/Notification/unread-count-by-user")
+    suspend fun requestGetNotificationUnreadCount(
+        @Header("Authorization") token : String
+    ) : Response<NotificationUnreadResponse>
+
 
     @GET
     suspend fun requestGetAddress(

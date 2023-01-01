@@ -16,7 +16,6 @@ import com.zar.core.tools.autoimageslider.SliderView
 import com.zarholding.zar.database.entity.ArticleEntity
 import com.zarholding.zar.model.enum.EnumArticleType
 import com.zarholding.zar.model.other.AppModel
-import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.view.dialog.ArticleDetailDialog
 import com.zarholding.zar.view.dialog.ConfirmDialog
 import com.zarholding.zar.view.recycler.adapter.AppAdapter
@@ -119,6 +118,14 @@ class HomeFragment : Fragment(){
                 R.drawable.ic_taxi,
                 getString(R.string.taxiReservation),
                 R.id.action_HomeFragment_to_TaxiReservationFragment
+            )
+        )
+
+        apps.add(
+            AppModel(
+                R.drawable.ic_qr_code_svgrepo,
+                getString(R.string.qrCode),
+                R.id.action_HomeFragment_to_QRCodeFragment
             )
         )
 

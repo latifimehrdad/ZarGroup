@@ -75,8 +75,6 @@ class ProfileFragment : Fragment(){
                 userInfoDao.deleteAllRole()
                 sharedPreferences.edit().putString(CompanionValues.TOKEN, null).apply()
                 CoroutineScope(IO).launch {
-                    requireActivity().stopService(Intent(requireActivity(),
-                        ZarNotificationService::class.java))
                     delay(500)
                     withContext(Main) {
                         findNavController().navigate(R.id.action_goto_SplashFragment)

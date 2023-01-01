@@ -55,6 +55,14 @@
             app:popEnterAnim="@anim/slide_in_right"
             app:popExitAnim="@anim/slide_out_left" />
 
+        <action
+            android:id="@+id/action_HomeFragment_to_QRCodeFragment"
+            app:destination="@id/QRCodeFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left" />
+
     </fragment>
 
     <fragment
@@ -120,6 +128,11 @@
         android:name="com.zarholding.zar.view.fragment.AdminTaxiFragment"
         android:label="AdminTaxiFragment"/>
 
+    <fragment
+        android:id="@+id/QRCodeFragment"
+        android:name="com.zarholding.zar.view.fragment.QRCodeFragment"
+        android:label="QRCodeFragment"/>
+
 
     <action
         android:id="@+id/action_goto_ProfileFragment"
@@ -128,7 +141,8 @@
         app:exitAnim="@anim/slide_out_right"
         app:popEnterAnim="@anim/slide_in_right"
         app:popExitAnim="@anim/slide_out_left"
-        app:popUpTo="@id/ProfileFragment" />
+        app:popUpTo="@id/ProfileFragment"
+        app:launchSingleTop="true"/>
 
     <action
         android:id="@+id/action_goto_SettingFragment"
@@ -137,7 +151,8 @@
         app:exitAnim="@anim/slide_out_right"
         app:popEnterAnim="@anim/slide_in_right"
         app:popExitAnim="@anim/slide_out_left"
-        app:popUpTo="@id/SettingFragment" />
+        app:popUpTo="@id/SettingFragment"
+        app:launchSingleTop="true"/>
 
     <action
         android:id="@+id/action_goto_HomeFragment"
@@ -146,7 +161,8 @@
         app:exitAnim="@anim/slide_out_right"
         app:popEnterAnim="@anim/slide_in_right"
         app:popExitAnim="@anim/slide_out_left"
-        app:popUpTo="@id/HomeFragment" />
+        app:popUpTo="@id/HomeFragment"
+        app:launchSingleTop="true"/>
 
     <action
         android:id="@+id/action_goto_SplashFragment"
@@ -155,7 +171,8 @@
         app:exitAnim="@anim/slide_out_right"
         app:popEnterAnim="@anim/slide_in_right"
         app:popExitAnim="@anim/slide_out_left"
-        app:popUpTo="@id/splashFragment" />
+        app:popUpTo="@id/splashFragment"
+        app:launchSingleTop="true"/>
 
     <action
         android:id="@+id/action_goto_DashboardFragment"
@@ -164,6 +181,7 @@
         app:exitAnim="@anim/slide_out_right"
         app:popEnterAnim="@anim/slide_in_right"
         app:popExitAnim="@anim/slide_out_left"
-        app:popUpTo="@id/DashboardFragment" />
+        app:popUpTo="@id/DashboardFragment"
+        app:launchSingleTop="true"/>
 
 </navigation>

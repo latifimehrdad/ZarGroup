@@ -1,5 +1,6 @@
 package com.zarholding.zar.view.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.material.snackbar.Snackbar
 import com.zar.core.tools.BiometricTools
+import com.zarholding.zar.background.ZarNotificationService
 import com.zarholding.zar.view.extension.hideKeyboard
 import com.zarholding.zar.viewmodel.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -58,6 +60,10 @@ class LoginFragment : Fragment(){
 
     //---------------------------------------------------------------------------------------------- initView
     private fun initView() {
+        requireActivity().stopService(
+            Intent(requireActivity(),
+            ZarNotificationService::class.java)
+        )
         if (loginViewModel.getBiometricEnable())
             binding.buttonFingerLogin.visibility = View.VISIBLE
         else

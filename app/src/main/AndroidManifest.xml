@@ -35,6 +35,7 @@
             </intent-filter>
         </activity>
 
+
         <receiver android:name="com.zarholding.zar.background.ZarBackgroundBroadcast"
             android:exported="false"
             android:enabled="true"

@@ -9,6 +9,7 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="primaryColor">#206cc9</color>
+    <color name="primaryColor1">#0B4791</color>
     <color name="primaryColorVariant">#111820</color>
 
 
@@ -99,6 +100,7 @@
 
     <color name="buttonDisable">#7A7A7A</color>
 
+    <color name="timePickerNumber">#7A7A7A</color>
 
     <color name="datePickerConfirmButtonBackColor">#206cc9</color>
     <color name="datePickerDateBackColor">#FFFFFF</color>

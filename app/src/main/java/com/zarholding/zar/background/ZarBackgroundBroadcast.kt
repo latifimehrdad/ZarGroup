@@ -5,12 +5,15 @@ import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
 import android.net.Uri
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.zarholding.zar.repository.NotificationRepository
 import com.zarholding.zar.repository.TokenRepository
 import com.zarholding.zar.utility.CompanionValues
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 import zar.R
 import javax.inject.Inject
 
@@ -19,15 +22,33 @@ class ZarBackgroundBroadcast : HiltBroadcastReceiver(){
 
     @Inject
     lateinit var tokenRepository: TokenRepository
+    @Inject
+    lateinit var notificationRepository: NotificationRepository
+
+    lateinit var context: Context
 
 
     //---------------------------------------------------------------------------------------------- onReceive
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
-        Log.d("meri", "onReceive ${tokenRepository.getBearerToken()}")
-        showNotificationPreviousStationReached(context!!)
+        this.context = context
+        requestGetNotificationUnreadCount()
     }
     //---------------------------------------------------------------------------------------------- onReceive
+
+
+
+    //---------------------------------------------------------------------------------------------- requestGetNotificationUnreadCount
+    private fun requestGetNotificationUnreadCount() {
+        CoroutineScope(IO).launch {
+            val response = notificationRepository.requestGetNotificationUnreadCount()
+            if (response?.isSuccessful == true)
+                response.body()?.let {
+                    showNotificationPreviousStationReached(context)
+                }
+        }
+    }
+    //---------------------------------------------------------------------------------------------- requestGetNotificationUnreadCount
 
 
 
@@ -42,10 +63,7 @@ class ZarBackgroundBroadcast : HiltBroadcastReceiver(){
             .setOngoing(false)
             .setSmallIcon(R.mipmap.ic_launcher)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentTitle(
-                context
-                    .resources.getString(R.string.messagePreviousStationReached)
-            )
+            .setContentTitle(context.getString(R.string.youHaveUnreadMessage))
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setCategory(Notification.CATEGORY_SERVICE)
             .setVibrate(vibrate)

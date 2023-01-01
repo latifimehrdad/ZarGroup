@@ -336,6 +336,7 @@ class TaxiReservationFragment : Fragment() {
                 getString(R.string.companyIsSelect),
                 object : ConfirmDialog.Click {
                     override fun clickYes() {
+                        binding.textViewCompany.text = getString(R.string.pleaseSelectCompany)
                         taxiReservationViewModel.companySelected = null
                         binding.powerSpinnerCompany.clearSelectedItem()
                         binding.powerSpinnerCompany.showArrow = true
@@ -620,6 +621,7 @@ class TaxiReservationFragment : Fragment() {
                 setOnSpinnerItemSelectedListener<IconSpinnerItem> { _, _, newIndex, _ ->
                     taxiReservationViewModel.companySelected = it[newIndex]
                     binding.powerSpinnerCompany.setBackgroundResource(R.drawable.drawable_spinner_select)
+                    binding.textViewCompany.text = it[newIndex].text
                 }
             }
         }

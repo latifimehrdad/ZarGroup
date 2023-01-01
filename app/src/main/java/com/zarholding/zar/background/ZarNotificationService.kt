@@ -24,6 +24,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class ZarNotificationService : LifecycleService(), RemoteSignalREmitter {
 
+
     @Inject
     lateinit var tokenRepository: TokenRepository
     @Inject
@@ -110,8 +111,9 @@ class ZarNotificationService : LifecycleService(), RemoteSignalREmitter {
     //---------------------------------------------------------------------------------------------- onReceiveMessage
     override fun onReceiveMessage(user: String, message: NotificationSignalrModel) {
         super.onReceiveMessage(user, message)
-        Log.d("meri", "onReceiveMessage")
         signalRListener.notificationReceived(message.id)
+        val intent = Intent("com.zarholding.zar.background")
+        sendBroadcast(intent)
         showNotification(message)
     }
     //---------------------------------------------------------------------------------------------- onReceiveMessage

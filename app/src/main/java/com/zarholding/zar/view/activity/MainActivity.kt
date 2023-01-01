@@ -5,13 +5,14 @@ import android.app.Dialog
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.SharedPreferences
+import android.content.*
 import android.content.res.Configuration
 import android.graphics.Color
 import android.media.AudioAttributes
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.ImageView
@@ -21,7 +22,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.RecyclerView
-import com.ahmadhamwi.tabsync.TabbedListMediator
 import com.google.android.material.tabs.TabLayout
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -31,12 +31,12 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.zar.core.tools.loadings.LoadingManager
 import com.zar.core.tools.manager.DialogManager
 import com.zar.core.tools.manager.ThemeManager
+import com.zarholding.zar.background.ZarBackgroundBroadcast
+import com.zarholding.zar.background.ZarNotificationService
 import com.zarholding.zar.database.dao.UserInfoDao
-import com.zarholding.zar.model.other.notification.NotificationCategoryModel
-import com.zarholding.zar.model.other.notification.NotificationModel
 import com.zarholding.zar.utility.CompanionValues
 import com.zarholding.zar.utility.RoleManager
-import com.zarholding.zar.view.recycler.adapter.notification.NotificationCategoryAdapter
+import com.zarholding.zar.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -46,7 +46,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import zar.R
 import zar.databinding.ActivityMainBinding
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 
@@ -72,7 +71,7 @@ class MainActivity : AppCompatActivity(){
     lateinit var binding: ActivityMainBinding
     private var navController: NavController? = null
 
-
+    private var broadcastReceiver: BroadcastReceiver? = null
 
     //---------------------------------------------------------------------------------------------- onCreate
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,6 +85,7 @@ class MainActivity : AppCompatActivity(){
     //---------------------------------------------------------------------------------------------- initView
     private fun initView() {
         setAppTheme(themeManagers.applicationTheme())
+        registerReceiver()
         setUserInfo()
         setListener()
         checkLocationPermission()
@@ -108,6 +108,16 @@ class MainActivity : AppCompatActivity(){
     //______________________________________________________________________________________________ setAppTheme
 
 
+
+    //---------------------------------------------------------------------------------------------- setNotificationCount
+    fun setNotificationCount(count : Int) {
+        Log.i("meri", "main = $count")
+        binding.textViewNotificationCount.text = count.toString()
+    }
+    //---------------------------------------------------------------------------------------------- setNotificationCount
+
+
+
     //---------------------------------------------------------------------------------------------- setListener
     private fun setListener() {
 
@@ -120,7 +130,7 @@ class MainActivity : AppCompatActivity(){
         }
 
 
-        binding.imageViewNotification.setOnClickListener { showNotificationDialog() }
+//        binding.imageViewNotification.setOnClickListener { showNotificationDialog() }
 
 
         binding.imageViewProfile.setOnClickListener {
@@ -182,6 +192,7 @@ class MainActivity : AppCompatActivity(){
     //---------------------------------------------------------------------------------------------- gotoFirstFragment
     fun gotoFirstFragment() {
         CoroutineScope(IO).launch {
+            stopService(Intent(this@MainActivity, ZarNotificationService::class.java))
             sharedPreferences
                 .edit()
                 .putString(CompanionValues.TOKEN, null)
@@ -277,16 +288,18 @@ class MainActivity : AppCompatActivity(){
     //---------------------------------------------------------------------------------------------- createNotificationChannel
 
 
-
-/*
-    //---------------------------------------------------------------------------------------------- startServiceBackground
-    private fun startServiceBackground() {
-        startService(Intent(this, ZarNotificationService::class.java))
+    //---------------------------------------------------------------------------------------------- registerReceiver
+    private fun registerReceiver() {
+        broadcastReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent) {
+                Log.e("meri", "registerReceiver")
+                MainViewModel.notificationCount += 1
+                setNotificationCount(MainViewModel.notificationCount)
+            }
+        }
+        registerReceiver(broadcastReceiver, IntentFilter("com.zarholding.zar.background"))
     }
-    //---------------------------------------------------------------------------------------------- startServiceBackground
-*/
-
-
+    //---------------------------------------------------------------------------------------------- registerReceiver
 
 
     private fun initNotification(dialog: Dialog) {
@@ -357,5 +370,12 @@ class MainActivity : AppCompatActivity(){
         ).attach()*/
 
     }
+
+    //---------------------------------------------------------------------------------------------- onDestroy
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(broadcastReceiver)
+    }
+    //---------------------------------------------------------------------------------------------- onDestroy
 
 }

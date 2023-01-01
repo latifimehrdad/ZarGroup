@@ -21,6 +21,7 @@ class UserRepository @Inject constructor(
     private val api: ApiSuperApp,
     private val userInfoDao: UserInfoDao,
     private val roleDao: RoleDao,
+    private val tokenRepository: TokenRepository
 ) {
 
     private var pageNumber = 0
@@ -31,6 +32,12 @@ class UserRepository @Inject constructor(
     //---------------------------------------------------------------------------------------------- requestUserInfo
     suspend fun requestUserInfo(token: String) =
         apiCall{ api.requestUserInfo(token) }
+    //---------------------------------------------------------------------------------------------- requestUserInfo
+
+
+    //---------------------------------------------------------------------------------------------- requestUserInfo
+    suspend fun requestUserInfo(id: Int) =
+        apiCall{ api.requestUserInfo(id, tokenRepository.getBearerToken()) }
     //---------------------------------------------------------------------------------------------- requestUserInfo
 
 

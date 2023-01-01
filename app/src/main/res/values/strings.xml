@@ -111,6 +111,7 @@
     <string name="requester">درخواست کننده : %1$s</string>
     <string name="setThreeString">%1$s - %2$s - %3$s</string>
     <string name="setTwoString">%1$s - %2$s</string>
+    <string name="setTwoStringDot">%1$s : %2$s</string>
     <string name="setTwoStringSlash">%1$s / %2$s</string>
     <string name="setDate">%1$s/%2$s/%3$s</string>
     <string name="personalCode">کد پرسنلی : %1$s</string>
@@ -156,6 +157,7 @@
     <string name="selectTheReturnTime">لطفا ساعت برگشت را انتخاب نمایید</string>
     <string name="theReturnDateIsBeforeTheDepartureDate">تاریخ برگشت قبل از تاریخ رفت است</string>
     <string name="searchPlace">جستجوی آدرس</string>
+    <string name="companyDot">شرکت :</string>
     <string name="pleaseSelectCompany">لطفا شرکت را انتخاب کنید</string>
     <string name="companyIsSelect">شرکت انتخاب شده است، آیا میخواهید آنرا تغییر دهید؟</string>
     <string name="originLocationIsSelect">مبدا انتخاب شده است، آیا میخواهید مبدا را تغییر بدهید؟</string>
@@ -164,6 +166,16 @@
     <string name="pleaseChooseDestinationLocation">لطفا مقصد را انتخاب نمایید</string>
     <string name="pleaseSelectPassenger">لطفا حداقل 1 مسافر را انتخاب نمایید</string>
     <string name="pleaseCompleteFollowingSteps">لطفا مراحل زیر را تکمیل کنید</string>
+    <string name="youHaveUnreadMessage">شما پیام خوانده نشده دارید</string>
+    <string name="empty"> </string>
+    <string name="qrCode">QR Code</string>
+    <string name="fullName">نام و نام خانوادگی</string>
+    <string name="personnelNumber">شماره پرسنلی</string>
+    <string name="jobTitle">سمت شغلی</string>
+    <string name="organizationUnit">واحد سازمانی</string>
+    <string name="organizationPhone">داخلی</string>
+    <string name="mobile">موبایل</string>
+
 
     
     

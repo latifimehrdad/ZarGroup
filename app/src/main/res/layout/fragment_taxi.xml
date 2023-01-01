@@ -385,12 +385,31 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/kalameh_semibold"
-                        android:text="@string/pleaseSelectCompany"
+                        android:text="@string/companyDot"
                         android:textColor="@color/textViewColor1"
                         android:textSize="@dimen/_10sdp"
                         android:textStyle="bold"
                         android:layout_marginStart="@dimen/_10sdp"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintBottom_toBottomOf="@id/powerSpinnerCompany"
+                        app:layout_constraintTop_toTopOf="@id/powerSpinnerCompany" />
+
+                    <TextView
+                        android:id="@+id/textViewCompany"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:layout_marginEnd="@dimen/_3sdp"
+                        android:ellipsize="marquee"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:scrollHorizontally="true"
+                        android:singleLine="true"
+                        android:fontFamily="@font/kalameh_medium"
+                        android:text="@string/pleaseSelectCompany"
+                        android:textColor="@color/textViewFooter"
+                        android:textSize="@dimen/_10sdp"
+                        app:layout_constraintBottom_toBottomOf="@id/powerSpinnerCompany"
+                        app:layout_constraintEnd_toStartOf="@id/textViewCompanyTitle"
                         app:layout_constraintStart_toEndOf="@id/powerSpinnerCompany"
                         app:layout_constraintTop_toTopOf="@id/powerSpinnerCompany" />
 

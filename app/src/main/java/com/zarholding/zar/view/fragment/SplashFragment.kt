@@ -2,6 +2,7 @@ package com.zarholding.zar.view.fragment
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,8 +11,10 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.zar.core.enums.EnumApiError
+import com.zarholding.zar.background.ZarBackgroundBroadcast
 import com.zarholding.zar.background.ZarNotificationService
 import com.zarholding.zar.view.activity.MainActivity
+import com.zarholding.zar.viewmodel.MainViewModel
 import com.zarholding.zar.viewmodel.SplashViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -31,7 +34,7 @@ class SplashFragment : Fragment() {
     private var _binding: FragmentSplashBinding? = null
     private val binding get() = _binding!!
 
-    private val splashViewModel : SplashViewModel by viewModels()
+    private val splashViewModel: SplashViewModel by viewModels()
 
     private lateinit var job: Job
 
@@ -67,7 +70,6 @@ class SplashFragment : Fragment() {
         stopLoading()
     }
     //---------------------------------------------------------------------------------------------- showMessage
-
 
 
     //---------------------------------------------------------------------------------------------- checkUserIsLogged
@@ -108,7 +110,6 @@ class SplashFragment : Fragment() {
     //---------------------------------------------------------------------------------------------- gotoFragmentHome
 
 
-
     //---------------------------------------------------------------------------------------------- startServiceNotificationBackground
     private fun startServiceNotificationBackground() {
         requireContext().startService(Intent(requireContext(), ZarNotificationService::class.java))
@@ -116,13 +117,12 @@ class SplashFragment : Fragment() {
     //---------------------------------------------------------------------------------------------- startServiceNotificationBackground
 
 
-
     //---------------------------------------------------------------------------------------------- observeLoginLiveDate
     private fun observeErrorLiveDate() {
         splashViewModel.errorLiveDate.observe(viewLifecycleOwner) {
             stopLoading()
             showMessage(it.message)
-            when(it.type) {
+            when (it.type) {
                 EnumApiError.UnAuthorization -> (activity as MainActivity?)?.gotoFirstFragment()
                 else -> {}
             }
@@ -131,19 +131,17 @@ class SplashFragment : Fragment() {
     //---------------------------------------------------------------------------------------------- observeLoginLiveDate
 
 
-
     //---------------------------------------------------------------------------------------------- observeSuccessLiveDataLiveData
     private fun observeSuccessLiveDataLiveData() {
-        splashViewModel.successLiveData.observe(viewLifecycleOwner){
+        splashViewModel.successLiveData.observe(viewLifecycleOwner) {
             (activity as MainActivity).setUserInfo()
             startServiceNotificationBackground()
-            if (it)
-                findNavController()
-                    .navigate(R.id.action_splashFragment_to_HomeFragment)
+            MainViewModel.notificationCount = it
+            (activity as MainActivity).setNotificationCount(it)
+            findNavController().navigate(R.id.action_splashFragment_to_HomeFragment)
         }
     }
     //---------------------------------------------------------------------------------------------- observeSuccessLiveDataLiveData
-
 
 
     //---------------------------------------------------------------------------------------------- requestGetData
@@ -154,15 +152,12 @@ class SplashFragment : Fragment() {
     //---------------------------------------------------------------------------------------------- requestGetData
 
 
-
-
     //---------------------------------------------------------------------------------------------- startLoading
     private fun startLoading() {
         binding.buttonReTry.visibility = View.GONE
         binding.buttonReTry.startLoading("")
     }
     //---------------------------------------------------------------------------------------------- startLoading
-
 
 
     //---------------------------------------------------------------------------------------------- stopLoading

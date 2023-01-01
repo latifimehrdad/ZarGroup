@@ -35,10 +35,10 @@ class SignalrNotificationBackgroundService : LifecycleService(), RemoteSignalREm
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
         lifecycleScope.launch(Dispatchers.Default) {
-            signalRListener = SignalRListener.getInstance(
+/*            signalRListener = SignalRListener.getInstance(
                 this@SignalrNotificationBackgroundService, tokenRepository.getToken()
             )
-            startSignalR()
+            startSignalR()*/
         }
         return START_STICKY
     }
