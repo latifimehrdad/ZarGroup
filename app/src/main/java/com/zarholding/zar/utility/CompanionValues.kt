@@ -15,5 +15,6 @@ class CompanionValues {
         const val passcode = "passcode"
         const val adminTaxiType = "adminTaxiType"
         const val myRequest = "myRequest"
+        const val notificationLastId = "notificationLastId"
     }
 }

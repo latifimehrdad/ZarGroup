@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="item"
+            type="com.zarholding.zar.model.response.taxi.AdminTaxiRequestModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_10sdp"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@color/primaryColor"/>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayoutAvatar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:padding="@dimen/_5sdp"
+            android:background="@drawable/drawable_spinner">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardViewIcon"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintDimensionRatio="H,1:1"
+                app:cardCornerRadius="@dimen/_30sdp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:cardBackgroundColor="@color/primaryColor">
+
+                <ImageView
+                    android:id="@+id/imageViewIcon"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_person_avatar"
+                    android:layout_margin="@dimen/_1sdp"
+                    android:contentDescription="@string/iconNotificationDescription" />
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/textViewApplicatorName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/cardViewIcon"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:textColor="@color/textViewColor2"
+                android:textSize="@dimen/_9sdp"
+                android:fontFamily="@font/kalameh_regular"
+                android:maxLines="2"
+                android:textStyle="bold"
+                app:setApplicatorNameToTextView="@{item.requesterName}"/>
+
+            <TextView
+                android:id="@+id/textviewJobTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/textViewApplicatorName"
+                android:layout_marginTop="@dimen/_5sdp"
+                app:layout_constraintStart_toStartOf="@id/textViewApplicatorName"
+                app:layout_constraintEnd_toEndOf="@id/textViewApplicatorName"
+                android:textColor="@color/textViewColor2"
+                android:textSize="@dimen/_9sdp"
+                android:textStyle="bold"
+                android:fontFamily="@font/kalameh_regular"
+                app:setTitleText="@{@string/jobTitle}"
+                app:setValueText="@{item.personnelJobKeyText}"/>
+
+            <TextView
+                android:id="@+id/textviewUnitTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/textviewJobTitle"
+                app:layout_constraintStart_toStartOf="@id/textViewApplicatorName"
+                app:layout_constraintEnd_toEndOf="@id/textViewApplicatorName"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:textColor="@color/textViewColor2"
+                android:textSize="@dimen/_9sdp"
+                android:textStyle="bold"
+                android:fontFamily="@font/kalameh_regular"
+                app:setTitleText="@{@string/organizationUnit}"
+                app:setValueText="@{item.organizationUnit}"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayoutMap"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/constraintLayoutAvatar"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:padding="@dimen/_7sdp"
+            android:background="@drawable/drawable_spinner_select">
+
+            <LinearLayout
+                android:id="@+id/linearLayoutMap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toTopOf="@id/textviewOriginTitle"
+                app:layout_constraintBottom_toBottomOf="@id/textviewDestinationTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                android:paddingHorizontal="@dimen/_5sdp"
+                android:paddingVertical="@dimen/_7sdp"
+                android:gravity="center"
+                android:background="@drawable/drawable_confirm">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/_8sdp"
+                    android:textColor="@color/textViewColor1"
+                    android:text="@string/showOnMap"
+                    android:shadowColor="@color/black"
+                    android:shadowDx="1"
+                    android:shadowDy="1"
+                    android:shadowRadius="2"
+                    android:fontFamily="@font/kalameh_bold"
+                    android:textStyle="bold"/>
+
+                <ImageView
+                    android:layout_width="@dimen/_12sdp"
+                    android:layout_height="@dimen/_12sdp"
+                    android:layout_marginStart="@dimen/_2sdp"
+                    android:src="@drawable/ic__metro_location"
+                    android:contentDescription="@string/iconDescription"
+                    app:tint="@color/textViewColor1" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textviewOriginTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:textColor="@color/textViewColor2"
+                android:textSize="@dimen/_9sdp"
+                android:fontFamily="@font/kalameh_regular"
+                android:text="@string/originDot"/>
+
+            <TextView
+                android:id="@+id/textviewOriginAddress"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/textviewOriginTitle"
+                app:layout_constraintStart_toEndOf="@id/linearLayoutMap"
+                app:layout_constraintEnd_toStartOf="@id/textviewOriginTitle"
+                android:textSize="@dimen/_9sdp"
+                android:lines="1"
+                android:layout_marginHorizontal="@dimen/_3sdp"
+                android:textColor="@color/textViewColor2"
+                android:fontFamily="@font/kalameh_regular"
+                android:text="@{item.originAddress}"/>
+
+            <TextView
+                android:id="@+id/textviewDestinationTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/textviewOriginTitle"
+                android:layout_marginTop="@dimen/_5sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:textColor="@color/textViewColor2"
+                android:textSize="@dimen/_9sdp"
+                android:fontFamily="@font/kalameh_regular"
+                android:text="@string/destinationDot"/>
+
+            <TextView
+                android:id="@+id/textviewDestinationAddress"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/textviewDestinationTitle"
+                app:layout_constraintStart_toEndOf="@id/linearLayoutMap"
+                app:layout_constraintEnd_toStartOf="@id/textviewDestinationTitle"
+                android:textSize="@dimen/_9sdp"
+                android:lines="1"
+                android:layout_marginHorizontal="@dimen/_3sdp"
+                android:textColor="@color/textViewColor2"
+                android:fontFamily="@font/kalameh_regular"
+                android:text="@{item.destinationAddress}"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayoutReturn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/constraintLayoutMap"
+            app:layout_constraintEnd_toStartOf="@id/linearLayoutDeparture"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:orientation="vertical"
+            android:padding="@dimen/_5sdp"
+            android:background="@drawable/drawable_spinner">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/_9sdp"
+                android:gravity="center"
+                android:textColor="@color/textViewColor2"
+                android:fontFamily="@font/kalameh_regular"
+                app:setTitleText="@{@string/returnDate}"
+                app:setValueText="@{item.returnDate}"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/_9sdp"
+                android:gravity="center"
+                android:textColor="@color/textViewColor2"
+                android:fontFamily="@font/kalameh_regular"
+                app:setTitleText="@{@string/returnTimeDot}"
+                app:setValueText="@{item.returnTime}"
+                android:layout_marginTop="@dimen/_5sdp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayoutDeparture"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@id/linearLayoutReturn"
+            app:layout_constraintStart_toEndOf="@id/linearLayoutReturn"
+            android:layout_marginStart="@dimen/_10sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:orientation="vertical"
+            android:padding="@dimen/_5sdp"
+            android:background="@drawable/drawable_spinner">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/_9sdp"
+                android:gravity="center"
+                android:textColor="@color/textViewColor2"
+                android:fontFamily="@font/kalameh_regular"
+                app:setTitleText="@{@string/departureDate}"
+                app:setValueText="@{item.departureDate}"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/_9sdp"
+                android:gravity="center"
+                android:textColor="@color/textViewColor2"
+                android:fontFamily="@font/kalameh_regular"
+                app:setTitleText="@{@string/departureTimeDot}"
+                app:setValueText="@{item.departureTime}"
+                android:layout_marginTop="@dimen/_5sdp"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textViewPassenger"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/linearLayoutReturn"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:background="@drawable/drawable_spinner"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:textSize="@dimen/_8sdp"
+            android:padding="@dimen/_3sdp"
+            android:textColor="@color/textViewFooter"
+            android:fontFamily="@font/kalameh_regular"
+            app:setPassengersToTextView="@{item.listPassengers}"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</layout>

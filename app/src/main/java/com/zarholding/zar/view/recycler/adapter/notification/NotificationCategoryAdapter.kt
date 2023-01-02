@@ -3,7 +3,7 @@ package com.zarholding.zar.view.recycler.adapter.notification
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.zarholding.zar.model.other.notification.NotificationCategoryModel
+import com.zarholding.zar.model.notification_signalr.NotificationCategoryModel
 import com.zarholding.zar.view.recycler.holder.notification.NotificationCategoryHolder
 import zar.databinding.ItemNotificationCategoryBinding
 

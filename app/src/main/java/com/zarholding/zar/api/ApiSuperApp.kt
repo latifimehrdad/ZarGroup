@@ -1,6 +1,7 @@
 package com.zarholding.zar.api
 
 import com.zarholding.zar.model.enum.EnumDriverType
+import com.zarholding.zar.model.notification_signalr.NotificationResponse
 import com.zarholding.zar.model.request.*
 import com.zarholding.zar.model.response.LoginResponseModel
 import com.zarholding.zar.model.response.address.AddressResponseModel
@@ -169,10 +170,17 @@ interface ApiSuperApp {
     ) : Response<DriverResponse>
 
 
-    @GET("$v1/Notification/unread-count-by-user")
+    @POST("$v1/Notification/unread-count-by-user")
     suspend fun requestGetNotificationUnreadCount(
+        @Body request : NotificationUnreadCountRequestModel,
         @Header("Authorization") token : String
     ) : Response<NotificationUnreadResponse>
+
+
+    @GET("$v1/Notification/get-messages")
+    suspend fun requestGetNotification(
+        @Header("Authorization") token : String
+    ) : Response<NotificationResponse>
 
 
     @GET

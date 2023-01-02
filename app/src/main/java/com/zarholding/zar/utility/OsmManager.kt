@@ -4,6 +4,7 @@ import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.location.Location
+import android.util.Log
 import android.util.Size
 import android.view.View
 import android.widget.TextView
@@ -336,6 +337,14 @@ class OsmManager(private val map: MapView) {
     fun moveCamera(geoPoint: GeoPoint) {
         val mapController: IMapController = map.controller
         mapController.animateTo(geoPoint, 18.0, 1000)
+    }
+    //---------------------------------------------------------------------------------------------- moveCamera
+
+
+    //---------------------------------------------------------------------------------------------- moveCamera
+    fun moveCamera(geoPoint: GeoPoint, speed : Long) {
+        val mapController: IMapController = map.controller
+        mapController.animateTo(geoPoint, 18.0, speed)
     }
     //---------------------------------------------------------------------------------------------- moveCamera
 

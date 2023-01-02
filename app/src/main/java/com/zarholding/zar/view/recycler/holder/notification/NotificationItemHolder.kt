@@ -1,7 +1,7 @@
 package com.zarholding.zar.view.recycler.holder.notification
 
 import androidx.recyclerview.widget.RecyclerView
-import com.zarholding.zar.model.other.notification.NotificationModel
+import com.zarholding.zar.model.notification_signalr.NotificationSignalrModel
 import zar.databinding.ItemNotificationBinding
 
 /**
@@ -13,7 +13,7 @@ class NotificationItemHolder(private val binding: ItemNotificationBinding) :
 {
 
     //---------------------------------------------------------------------------------------------- bind
-    fun bind(item: NotificationModel)
+    fun bind(item: NotificationSignalrModel)
     {
         binding.item = item
         binding.executePendingBindings()

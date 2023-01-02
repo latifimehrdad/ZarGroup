@@ -1,8 +1,6 @@
 package com.zarholding.zar.view.recycler.holder
 
-import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import com.zarholding.zar.model.enum.EnumPersonnelType
 import com.zarholding.zar.model.enum.EnumTaxiRequestType
 import com.zarholding.zar.model.response.taxi.AdminTaxiRequestModel
 import zar.R
@@ -22,7 +20,7 @@ class AdminTaxiRequestHolder(
 
 
     //---------------------------------------------------------------------------------------------- bind
-    fun bind(item: AdminTaxiRequestModel, userType: EnumPersonnelType) {
+    fun bind(item: AdminTaxiRequestModel) {
         binding.item = item
         binding.textviewOriginDestinationDateTitle.text = when (item.type) {
             EnumTaxiRequestType.OneWay ->
@@ -36,16 +34,6 @@ class AdminTaxiRequestHolder(
                 binding.root.resources.getString(R.string.departureTimeDot)
             EnumTaxiRequestType.Return ->
                 binding.root.resources.getString(R.string.departureReturnTime)
-        }
-        when (userType) {
-            EnumPersonnelType.Driver -> {
-                binding.buttonReject.visibility = View.GONE
-                binding.buttonConfirm.visibility = View.GONE
-            }
-            else -> {
-                binding.buttonReject.visibility = View.VISIBLE
-                binding.buttonConfirm.visibility = View.VISIBLE
-            }
         }
         binding.buttonReject.setOnClickListener { click.reject(item) }
         binding.buttonConfirm.setOnClickListener { click.accept(item) }

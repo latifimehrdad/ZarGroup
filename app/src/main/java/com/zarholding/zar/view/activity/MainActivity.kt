@@ -16,12 +16,14 @@ import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.ImageView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.RecyclerView
+import com.ahmadhamwi.tabsync.TabbedListMediator
 import com.google.android.material.tabs.TabLayout
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -31,11 +33,11 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.zar.core.tools.loadings.LoadingManager
 import com.zar.core.tools.manager.DialogManager
 import com.zar.core.tools.manager.ThemeManager
-import com.zarholding.zar.background.ZarBackgroundBroadcast
 import com.zarholding.zar.background.ZarNotificationService
 import com.zarholding.zar.database.dao.UserInfoDao
 import com.zarholding.zar.utility.CompanionValues
 import com.zarholding.zar.utility.RoleManager
+import com.zarholding.zar.view.recycler.adapter.notification.NotificationCategoryAdapter
 import com.zarholding.zar.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -46,6 +48,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import zar.R
 import zar.databinding.ActivityMainBinding
+import java.time.Duration
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 
@@ -54,14 +58,17 @@ import javax.inject.Inject
  */
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(){
+class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var userInfoDao: UserInfoDao
+
     @Inject
     lateinit var roleManager: RoleManager
+
     @Inject
     lateinit var themeManagers: ThemeManager
+
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
@@ -70,6 +77,8 @@ class MainActivity : AppCompatActivity(){
 
     lateinit var binding: ActivityMainBinding
     private var navController: NavController? = null
+
+    private val mainViewModel: MainViewModel by viewModels()
 
     private var broadcastReceiver: BroadcastReceiver? = null
 
@@ -84,6 +93,7 @@ class MainActivity : AppCompatActivity(){
 
     //---------------------------------------------------------------------------------------------- initView
     private fun initView() {
+        mainViewModel.setLastNotificationIdToZero()
         setAppTheme(themeManagers.applicationTheme())
         registerReceiver()
         setUserInfo()
@@ -108,14 +118,11 @@ class MainActivity : AppCompatActivity(){
     //______________________________________________________________________________________________ setAppTheme
 
 
-
     //---------------------------------------------------------------------------------------------- setNotificationCount
-    fun setNotificationCount(count : Int) {
-        Log.i("meri", "main = $count")
+    fun setNotificationCount(count: Int) {
         binding.textViewNotificationCount.text = count.toString()
     }
     //---------------------------------------------------------------------------------------------- setNotificationCount
-
 
 
     //---------------------------------------------------------------------------------------------- setListener
@@ -130,7 +137,7 @@ class MainActivity : AppCompatActivity(){
         }
 
 
-//        binding.imageViewNotification.setOnClickListener { showNotificationDialog() }
+        binding.imageViewNotification.setOnClickListener { showNotificationDialog() }
 
 
         binding.imageViewProfile.setOnClickListener {
@@ -166,12 +173,12 @@ class MainActivity : AppCompatActivity(){
     //---------------------------------------------------------------------------------------------- showNotificationDialog
 
 
-
     //---------------------------------------------------------------------------------------------- showAndHideBottomMenu
     private fun showAndHideBottomMenu(fragmentLabel: String) {
         when (fragmentLabel) {
             "SplashFragment",
-            "LoginFragment" -> {
+            "LoginFragment",
+            "MapFragment"-> {
                 binding.constraintLayoutFooterMenu.visibility = View.GONE
                 binding.constraintLayoutProfile.visibility = View.GONE
 
@@ -188,18 +195,10 @@ class MainActivity : AppCompatActivity(){
     //---------------------------------------------------------------------------------------------- showAndHideBottomMenu
 
 
-
     //---------------------------------------------------------------------------------------------- gotoFirstFragment
     fun gotoFirstFragment() {
         CoroutineScope(IO).launch {
-            stopService(Intent(this@MainActivity, ZarNotificationService::class.java))
-            sharedPreferences
-                .edit()
-                .putString(CompanionValues.TOKEN, null)
-                .putString(CompanionValues.userName, null)
-                .putString(CompanionValues.passcode, null)
-                .apply()
-            userInfoDao.deleteAllRole()
+            deleteAllData()
             delay(500)
             withContext(Main) {
                 gotoFragment(R.id.action_goto_SplashFragment)
@@ -302,6 +301,14 @@ class MainActivity : AppCompatActivity(){
     //---------------------------------------------------------------------------------------------- registerReceiver
 
 
+    //---------------------------------------------------------------------------------------------- deleteAllData
+    fun deleteAllData() {
+        stopService(Intent(this@MainActivity, ZarNotificationService::class.java))
+        mainViewModel.deleteAllData()
+    }
+    //---------------------------------------------------------------------------------------------- deleteAllData
+
+
     private fun initNotification(dialog: Dialog) {
 
         dialog.setCancelable(true)
@@ -309,65 +316,41 @@ class MainActivity : AppCompatActivity(){
         val recyclerView = dialog.findViewById<RecyclerView>(R.id.recyclerViewNotification)
         val imageViewClose = dialog.findViewById<ImageView>(R.id.imageViewClose)
 
+        imageViewClose.setOnClickListener {
+            dialog.dismiss()
+        }
+
         loadingManager.setRecyclerLoading(
             recyclerView,
             R.layout.item_loading,
             R.color.recyclerLoadingShadow,
             1
         )
+        mainViewModel.notificationResponseLiveData.observe(this) {
+            loadingManager.stopLoadingView()
 
-        imageViewClose.setOnClickListener {
-            dialog.dismiss()
-        }
-/*
-        val categories = mutableListOf(
-            NotificationCategoryModel(
-                "امروز",
-                LocalDateTime.now(),
-                NotificationModel("", "", "", "", LocalDateTime.now(), false),
-                NotificationModel("", "", "", "", LocalDateTime.now(), true),
-                NotificationModel("", "", "", "", LocalDateTime.now(), false),
-                NotificationModel("", "", "", "", LocalDateTime.now(), true),
-                NotificationModel("", "", "", "", LocalDateTime.now(), true),
-                NotificationModel("", "", "", "", LocalDateTime.now(), true),
-            ),
-            NotificationCategoryModel(
-                "دیروز",
-                LocalDateTime.now().minusDays(1),
-                NotificationModel("", "", "", "", LocalDateTime.now(), true),
-                NotificationModel("", "", "", "", LocalDateTime.now(), false),
-                NotificationModel("", "", "", "", LocalDateTime.now(), true),
-                NotificationModel("", "", "", "", LocalDateTime.now(), true),
-                NotificationModel("", "", "", "", LocalDateTime.now(), true),
-            ),
-            NotificationCategoryModel(
-                "همه",
-                null,
-                NotificationModel("", "", "", "", LocalDateTime.now(), true),
-                NotificationModel("", "", "", "", LocalDateTime.now(), true),
-                NotificationModel("", "", "", "", LocalDateTime.now(), true),
-                NotificationModel("", "", "", "", LocalDateTime.now(), true),
-            )
-        )
+            for (category in it) {
+                tabLayout.addTab(tabLayout.newTab().setText(category.name))
+            }
 
-        for (category in categories) {
-            tabLayout.addTab(tabLayout.newTab().setText(category.name))
+            tabLayout?.getTabAt(0)?.apply {
+                orCreateBadge
+                badge?.isVisible = true
+                badge?.number = 3
+            }
+
+            recyclerView.adapter = NotificationCategoryAdapter(it)
+
+            TabbedListMediator(
+                recyclerView,
+                tabLayout,
+                it.indices.toList(),
+                true
+            ).attach()
+
         }
 
-        tabLayout?.getTabAt(0)?.apply {
-            orCreateBadge
-            badge?.isVisible = true
-            badge?.number = 3
-        }
-
-        recyclerView.adapter = NotificationCategoryAdapter(categories)
-
-        TabbedListMediator(
-            recyclerView,
-            tabLayout,
-            categories.indices.toList(),
-            true
-        ).attach()*/
+        mainViewModel.requestGetNotification()
 
     }
 

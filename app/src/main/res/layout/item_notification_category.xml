@@ -4,7 +4,7 @@
     <data>
         <variable
             name="item"
-            type="com.zarholding.zar.model.other.notification.NotificationCategoryModel" />
+            type="com.zarholding.zar.model.notification_signalr.NotificationCategoryModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

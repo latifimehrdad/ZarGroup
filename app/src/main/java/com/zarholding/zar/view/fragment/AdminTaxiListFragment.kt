@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.zar.core.enums.EnumApiError
@@ -23,10 +24,13 @@ import com.zarholding.zar.view.dialog.DriverDialog
 import com.zarholding.zar.view.dialog.RejectReasonDialog
 import com.zarholding.zar.view.recycler.adapter.MyTaxiAdapter
 import com.zarholding.zar.view.recycler.adapter.AdminTaxiRequestAdapter
+import com.zarholding.zar.view.recycler.adapter.DriverTaxiRequestAdapter
 import com.zarholding.zar.view.recycler.holder.AdminTaxiRequestHolder
+import com.zarholding.zar.view.recycler.holder.DriverTaxiRequestHolder
 import com.zarholding.zar.viewmodel.AdminTaxiListViewModel
 import com.zarholding.zar.viewmodel.AdminTaxiViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import org.osmdroid.util.GeoPoint
 import zar.R
 import zar.databinding.FragmentAdminTaxiListBinding
 import javax.inject.Inject
@@ -44,6 +48,7 @@ class AdminTaxiListFragment : Fragment() {
 
     private var myTaxiRequestAdapter: MyTaxiAdapter? = null
     private var adminTaxiRequestAdapter: AdminTaxiRequestAdapter? = null
+    private var driverTaxiRequestAdapter : DriverTaxiRequestAdapter? = null
 
     private var endlessScrollListener: EndlessScrollListener? = null
 
@@ -129,7 +134,12 @@ class AdminTaxiListFragment : Fragment() {
             EnumAdminTaxiType.MY,
             EnumAdminTaxiType.HISTORY
             -> setMyTaxiRequestAdapter(items)
-            EnumAdminTaxiType.REQUEST -> setTaxiRequestAdapter(items)
+            EnumAdminTaxiType.REQUEST -> {
+                when(adminTaxiListViewModel.getUserType()) {
+                    EnumPersonnelType.Driver -> setDriverTaxiRequestAdapter(items)
+                    else -> setTaxiRequestAdapter(items)
+                }
+            }
         }
     }
     //---------------------------------------------------------------------------------------------- setAdapter
@@ -193,10 +203,7 @@ class AdminTaxiListFragment : Fragment() {
 
             }
             AdminTaxiViewModel.requestTaxiLiveDate.value = items.size
-            adminTaxiRequestAdapter = AdminTaxiRequestAdapter(
-                items.toMutableList(),
-                click, adminTaxiListViewModel.getUserType()
-            )
+            adminTaxiRequestAdapter = AdminTaxiRequestAdapter(items.toMutableList(), click)
             val manager = LinearLayoutManager(
                 requireContext(),
                 LinearLayoutManager.VERTICAL,
@@ -209,6 +216,55 @@ class AdminTaxiListFragment : Fragment() {
         }
     }
     //---------------------------------------------------------------------------------------------- setTaxiRequestAdapter
+
+
+
+    //---------------------------------------------------------------------------------------------- setDriverTaxiRequestAdapter
+    private fun setDriverTaxiRequestAdapter(items: List<AdminTaxiRequestModel>) {
+        if (context == null)
+            return
+        driverTaxiRequestAdapter?.let { adapter ->
+            val count = AdminTaxiViewModel.requestTaxiLiveDate.value ?: run { 0 }
+            AdminTaxiViewModel.requestTaxiLiveDate.value = count + items.size
+            adapter.addRequest(items)
+            endlessScrollListener?.let {
+                it.setLoading(false)
+                if (items.isEmpty())
+                    binding.recyclerView.removeOnScrollListener(it)
+            }
+        } ?: run {
+            val click = object : DriverTaxiRequestHolder.Click {
+                override fun showOnMap(
+                    latOrigin: Double,
+                    lngOrigin: Double,
+                    latDestination: Double,
+                    lngDestination: Double
+                ) {
+                    val bundle = Bundle()
+                    bundle.putDouble("latOrigin", latOrigin)
+                    bundle.putDouble("lngOrigin", lngOrigin)
+                    bundle.putDouble("latDestination", latDestination)
+                    bundle.putDouble("lngDestination", lngDestination)
+
+                    findNavController()
+                        .navigate(R.id.action_AdminTaxiFragment_to_MapFragment, bundle)
+                }
+            }
+            AdminTaxiViewModel.requestTaxiLiveDate.value = items.size
+            driverTaxiRequestAdapter = DriverTaxiRequestAdapter(items.toMutableList(), click)
+            val manager = LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.VERTICAL,
+                false
+            )
+            endlessScrollListener = getEndlessScrollListener(manager)
+            binding.recyclerView.layoutManager = manager
+            binding.recyclerView.adapter = driverTaxiRequestAdapter
+            binding.recyclerView.addOnScrollListener(endlessScrollListener!!)
+        }
+    }
+    //---------------------------------------------------------------------------------------------- setDriverTaxiRequestAdapter
+
 
 
     //______________________________________________________________________________________________ getEndlessScrollListener

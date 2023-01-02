@@ -5,23 +5,23 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.zarholding.zar.model.enum.EnumPersonnelType
 import com.zarholding.zar.model.response.taxi.AdminTaxiRequestModel
-import com.zarholding.zar.view.recycler.holder.AdminTaxiRequestHolder
-import zar.databinding.ItemAdminTaxiRequestBinding
+import com.zarholding.zar.view.recycler.holder.DriverTaxiRequestHolder
+import zar.databinding.ItemDriverTaxiRequestBinding
 
-class AdminTaxiRequestAdapter(
+class DriverTaxiRequestAdapter(
     private val items: MutableList<AdminTaxiRequestModel>,
-    private val click: AdminTaxiRequestHolder.Click
-) : RecyclerView.Adapter<AdminTaxiRequestHolder>() {
+    private val click: DriverTaxiRequestHolder.Click
+) : RecyclerView.Adapter<DriverTaxiRequestHolder>() {
 
     private var layoutInflater: LayoutInflater? = null
 
 
     //---------------------------------------------------------------------------------------------- onCreateViewHolder
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdminTaxiRequestHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DriverTaxiRequestHolder {
         if (layoutInflater == null)
             layoutInflater = LayoutInflater.from(parent.context)
-        return AdminTaxiRequestHolder(
-            ItemAdminTaxiRequestBinding
+        return DriverTaxiRequestHolder(
+            ItemDriverTaxiRequestBinding
                 .inflate(layoutInflater!!, parent, false), click
         )
     }
@@ -29,7 +29,7 @@ class AdminTaxiRequestAdapter(
 
 
     //---------------------------------------------------------------------------------------------- onBindViewHolder
-    override fun onBindViewHolder(holder: AdminTaxiRequestHolder, position: Int) {
+    override fun onBindViewHolder(holder: DriverTaxiRequestHolder, position: Int) {
         holder.bind(items[position])
     }
     //---------------------------------------------------------------------------------------------- onBindViewHolder

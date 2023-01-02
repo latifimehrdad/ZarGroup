@@ -1,7 +1,7 @@
 package com.zarholding.zar.view.recycler.holder.notification
 
 import androidx.recyclerview.widget.RecyclerView
-import com.zarholding.zar.model.other.notification.NotificationCategoryModel
+import com.zarholding.zar.model.notification_signalr.NotificationCategoryModel
 import com.zarholding.zar.view.recycler.adapter.notification.NotificationAdapter
 import zar.databinding.ItemNotificationCategoryBinding
 
@@ -15,7 +15,7 @@ class NotificationCategoryHolder(private val binding: ItemNotificationCategoryBi
     //---------------------------------------------------------------------------------------------- bind
     fun bind(item: NotificationCategoryModel) {
         binding.item = item
-        val adapter = NotificationAdapter(item.listOfNotificationModel)
+        val adapter = NotificationAdapter(item.notifications)
         binding.recyclerViewNotification.adapter = adapter
         binding.executePendingBindings()
     }

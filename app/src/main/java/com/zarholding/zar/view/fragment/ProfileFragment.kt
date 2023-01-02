@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import com.zarholding.zar.background.ZarNotificationService
 import com.zarholding.zar.database.dao.UserInfoDao
 import com.zarholding.zar.utility.CompanionValues
+import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.view.dialog.ConfirmDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -72,16 +73,8 @@ class ProfileFragment : Fragment(){
 
         val click = object : ConfirmDialog.Click {
             override fun clickYes() {
-                userInfoDao.deleteAllRole()
-                sharedPreferences.edit().putString(CompanionValues.TOKEN, null).apply()
-                CoroutineScope(IO).launch {
-                    delay(500)
-                    withContext(Main) {
-                        findNavController().navigate(R.id.action_goto_SplashFragment)
-                    }
-                }
+                (activity as MainActivity).gotoFirstFragment()
             }
-
         }
         ConfirmDialog(
             requireContext(),

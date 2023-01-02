@@ -3,7 +3,7 @@ package com.zarholding.zar.view.recycler.adapter.notification
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.zarholding.zar.model.other.notification.NotificationModel
+import com.zarholding.zar.model.notification_signalr.NotificationSignalrModel
 import com.zarholding.zar.view.recycler.holder.notification.NotificationItemHolder
 import zar.databinding.ItemNotificationBinding
 
@@ -11,7 +11,7 @@ import zar.databinding.ItemNotificationBinding
  * Created by m-latifi on 11/16/2022.
  */
 
-class NotificationAdapter(private var notificationModels: List<NotificationModel>) :
+class NotificationAdapter(private var notificationModels: List<NotificationSignalrModel>) :
     RecyclerView.Adapter<NotificationItemHolder>() {
 
     private var layoutInflater : LayoutInflater? = null

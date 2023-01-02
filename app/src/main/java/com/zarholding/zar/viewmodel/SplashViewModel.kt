@@ -1,5 +1,7 @@
 package com.zarholding.zar.viewmodel
 
+import android.content.SharedPreferences
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.zar.core.enums.EnumApiError
 import com.zar.core.models.ErrorApiModel
@@ -8,10 +10,12 @@ import com.zarholding.zar.database.entity.ArticleEntity
 import com.zarholding.zar.database.entity.RoleEntity
 import com.zarholding.zar.database.entity.UserInfoEntity
 import com.zarholding.zar.model.request.ArticleRequestModel
+import com.zarholding.zar.model.request.NotificationUnreadCountRequestModel
 import com.zarholding.zar.repository.ArticleRepository
 import com.zarholding.zar.repository.NotificationRepository
 import com.zarholding.zar.repository.TokenRepository
 import com.zarholding.zar.repository.UserRepository
+import com.zarholding.zar.utility.CompanionValues
 import com.zarholding.zar.utility.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
@@ -25,7 +29,8 @@ class SplashViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val articleRepository : ArticleRepository,
     private val tokenRepository: TokenRepository,
-    private val notificationRepository: NotificationRepository
+    private val notificationRepository: NotificationRepository,
+    private val sharedPreferences: SharedPreferences
 ) : ViewModel(){
 
     private var job: Job? = null
@@ -183,11 +188,26 @@ class SplashViewModel @Inject constructor(
     private fun requestGetNotificationUnreadCount() : Job  {
         return CoroutineScope(IO + exceptionHandler()).launch {
             delay(1000)
-            val response = notificationRepository.requestGetNotificationUnreadCount()
+            val request = NotificationUnreadCountRequestModel(
+                0,
+                "MIM",
+                sharedPreferences.getInt(CompanionValues.notificationLastId,0)
+            )
+            Log.e("meri", "splash request = ${request.lastId}")
+            val response = notificationRepository.requestGetNotificationUnreadCount(request)
             if (response?.isSuccessful == true) {
                 response.body()?.let {
-                    withContext(Main){
-                        successLiveData.value = it.data
+                    it.data?.let { count ->
+                        Log.d("meri", "count = ${count.unreadCount} - ${count.lastId}")
+                        if (count.unreadCount > 0) {
+                            sharedPreferences
+                                .edit()
+                                .putInt(CompanionValues.notificationLastId, count.lastId)
+                                .apply()
+                        }
+                        withContext(Main){
+                            successLiveData.value = count.unreadCount
+                        }
                     }
                 }
             }

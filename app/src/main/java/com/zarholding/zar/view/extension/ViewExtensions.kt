@@ -84,10 +84,19 @@ fun AddressModel.getAddress() : String {
 
 //-------------------------------------------------------------------------------------------------- setTitleAndValueText
 @BindingAdapter("setTitleText", "setValueText")
-fun TextView.setTitleAndValueText(title : String, value : String) {
+fun TextView.setTitleAndValueText(title : String?, value : String?) {
     text = context.getString(R.string.setTwoStringDot, title, value)
 }
 //-------------------------------------------------------------------------------------------------- setTitleAndValueText
+
+
+//-------------------------------------------------------------------------------------------------- setTwoToTextView
+@BindingAdapter("setOneValueToTextView", "setTwoValueToTextView")
+fun TextView.setTwoToTextView(one : String?, two : String?) {
+    text = context.getString(R.string.setTwoString, one, two)
+}
+//-------------------------------------------------------------------------------------------------- setTwoToTextView
+
 
 
 //-------------------------------------------------------------------------------------------------- setCommuteTripAndDriverName

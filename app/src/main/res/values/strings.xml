@@ -80,6 +80,7 @@
     <string name="originAndDestination">مبدا - مقصد : </string>
     <string name="approver">تصویب کننده :</string>
     <string name="departureDate">تاریخ رفت : </string>
+    <string name="returnDate">تاریخ برگشت : </string>
     <string name="departureReturnDate">تاریخ رفت - برگشت : </string>
     <string name="departureReturnTime">ساعت رفت - برگشت : </string>
     <string name="dateDot">تاریخ :</string>
@@ -175,7 +176,8 @@
     <string name="organizationUnit">واحد سازمانی</string>
     <string name="organizationPhone">داخلی</string>
     <string name="mobile">موبایل</string>
-
+    <string name="showOnMap">نمایش در نقشه</string>
+    <string name="chooseNavigationMap">انتخاب یک برنامه مسیریاب</string>
 
     
     
