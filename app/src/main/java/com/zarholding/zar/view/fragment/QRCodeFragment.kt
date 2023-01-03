@@ -153,6 +153,10 @@ class QRCodeFragment : Fragment() {
         )
         if (id?.isDigitsOnly() == true)
             qrCodeViewModel.requestUserInfo(id.toInt())
+        else {
+            showMessage(getString(R.string.qrCodeNotDigit))
+            activity?.onBackPressedDispatcher?.onBackPressed()
+        }
     }
     //---------------------------------------------------------------------------------------------- requestUserInfo
 

@@ -4,11 +4,8 @@ import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.location.Location
-import android.util.Log
 import android.util.Size
-import android.view.View
 import android.widget.TextView
-import com.zarholding.zar.model.response.address.AddressModel
 import com.zarholding.zar.model.response.trip.TripPointModel
 import com.zarholding.zardriver.model.response.TripStationModel
 import kotlinx.coroutines.Dispatchers.Main
@@ -185,7 +182,7 @@ class OsmManager(private val map: MapView) {
 
 
     //---------------------------------------------------------------------------------------------- getGeoPoints
-    fun getGeoPoints(tripPoints: List<TripPointModel>): ArrayList<GeoPoint> {
+    private fun getGeoPoints(tripPoints: List<TripPointModel>): ArrayList<GeoPoint> {
         val geoPoints = ArrayList<GeoPoint>()
         for (item in tripPoints)
             geoPoints.add(GeoPoint(item.lat.toDouble(), item.long.toDouble()))
@@ -226,7 +223,7 @@ class OsmManager(private val map: MapView) {
 
 
     //---------------------------------------------------------------------------------------------- addStationMarker
-    suspend fun addStationMarker(stations: List<TripStationModel>, view: View) {
+    suspend fun addStationMarker(stations: List<TripStationModel>) {
         withContext(Main) {
             addStartStationMarker(stations[0])
             addEndStationMarker(stations[stations.size - 1])
@@ -244,7 +241,6 @@ class OsmManager(private val map: MapView) {
                 )
                 addMarker(iconStation, position, infoWindows)
             }
-            view.visibility = View.GONE
         }
     }
     //---------------------------------------------------------------------------------------------- addStationMarker

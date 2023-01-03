@@ -364,7 +364,6 @@ class BusServiceFragment : Fragment(){
 
     //---------------------------------------------------------------------------------------------- drawRoadOnMap
     private fun drawRoadOnMap(item: TripModel, tripSelect: TripSelect) {
-
         if (binding.textViewLoading.visibility == View.VISIBLE) {
             val snack = Snackbar.make(binding.constraintLayoutParent,
                 getString(R.string.bePatientToLoadMap), 5 * 1000)
@@ -375,33 +374,34 @@ class BusServiceFragment : Fragment(){
             snack.show()
             return
         }
-
+        binding.textViewLoading.visibility = View.VISIBLE
         tripId = item.id
         stationId = item.myStationTripId
 
+        job = CoroutineScope(IO).launch {
 
-        item.tripPoints?.let {
-            job = CoroutineScope(IO).launch {
-                osmManager.drawPolyLine(it)
-            }
+            CoroutineScope(IO).launch {
+                delay(300)
+                if (!item.tripPoints.isNullOrEmpty())
+                    osmManager.drawPolyLine(item.tripPoints)
+            }.join()
+
+            CoroutineScope(IO).launch {
+                delay(300)
+                if (!item.stations.isNullOrEmpty())
+                    osmManager.addStationMarker(item.stations)
+            }.join()
+
+            CoroutineScope(Main).launch {
+                delay(300)
+                binding.textViewLoading.visibility = View.GONE
+                if (tripSelect == TripSelect.MY && item.myStationTripStatus == EnumTripStatus.Confirmed)
+                    startSignalR()
+            }.join()
         }
-
-        CoroutineScope(Main).launch {
-            binding.textViewLoading.visibility = View.VISIBLE
-            delay(300)
-            item.stations?.let { station ->
-                CoroutineScope(IO).launch {
-                    job?.join()
-                    osmManager.addStationMarker(station, binding.textViewLoading)
-                }
-            }
-        }
-
-
-        if (tripSelect == TripSelect.MY && item.myStationTripStatus == EnumTripStatus.Confirmed)
-            startSignalR()
     }
     //---------------------------------------------------------------------------------------------- drawRoadOnMap
+
 
 
     //---------------------------------------------------------------------------------------------- startSignalR
