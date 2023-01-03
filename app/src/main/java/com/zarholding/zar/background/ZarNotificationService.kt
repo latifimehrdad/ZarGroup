@@ -5,18 +5,18 @@ import android.app.Notification
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.media.RingtoneManager
-import android.net.Uri
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.LifecycleService
+import com.google.gson.Gson
 import com.zarholding.zar.model.notification_signalr.NotificationSignalrModel
 import com.zarholding.zar.repository.TokenRepository
 import com.zarholding.zar.repository.UserRepository
 import com.zarholding.zar.utility.CompanionValues
 import com.zarholding.zar.utility.signalr.RemoteSignalREmitter
 import com.zarholding.zar.utility.signalr.SignalRListener
+import com.zarholding.zar.view.extension.getMessageContent
 import dagger.hilt.android.AndroidEntryPoint
 import zar.R
 import javax.inject.Inject
@@ -95,7 +95,7 @@ class ZarNotificationService : LifecycleService(), RemoteSignalREmitter {
     //---------------------------------------------------------------------------------------------- onErrorConnectToSignalR
     override fun onErrorConnectToSignalR() {
         super.onErrorConnectToSignalR()
-        Log.d("meri", "onErrorConnectToSignalR")
+        Log.e("meri", "onErrorConnectToSignalR")
     }
     //---------------------------------------------------------------------------------------------- onErrorConnectToSignalR
 
@@ -103,7 +103,7 @@ class ZarNotificationService : LifecycleService(), RemoteSignalREmitter {
     //---------------------------------------------------------------------------------------------- onReConnectToSignalR
     override fun onReConnectToSignalR() {
         super.onReConnectToSignalR()
-        Log.d("meri", "onReConnectToSignalR")
+        Log.e("meri", "onReConnectToSignalR")
     }
     //---------------------------------------------------------------------------------------------- onReConnectToSignalR
 
@@ -112,7 +112,10 @@ class ZarNotificationService : LifecycleService(), RemoteSignalREmitter {
     override fun onReceiveMessage(user: String, message: NotificationSignalrModel) {
         super.onReceiveMessage(user, message)
         signalRListener.notificationReceived(message.id)
-        val intent = Intent("com.zarholding.zar.background")
+        val gson = Gson()
+        val item = gson.toJson(message)
+        val intent = Intent("com.zarholding.zar.receive.message")
+        intent.putExtra(CompanionValues.notificationLast, item)
         sendBroadcast(intent)
         showNotification(message)
     }
@@ -121,8 +124,9 @@ class ZarNotificationService : LifecycleService(), RemoteSignalREmitter {
 
     //---------------------------------------------------------------------------------------------- showNotification
     private fun showNotification(message: NotificationSignalrModel) {
+        if (message.message.isNullOrEmpty())
+            return
         val vibrate: LongArray = longArrayOf(1000L, 1000L, 1000L, 1000L, 1000L)
-        val alarmSound: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notifyManager = NotificationManagerCompat.from(this)
         val notificationBuilder = NotificationCompat
             .Builder(this, CompanionValues.channelId)
@@ -131,11 +135,11 @@ class ZarNotificationService : LifecycleService(), RemoteSignalREmitter {
             .setSmallIcon(R.mipmap.ic_launcher)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setSubText(message.senderName)
-            .setContentTitle(message.message)
+            .setContentTitle(message.getMessageContent())
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setCategory(Notification.CATEGORY_SERVICE)
             .setVibrate(vibrate)
-            .setSound(alarmSound)
+            .setDefaults(Notification.DEFAULT_SOUND)
             .setCategory(NotificationCompat.CATEGORY_MESSAGE)
         notifyManager.notify(7126, notification.build())
     }

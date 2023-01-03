@@ -1,7 +1,8 @@
 package com.zarholding.zar.view.fragment
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.material.snackbar.Snackbar
 import com.zar.core.enums.EnumApiError
+import com.zar.core.tools.extensions.persianNumberToEnglishNumber
 import com.zar.core.tools.loadings.LoadingManager
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.viewmodel.QRCodeViewModel
@@ -21,6 +23,7 @@ import io.github.g00fy2.quickie.config.ScannerConfig
 import zar.R
 import zar.databinding.FragmentQrcodeBinding
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class QRCodeFragment : Fragment() {
@@ -48,6 +51,7 @@ class QRCodeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner
+        setListener()
         observeErrorLiveDate()
         observeSuccessLiveData()
         startQRCodeReader()
@@ -56,7 +60,7 @@ class QRCodeFragment : Fragment() {
 
 
     //---------------------------------------------------------------------------------------------- showMessage
-    fun showMessage(message: String) {
+    private fun showMessage(message: String) {
         val snack = Snackbar.make(binding.constraintLayoutParent, message, 5 * 1000)
         snack.setBackgroundTint(resources.getColor(R.color.primaryColor, requireContext().theme))
         snack.setTextColor(resources.getColor(R.color.textViewColor3, requireContext().theme))
@@ -83,6 +87,23 @@ class QRCodeFragment : Fragment() {
     //---------------------------------------------------------------------------------------------- startQRCodeReader
 
 
+    //---------------------------------------------------------------------------------------------- setListener
+    private fun setListener() {
+        binding.materialButtonSms.setOnClickListener {
+            binding.item?.let {
+                val number = it.mobile.persianNumberToEnglishNumber()
+                startActivity(
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.fromParts("sms", number, null)
+                    )
+                )
+            }
+        }
+    }
+    //---------------------------------------------------------------------------------------------- setListener
+
+
     //---------------------------------------------------------------------------------------------- observeLoginLiveDate
     private fun observeErrorLiveDate() {
         qrCodeViewModel.errorLiveDate.observe(viewLifecycleOwner) {
@@ -96,7 +117,6 @@ class QRCodeFragment : Fragment() {
         }
     }
     //---------------------------------------------------------------------------------------------- observeLoginLiveDate
-
 
 
     //---------------------------------------------------------------------------------------------- observeSuccessLiveData

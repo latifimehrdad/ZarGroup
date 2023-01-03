@@ -1,4 +1,4 @@
-package com.zarholding.zar.model.notification_signalr
+package com.zarholding.zar.model.notification
 
 data class NotificationMessageSignalrModel(
     val UserAction: String?,

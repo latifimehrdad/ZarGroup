@@ -102,6 +102,11 @@
 
     <color name="timePickerNumber">#7A7A7A</color>
 
+    <color name="userInfoGradiantStart">#60a7ff</color>
+    <color name="userInfoGradiantEnd">#206cc9</color>
+    <color name="userInfoLayoutBackground">#33EFEFEF</color>
+    <color name="userInfoLayoutBackground2">#8009192C</color>
+
     <color name="datePickerConfirmButtonBackColor">#206cc9</color>
     <color name="datePickerDateBackColor">#FFFFFF</color>
     <color name="datePickerRangeColor">#163c69</color>

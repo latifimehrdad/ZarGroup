@@ -118,6 +118,8 @@
     <string name="personalCode">کد پرسنلی : %1$s</string>
     <string name="attendanceTime">ساعت حضور : %1$s</string>
     <string name="myStation">ایستگاه من : %1$s</string>
+    <string name="dayAgo">%1$s روز پیش</string>
+    <string name="hoursAgo">%1$s ساعت پیش</string>
     <string name="taxiRequestIsConfirm">درخواست سرویس آقا/خانم %1$s تایید شد.</string>
     <string name="confirmForTaxiRequestRegister">آیا برای تایید درخواست آژانس آقا/خانم %1$s مطمئن هستید؟</string>
     <string name="confirmForTripRequestRegister">آیا برای تایید درخواست رزرو سرویس های انتخابی مطمئن هستید؟</string>
@@ -173,11 +175,17 @@
     <string name="fullName">نام و نام خانوادگی</string>
     <string name="personnelNumber">شماره پرسنلی</string>
     <string name="jobTitle">سمت شغلی</string>
+    <string name="jobTitleDot">سمت شغلی :</string>
     <string name="organizationUnit">واحد سازمانی</string>
-    <string name="organizationPhone">داخلی</string>
-    <string name="mobile">موبایل</string>
+    <string name="organizationUnitDot">واحد سازمانی :</string>
+    <string name="organizationPhone">شماره داخلی</string>
+    <string name="organizationPhoneDot">شماره داخلی :</string>
+    <string name="mobile">شماره موبایل</string>
+    <string name="mobileDot">شماره موبایل :</string>
     <string name="showOnMap">نمایش در نقشه</string>
     <string name="chooseNavigationMap">انتخاب یک برنامه مسیریاب</string>
+    <string name="sendNotification">ارسال نوتیفیکیشن</string>
+    <string name="sendSms">ارسال SMS</string>
 
     
     

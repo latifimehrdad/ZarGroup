@@ -1,7 +1,7 @@
 package com.zarholding.zar.api
 
 import com.zarholding.zar.model.enum.EnumDriverType
-import com.zarholding.zar.model.notification_signalr.NotificationResponse
+import com.zarholding.zar.model.notification.NotificationResponse
 import com.zarholding.zar.model.request.*
 import com.zarholding.zar.model.response.LoginResponseModel
 import com.zarholding.zar.model.response.address.AddressResponseModel
@@ -181,6 +181,12 @@ interface ApiSuperApp {
     suspend fun requestGetNotification(
         @Header("Authorization") token : String
     ) : Response<NotificationResponse>
+
+    @POST("$v1/Notification/set-read")
+    suspend fun requestReadNotification(
+        @Body ids : List<Int>,
+        @Header("Authorization") token : String
+    ) : Response<TaxiRemoveFavePlaceResponse>
 
 
     @GET

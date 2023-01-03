@@ -23,4 +23,10 @@ class NotificationRepository @Inject constructor(
         apiCall { api.requestGetNotification(tokenRepository.getBearerToken()) }
     //---------------------------------------------------------------------------------------------- requestGetNotification
 
+
+    //---------------------------------------------------------------------------------------------- requestReadNotification
+    suspend fun requestReadNotification(ids : List<Int>) =
+        apiCall { api.requestReadNotification(ids, tokenRepository.getBearerToken()) }
+    //---------------------------------------------------------------------------------------------- requestReadNotification
+
 }

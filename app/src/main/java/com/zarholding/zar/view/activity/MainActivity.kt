@@ -1,7 +1,6 @@
 package com.zarholding.zar.view.activity
 
 import android.Manifest
-import android.app.Dialog
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -12,32 +11,25 @@ import android.media.AudioAttributes
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
-import android.view.Gravity
 import android.view.View
-import android.widget.ImageView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.recyclerview.widget.RecyclerView
-import com.ahmadhamwi.tabsync.TabbedListMediator
-import com.google.android.material.tabs.TabLayout
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.zar.core.tools.loadings.LoadingManager
-import com.zar.core.tools.manager.DialogManager
 import com.zar.core.tools.manager.ThemeManager
 import com.zarholding.zar.background.ZarNotificationService
 import com.zarholding.zar.database.dao.UserInfoDao
 import com.zarholding.zar.utility.CompanionValues
 import com.zarholding.zar.utility.RoleManager
-import com.zarholding.zar.view.recycler.adapter.notification.NotificationCategoryAdapter
+import com.zarholding.zar.view.dialog.NotificationDialog
 import com.zarholding.zar.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -48,8 +40,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import zar.R
 import zar.databinding.ActivityMainBinding
-import java.time.Duration
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 
@@ -100,8 +90,6 @@ class MainActivity : AppCompatActivity() {
         setListener()
         checkLocationPermission()
         createNotificationChannel()
-/*        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.deleteNotificationChannel(CompanionValues.channelId)*/
     }
     //---------------------------------------------------------------------------------------------- initView
 
@@ -164,11 +152,8 @@ class MainActivity : AppCompatActivity() {
     private fun showNotificationDialog() {
         val position = binding.imageViewNotification.top +
                 binding.imageViewNotification.measuredHeight
-        val dialog = DialogManager().createDialogHeightWrapContent(
-            this, R.layout.dialog_notification, Gravity.TOP, position
-        )
-        initNotification(dialog)
-        dialog.show()
+        NotificationDialog(position).show(supportFragmentManager, "notification dialog")
+
     }
     //---------------------------------------------------------------------------------------------- showNotificationDialog
 
@@ -265,10 +250,6 @@ class MainActivity : AppCompatActivity() {
     //---------------------------------------------------------------------------------------------- createNotificationChannel
     private fun createNotificationChannel() {
         val vibrate: LongArray = longArrayOf(1000L, 1000L, 1000L, 1000L, 1000L)
-        val alarmSound: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        val audioAttributes = AudioAttributes.Builder()
-            .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-            .build()
         val importance = NotificationManager.IMPORTANCE_HIGH
         val channel = NotificationChannel(
             CompanionValues.channelId,
@@ -280,7 +261,6 @@ class MainActivity : AppCompatActivity() {
         channel.lightColor = Color.BLUE
         channel.enableVibration(true)
         channel.vibrationPattern = vibrate
-        channel.setSound(alarmSound, audioAttributes)
         val notificationManager = getSystemService(NotificationManager::class.java)
         notificationManager.createNotificationChannel(channel)
     }
@@ -291,12 +271,13 @@ class MainActivity : AppCompatActivity() {
     private fun registerReceiver() {
         broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent) {
-                Log.e("meri", "registerReceiver")
                 MainViewModel.notificationCount += 1
                 setNotificationCount(MainViewModel.notificationCount)
             }
         }
-        registerReceiver(broadcastReceiver, IntentFilter("com.zarholding.zar.background"))
+        registerReceiver(
+            broadcastReceiver,
+            IntentFilter("com.zarholding.zar.receive.message"))
     }
     //---------------------------------------------------------------------------------------------- registerReceiver
 
@@ -309,50 +290,6 @@ class MainActivity : AppCompatActivity() {
     //---------------------------------------------------------------------------------------------- deleteAllData
 
 
-    private fun initNotification(dialog: Dialog) {
-
-        dialog.setCancelable(true)
-        val tabLayout = dialog.findViewById<TabLayout>(R.id.tabLayout)
-        val recyclerView = dialog.findViewById<RecyclerView>(R.id.recyclerViewNotification)
-        val imageViewClose = dialog.findViewById<ImageView>(R.id.imageViewClose)
-
-        imageViewClose.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        loadingManager.setRecyclerLoading(
-            recyclerView,
-            R.layout.item_loading,
-            R.color.recyclerLoadingShadow,
-            1
-        )
-        mainViewModel.notificationResponseLiveData.observe(this) {
-            loadingManager.stopLoadingView()
-
-            for (category in it) {
-                tabLayout.addTab(tabLayout.newTab().setText(category.name))
-            }
-
-            tabLayout?.getTabAt(0)?.apply {
-                orCreateBadge
-                badge?.isVisible = true
-                badge?.number = 3
-            }
-
-            recyclerView.adapter = NotificationCategoryAdapter(it)
-
-            TabbedListMediator(
-                recyclerView,
-                tabLayout,
-                it.indices.toList(),
-                true
-            ).attach()
-
-        }
-
-        mainViewModel.requestGetNotification()
-
-    }
 
     //---------------------------------------------------------------------------------------------- onDestroy
     override fun onDestroy() {

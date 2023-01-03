@@ -12,13 +12,17 @@ import androidx.databinding.BindingAdapter
 import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
+import com.google.gson.Gson
 import com.zar.core.tools.extensions.toSolarDate
 import com.zarholding.zar.hilt.Providers
 import com.zarholding.zar.model.enum.EnumTripStatus
+import com.zarholding.zar.model.notification.NotificationMessageSignalrModel
+import com.zarholding.zar.model.notification_signalr.NotificationSignalrModel
 import com.zarholding.zar.model.response.PassengerModel
 import com.zarholding.zar.model.response.address.AddressModel
 import com.zarholding.zardriver.model.response.TripStationModel
 import zar.R
+import java.time.Duration
 import java.time.LocalDateTime
 
 /**
@@ -80,6 +84,49 @@ fun AddressModel.getAddress() : String {
     return addressText
 }
 //-------------------------------------------------------------------------------------------------- AddressModel.getAddress()
+
+
+//-------------------------------------------------------------------------------------------------- getMessageContent
+fun NotificationSignalrModel?.getMessageContent() = this?.let {
+    if (it.message.isNullOrEmpty())
+        ""
+    else {
+        val gson = Gson()
+        val messageContent = gson
+            .fromJson(it.message, NotificationMessageSignalrModel::class.java)
+        messageContent.Body
+    }
+}
+//-------------------------------------------------------------------------------------------------- getMessageContent
+
+
+
+//-------------------------------------------------------------------------------------------------- getMessageContent
+@BindingAdapter("getMessageContent")
+fun TextView.getMessageContent(notification : NotificationSignalrModel?) {
+    text = notification.getMessageContent()
+}
+//-------------------------------------------------------------------------------------------------- getMessageContent
+
+
+
+//-------------------------------------------------------------------------------------------------- setElapseTime
+@BindingAdapter("setElapseTime")
+fun TextView.setElapseTime(dateTime : String?) {
+    dateTime?.let {
+        val now = LocalDateTime.now()
+        val date = LocalDateTime.parse(dateTime)
+        val hoursBetween = Duration.between(date, now).toHours()
+        text = if (hoursBetween > 24) {
+            val daysBetween = Duration.between(date, now).toDays()
+            context.getString(R.string.dayAgo , daysBetween.toString())
+        } else
+            context.getString(R.string.hoursAgo , hoursBetween.toString())
+
+    }
+}
+//-------------------------------------------------------------------------------------------------- setElapseTime
+
 
 
 //-------------------------------------------------------------------------------------------------- setTitleAndValueText
@@ -149,7 +196,7 @@ fun TextView.setPassengersToTextView(passengers : List<PassengerModel>?) {
 //-------------------------------------------------------------------------------------------------- setWaitingTimeToTextView
 @BindingAdapter("setWaitingTimeToTextView")
 fun TextView.setWaitingTimeToTextView(time : Int) {
-    val title = if (time < 6)
+    text = if (time < 59)
         "$time دقیقه پیش "
     else {
         val h = time / 60

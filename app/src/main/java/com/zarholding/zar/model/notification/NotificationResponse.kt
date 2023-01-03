@@ -1,5 +1,6 @@
-package com.zarholding.zar.model.notification_signalr
+package com.zarholding.zar.model.notification
 
+import com.zarholding.zar.model.notification_signalr.NotificationSignalrModel
 import com.zarholding.zar.model.response.BaseResponseAbstractModel
 
 data class NotificationResponse(

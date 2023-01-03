@@ -11,7 +11,11 @@ import zar.databinding.ItemNotificationBinding
  * Created by m-latifi on 11/16/2022.
  */
 
-class NotificationAdapter(private var notificationModels: List<NotificationSignalrModel>) :
+class NotificationAdapter(
+    private var notificationModels: List<NotificationSignalrModel>,
+    private var categoryPosition : Int,
+    private val click: NotificationItemHolder.Click
+) :
     RecyclerView.Adapter<NotificationItemHolder>() {
 
     private var layoutInflater : LayoutInflater? = null
@@ -24,14 +28,14 @@ class NotificationAdapter(private var notificationModels: List<NotificationSigna
             layoutInflater = LayoutInflater.from(parent.context)
 
         return NotificationItemHolder(ItemNotificationBinding
-            .inflate(layoutInflater!!, parent, false))
+            .inflate(layoutInflater!!, parent, false),categoryPosition, click)
     }
     //---------------------------------------------------------------------------------------------- onCreateViewHolder
 
 
     //---------------------------------------------------------------------------------------------- onBindViewHolder
     override fun onBindViewHolder(holder: NotificationItemHolder, position: Int) {
-        holder.bind(notificationModels[position])
+        holder.bind(notificationModels[position], position)
     }
     //---------------------------------------------------------------------------------------------- onBindViewHolder
 

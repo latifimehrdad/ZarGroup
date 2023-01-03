@@ -2,6 +2,7 @@ package com.zarholding.zar.utility.signalr
 
 import com.zarholding.zar.model.notification_signalr.NotificationSignalrModel
 
+
 /**
  * Created by m-latifi on 11/21/2022.
  */

@@ -420,7 +420,6 @@ class TaxiReservationFragment : Fragment() {
     private fun showDatePickerDialog() {
         if (context == null)
             return
-        val persianDate = LocalDateTime.now().toSolarDate()!!
         val datePickerDialog = DatePickerDialog(requireContext())
         when (taxiReservationViewModel.getTimePickMode()) {
             ZarTimePicker.PickerMode.DEPARTURE ->

@@ -191,7 +191,7 @@ class SplashViewModel @Inject constructor(
             val request = NotificationUnreadCountRequestModel(
                 0,
                 "MIM",
-                sharedPreferences.getInt(CompanionValues.notificationLastId,0)
+                sharedPreferences.getInt(CompanionValues.notificationLast,0)
             )
             Log.e("meri", "splash request = ${request.lastId}")
             val response = notificationRepository.requestGetNotificationUnreadCount(request)
@@ -202,7 +202,7 @@ class SplashViewModel @Inject constructor(
                         if (count.unreadCount > 0) {
                             sharedPreferences
                                 .edit()
-                                .putInt(CompanionValues.notificationLastId, count.lastId)
+                                .putInt(CompanionValues.notificationLast, count.lastId)
                                 .apply()
                         }
                         withContext(Main){

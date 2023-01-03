@@ -41,7 +41,6 @@
             android:id="@+id/checkboxRead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="55 دقیقه پیش"
             app:layout_constraintTop_toTopOf="@id/cardViewIcon"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="@dimen/_5sdp"
@@ -49,7 +48,8 @@
             android:textSize="@dimen/_8sdp"
             android:textColor="@color/textViewFooter"
             android:checked="false"
-            android:theme="@style/checkBoxStyle"/>
+            android:theme="@style/checkBoxStyle"
+            app:setElapseTime="@{item.lastUpdate}"/>
 
 
         <TextView
@@ -60,7 +60,7 @@
             app:layout_constraintTop_toTopOf="@id/cardViewIcon"
             android:layout_marginStart="@dimen/_5sdp"
             android:layout_marginEnd="@dimen/_8sdp"
-            android:text="مجتبی یکتا"
+            android:text="@{item.senderName}"
             android:textSize="@dimen/_10sdp"
             android:textColor="@color/textViewColor2"
             android:fontFamily="@font/kalameh_regular"
@@ -69,16 +69,17 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@id/checkboxRead"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/cardViewIcon"
             app:layout_constraintBottom_toBottomOf="@id/cardViewIcon"
             android:layout_marginStart="@dimen/_5sdp"
             android:layout_marginEnd="@dimen/_8sdp"
-            android:text="مجتبی یکتا"
             android:textSize="@dimen/_10sdp"
             android:textColor="@color/textViewFooter"
             android:fontFamily="@font/kalameh_light"
-            android:lines="1"/>
+            android:lines="1"
+            android:ellipsize="end"
+            app:getMessageContent="@{item}"/>
 
         <View
             android:layout_width="match_parent"
