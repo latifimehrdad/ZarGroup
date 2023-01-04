@@ -32,9 +32,9 @@ import com.zarholding.zar.utility.CompanionValues
 import com.zarholding.zar.utility.OsmManager
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.view.dialog.*
-import com.zarholding.zar.view.extension.getAddress
-import com.zarholding.zar.view.extension.hideKeyboard
-import com.zarholding.zar.view.extension.setApplicatorNameToTextView
+import com.zarholding.zar.utility.extension.getAddress
+import com.zarholding.zar.utility.extension.hideKeyboard
+import com.zarholding.zar.utility.extension.setApplicatorNameToTextView
 import com.zarholding.zar.view.recycler.adapter.PassengerAdapter
 import com.zarholding.zar.view.recycler.holder.PassengerItemHolder
 import com.zarholding.zar.viewmodel.TaxiReservationViewModel

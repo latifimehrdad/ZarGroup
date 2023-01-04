@@ -4,7 +4,7 @@
     <string name="welcomeToApp">به نرم افزار هلدینگ زر خوش آمدید.</string>
     <string name="designer">طراحی و توسعه توسط تیم نرم افزار هلدینگ زر</string>
     <string name="pleaseEnterUserPass">لطفا نام کاربری و رمز ورود خود را وارد کنید</string>
-
+    <string name="disableFeature">این قابلیت بزودی راه اندازی میشود</string>
     <string name="userName">نام کاربری</string>
     <string name="passcode">رمز ورود</string>
     <string name="enter">ورود</string>
@@ -97,12 +97,16 @@
     <string name="no">خیر</string>
     <string name="send">ارسال</string>
     <string name="cancel">انصراف</string>
+    <string name="search">جستجو</string>
     <string name="searchLoadMore">جستجوی موارد بیشتر</string>
     <string name="showAllNews">مشاهده تمام خبرها</string>
     <string name="confirmChecked">تایید نشان شده ها</string>
     <string name="rejectChecked">عدم تایید نشان شده ها</string>
     <string name="reTry">تلاش دوباره</string>
     <string name="chooseFromList">انتخاب از لیست</string>
+    <string name="alphabet">حرف</string>
+    <string name="iran">ایران</string>
+    <string name="carHint"> </string>
     <string name="passengers">مسافران</string>
     <string name="passengersDot">مسافران :</string>
     <string name="sendInformation">ارسال اطلاعات</string>
@@ -115,9 +119,11 @@
     <string name="setTwoStringDot">%1$s : %2$s</string>
     <string name="setTwoStringSlash">%1$s / %2$s</string>
     <string name="setDate">%1$s/%2$s/%3$s</string>
-    <string name="personalCode">کد پرسنلی : %1$s</string>
+    <string name="personalCodeDote">کد پرسنلی : %1$s</string>
+    <string name="personalCode">کد پرسنلی</string>
     <string name="attendanceTime">ساعت حضور : %1$s</string>
     <string name="myStation">ایستگاه من : %1$s</string>
+    <string name="minuteAgo">%1$s دقیقه پیش</string>
     <string name="dayAgo">%1$s روز پیش</string>
     <string name="hoursAgo">%1$s ساعت پیش</string>
     <string name="taxiRequestIsConfirm">درخواست سرویس آقا/خانم %1$s تایید شد.</string>
@@ -172,6 +178,7 @@
     <string name="youHaveUnreadMessage">شما پیام خوانده نشده دارید</string>
     <string name="empty"> </string>
     <string name="qrCode">QR Code</string>
+    <string name="parking">پارکینگ</string>
     <string name="fullName">نام و نام خانوادگی</string>
     <string name="personnelNumber">شماره پرسنلی</string>
     <string name="jobTitle">سمت شغلی</string>
@@ -187,6 +194,7 @@
     <string name="sendNotification">ارسال نوتیفیکیشن</string>
     <string name="sendSms">ارسال SMS</string>
     <string name="qrCodeNotDigit">مقدار دریافت شده حاوی کاراکتر غیر عددی است</string>
+    <string name="pleaseEnterCarNumber">لطفا شماره پلاک ماشین را وارد کنید</string>
 
     
     
@@ -201,6 +209,7 @@
     <string name="iconDescription">icon</string>
     <string name="plusDescription">plus</string>
     <string name="searchDescription">search</string>
+    <string name="retryDescription">retry</string>
     <string name="favDescription">favorite</string>
     <string name="markerDescription">marker</string>
 

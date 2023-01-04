@@ -23,7 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     var repository: LoginRepository
-    ) : ViewModel() {
+    ) : ZarViewModel() {
 
     @Inject
     lateinit var sharedPreferences: SharedPreferences

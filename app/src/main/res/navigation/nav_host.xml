@@ -56,8 +56,8 @@
             app:popExitAnim="@anim/slide_out_left" />
 
         <action
-            android:id="@+id/action_HomeFragment_to_QRCodeFragment"
-            app:destination="@id/QRCodeFragment"
+            android:id="@+id/action_HomeFragment_to_ParkingFragment"
+            app:destination="@id/ParkingFragment"
             app:enterAnim="@anim/slide_in_left"
             app:exitAnim="@anim/slide_out_right"
             app:popEnterAnim="@anim/slide_in_right"
@@ -140,9 +140,9 @@
     </fragment>
 
     <fragment
-        android:id="@+id/QRCodeFragment"
-        android:name="com.zarholding.zar.view.fragment.QRCodeFragment"
-        android:label="QRCodeFragment"/>
+        android:id="@+id/ParkingFragment"
+        android:name="com.zarholding.zar.view.fragment.ParkingFragment"
+        android:label="ParkingFragment"/>
 
     <fragment
         android:id="@+id/MapFragment"

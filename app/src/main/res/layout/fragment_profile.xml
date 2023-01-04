@@ -2,6 +2,16 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <data>
+        <variable
+            name="item"
+            type="com.zarholding.zar.database.entity.UserInfoEntity" />
+
+        <variable
+            name="token"
+            type="String" />
+    </data>
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -39,17 +49,19 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_margin="@dimen/_3sdp"
-                    app:cardBackgroundColor="@color/profileImageBackgroundColor"
                     app:cardCornerRadius="@dimen/_100sdp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintDimensionRatio="H,1:1"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintWidth_percent="0.25">
+                    app:layout_constraintWidth_percent="0.25"
+                    app:cardBackgroundColor="@color/white">
 
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        app:loadImageProfile="@{item != null ? item.userName : @string/empty}"
+                        app:bearerToken="@{token}"
                         android:contentDescription="@string/profileDescription" />
 
                 </androidx.cardview.widget.CardView>
@@ -62,7 +74,8 @@
                     app:cardCornerRadius="@dimen/_100sdp"
                     app:cardElevation="@dimen/_3sdp"
                     app:layout_constraintBottom_toBottomOf="@id/cardViewProfile"
-                    app:layout_constraintStart_toStartOf="@id/cardViewProfile">
+                    app:layout_constraintStart_toStartOf="@id/cardViewProfile"
+                    android:visibility="gone">
 
                     <ImageView
                         android:layout_width="match_parent"
@@ -84,7 +97,8 @@
                     android:textColor="@color/textViewColor2"
                     android:textSize="@dimen/_10sdp"
                     app:layout_constraintEnd_toStartOf="@id/cardViewProfile"
-                    app:layout_constraintTop_toTopOf="@id/cardViewProfile" />
+                    app:layout_constraintTop_toTopOf="@id/cardViewProfile"
+                    android:text="@{item != null ? item.fullName : @string/empty}"/>
 
                 <TextView
                     android:id="@+id/textViewDegree"
@@ -97,7 +111,8 @@
                     android:textSize="@dimen/_10sdp"
                     app:layout_constraintBottom_toTopOf="@id/textViewPersonalCode"
                     app:layout_constraintEnd_toEndOf="@id/textViewProfileName"
-                    app:layout_constraintTop_toBottomOf="@id/textViewProfileName" />
+                    app:layout_constraintTop_toBottomOf="@id/textViewProfileName"
+                    android:text="@{item != null ? item.personnelJobKeyText : @string/empty}"/>
 
                 <TextView
                     android:id="@+id/textViewPersonalCode"
@@ -112,7 +127,9 @@
                     android:textSize="@dimen/_10sdp"
                     app:layout_constraintBottom_toBottomOf="@id/cardViewProfile"
                     app:layout_constraintEnd_toEndOf="@id/textViewProfileName"
-                    app:layout_constraintTop_toBottomOf="@id/textViewDegree" />
+                    app:layout_constraintTop_toBottomOf="@id/textViewDegree"
+                    app:setTitleText="@{@string/personalCode}"
+                    app:setValueText="@{item != null ? item.userName : @string/empty}"/>
 
 
 

@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.zarholding.zar.model.enum.EnumTripStatus
 import com.zarholding.zar.model.other.ShowImageModel
 import com.zarholding.zar.model.response.trip.TripModel
-import com.zarholding.zar.view.extension.setRegisterStationStatus
+import com.zarholding.zar.utility.extension.setRegisterStationStatus
 import zar.R
 import zar.databinding.ItemMyServiceBinding
 

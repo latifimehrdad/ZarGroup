@@ -7,9 +7,6 @@ import android.app.NotificationManager
 import android.content.*
 import android.content.res.Configuration
 import android.graphics.Color
-import android.media.AudioAttributes
-import android.media.RingtoneManager
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
@@ -23,12 +20,8 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.zar.core.tools.loadings.LoadingManager
-import com.zar.core.tools.manager.ThemeManager
 import com.zarholding.zar.background.ZarNotificationService
-import com.zarholding.zar.database.dao.UserInfoDao
 import com.zarholding.zar.utility.CompanionValues
-import com.zarholding.zar.utility.RoleManager
 import com.zarholding.zar.view.dialog.NotificationDialog
 import com.zarholding.zar.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,7 +33,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import zar.R
 import zar.databinding.ActivityMainBinding
-import javax.inject.Inject
 
 
 /**
@@ -49,21 +41,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-
-    @Inject
-    lateinit var userInfoDao: UserInfoDao
-
-    @Inject
-    lateinit var roleManager: RoleManager
-
-    @Inject
-    lateinit var themeManagers: ThemeManager
-
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
-
-    @Inject
-    lateinit var loadingManager: LoadingManager
 
     lateinit var binding: ActivityMainBinding
     private var navController: NavController? = null
@@ -76,6 +53,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding.token = ""
         initView()
     }
     //---------------------------------------------------------------------------------------------- onCreate
@@ -84,7 +62,7 @@ class MainActivity : AppCompatActivity() {
     //---------------------------------------------------------------------------------------------- initView
     private fun initView() {
         mainViewModel.setLastNotificationIdToZero()
-        setAppTheme(themeManagers.applicationTheme())
+        setAppTheme()
         registerReceiver()
         setUserInfo()
         setListener()
@@ -95,8 +73,8 @@ class MainActivity : AppCompatActivity() {
 
 
     //______________________________________________________________________________________________ setAppTheme
-    private fun setAppTheme(theme: Int) {
-        when (theme) {
+    private fun setAppTheme() {
+        when (mainViewModel.applicationTheme()) {
             Configuration.UI_MODE_NIGHT_YES ->
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             Configuration.UI_MODE_NIGHT_NO ->
@@ -109,6 +87,10 @@ class MainActivity : AppCompatActivity() {
     //---------------------------------------------------------------------------------------------- setNotificationCount
     fun setNotificationCount(count: Int) {
         binding.textViewNotificationCount.text = count.toString()
+        if (count < 1)
+            binding.cardViewNotification.visibility = View.GONE
+        else
+            binding.cardViewNotification.visibility = View.VISIBLE
     }
     //---------------------------------------------------------------------------------------------- setNotificationCount
 
@@ -116,17 +98,18 @@ class MainActivity : AppCompatActivity() {
     //---------------------------------------------------------------------------------------------- setListener
     private fun setListener() {
 
-        val navHostFragment = supportFragmentManager
-            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment?
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment?
         navController = navHostFragment?.navController
         navController?.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.label != null)
-                showAndHideBottomMenu(destination.label.toString())
+                showAndHideBottomNavigationMenu(destination.label.toString())
         }
 
 
         binding.imageViewNotification.setOnClickListener { showNotificationDialog() }
 
+        binding.cardViewNotification.setOnClickListener { showNotificationDialog() }
 
         binding.imageViewProfile.setOnClickListener {
             gotoFragment(R.id.action_goto_ProfileFragment)
@@ -153,17 +136,16 @@ class MainActivity : AppCompatActivity() {
         val position = binding.imageViewNotification.top +
                 binding.imageViewNotification.measuredHeight
         NotificationDialog(position).show(supportFragmentManager, "notification dialog")
-
     }
     //---------------------------------------------------------------------------------------------- showNotificationDialog
 
 
-    //---------------------------------------------------------------------------------------------- showAndHideBottomMenu
-    private fun showAndHideBottomMenu(fragmentLabel: String) {
+    //---------------------------------------------------------------------------------------------- showAndHideBottomNavigationMenu
+    private fun showAndHideBottomNavigationMenu(fragmentLabel: String) {
         when (fragmentLabel) {
             "SplashFragment",
             "LoginFragment",
-            "MapFragment"-> {
+            "MapFragment" -> {
                 binding.constraintLayoutFooterMenu.visibility = View.GONE
                 binding.constraintLayoutProfile.visibility = View.GONE
 
@@ -177,13 +159,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    //---------------------------------------------------------------------------------------------- showAndHideBottomMenu
+    //---------------------------------------------------------------------------------------------- showAndHideBottomNavigationMenu
 
 
     //---------------------------------------------------------------------------------------------- gotoFirstFragment
     fun gotoFirstFragment() {
+        deleteAllData()
         CoroutineScope(IO).launch {
-            deleteAllData()
             delay(500)
             withContext(Main) {
                 gotoFragment(R.id.action_goto_SplashFragment)
@@ -191,6 +173,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
     //---------------------------------------------------------------------------------------------- gotoFirstFragment
+
+
+    //---------------------------------------------------------------------------------------------- deleteAllData
+    fun deleteAllData() {
+        stopService(Intent(this@MainActivity, ZarNotificationService::class.java))
+        mainViewModel.deleteAllData()
+    }
+    //---------------------------------------------------------------------------------------------- deleteAllData
 
 
     //---------------------------------------------------------------------------------------------- gotoFragment
@@ -230,18 +220,16 @@ class MainActivity : AppCompatActivity() {
 
     //---------------------------------------------------------------------------------------------- setUserInfo
     fun setUserInfo() {
-        CoroutineScope(IO).launch {
+        CoroutineScope(Main).launch {
             delay(500)
-            val user = userInfoDao.getUserInfo()
-            withContext(Main) {
-                binding.textViewProfileName.text = user?.fullName
-                binding.textViewPersonalCode.text = resources
-                    .getString(R.string.personalCode, user?.personnelNumber.toString())
-                if (roleManager.getAdminRole())
-                    binding.imageViewAdmin.visibility = View.VISIBLE
-                else
-                    binding.imageViewAdmin.visibility = View.GONE
-            }
+            val user = mainViewModel.getUserInfo()
+            binding.item = user
+            binding.token = mainViewModel.getBearerToken()
+            if (mainViewModel.getAdminRole())
+                binding.imageViewAdmin.visibility = View.VISIBLE
+            else
+                binding.imageViewAdmin.visibility = View.GONE
+            binding.notifyChange()
         }
     }
     //---------------------------------------------------------------------------------------------- setUserInfo
@@ -271,24 +259,19 @@ class MainActivity : AppCompatActivity() {
     private fun registerReceiver() {
         broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent) {
-                MainViewModel.notificationCount += 1
+                val item = intent.getStringExtra(CompanionValues.notificationLast)
+                if (item.isNullOrEmpty())
+                    MainViewModel.notificationCount -= 1
+                else MainViewModel.notificationCount += 1
                 setNotificationCount(MainViewModel.notificationCount)
             }
         }
         registerReceiver(
             broadcastReceiver,
-            IntentFilter("com.zarholding.zar.receive.message"))
+            IntentFilter("com.zarholding.zar.receive.message")
+        )
     }
     //---------------------------------------------------------------------------------------------- registerReceiver
-
-
-    //---------------------------------------------------------------------------------------------- deleteAllData
-    fun deleteAllData() {
-        stopService(Intent(this@MainActivity, ZarNotificationService::class.java))
-        mainViewModel.deleteAllData()
-    }
-    //---------------------------------------------------------------------------------------------- deleteAllData
-
 
 
     //---------------------------------------------------------------------------------------------- onDestroy

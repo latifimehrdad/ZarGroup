@@ -1,22 +1,9 @@
-package com.zarholding.zar.view.extension
+package com.zarholding.zar.utility.extension
 
-import android.app.Activity
-import android.content.Context
-import android.graphics.Color
-import android.view.View
-import android.view.inputmethod.InputMethodManager
-import android.widget.ImageView
 import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.databinding.BindingAdapter
-import androidx.fragment.app.Fragment
-import androidx.swiperefreshlayout.widget.CircularProgressDrawable
-import com.bumptech.glide.Glide
-import com.google.gson.Gson
 import com.zar.core.tools.extensions.toSolarDate
-import com.zarholding.zar.hilt.Providers
 import com.zarholding.zar.model.enum.EnumTripStatus
-import com.zarholding.zar.model.notification.NotificationMessageSignalrModel
 import com.zarholding.zar.model.notification_signalr.NotificationSignalrModel
 import com.zarholding.zar.model.response.PassengerModel
 import com.zarholding.zar.model.response.address.AddressModel
@@ -30,143 +17,72 @@ import java.time.LocalDateTime
  */
 
 
-//-------------------------------------------------------------------------------------------------- AddressModel.getAddress()
-fun AddressModel.getAddress() : String {
-    var addressText: String
-
-    var county = county
-    county = county?.replace("شهرستان", "")
-    county = county?.replace("شهر", "")
-    county = county?.trimStart()
-    county = county?.trimEnd()
-    if (county == null)
-        county = ""
-
-    var city = city
-    city = city?.replace("شهرستان", "")
-    city = city?.replace("شهر", "")
-    city = city?.trimStart()
-    city = city?.trimEnd()
-    if (city == null)
-        city = ""
-
-    var town = town
-    town = town?.replace("شهرستان", "")
-    town = town?.replace("شهر", "")
-    town = town?.trimStart()
-    town = town?.trimEnd()
-    if (town == null)
-        town = ""
-
-    addressText = if (city in county)
-        county
-    else if (county in city)
-        city
-    else
-        "$county , $city"
-
-    if (town !in addressText)
-        addressText += " , $town"
-
-
-    neighbourhood?.let {
-        addressText += " , $it"
-    }
-
-    residential?.let {
-        addressText += " , $it"
-    }
-
-    road?.let {
-        addressText += " , $it"
-    }
-
-    return addressText
-}
-//-------------------------------------------------------------------------------------------------- AddressModel.getAddress()
-
-
-//-------------------------------------------------------------------------------------------------- getMessageContent
-fun NotificationSignalrModel?.getMessageContent() = this?.let {
-    if (it.message.isNullOrEmpty())
-        ""
-    else {
-        val gson = Gson()
-        val messageContent = gson
-            .fromJson(it.message, NotificationMessageSignalrModel::class.java)
-        messageContent.Body
-    }
-}
-//-------------------------------------------------------------------------------------------------- getMessageContent
-
-
-
 //-------------------------------------------------------------------------------------------------- getMessageContent
 @BindingAdapter("getMessageContent")
-fun TextView.getMessageContent(notification : NotificationSignalrModel?) {
+fun TextView.getMessageContent(notification: NotificationSignalrModel?) {
     text = notification.getMessageContent()
 }
 //-------------------------------------------------------------------------------------------------- getMessageContent
 
 
-
 //-------------------------------------------------------------------------------------------------- setElapseTime
 @BindingAdapter("setElapseTime")
-fun TextView.setElapseTime(dateTime : String?) {
+fun TextView.setElapseTime(dateTime: String?) {
     dateTime?.let {
         val now = LocalDateTime.now()
         val date = LocalDateTime.parse(dateTime)
+        val minuteBetween = Duration.between(date, now).toMinutes()
         val hoursBetween = Duration.between(date, now).toHours()
-        text = if (hoursBetween > 24) {
+        text = if (minuteBetween < 60)
+            context.getString(R.string.minuteAgo, minuteBetween.toString())
+        else if (hoursBetween < 24)
+            context.getString(R.string.hoursAgo, hoursBetween.toString())
+        else {
             val daysBetween = Duration.between(date, now).toDays()
-            context.getString(R.string.dayAgo , daysBetween.toString())
-        } else
-            context.getString(R.string.hoursAgo , hoursBetween.toString())
+            context.getString(R.string.dayAgo, daysBetween.toString())
+        }
+
 
     }
 }
 //-------------------------------------------------------------------------------------------------- setElapseTime
 
 
-
 //-------------------------------------------------------------------------------------------------- setTitleAndValueText
 @BindingAdapter("setTitleText", "setValueText")
-fun TextView.setTitleAndValueText(title : String?, value : String?) {
+fun TextView.setTitleAndValueText(title: String?, value: String?) {
     text = context.getString(R.string.setTwoStringDot, title, value)
 }
 //-------------------------------------------------------------------------------------------------- setTitleAndValueText
 
 
-//-------------------------------------------------------------------------------------------------- setTwoToTextView
+//-------------------------------------------------------------------------------------------------- setTitleAndValueDash
 @BindingAdapter("setOneValueToTextView", "setTwoValueToTextView")
-fun TextView.setTwoToTextView(one : String?, two : String?) {
+fun TextView.setTitleAndValueDash(one: String?, two: String?) {
     text = context.getString(R.string.setTwoString, one, two)
 }
-//-------------------------------------------------------------------------------------------------- setTwoToTextView
-
+//-------------------------------------------------------------------------------------------------- setTitleAndValueDash
 
 
 //-------------------------------------------------------------------------------------------------- setCommuteTripAndDriverName
-@BindingAdapter("setCommuteTripName" , "setDriverName")
-fun TextView.setCommuteTripAndDriverName(commuteTripName : String?, driverName: String?) {
-  text = context.getString(R.string.setTwoString, commuteTripName, driverName)
+@BindingAdapter("setCommuteTripName", "setDriverName")
+fun TextView.setCommuteTripAndDriverName(commuteTripName: String?, driverName: String?) {
+    text = context.getString(R.string.setTwoString, commuteTripName, driverName)
 }
 //-------------------------------------------------------------------------------------------------- setCommuteTripAndDriverName
-
 
 
 //-------------------------------------------------------------------------------------------------- setOriginDestinationToTextView
 @BindingAdapter("setOriginToTextView", "setDestinationToTextView")
-fun TextView.setOriginDestinationToTextView(origin : String?, destination : String?) {
+fun TextView.setOriginDestinationToTextView(origin: String?, destination: String?) {
     text = context.getString(R.string.setTwoStringSlash, origin, destination)
 }
 //-------------------------------------------------------------------------------------------------- setOriginDestinationToTextView
 
 
-
 //-------------------------------------------------------------------------------------------------- setDepartureReturnToTextView
 @BindingAdapter("setDepartureToTextView", "setReturnToTextView")
-fun TextView.setDepartureReturnToTextView(departure : String?, _return : String?) {
+fun TextView.setDepartureReturnToTextView(departure: String?, _return: String?) {
     val temp = _return?.trimStart()
     text = if (temp.isNullOrEmpty())
         departure
@@ -178,11 +94,11 @@ fun TextView.setDepartureReturnToTextView(departure : String?, _return : String?
 
 //-------------------------------------------------------------------------------------------------- setPassengersToTextView
 @BindingAdapter("setPassengersToTextView")
-fun TextView.setPassengersToTextView(passengers : List<PassengerModel>?) {
+fun TextView.setPassengersToTextView(passengers: List<PassengerModel>?) {
     var title = context.getString(R.string.passengersDot)
     passengers?.let {
         for (i in passengers.indices)
-            title += if (i == passengers.size -1)
+            title += if (i == passengers.size - 1)
                 passengers[i].value
             else
                 "${passengers[i].value} - "
@@ -192,10 +108,9 @@ fun TextView.setPassengersToTextView(passengers : List<PassengerModel>?) {
 //-------------------------------------------------------------------------------------------------- setPassengersToTextView
 
 
-
 //-------------------------------------------------------------------------------------------------- setWaitingTimeToTextView
 @BindingAdapter("setWaitingTimeToTextView")
-fun TextView.setWaitingTimeToTextView(time : Int) {
+fun TextView.setWaitingTimeToTextView(time: Int) {
     text = if (time < 59)
         "$time دقیقه پیش "
     else {
@@ -206,21 +121,18 @@ fun TextView.setWaitingTimeToTextView(time : Int) {
 //-------------------------------------------------------------------------------------------------- setWaitingTimeToTextView
 
 
-
 //-------------------------------------------------------------------------------------------------- setReasonToTextView
 @BindingAdapter("setReasonToTextView")
-fun TextView.setReasonToTextView(reason : String?) {
+fun TextView.setReasonToTextView(reason: String?) {
     val title = context.getString(R.string.reasonOfTripDot) + " " + reason
     text = title
 }
 //-------------------------------------------------------------------------------------------------- setReasonToTextView
 
 
-
-
 //-------------------------------------------------------------------------------------------------- setApplicatorNameToTextView
 @BindingAdapter("setApplicatorNameToTextView")
-fun TextView.setApplicatorNameToTextView(name : String?) {
+fun TextView.setApplicatorNameToTextView(name: String?) {
     text = context.getString(R.string.applicator, name)
 }
 //-------------------------------------------------------------------------------------------------- setApplicatorNameToTextView
@@ -228,16 +140,15 @@ fun TextView.setApplicatorNameToTextView(name : String?) {
 
 //-------------------------------------------------------------------------------------------------- setAddressToTextview
 @BindingAdapter("setAddressToTextview")
-fun TextView.setAddressToTextview(address : AddressModel) {
+fun TextView.setAddressToTextview(address: AddressModel) {
     text = address.getAddress()
 }
 //-------------------------------------------------------------------------------------------------- setAddressToTextview
 
 
-
 //-------------------------------------------------------------------------------------------------- setPersonnelNameCode
 @BindingAdapter("setPersonnelName", "setPersonnelCode")
-fun TextView.setPersonnelNameCode(name : String, code : String) {
+fun TextView.setPersonnelNameCode(name: String, code: String) {
     text = context.getString(R.string.setTwoString, name, code)
 }
 //-------------------------------------------------------------------------------------------------- setPersonnelNameCode
@@ -245,7 +156,7 @@ fun TextView.setPersonnelNameCode(name : String, code : String) {
 
 //-------------------------------------------------------------------------------------------------- setRequestReason
 @BindingAdapter("setRequestReason")
-fun TextView.setRequestReason(reason : String?) {
+fun TextView.setRequestReason(reason: String?) {
     text = context.getString(R.string.reasonOfReject1, reason)
     setTextColor(context.getColor(R.color.rejectGradiantEndColor))
 }
@@ -254,39 +165,24 @@ fun TextView.setRequestReason(reason : String?) {
 
 //-------------------------------------------------------------------------------------------------- setRequester
 @BindingAdapter("setRequester")
-fun TextView.setRequester(userName : String) {
+fun TextView.setRequester(userName: String) {
     text = context.getString(R.string.requester, userName)
 }
 //-------------------------------------------------------------------------------------------------- setRequester
 
 
 //-------------------------------------------------------------------------------------------------- setRequester
-@BindingAdapter("setDriverName", "setCommuteTripName" ,"setStationName")
-fun TextView.setDriverAndStation(driverName : String, tripName : String , stationName : String) {
+@BindingAdapter("setDriverName", "setCommuteTripName", "setStationName")
+fun TextView.setDriverAndStation(driverName: String, tripName: String, stationName: String) {
     text = context.getString(R.string.setThreeString, tripName, driverName, stationName)
 }
 //-------------------------------------------------------------------------------------------------- setRequester
 
 
-
 //-------------------------------------------------------------------------------------------------- setRegisterStationStatus
-fun CardView.setRegisterStationStatus(status : EnumTripStatus?){
+fun TextView.setRegisterStationStatus(status: EnumTripStatus?) {
     status?.let {
-        when(status) {
-            EnumTripStatus.Pending -> setCardBackgroundColor(context.resources.getColor(R.color.waiting, context.theme))
-            EnumTripStatus.Confirmed -> setCardBackgroundColor(context.resources.getColor(R.color.positive, context.theme))
-            EnumTripStatus.Reject -> setCardBackgroundColor(context.resources.getColor(R.color.negative, context.theme))
-        }
-    }
-}
-//-------------------------------------------------------------------------------------------------- setRegisterStationStatus
-
-
-
-//-------------------------------------------------------------------------------------------------- setRegisterStationStatus
-fun TextView.setRegisterStationStatus(status : EnumTripStatus?){
-    status?.let {
-        text = when(status) {
+        text = when (status) {
             EnumTripStatus.Pending -> context.resources.getString(R.string.pendingForAccept)
             EnumTripStatus.Confirmed -> context.resources.getString(R.string.confirmedByOfficial)
             EnumTripStatus.Reject -> context.resources.getString(R.string.reject)
@@ -297,22 +193,9 @@ fun TextView.setRegisterStationStatus(status : EnumTripStatus?){
 
 
 
-//-------------------------------------------------------------------------------------------------- setRegisterStationStatus
-fun ImageView.setRegisterStationStatus(status : EnumTripStatus?){
-    status?.let {
-        when(status) {
-            EnumTripStatus.Pending -> setImageResource(R.drawable.ic_pending)
-            EnumTripStatus.Confirmed -> setImageResource(R.drawable.ic_check)
-            EnumTripStatus.Reject -> setImageResource(R.drawable.ic_delete)
-        }
-    }
-}
-//-------------------------------------------------------------------------------------------------- setRegisterStationStatus
-
-
 //-------------------------------------------------------------------------------------------------- setMyStation
-@BindingAdapter("setMyStation","setArriveTime")
-fun TextView.setMyStation(myStation : String?, arriveTime : String?) {
+@BindingAdapter("setMyStation", "setArriveTime")
+fun TextView.setMyStation(myStation: String?, arriveTime: String?) {
     val title = "${context.getString(R.string.myStation, myStation)} - $arriveTime"
     text = title
 }
@@ -350,25 +233,6 @@ fun TextView.setStartEndStation(originName: String?, destinationName: String?) {
 //-------------------------------------------------------------------------------------------------- setStartEndStation
 
 
-//-------------------------------------------------------------------------------------------------- ImageView.setAppIcon
-@BindingAdapter("setAppIcon")
-fun ImageView.setAppIcon(icon: Int) {
-    setImageResource(icon)
-}
-//-------------------------------------------------------------------------------------------------- ImageView.setAppIcon
-
-
-//-------------------------------------------------------------------------------------------------- ImageView.setAppIcon
-@BindingAdapter("setAppComingSoon")
-fun View.setAppComingSoon(link: Int) {
-    visibility = if (link == 0)
-        View.VISIBLE
-    else
-        View.GONE
-}
-//-------------------------------------------------------------------------------------------------- ImageView.setAppIcon
-
-
 //-------------------------------------------------------------------------------------------------- TextView.setDateTime
 @BindingAdapter("setDateTime")
 fun TextView.setDateTime(localDateTime: LocalDateTime?) {
@@ -386,45 +250,5 @@ fun TextView.setDateTime(localDateTime: LocalDateTime?) {
 //-------------------------------------------------------------------------------------------------- TextView.setDateTime
 
 
-//-------------------------------------------------------------------------------------------------- loadImage
-@BindingAdapter("loadImage", "setEntityType")
-fun ImageView.loadImage(url: String, entityType: String) {
-    val circularProgressDrawable = CircularProgressDrawable(this.context)
-    circularProgressDrawable.strokeWidth = 5f
-    circularProgressDrawable.centerRadius = 30f
-    circularProgressDrawable.start()
-    val link = "${Providers.url}/api/v1/Content/file?entityType=$entityType&fileName=$url"
-    Glide
-        .with(this)
-        .load(link)
-        .into(this)
-}
-//-------------------------------------------------------------------------------------------------- loadImage
 
 
-
-//-------------------------------------------------------------------------------------------------- setUnreadNotification
-@BindingAdapter("setUnreadNotification")
-fun View.setUnreadNotification(read: Boolean) {
-    if (read)
-        setBackgroundColor(Color.TRANSPARENT)
-    else
-        setBackgroundColor(
-            context
-                .resources
-                .getColor(R.color.notificationUnreadColor, context.theme)
-        )
-}
-//-------------------------------------------------------------------------------------------------- setUnreadNotification
-
-
-//-------------------------------------------------------------------------------------------------- hideKeyboard
-fun Fragment.hideKeyboard() {
-    view?.let { activity?.hideKeyboard(it) }
-}
-
-fun Context.hideKeyboard(view: View) {
-    val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-    inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
-}
-//-------------------------------------------------------------------------------------------------- hideKeyboard

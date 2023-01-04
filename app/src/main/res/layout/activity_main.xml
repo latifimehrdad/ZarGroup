@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="item"
+            type="com.zarholding.zar.database.entity.UserInfoEntity" />
+
+        <variable
+            name="token"
+            type="String" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayoutParent"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -26,11 +37,13 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:cardBackgroundColor="@color/profileImageBackgroundColor">
+                app:cardBackgroundColor="@color/white">
 
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    app:loadImageProfile="@{item != null ? item.userName : @string/empty}"
+                    app:bearerToken="@{token}"
                     android:contentDescription="@string/profileDescription" />
 
             </androidx.cardview.widget.CardView>
@@ -46,7 +59,8 @@
                 android:lines="1"
                 app:layout_constraintBottom_toTopOf="@id/textViewPersonalCode"
                 app:layout_constraintEnd_toStartOf="@id/cardViewProfile"
-                app:layout_constraintTop_toTopOf="@id/cardViewProfile" />
+                app:layout_constraintTop_toTopOf="@id/cardViewProfile"
+                android:text="@{item != null ? item.fullName : @string/empty}"/>
 
             <TextView
                 android:id="@+id/textViewPersonalCode"
@@ -58,7 +72,9 @@
                 android:textSize="@dimen/_10sdp"
                 app:layout_constraintBottom_toBottomOf="@id/cardViewProfile"
                 app:layout_constraintEnd_toStartOf="@id/cardViewProfile"
-                app:layout_constraintTop_toBottomOf="@id/textViewProfileName" />
+                app:layout_constraintTop_toBottomOf="@id/textViewProfileName"
+                app:setTitleText="@{@string/personalCode}"
+                app:setValueText="@{item != null ? item.userName : @string/empty}" />
 
             <ImageView
                 android:id="@+id/imageViewNotification"
@@ -72,6 +88,7 @@
 
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/cardViewNotification"
                 android:layout_width="@dimen/_18sdp"
                 android:layout_height="@dimen/_18sdp"
                 android:layout_marginStart="@dimen/_15sdp"

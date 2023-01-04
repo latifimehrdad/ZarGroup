@@ -123,9 +123,9 @@ class HomeFragment : Fragment(){
 
         apps.add(
             AppModel(
-                R.drawable.ic_qr_code_svgrepo,
-                getString(R.string.qrCode),
-                R.id.action_HomeFragment_to_QRCodeFragment
+                R.drawable.ic_parking,
+                getString(R.string.parking),
+                R.id.action_HomeFragment_to_ParkingFragment
             )
         )
 

@@ -7,6 +7,7 @@ import android.graphics.drawable.InsetDrawable
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
@@ -30,19 +31,18 @@ class NotificationDialog(
 ) : DialogFragment() {
 
     @Inject
-    lateinit var loadingManager : LoadingManager
+    lateinit var loadingManager: LoadingManager
 
     lateinit var binding: DialogNotificationBinding
 
     private val notificationViewModel: NotificationViewModel by viewModels()
 
-    private var adapter : NotificationCategoryAdapter? = null
+    private var adapter: NotificationCategoryAdapter? = null
 
     private var broadcastReceiver: BroadcastReceiver? = null
 
     private var categoryPosition = 0
     private var notificationPosition = 0
-
 
 
     //---------------------------------------------------------------------------------------------- onCreateView
@@ -64,7 +64,7 @@ class NotificationDialog(
             val metrics: WindowMetrics? =
                 context?.getSystemService(WindowManager::class.java)?.currentWindowMetrics
             metrics?.bounds?.let {
-                it.height() - margin - (margin /2)
+                it.height() - margin - (margin / 2)
             } ?: run {
                 WindowManager.LayoutParams.MATCH_PARENT
             }
@@ -72,7 +72,7 @@ class NotificationDialog(
             val displayMetrics = DisplayMetrics()
             @Suppress("DEPRECATION")
             activity?.windowManager?.defaultDisplay?.getMetrics(displayMetrics)
-            displayMetrics.heightPixels - margin - (margin /2)
+            displayMetrics.heightPixels - margin - (margin / 2)
         }
 
         isCancelable = false
@@ -111,6 +111,8 @@ class NotificationDialog(
         broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent) {
                 val item = intent.getStringExtra(CompanionValues.notificationLast)
+                if (item.isNullOrEmpty())
+                    return
                 val gson = Gson()
                 val notification = gson.fromJson(item, NotificationSignalrModel::class.java)
                 notificationViewModel.addNotification(notification)
@@ -124,15 +126,16 @@ class NotificationDialog(
     //---------------------------------------------------------------------------------------------- registerReceiver
 
 
-
     //---------------------------------------------------------------------------------------------- observeReadLiveData
     private fun observeReadLiveData() {
         notificationViewModel.readLiveData.observe(viewLifecycleOwner) {
+            Log.i("meri", "selectedTabPosition = ${binding.tabLayout.selectedTabPosition}")
             adapter!!.setReadNotification(categoryPosition, notificationPosition)
+            val intent = Intent("com.zarholding.zar.receive.message")
+            context?.sendBroadcast(intent)
         }
     }
     //---------------------------------------------------------------------------------------------- observeReadLiveData
-
 
 
     //---------------------------------------------------------------------------------------------- observeNotificationResponseLiveData
@@ -152,12 +155,12 @@ class NotificationDialog(
             }
 
             val click = object : NotificationItemHolder.Click {
-                override fun showDetail(categoryPosition : Int, notificationPosition : Int) {
+                override fun showDetail(categoryPosition: Int, notificationPosition: Int) {
                     requestReadNotification(categoryPosition, notificationPosition)
                 }
             }
 
-            adapter = NotificationCategoryAdapter(it,click)
+            adapter = NotificationCategoryAdapter(it, click)
             binding.recyclerViewNotification.adapter = adapter
 
             TabbedListMediator(
@@ -169,7 +172,6 @@ class NotificationDialog(
         }
     }
     //---------------------------------------------------------------------------------------------- observeNotificationResponseLiveData
-
 
 
     //---------------------------------------------------------------------------------------------- getNotification
@@ -186,22 +188,21 @@ class NotificationDialog(
 
 
     //---------------------------------------------------------------------------------------------- requestReadNotification
-    private fun requestReadNotification(categoryPosition : Int, notificationPosition : Int) {
+    private fun requestReadNotification(categoryPosition: Int, notificationPosition: Int) {
         this.categoryPosition = categoryPosition
         this.notificationPosition = notificationPosition
         adapter?.let {
-            val item  = it
+            val item = it
                 .getListOfCategories()[categoryPosition]
                 .notifications[notificationPosition]
             context?.let {
-                NotificationDetailDialog(requireContext(),item).show()
+                NotificationDetailDialog(requireContext(), item).show()
             }
             notificationViewModel.requestReadNotification(listOf(item.id))
         }
 
     }
     //---------------------------------------------------------------------------------------------- requestReadNotification
-
 
 
     //---------------------------------------------------------------------------------------------- onDismiss

@@ -6,42 +6,39 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.text.isDigitsOnly
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
+import com.skydoves.powerspinner.DefaultSpinnerAdapter
 import com.zar.core.enums.EnumApiError
 import com.zar.core.tools.extensions.persianNumberToEnglishNumber
-import com.zar.core.tools.loadings.LoadingManager
+import com.zarholding.zar.utility.extension.hideKeyboard
 import com.zarholding.zar.view.activity.MainActivity
-import com.zarholding.zar.viewmodel.QRCodeViewModel
+import com.zarholding.zar.viewmodel.ParkingViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.g00fy2.quickie.QRResult
 import io.github.g00fy2.quickie.QRResult.QRSuccess
 import io.github.g00fy2.quickie.ScanCustomCode
 import io.github.g00fy2.quickie.config.ScannerConfig
 import zar.R
-import zar.databinding.FragmentQrcodeBinding
-import javax.inject.Inject
+import zar.databinding.FragmentParkingBinding
 
 
 @AndroidEntryPoint
-class QRCodeFragment : Fragment() {
+class ParkingFragment : Fragment() {
 
-    @Inject
-    lateinit var loadingManager: LoadingManager
-
-    private var _binding: FragmentQrcodeBinding? = null
+    private var _binding: FragmentParkingBinding? = null
     private val binding get() = _binding!!
 
-    private val qrCodeViewModel: QRCodeViewModel by viewModels()
+    private val parkingViewModel: ParkingViewModel by viewModels()
 
     //---------------------------------------------------------------------------------------------- onCreateView
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentQrcodeBinding.inflate(inflater, container, false)
+        _binding = FragmentParkingBinding.inflate(inflater, container, false)
         return binding.root
     }
     //---------------------------------------------------------------------------------------------- onCreateView
@@ -51,10 +48,13 @@ class QRCodeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner
+        binding.viewModel = parkingViewModel
+        binding.token = parkingViewModel.getBearerToken()
         setListener()
+        initAlphabetSpinner()
         observeErrorLiveDate()
         observeSuccessLiveData()
-        startQRCodeReader()
+//        startQRCodeReader()
     }
     //---------------------------------------------------------------------------------------------- onViewCreated
 
@@ -67,6 +67,7 @@ class QRCodeFragment : Fragment() {
         snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
         snack.setActionTextColor(resources.getColor(R.color.textViewColor1, requireContext().theme))
         snack.show()
+        binding.materialButtonSearch.stopLoading()
     }
     //---------------------------------------------------------------------------------------------- showMessage
 
@@ -89,6 +90,11 @@ class QRCodeFragment : Fragment() {
 
     //---------------------------------------------------------------------------------------------- setListener
     private fun setListener() {
+
+        binding.materialButtonSearch.setOnClickListener { requestUserInfo() }
+
+        binding.imageViewRetry.setOnClickListener { resetSearch() }
+
         binding.materialButtonSms.setOnClickListener {
             binding.item?.let {
                 val number = it.mobile.persianNumberToEnglishNumber()
@@ -106,8 +112,7 @@ class QRCodeFragment : Fragment() {
 
     //---------------------------------------------------------------------------------------------- observeLoginLiveDate
     private fun observeErrorLiveDate() {
-        qrCodeViewModel.errorLiveDate.observe(viewLifecycleOwner) {
-            loadingManager.stopLoadingView()
+        parkingViewModel.errorLiveDate.observe(viewLifecycleOwner) {
             showMessage(it.message)
             when (it.type) {
                 EnumApiError.UnAuthorization -> (activity as MainActivity?)?.gotoFirstFragment()
@@ -121,9 +126,12 @@ class QRCodeFragment : Fragment() {
 
     //---------------------------------------------------------------------------------------------- observeSuccessLiveData
     private fun observeSuccessLiveData() {
-        qrCodeViewModel.successLiveData.observe(viewLifecycleOwner) {
-            loadingManager.stopLoadingView()
+        parkingViewModel.successLiveData.observe(viewLifecycleOwner) {
+            binding.materialButtonSearch.visibility = View.INVISIBLE
+            binding.imageViewRetry.visibility = View.VISIBLE
+            binding.materialButtonSearch.stopLoading()
             binding.item = it
+            binding.expandableInfo.expand()
         }
     }
     //---------------------------------------------------------------------------------------------- observeSuccessLiveData
@@ -134,7 +142,7 @@ class QRCodeFragment : Fragment() {
         when (result) {
             is QRSuccess -> {
                 result.content.rawValue
-                requestUserInfo(result.content.rawValue)
+//                requestUserInfo(result.content.rawValue)
             }
             else -> {
                 activity?.onBackPressedDispatcher?.onBackPressed()
@@ -144,21 +152,49 @@ class QRCodeFragment : Fragment() {
     //---------------------------------------------------------------------------------------------- handleResult
 
 
-    //---------------------------------------------------------------------------------------------- requestUserInfo
-    private fun requestUserInfo(id: String?) {
-        loadingManager.setViewLoading(
-            binding.linearLayoutContent,
-            R.layout.item_loading_view,
-            R.color.recyclerLoadingShadow
-        )
-        if (id?.isDigitsOnly() == true)
-            qrCodeViewModel.requestUserInfo(id.toInt())
-        else {
-            showMessage(getString(R.string.qrCodeNotDigit))
-            activity?.onBackPressedDispatcher?.onBackPressed()
+    //---------------------------------------------------------------------------------------------- initAlphabetSpinner
+    private fun initAlphabetSpinner() {
+        binding.powerSpinnerAlphabet.apply {
+            setSpinnerAdapter(DefaultSpinnerAdapter(this))
+            setItems(parkingViewModel.getAlphabet())
+            getSpinnerRecyclerView().layoutManager =
+                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            lifecycleOwner = viewLifecycleOwner
         }
+        binding.powerSpinnerAlphabet.selectItemByIndex(0)
+    }
+    //---------------------------------------------------------------------------------------------- initAlphabetSpinner
+
+
+    //---------------------------------------------------------------------------------------------- resetSearch
+    private fun resetSearch() {
+        if (binding.materialButtonSearch.isLoading)
+            return
+        binding.materialButtonSearch.visibility = View.VISIBLE
+        binding.imageViewRetry.visibility = View.GONE
+        binding.expandableInfo.requestFocus()
+        binding.expandableInfo.collapse()
+        binding.editTextNumber1.text.clear()
+        binding.editTextNumber2.text.clear()
+        binding.editTextCityCode.text.clear()
+        binding.powerSpinnerAlphabet.selectItemByIndex(0)
+        binding.powerSpinnerAlphabet.showArrow = true
+        binding.powerSpinnerAlphabet.setBackgroundResource(R.drawable.drawable_border_car_number)
+    }
+    //---------------------------------------------------------------------------------------------- resetSearch
+
+
+    //---------------------------------------------------------------------------------------------- requestUserInfo
+    private fun requestUserInfo() {
+        if (binding.materialButtonSearch.isLoading)
+            return
+        hideKeyboard()
+        binding.expandableInfo.collapse()
+        binding.materialButtonSearch.startLoading(getString(R.string.bePatient))
+        parkingViewModel.requestUserInfo()
     }
     //---------------------------------------------------------------------------------------------- requestUserInfo
+
 
 
     //---------------------------------------------------------------------------------------------- onDestroyView

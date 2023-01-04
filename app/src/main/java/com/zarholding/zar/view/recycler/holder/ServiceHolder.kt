@@ -3,7 +3,6 @@ package com.zarholding.zar.view.recycler.holder
 import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
-import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.zarholding.zar.model.other.ShowImageModel
 import com.zarholding.zar.model.response.trip.TripModel

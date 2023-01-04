@@ -4,18 +4,13 @@ import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.InsetDrawable
 import android.os.Bundle
 import android.view.*
 import android.widget.ImageView
-import android.widget.TextView
-import androidx.fragment.app.DialogFragment
-import com.google.android.material.button.MaterialButton
 import com.zarholding.zar.model.other.ShowImageModel
 import com.zarholding.zar.utility.TouchImageView
-import com.zarholding.zar.view.extension.loadImage
+import com.zarholding.zar.utility.extension.loadImage
 import zar.R
-import zar.databinding.DialogShowImageBinding
 
 class ShowImageDialog(
     context: Context,

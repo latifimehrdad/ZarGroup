@@ -1,22 +1,18 @@
 package com.zarholding.zar.view.fragment
 
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
-import com.zarholding.zar.background.ZarNotificationService
+import androidx.fragment.app.viewModels
+import com.google.android.material.snackbar.Snackbar
 import com.zarholding.zar.database.dao.UserInfoDao
-import com.zarholding.zar.utility.CompanionValues
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.view.dialog.ConfirmDialog
+import com.zarholding.zar.viewmodel.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import zar.R
 import zar.databinding.FragmentProfileBinding
 import javax.inject.Inject
@@ -36,6 +32,8 @@ class ProfileFragment : Fragment(){
 
     @Inject
     lateinit var sharedPreferences: SharedPreferences
+
+    private val profileViewModel : ProfileViewModel by viewModels()
 
 
     //---------------------------------------------------------------------------------------------- onCreateView
@@ -60,11 +58,35 @@ class ProfileFragment : Fragment(){
 
 
 
+    //---------------------------------------------------------------------------------------------- showMessage
+    private fun showMessage(message: String) {
+        val snack = Snackbar.make(binding.constraintLayoutParent, message, 5 * 1000)
+        snack.setBackgroundTint(resources.getColor(R.color.primaryColor, requireContext().theme))
+        snack.setTextColor(resources.getColor(R.color.textViewColor3, requireContext().theme))
+        snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
+        snack.setActionTextColor(resources.getColor(R.color.textViewColor1, requireContext().theme))
+        snack.show()
+    }
+    //---------------------------------------------------------------------------------------------- showMessage
+
+
+
     //---------------------------------------------------------------------------------------------- setListener
     private fun setListener() {
         binding.layoutLogout.root.setOnClickListener { logOut() }
+        binding.layoutMessage.root.setOnClickListener { disableFeature() }
+        binding.layoutPersonalInformation.root.setOnClickListener { disableFeature() }
+        binding.layoutTrainings.root.setOnClickListener { disableFeature() }
     }
     //---------------------------------------------------------------------------------------------- setListener
+
+
+
+    //---------------------------------------------------------------------------------------------- disableFeature
+    private fun disableFeature() {
+        showMessage(getString(R.string.disableFeature))
+    }
+    //---------------------------------------------------------------------------------------------- disableFeature
 
 
 
@@ -89,15 +111,9 @@ class ProfileFragment : Fragment(){
 
     //---------------------------------------------------------------------------------------------- setUserInfo
     private fun setUserInfo() {
-        CoroutineScope(IO).launch {
-            val user = userInfoDao.getUserInfo()
-            withContext(Main) {
-                binding.textViewProfileName.text = user?.fullName
-                binding.textViewPersonalCode.text = resources
-                    .getString(R.string.personalCode, user?.personnelNumber?.toLong().toString())
-                binding.textViewDegree.text = user?.personnelJobKeyText.toString()
-            }
-        }
+        val user = userInfoDao.getUserInfo()
+        binding.item = user
+        binding.token = profileViewModel.getBearerToken()
     }
     //---------------------------------------------------------------------------------------------- setUserInfo
 

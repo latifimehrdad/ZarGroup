@@ -9,6 +9,7 @@ import com.zarholding.zar.database.entity.RoleEntity
 import com.zarholding.zar.database.entity.UserInfoEntity
 import com.zarholding.zar.model.enum.EnumPersonnelType
 import com.zarholding.zar.model.request.FilterUserRequestModel
+import com.zarholding.zar.model.request.UserInfoRequest
 import com.zarholding.zar.model.response.user.UserResponseModel
 import retrofit2.Response
 import javax.inject.Inject
@@ -36,8 +37,8 @@ class UserRepository @Inject constructor(
 
 
     //---------------------------------------------------------------------------------------------- requestUserInfo
-    suspend fun requestUserInfo(id: Int) =
-        apiCall{ api.requestUserInfo(id, tokenRepository.getBearerToken()) }
+    suspend fun requestUserInfo(request : UserInfoRequest) =
+        apiCall{ api.requestUserInfo(request, tokenRepository.getBearerToken()) }
     //---------------------------------------------------------------------------------------------- requestUserInfo
 
 
