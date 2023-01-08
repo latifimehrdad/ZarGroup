@@ -10,37 +10,45 @@ import javax.inject.Inject
  * Created by m-latifi on 11/26/2022.
  */
 
-class TripRepository @Inject constructor(private val api: ApiSuperApp) {
+class TripRepository @Inject constructor(
+    private val api: ApiSuperApp,
+    private val tokenRepository: TokenRepository
+) {
 
 
     //---------------------------------------------------------------------------------------------- requestGetAllTrips
-    suspend fun requestGetAllTrips(token: String) = apiCall { api.requestGetAllTrips(token) }
+    suspend fun requestGetAllTrips() =
+        apiCall { api.requestGetAllTrips(tokenRepository.getBearerToken()) }
     //---------------------------------------------------------------------------------------------- requestGetAllTrips
 
 
     //---------------------------------------------------------------------------------------------- requestRegisterStation
-    suspend fun requestRegisterStation(registerStationModel: RequestRegisterStationModel, token: String) =
-        apiCall { api.requestRegisterStation(registerStationModel, token) }
+    suspend fun requestRegisterStation(request : RequestRegisterStationModel) =
+        apiCall { api.requestRegisterStation(request, tokenRepository.getBearerToken()) }
     //---------------------------------------------------------------------------------------------- requestRegisterStation
 
 
     //---------------------------------------------------------------------------------------------- requestDeleteRegisteredStation
-    suspend fun requestDeleteRegisteredStation(id: Int, token: String) =
-        apiCall { api.requestDeleteRegisteredStation(id, token) }
+    suspend fun requestDeleteRegisteredStation(id: Int) =
+        apiCall { api.requestDeleteRegisteredStation(id, tokenRepository.getBearerToken()) }
     //---------------------------------------------------------------------------------------------- requestDeleteRegisteredStation
 
 
-    //---------------------------------------------------------------------------------------------- requestGetTripRequestRegister
-    suspend fun requestGetTripRequestRegister(token: String) =
-        apiCall { api.requestGetTripRequestRegister(token) }
-    //---------------------------------------------------------------------------------------------- requestGetTripRequestRegister
+    //---------------------------------------------------------------------------------------------- requestGetTripForRegister
+    suspend fun requestGetTripForRegister() =
+        apiCall { api.requestGetTripForRegister(tokenRepository.getBearerToken()) }
+    //---------------------------------------------------------------------------------------------- requestGetTripForRegister
 
 
-    //---------------------------------------------------------------------------------------------- requestConfirmAndRejectTripRequestRegister
-    suspend fun requestConfirmAndRejectTripRequestRegister(
-        request: List<TripRequestRegisterStatusModel>,
-        token: String
-    ) = apiCall { api.requestConfirmAndRejectTripRequestRegister(request, token) }
-    //---------------------------------------------------------------------------------------------- requestConfirmAndRejectTripRequestRegister
+    //---------------------------------------------------------------------------------------------- requestChangeStatusTripRegister
+    suspend fun requestChangeStatusTripRegister(
+        request: List<TripRequestRegisterStatusModel>
+    ) = apiCall { api.requestChangeStatusTripRegister(request, tokenRepository.getBearerToken()) }
+    //---------------------------------------------------------------------------------------------- requestChangeStatusTripRegister
+
+
+    //---------------------------------------------------------------------------------------------- getToken
+    fun getToken() = tokenRepository.getToken()
+    //---------------------------------------------------------------------------------------------- getToken
 
 }

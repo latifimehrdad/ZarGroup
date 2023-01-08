@@ -1,4 +1,4 @@
-package com.zarholding.zar.view.fragment
+package com.zarholding.zar.view.fragment.bus
 
 import android.annotation.SuppressLint
 import android.app.Notification
@@ -61,7 +61,6 @@ class BusServiceFragment : Fragment(){
     private val binding get() = _binding!!
 
     private val busServiceViewModel : BusServiceViewModel by viewModels()
-
 
     private lateinit var osmManager: OsmManager
 

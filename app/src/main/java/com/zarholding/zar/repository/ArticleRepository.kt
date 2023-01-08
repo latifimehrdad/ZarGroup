@@ -9,12 +9,14 @@ import com.zarholding.zar.model.request.ArticleRequestModel
 import javax.inject.Inject
 
 class ArticleRepository @Inject constructor(
-    private val api : ApiSuperApp,
-    private val articleDao: ArticleDao) {
+    private val api: ApiSuperApp,
+    private val articleDao: ArticleDao,
+    private val tokenRepository: TokenRepository
+) {
 
     //---------------------------------------------------------------------------------------------- requestGetArticles
-    suspend fun requestGetArticles(request : ArticleRequestModel, token : String) =
-        apiCall{ api.requestGetArticles(request, token) }
+    suspend fun requestGetArticles(request: ArticleRequestModel) =
+        apiCall { api.requestGetArticles(request, tokenRepository.getBearerToken()) }
     //---------------------------------------------------------------------------------------------- requestGetArticles
 
 
@@ -27,7 +29,7 @@ class ArticleRepository @Inject constructor(
 
 
     //---------------------------------------------------------------------------------------------- getArticles
-    fun getArticles(type : EnumArticleType) : List<ArticleEntity>{
+    fun getArticles(type: EnumArticleType): List<ArticleEntity> {
         return articleDao.getArticles(type.name)
     }
     //---------------------------------------------------------------------------------------------- getArticles

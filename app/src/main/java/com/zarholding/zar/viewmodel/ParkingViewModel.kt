@@ -1,77 +1,54 @@
 package com.zarholding.zar.viewmodel
 
-import androidx.lifecycle.ViewModel
-import com.zar.core.enums.EnumApiError
-import com.zar.core.models.ErrorApiModel
-import com.zar.core.tools.api.checkResponseError
+import com.zar.core.tools.extensions.persianNumberToEnglishNumber
 import com.zarholding.zar.database.entity.UserInfoEntity
+import com.zarholding.zar.hilt.ResourcesProvider
 import com.zarholding.zar.model.request.CarPlaqueEditRequest
 import com.zarholding.zar.model.request.UserInfoRequest
-import com.zarholding.zar.repository.TokenRepository
 import com.zarholding.zar.repository.UserRepository
 import com.zarholding.zar.utility.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.Main
-import retrofit2.Response
+import zar.R
 import javax.inject.Inject
 
 @HiltViewModel
 class ParkingViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val tokenRepository: TokenRepository
-) : ViewModel(){
+    private val resourcesProvider: ResourcesProvider
+) : ZarViewModel() {
 
-    var userInfoEntity : UserInfoEntity? = null
-    private var job: Job? = null
-    val errorLiveDate = SingleLiveEvent<ErrorApiModel>()
+    var userInfoEntity: UserInfoEntity? = null
     val successLiveData = SingleLiveEvent<UserInfoEntity>()
-    var plaqueNumber1 : String? = null
-    var plaqueNumber2 : String? = null
-    var plaqueCity : String? = null
-    var plaqueAlphabet : String? = null
-    var carModel : String? = null
-
-    //---------------------------------------------------------------------------------------------- setError
-    private suspend fun setError(response: Response<*>?) {
-        withContext(Main) {
-            checkResponseError(response, errorLiveDate)
-        }
-        job?.cancel()
-    }
-    //---------------------------------------------------------------------------------------------- setError
-
-
-    //---------------------------------------------------------------------------------------------- setError
-    private suspend fun setError(message: String) {
-        withContext(Main) {
-            errorLiveDate.value = ErrorApiModel(EnumApiError.Error, message)
-        }
-        job?.cancel()
-    }
-    //---------------------------------------------------------------------------------------------- setError
+    var plaqueNumber1: String? = null
+    var plaqueNumber2: String? = null
+    var plaqueCity: String? = null
+    var plaqueAlphabet: String? = null
+    var carModel: String? = null
 
 
     //---------------------------------------------------------------------------------------------- requestChangeCarPlaque
     fun requestChangeCarPlaque() {
         CoroutineScope(Dispatchers.IO + exceptionHandler()).launch {
-            if (plaqueNumber1?.length != 2 || plaqueNumber2?.length != 3 ||
-                plaqueCity?.length != 2 || plaqueAlphabet.isNullOrEmpty()
-            ) {
-                setError("اطلاعات پلاک را کامل وارد نمایید")
-            } else {
+            if (checkPlaqueValidation())
+                setMessage(resourcesProvider.getString(R.string.plaqueInformationIsEmpty))
+            else {
                 val user = getUserInfo()
                 if (user == null)
-                    setError("اطلاعات خالی است")
+                    setMessage(resourcesProvider.getString(R.string.dataSendingIsEmpty))
                 else {
-                    val plaque = plaqueNumber1 + plaqueAlphabet + plaqueNumber2 + plaqueCity
+                    val plaque = plaqueNumber1.persianNumberToEnglishNumber() +
+                            plaqueAlphabet +
+                            plaqueNumber2.persianNumberToEnglishNumber() +
+                            plaqueCity.persianNumberToEnglishNumber()
                     val model = CarPlaqueEditRequest(carModel, plaque)
                     val response = userRepository.requestChangeCarPlaque(model)
                     if (response?.isSuccessful == true) {
                         val userInfo = response.body()
                         userInfo?.let {
                             if (it.hasError)
-                                setError(it.message)
+                                setMessage(it.message)
                             else {
                                 user.pelak = plaque
                                 userRepository.insertUserInfo(user)
@@ -80,10 +57,10 @@ class ParkingViewModel @Inject constructor(
                                 }
                             }
                         } ?: run {
-                            setError("اطلاعات خالی است")
+                            setMessage(resourcesProvider.getString(R.string.dataReceivedIsEmpty))
                         }
                     } else
-                        setError(response)
+                        setMessage(response)
                 }
             }
         }
@@ -91,23 +68,23 @@ class ParkingViewModel @Inject constructor(
     //---------------------------------------------------------------------------------------------- requestChangeCarPlaque
 
 
-
-    //---------------------------------------------------------------------------------------------- requestUserInfo
-    fun requestUserInfo() {
+    //---------------------------------------------------------------------------------------------- requestGetUserInfo
+    fun requestGetUserInfo() {
         CoroutineScope(Dispatchers.IO + exceptionHandler()).launch {
-            if (plaqueNumber1.isNullOrEmpty() || plaqueNumber2.isNullOrEmpty() ||
-                plaqueCity.isNullOrEmpty() || plaqueAlphabet.isNullOrEmpty()
-            ) {
-                setError("اطلاعات پلاک را کامل وارد نمایید")
-            } else {
-                val plaque = plaqueNumber1 + plaqueAlphabet + plaqueNumber2 + plaqueCity
+            if (checkPlaqueValidation())
+                setMessage(resourcesProvider.getString(R.string.plaqueInformationIsEmpty))
+            else {
+                val plaque = plaqueNumber1.persianNumberToEnglishNumber() +
+                        plaqueAlphabet +
+                        plaqueNumber2.persianNumberToEnglishNumber() +
+                        plaqueCity.persianNumberToEnglishNumber()
                 val request = UserInfoRequest(null, plaque)
-                val response = userRepository.requestUserInfo(request)
+                val response = userRepository.requestGetUserInfo(request)
                 if (response?.isSuccessful == true) {
                     val userInfo = response.body()
                     userInfo?.let {
                         if (it.hasError)
-                            setError(it.message)
+                            setMessage(it.message)
                         else {
                             it.data?.let { temp ->
                                 userInfoEntity = temp
@@ -115,55 +92,73 @@ class ParkingViewModel @Inject constructor(
                                     successLiveData.value = userInfoEntity
                                 }
                             } ?: run {
-                                setError("اطلاعات خالی است")
+                                setMessage(resourcesProvider.getString(R.string.dataReceivedIsEmpty))
                             }
                         }
                     } ?: run {
-                        setError("اطلاعات خالی است")
+                        setMessage(resourcesProvider.getString(R.string.dataReceivedIsEmpty))
                     }
                 } else
-                    setError(response)
+                    setMessage(response)
             }
         }
     }
-    //---------------------------------------------------------------------------------------------- requestUserInfo
+    //---------------------------------------------------------------------------------------------- requestGetUserInfo
 
 
-
-    //---------------------------------------------------------------------------------------------- exceptionHandler
-    private fun exceptionHandler() = CoroutineExceptionHandler { _, throwable ->
-        CoroutineScope(Main).launch {
-            throwable.localizedMessage?.let { setError(it) }
-        }
-    }
-    //---------------------------------------------------------------------------------------------- exceptionHandler
-
+    //---------------------------------------------------------------------------------------------- checkPlaqueValidation
+    private fun checkPlaqueValidation(): Boolean =
+        plaqueNumber1?.length != 2 || plaqueNumber2?.length != 3 ||
+                plaqueCity?.length != 2 || plaqueAlphabet.isNullOrEmpty()
+    //---------------------------------------------------------------------------------------------- checkPlaqueValidation
 
 
     //---------------------------------------------------------------------------------------------- getBearerToken
-    fun getBearerToken() = tokenRepository.getBearerToken()
+    fun getBearerToken() = userRepository.getBearerToken()
     //---------------------------------------------------------------------------------------------- getBearerToken
 
 
     //---------------------------------------------------------------------------------------------- getAlphabet
     fun getAlphabet() = listOf(
-        "الف","ب","پ","ت","ث","ج","چ","ح","خ","د","ذ","ر","ز","ژ","س","ش","ص","ض","ط","ظ","ع","غ",
-        "ف","ق","ک","گ","ل","م","ن","و","ه","ی"
+        "الف",
+        "ب",
+        "پ",
+        "ت",
+        "ث",
+        "ج",
+        "چ",
+        "ح",
+        "خ",
+        "د",
+        "ذ",
+        "ر",
+        "ز",
+        "ژ",
+        "س",
+        "ش",
+        "ص",
+        "ض",
+        "ط",
+        "ظ",
+        "ع",
+        "غ",
+        "ف",
+        "ق",
+        "ک",
+        "گ",
+        "ل",
+        "م",
+        "ن",
+        "و",
+        "ه",
+        "ی"
     )
     //---------------------------------------------------------------------------------------------- getAlphabet
 
 
     //---------------------------------------------------------------------------------------------- getUserInfo
-    fun getUserInfo() = userRepository.getUser()
+    private fun getUserInfo() = userRepository.getUser()
     //---------------------------------------------------------------------------------------------- getUserInfo
-
-
-    //---------------------------------------------------------------------------------------------- onCleared
-    override fun onCleared() {
-        super.onCleared()
-        job?.cancel()
-    }
-    //---------------------------------------------------------------------------------------------- onCleared
 
 
 }

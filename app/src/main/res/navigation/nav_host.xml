@@ -77,7 +77,7 @@
 
     <fragment
         android:id="@+id/BusServiceFragment"
-        android:name="com.zarholding.zar.view.fragment.BusServiceFragment"
+        android:name="com.zarholding.zar.view.fragment.bus.BusServiceFragment"
         android:label="ServiceFragment" />
 
     <fragment
@@ -105,12 +105,12 @@
 
     <fragment
         android:id="@+id/AdminBusFragment"
-        android:name="com.zarholding.zar.view.fragment.AdminBusFragment"
+        android:name="com.zarholding.zar.view.fragment.bus.AdminBusFragment"
         android:label="AdminBusFragment" />
 
     <fragment
         android:id="@+id/TaxiReservationFragment"
-        android:name="com.zarholding.zar.view.fragment.TaxiReservationFragment"
+        android:name="com.zarholding.zar.view.fragment.taxi.TaxiReservationFragment"
         android:label="TaxiReservationFragment">
 
         <action
@@ -125,7 +125,7 @@
 
     <fragment
         android:id="@+id/AdminTaxiFragment"
-        android:name="com.zarholding.zar.view.fragment.AdminTaxiFragment"
+        android:name="com.zarholding.zar.view.fragment.taxi.AdminTaxiFragment"
         android:label="AdminTaxiFragment">
 
         <action
@@ -141,7 +141,7 @@
 
     <fragment
         android:id="@+id/ParkingFragment"
-        android:name="com.zarholding.zar.view.fragment.ParkingFragment"
+        android:name="com.zarholding.zar.view.fragment.parcking.ParkingFragment"
         android:label="ParkingFragment"/>
 
     <fragment

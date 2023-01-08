@@ -1,4 +1,4 @@
-package com.zarholding.zar.view.fragment
+package com.zarholding.zar.view.fragment.taxi
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -114,12 +114,9 @@ class TaxiReservationFragment : Fragment() {
 
     //---------------------------------------------------------------------------------------------- showMessage
     private fun showMessage(message: String) {
-        val snack = Snackbar.make(binding.constraintLayoutParent, message, 5 * 1000)
-        snack.setBackgroundTint(resources.getColor(R.color.primaryColor, context?.theme))
-        snack.setTextColor(resources.getColor(R.color.textViewColor3, context?.theme))
-        snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
-        snack.setActionTextColor(resources.getColor(R.color.textViewColor1, context?.theme))
-        snack.show()
+        activity?.let {
+            (it as MainActivity).showMessage(message)
+        }
         binding.textViewLoading.visibility = View.GONE
         loadingManager.stopLoadingView()
     }
@@ -200,16 +197,10 @@ class TaxiReservationFragment : Fragment() {
             binding.imageViewFavOrigin.clearAnimation()
             binding.imageViewFavDestination.clearAnimation()
             when (taxiReservationViewModel.getFavPlaceType()) {
-                FavPlaceType.ORIGIN -> {
-                    binding
-                        .imageViewFavOrigin
-                        .setImageResource(R.drawable.ic_favorite)
-                }
-                FavPlaceType.DESTINATION -> {
-                    binding
-                        .imageViewFavDestination
-                        .setImageResource(R.drawable.ic_favorite)
-                }
+                FavPlaceType.ORIGIN ->
+                    binding.imageViewFavOrigin.setImageResource(R.drawable.ic_favorite)
+                FavPlaceType.DESTINATION ->
+                    binding.imageViewFavDestination.setImageResource(R.drawable.ic_favorite)
                 else -> {}
             }
             initOriginSpinner()

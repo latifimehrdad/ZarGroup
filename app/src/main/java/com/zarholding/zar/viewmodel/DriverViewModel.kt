@@ -21,44 +21,22 @@ import javax.inject.Inject
 class DriverViewModel @Inject constructor(
     private val driverRepository: DriverRepository,
     private val taxiRepository: TaxiRepository
-) : ViewModel() {
+) : ZarViewModel() {
 
-    private var drivers : List<DriverModel>? = null
-    private var job: Job? = null
-    val errorLiveDate = SingleLiveEvent<ErrorApiModel>()
+    private var drivers: List<DriverModel>? = null
     val driversListLiveData = SingleLiveEvent<List<DriverModel>>()
     val assignDriverLiveData = SingleLiveEvent<String>()
-    var selectedDriver : DriverModel? = null
-
-    //---------------------------------------------------------------------------------------------- setError
-    private suspend fun setError(response: Response<*>?) {
-        withContext(Main) {
-            checkResponseError(response, errorLiveDate)
-        }
-        job?.cancel()
-    }
-    //---------------------------------------------------------------------------------------------- setError
-
-
-    //---------------------------------------------------------------------------------------------- setError
-    private suspend fun setError(message: String) {
-        withContext(Main) {
-            errorLiveDate.value = ErrorApiModel(EnumApiError.Error, message)
-        }
-        job?.cancel()
-    }
-    //---------------------------------------------------------------------------------------------- setError
-
+    var selectedDriver: DriverModel? = null
 
 
     //---------------------------------------------------------------------------------------------- requestGetDriver
-    fun requestGetDriver(type : EnumDriverType, companyCode : String?) {
+    fun requestGetDriver(type: EnumDriverType, companyCode: String?) {
         job = CoroutineScope(IO + exceptionHandler()).launch {
             val response = driverRepository.requestGetDriver(type, companyCode)
             if (response?.isSuccessful == true) {
                 response.body()?.let {
                     if (it.hasError)
-                        setError(it.message)
+                        setMessage(it.message)
                     else
                         it.data?.let { list ->
                             drivers = list
@@ -66,42 +44,40 @@ class DriverViewModel @Inject constructor(
                                 driversListLiveData.value = list
                             }
                         } ?: run {
-                            setError("اطلاعات خالی است")
+                            setMessage("اطلاعات خالی است")
                         }
                 }
             } else
-                setError(response)
+                setMessage(response)
         }
     }
     //---------------------------------------------------------------------------------------------- requestGetDriver
 
 
-
     //---------------------------------------------------------------------------------------------- requestAssignDriverToRequest
-    fun requestAssignDriverToRequest(requestId : String) {
+    fun requestAssignDriverToRequest(requestId: String) {
         selectedDriver?.let { driver ->
-            val request = AssignDriverRequest(requestId,driver.id.toString())
+            val request = AssignDriverRequest(requestId, driver.id.toString())
             job = CoroutineScope(IO + exceptionHandler()).launch {
                 val response = taxiRepository.requestAssignDriverToRequest(request)
                 if (response?.isSuccessful == true) {
                     response.body()?.let {
                         if (it.hasError)
-                            setError(it.message)
+                            setMessage(it.message)
                         else {
                             withContext(Main) {
                                 assignDriverLiveData.value = it.message
                             }
                         }
                     } ?: run {
-                        setError("اطلاعات خالی است")
+                        setMessage("اطلاعات خالی است")
                     }
                 } else
-                    setError(response)
+                    setMessage(response)
             }
         }
     }
     //---------------------------------------------------------------------------------------------- requestAssignDriverToRequest
-
 
 
     //---------------------------------------------------------------------------------------------- getDriverList
@@ -109,19 +85,8 @@ class DriverViewModel @Inject constructor(
     //---------------------------------------------------------------------------------------------- getDriverList
 
 
-
-    //---------------------------------------------------------------------------------------------- exceptionHandler
-    private fun exceptionHandler() = CoroutineExceptionHandler { _, throwable ->
-        CoroutineScope(Main).launch {
-            throwable.localizedMessage?.let { setError(it) }
-        }
-    }
-    //---------------------------------------------------------------------------------------------- exceptionHandler
-
-
-
     //---------------------------------------------------------------------------------------------- selectDriverByIndex
-    fun selectDriverByIndex(index : Int) {
+    fun selectDriverByIndex(index: Int) {
         drivers?.let {
             selectedDriver = it[index]
         }

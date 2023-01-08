@@ -35,13 +35,13 @@ interface ApiSuperApp {
 
 
     @GET("${v1}/LogIn/login-userInfo")
-    suspend fun requestUserInfo(
+    suspend fun requestGetUserInfo(
         @Header("Authorization") token : String
     ) : Response<UserInfoResponseModel>
 
 
     @POST("${v1}/LogIn/login-userInfo")
-    suspend fun requestUserInfo(
+    suspend fun requestGetUserInfo(
         @Body request : UserInfoRequest,
         @Header("Authorization") token : String
     ) : Response<UserInfoResponseModel>
@@ -89,13 +89,13 @@ interface ApiSuperApp {
 
 
     @GET("$v1/personnelsRegisteredStation/list-request-registered-trip")
-    suspend fun requestGetTripRequestRegister(
+    suspend fun requestGetTripForRegister(
         @Header("Authorization") token : String
     ) : Response<TripRequestRegisterResponseModel>
 
 
     @POST("$v1/personnelsRegisteredStation/response-request-registered-trip")
-    suspend fun requestConfirmAndRejectTripRequestRegister(
+    suspend fun requestChangeStatusTripRegister(
         @Body request : List<TripRequestRegisterStatusModel>,
         @Header("Authorization") token : String
     ) : Response<TripRequestRegisterStatusResponseModel>

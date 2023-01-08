@@ -1,10 +1,7 @@
 package com.zarholding.zar.viewmodel
 
 import android.content.SharedPreferences
-import androidx.lifecycle.ViewModel
-import com.zar.core.enums.EnumApiError
-import com.zar.core.models.ErrorApiModel
-import com.zar.core.tools.api.checkResponseError
+import com.zarholding.zar.hilt.ResourcesProvider
 import com.zarholding.zar.model.request.LoginRequestModel
 import com.zarholding.zar.repository.LoginRepository
 import com.zarholding.zar.utility.CompanionValues
@@ -13,7 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import retrofit2.Response
+import zar.R
 import javax.inject.Inject
 
 /**
@@ -22,73 +19,45 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    var repository: LoginRepository
-    ) : ZarViewModel() {
+    private var repository: LoginRepository,
+    private val resourcesProvider: ResourcesProvider
+) : ZarViewModel() {
 
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
     var loginLiveDate = SingleLiveEvent<String?>()
-    val errorLiveDate = SingleLiveEvent<ErrorApiModel>()
     var userName: String? = null
     var password: String? = null
-    private var job: Job? = null
-
-
-    //---------------------------------------------------------------------------------------------- setError
-    private suspend fun setError(response: Response<*>?) {
-        withContext(Main) {
-            checkResponseError(response, errorLiveDate)
-        }
-        job?.cancel()
-    }
-    //---------------------------------------------------------------------------------------------- setError
-
-
-
-    //---------------------------------------------------------------------------------------------- setError
-    private suspend fun setError(message : String) {
-        withContext(Main) {
-            errorLiveDate.value = ErrorApiModel(EnumApiError.Error, message)
-        }
-        job?.cancel()
-    }
-    //---------------------------------------------------------------------------------------------- setError
-
-
 
 
     //---------------------------------------------------------------------------------------------- requestLogin
     fun requestLogin() {
-
-        val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-            CoroutineScope(Main).launch {
-                throwable.localizedMessage?.let { setError(it) }
-            }
-        }
-
-        job = CoroutineScope(IO + exceptionHandler).launch {
-            val response = repository.requestLogin(LoginRequestModel(userName!!, password!!))
-            withContext(Main) {
+        job = CoroutineScope(IO + exceptionHandler()).launch {
+            if (userName.isNullOrEmpty() || password.isNullOrEmpty())
+                setMessage(resourcesProvider.getString(R.string.dataSendingIsEmpty))
+            else {
+                val response = repository.requestLogin(LoginRequestModel(userName!!, password!!))
                 if (response?.isSuccessful == true) {
                     val loginResponse = response.body()
                     loginResponse?.let {
                         if (!it.hasError)
                             saveUserNameAndPassword(it.data)
-                        setError(it.message)
+                        setMessage(it.message)
+                    } ?: run {
+                        setMessage(resourcesProvider.getString(R.string.dataReceivedIsEmpty))
                     }
                 } else
-                    setError(response)
+                    setMessage(response)
             }
         }
     }
     //---------------------------------------------------------------------------------------------- requestLogin
 
 
-
-    //---------------------------------------------------------------------------------------------- getBiometricEnable
-    fun getBiometricEnable() = sharedPreferences.getBoolean(CompanionValues.biometric, false)
-    //---------------------------------------------------------------------------------------------- getBiometricEnable
+    //---------------------------------------------------------------------------------------------- isBiometricEnable
+    fun isBiometricEnable() = sharedPreferences.getBoolean(CompanionValues.biometric, false)
+    //---------------------------------------------------------------------------------------------- isBiometricEnable
 
 
     //---------------------------------------------------------------------------------------------- setUserNamePasswordFromSharePreferences
@@ -100,23 +69,16 @@ class LoginViewModel @Inject constructor(
 
 
     //---------------------------------------------------------------------------------------------- saveUserNameAndPassword
-    private fun saveUserNameAndPassword(token : String?) {
+    private suspend fun saveUserNameAndPassword(token: String?) {
         sharedPreferences
             .edit()
             .putString(CompanionValues.TOKEN, token)
             .putString(CompanionValues.userName, userName)
             .putString(CompanionValues.passcode, password)
             .apply()
-        loginLiveDate.value = token
+        withContext(Main){ loginLiveDate.value = token }
     }
     //---------------------------------------------------------------------------------------------- saveUserNameAndPassword
 
-
-    //---------------------------------------------------------------------------------------------- onCleared
-    override fun onCleared() {
-        super.onCleared()
-        job?.cancel()
-    }
-    //---------------------------------------------------------------------------------------------- onCleared
 
 }

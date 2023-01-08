@@ -8,12 +8,15 @@ import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.google.android.material.snackbar.Snackbar
 import com.zar.core.tools.BiometricTools
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.utility.extension.hideKeyboard
 import com.zarholding.zar.viewmodel.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import zar.R
 import zar.databinding.FragmentLoginBinding
 import javax.inject.Inject
@@ -23,7 +26,7 @@ import javax.inject.Inject
  */
 
 @AndroidEntryPoint
-class LoginFragment : Fragment(){
+class LoginFragment : Fragment() {
 
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
@@ -56,11 +59,10 @@ class LoginFragment : Fragment(){
     //---------------------------------------------------------------------------------------------- onViewCreated
 
 
-
     //---------------------------------------------------------------------------------------------- initView
     private fun initView() {
-        (activity as MainActivity).deleteAllData()
-        if (loginViewModel.getBiometricEnable())
+        activity?.let { (it as MainActivity).deleteAllData() }
+        if (loginViewModel.isBiometricEnable())
             binding.buttonFingerLogin.visibility = View.VISIBLE
         else
             binding.buttonFingerLogin.visibility = View.GONE
@@ -68,33 +70,6 @@ class LoginFragment : Fragment(){
         observeErrorLiveDate()
     }
     //---------------------------------------------------------------------------------------------- initView
-
-
-
-    //---------------------------------------------------------------------------------------------- showMessage
-    private fun showMessage(message: String) {
-        val snack = Snackbar.make(binding.constraintLayoutParent, message, 5 * 1000)
-        snack.setBackgroundTint(resources.getColor(R.color.primaryColor, requireContext().theme))
-        snack.setTextColor(resources.getColor(R.color.textViewColor3, requireContext().theme))
-        snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
-        snack.setActionTextColor(resources.getColor(R.color.textViewColor1, requireContext().theme))
-        snack.show()
-        stopLoading()
-    }
-    //---------------------------------------------------------------------------------------------- showMessage
-
-
-    //---------------------------------------------------------------------------------------------- observeLoginLiveDate
-    private fun observeLoginLiveDate() {
-        loginViewModel.loginLiveDate.observe(viewLifecycleOwner) {
-            it?.let {
-                if (activity != null)
-                    requireActivity().onBackPressedDispatcher.onBackPressed()
-            }
-        }
-    }
-    //---------------------------------------------------------------------------------------------- observeLoginLiveDate
-
 
 
     //---------------------------------------------------------------------------------------------- observeErrorLiveDate
@@ -106,6 +81,24 @@ class LoginFragment : Fragment(){
     }
     //---------------------------------------------------------------------------------------------- observeErrorLiveDate
 
+
+    //---------------------------------------------------------------------------------------------- observeLoginLiveDate
+    private fun observeLoginLiveDate() {
+        loginViewModel.loginLiveDate.observe(viewLifecycleOwner) {
+            activity?.onBackPressedDispatcher?.onBackPressed()
+        }
+    }
+    //---------------------------------------------------------------------------------------------- observeLoginLiveDate
+
+
+    //---------------------------------------------------------------------------------------------- showMessage
+    private fun showMessage(message: String) {
+        activity?.let {
+            (it as MainActivity).showMessage(message)
+        }
+        stopLoading()
+    }
+    //---------------------------------------------------------------------------------------------- showMessage
 
 
     //---------------------------------------------------------------------------------------------- setListener
@@ -130,9 +123,10 @@ class LoginFragment : Fragment(){
     //---------------------------------------------------------------------------------------------- setListener
 
 
-
     //---------------------------------------------------------------------------------------------- showBiometricDialog
     private fun showBiometricDialog() {
+        if (activity == null)
+            return
         val executor = ContextCompat.getMainExecutor(requireContext())
         val biometricPrompt = BiometricPrompt(
             requireActivity(),
@@ -148,7 +142,6 @@ class LoginFragment : Fragment(){
                     fingerPrintClick()
                 }
             })
-
         biometricTools.checkDeviceHasBiometric(biometricPrompt)
     }
     //---------------------------------------------------------------------------------------------- showBiometricDialog
@@ -161,25 +154,25 @@ class LoginFragment : Fragment(){
     //---------------------------------------------------------------------------------------------- fingerPrintClick
 
 
-
     //---------------------------------------------------------------------------------------------- login
-    private fun login(fromFingerPrint : Boolean) {
+    private fun login(fromFingerPrint: Boolean) {
         if (binding.buttonLogin.isLoading)
             return
-
-        if (fromFingerPrint)
-            loginViewModel.setUserNamePasswordFromSharePreferences()
-
-        if (checkEmpty()) {
-            startLoading()
-            loginViewModel.requestLogin()
+        CoroutineScope(Main).launch {
+            if (fromFingerPrint)
+                loginViewModel.setUserNamePasswordFromSharePreferences()
+            delay(500)
+            if (checkEmpty()) {
+                startLoading()
+                loginViewModel.requestLogin()
+            }
         }
     }
     //---------------------------------------------------------------------------------------------- login
 
 
     //---------------------------------------------------------------------------------------------- checkEmpty
-    private fun checkEmpty() : Boolean {
+    private fun checkEmpty(): Boolean {
         if (loginViewModel.userName.isNullOrEmpty()) {
             binding.textInputLayoutUserName.error = getString(R.string.userNameIsEmpty)
             return false
@@ -191,7 +184,6 @@ class LoginFragment : Fragment(){
         return true
     }
     //---------------------------------------------------------------------------------------------- checkEmpty
-
 
 
     //---------------------------------------------------------------------------------------------- startLoading

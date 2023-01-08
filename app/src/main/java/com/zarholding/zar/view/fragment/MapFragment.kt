@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.zar.core.tools.manager.ThemeManager
 import com.zarholding.zar.model.response.trip.TripPointModel
+import com.zarholding.zar.utility.CompanionValues
 import com.zarholding.zar.utility.OsmManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -82,10 +83,10 @@ class MapFragment : Fragment() {
     //---------------------------------------------------------------------------------------------- showPointOnMap
     private suspend fun showPointOnMap() {
         arguments?.let {
-            val latOrigin = it.getDouble("latOrigin")
-            val lngOrigin = it.getDouble("lngOrigin")
-            val latDestination = it.getDouble("latDestination", 0.0)
-            val lngDestination = it.getDouble("lngDestination", 0.0)
+            val latOrigin = it.getDouble(CompanionValues.latOrigin)
+            val lngOrigin = it.getDouble(CompanionValues.lngOrigin)
+            val latDestination = it.getDouble(CompanionValues.latDestination, 0.0)
+            val lngDestination = it.getDouble(CompanionValues.lngDestination, 0.0)
 
             val pointOrigin = GeoPoint(latOrigin, lngOrigin)
             var pointDestination: GeoPoint? = null

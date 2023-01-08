@@ -1,4 +1,4 @@
-package com.zarholding.zar.view.fragment
+package com.zarholding.zar.view.fragment.taxi
 
 import android.os.Bundle
 import android.view.LayoutInflater

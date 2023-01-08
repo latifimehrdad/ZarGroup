@@ -1,6 +1,5 @@
 package com.zarholding.zar.view.fragment
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,22 +17,18 @@ import com.zarholding.zar.viewmodel.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import zar.R
 import zar.databinding.FragmentProfileBinding
-import javax.inject.Inject
 
 /**
  * Created by m-latifi on 11/19/2022.
  */
 
 @AndroidEntryPoint
-class ProfileFragment : Fragment(){
+class ProfileFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
 
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
-
-    private val profileViewModel : ProfileViewModel by viewModels()
+    private val profileViewModel: ProfileViewModel by viewModels()
 
 
     //---------------------------------------------------------------------------------------------- onCreateView
@@ -57,18 +52,13 @@ class ProfileFragment : Fragment(){
     //---------------------------------------------------------------------------------------------- onViewCreated
 
 
-
     //---------------------------------------------------------------------------------------------- showMessage
     private fun showMessage(message: String) {
-        val snack = Snackbar.make(binding.constraintLayoutParent, message, 5 * 1000)
-        snack.setBackgroundTint(resources.getColor(R.color.primaryColor, requireContext().theme))
-        snack.setTextColor(resources.getColor(R.color.textViewColor3, requireContext().theme))
-        snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
-        snack.setActionTextColor(resources.getColor(R.color.textViewColor1, requireContext().theme))
-        snack.show()
+        activity?.let {
+            (it as MainActivity).showMessage(message)
+        }
     }
     //---------------------------------------------------------------------------------------------- showMessage
-
 
 
     //---------------------------------------------------------------------------------------------- setListener
@@ -82,13 +72,11 @@ class ProfileFragment : Fragment(){
     //---------------------------------------------------------------------------------------------- setListener
 
 
-
     //---------------------------------------------------------------------------------------------- disableFeature
     private fun disableFeature() {
         showMessage(getString(R.string.disableFeature))
     }
     //---------------------------------------------------------------------------------------------- disableFeature
-
 
 
     //---------------------------------------------------------------------------------------------- logOut
@@ -103,11 +91,11 @@ class ProfileFragment : Fragment(){
             requireContext(),
             ConfirmDialog.ConfirmType.DELETE,
             "آیا برای خروج مطمئن هستید؟",
-            click).show()
+            click
+        ).show()
 
     }
     //---------------------------------------------------------------------------------------------- logOut
-
 
 
     //---------------------------------------------------------------------------------------------- setUserInfo
@@ -118,7 +106,6 @@ class ProfileFragment : Fragment(){
     //---------------------------------------------------------------------------------------------- setUserInfo
 
 
-
     //---------------------------------------------------------------------------------------------- showAndHideInfo
     private fun showAndHideInfo() {
         if (binding.expandableInfo.isExpanded)
@@ -127,7 +114,6 @@ class ProfileFragment : Fragment(){
             showMoreInfo()
     }
     //---------------------------------------------------------------------------------------------- showAndHideInfo
-
 
 
     //---------------------------------------------------------------------------------------------- showMoreInfo
@@ -168,7 +154,6 @@ class ProfileFragment : Fragment(){
     //---------------------------------------------------------------------------------------------- hideMoreInfo
 
 
-
     //---------------------------------------------------------------------------------------------- showEditCarPlaque
     private fun showEditCarPlaque() {
         val click = object : EditPlaqueDialog.Click {
@@ -180,7 +165,6 @@ class ProfileFragment : Fragment(){
         EditPlaqueDialog(click).show(childFragmentManager, "edit plaque")
     }
     //---------------------------------------------------------------------------------------------- showEditCarPlaque
-
 
 
     //---------------------------------------------------------------------------------------------- onDestroyView

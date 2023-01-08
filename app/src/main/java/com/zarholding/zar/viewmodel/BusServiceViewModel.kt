@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.zar.core.enums.EnumApiError
 import com.zar.core.models.ErrorApiModel
 import com.zar.core.tools.api.checkResponseError
+import com.zarholding.zar.hilt.ResourcesProvider
 import com.zarholding.zar.model.request.RequestRegisterStationModel
 import com.zarholding.zar.model.response.trip.TripModel
 import com.zarholding.zar.repository.TokenRepository
@@ -14,48 +15,27 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import retrofit2.Response
+import zar.R
 import javax.inject.Inject
 
 @HiltViewModel
 class BusServiceViewModel @Inject constructor(
     private val tripRepository: TripRepository,
-    private val tokenRepository: TokenRepository
-) : ViewModel() {
+    private val resourcesProvider: ResourcesProvider
+) : ZarViewModel() {
 
-    private var job: Job? = null
     private var tripList: List<TripModel>? = null
-    val errorLiveDate = SingleLiveEvent<ErrorApiModel>()
     val tripModelLiveData = SingleLiveEvent<List<TripModel>?>()
-
-
-    //---------------------------------------------------------------------------------------------- setError
-    private suspend fun setError(response: Response<*>?) {
-        withContext(Main) {
-            checkResponseError(response, errorLiveDate)
-        }
-        job?.cancel()
-    }
-    //---------------------------------------------------------------------------------------------- setError
-
-
-    //---------------------------------------------------------------------------------------------- setError
-    private suspend fun setError(message: String) {
-        withContext(Main) {
-            errorLiveDate.value = ErrorApiModel(EnumApiError.Error, message)
-        }
-        job?.cancel()
-    }
-    //---------------------------------------------------------------------------------------------- setError
 
 
     //---------------------------------------------------------------------------------------------- requestGetAllTrips
     fun requestGetAllTrips() {
         job = CoroutineScope(IO + exceptionHandler()).launch {
-            val response = tripRepository.requestGetAllTrips(tokenRepository.getBearerToken())
+            val response = tripRepository.requestGetAllTrips()
             if (response?.isSuccessful == true) {
                 response.body()?.let {
                     if (it.hasError)
-                        setError(it.message)
+                        setMessage(it.message)
                     else {
                         tripList = it.data
                         withContext(Main) {
@@ -63,10 +43,10 @@ class BusServiceViewModel @Inject constructor(
                         }
                     }
                 } ?: run {
-                    setError("اطلاعات خالی است")
+                    setMessage(resourcesProvider.getString(R.string.dataReceivedIsEmpty))
                 }
             } else
-                setError(response)
+                setMessage(response)
         }
     }
     //---------------------------------------------------------------------------------------------- requestGetAllTrips
@@ -76,21 +56,18 @@ class BusServiceViewModel @Inject constructor(
     fun requestRegisterStation(tripId: Int, stationId: Int) {
         val requestModel = RequestRegisterStationModel(tripId, stationId)
         job = CoroutineScope(IO + exceptionHandler()).launch {
-            val response = tripRepository.requestRegisterStation(
-                requestModel,
-                tokenRepository.getBearerToken()
-            )
+            val response = tripRepository.requestRegisterStation(requestModel)
             if (response?.isSuccessful == true) {
                 response.body()?.let {
                     if (it.hasError)
-                        setError(it.message)
+                        setMessage(it.message)
                     else
                         requestGetAllTrips()
                 } ?: run {
-                    setError("اطلاعات خالی است")
+                    setMessage(resourcesProvider.getString(R.string.dataReceivedIsEmpty))
                 }
             } else
-                setError(response)
+                setMessage(response)
         }
     }
     //---------------------------------------------------------------------------------------------- requestRegisterStation
@@ -99,34 +76,21 @@ class BusServiceViewModel @Inject constructor(
     //---------------------------------------------------------------------------------------------- requestDeleteRegisteredStation
     fun requestDeleteRegisteredStation(id: Int) {
         job = CoroutineScope(IO + exceptionHandler()).launch {
-            val response = tripRepository.requestDeleteRegisteredStation(
-                id,
-                tokenRepository.getBearerToken()
-            )
+            val response = tripRepository.requestDeleteRegisteredStation(id)
             if (response?.isSuccessful == true) {
                 response.body()?.let {
                     if (it.hasError)
-                        setError(it.message)
+                        setMessage(it.message)
                     else
                         requestGetAllTrips()
                 } ?: run {
-                    setError("اطلاعات خالی است")
+                    setMessage(resourcesProvider.getString(R.string.dataReceivedIsEmpty))
                 }
             } else
-                setError(response)
+                setMessage(response)
         }
     }
     //---------------------------------------------------------------------------------------------- requestDeleteRegisteredStation
-
-
-
-    //---------------------------------------------------------------------------------------------- exceptionHandler
-    private fun exceptionHandler() = CoroutineExceptionHandler { _, throwable ->
-        CoroutineScope(Main).launch {
-            throwable.localizedMessage?.let { setError(it) }
-        }
-    }
-    //---------------------------------------------------------------------------------------------- exceptionHandler
 
 
     //---------------------------------------------------------------------------------------------- getAllTripList
@@ -149,18 +113,9 @@ class BusServiceViewModel @Inject constructor(
     //---------------------------------------------------------------------------------------------- getMyTripList
 
 
-
     //---------------------------------------------------------------------------------------------- getToken
-    fun getToken() = tokenRepository.getToken()
+    fun getToken() = tripRepository.getToken()
     //---------------------------------------------------------------------------------------------- getToken
-
-
-    //---------------------------------------------------------------------------------------------- onCleared
-    override fun onCleared() {
-        super.onCleared()
-        job?.cancel()
-    }
-    //---------------------------------------------------------------------------------------------- onCleared
 
 
 }

@@ -1,4 +1,4 @@
-package com.zarholding.zar.view.fragment
+package com.zarholding.zar.view.fragment.bus
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -117,7 +117,7 @@ class AdminBusFragment : Fragment(){
     //---------------------------------------------------------------------------------------------- requestGetTripRequestRegister
     private fun requestGetTripRequestRegister() {
         startLoading()
-        adminBusViewModel.requestGetTripRequestRegister()
+        adminBusViewModel.requestGetTripForRegister()
     }
     //---------------------------------------------------------------------------------------------- requestGetTripRequestRegister
 
@@ -158,9 +158,9 @@ class AdminBusFragment : Fragment(){
 
     //---------------------------------------------------------------------------------------------- countChooseItem
     private fun countChooseItem() {
-        val choosed = adapter.getItems().filterList { choose }
-        binding.textViewConfirmCount.text = choosed.size.toString()
-        binding.textViewRejectCount.text = choosed.size.toString()
+        val chosen = adapter.getItems().filterList { choose }
+        binding.textViewConfirmCount.text = chosen.size.toString()
+        binding.textViewRejectCount.text = chosen.size.toString()
     }
     //---------------------------------------------------------------------------------------------- countChooseItem
 
@@ -215,7 +215,7 @@ class AdminBusFragment : Fragment(){
             )
 
         startLoading()
-        adminBusViewModel.requestConfirmAndRejectTripRequestRegister(request)
+        adminBusViewModel.requestChangeStatusTripRegister(request)
     }
     //---------------------------------------------------------------------------------------------- requestConfirmAndRejectTripRequestRegister
 

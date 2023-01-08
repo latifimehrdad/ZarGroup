@@ -32,20 +32,20 @@ class UserRepository @Inject constructor(
 
 
     //---------------------------------------------------------------------------------------------- requestUserInfo
-    suspend fun requestUserInfo(token: String) =
-        apiCall{ api.requestUserInfo(token) }
+    suspend fun requestUserInfo() =
+        apiCall{ api.requestGetUserInfo(tokenRepository.getBearerToken()) }
     //---------------------------------------------------------------------------------------------- requestUserInfo
 
 
-    //---------------------------------------------------------------------------------------------- requestUserInfo
-    suspend fun requestUserInfo(request : UserInfoRequest) =
-        apiCall{ api.requestUserInfo(request, tokenRepository.getBearerToken()) }
-    //---------------------------------------------------------------------------------------------- requestUserInfo
+    //---------------------------------------------------------------------------------------------- requestGetUserInfo
+    suspend fun requestGetUserInfo(request : UserInfoRequest) =
+        apiCall{ api.requestGetUserInfo(request, tokenRepository.getBearerToken()) }
+    //---------------------------------------------------------------------------------------------- requestGetUserInfo
 
 
     //---------------------------------------------------------------------------------------------- requestUserPermission
-    suspend fun requestUserPermission(token: String) =
-        apiCall{ api.requestUserPermission(token) }
+    suspend fun requestUserPermission() =
+        apiCall{ api.requestUserPermission(tokenRepository.getBearerToken()) }
     //---------------------------------------------------------------------------------------------- requestUserPermission
 
 
@@ -99,4 +99,15 @@ class UserRepository @Inject constructor(
         apiCall { api.requestChangeCarPlaque(request, tokenRepository.getBearerToken()) }
     //---------------------------------------------------------------------------------------------- requestChangeCarPlaque
 
+
+    //---------------------------------------------------------------------------------------------- isEntered
+    fun isEntered() = tokenRepository.getToken()?.let {
+        true
+    } ?: false
+    //---------------------------------------------------------------------------------------------- isEntered
+
+
+    //---------------------------------------------------------------------------------------------- getBearerToken
+    fun getBearerToken() = tokenRepository.getBearerToken()
+    //---------------------------------------------------------------------------------------------- getBearerToken
 }

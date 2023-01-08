@@ -2,16 +2,13 @@ package com.zarholding.zar.view.fragment
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.snackbar.Snackbar
 import com.zar.core.enums.EnumApiError
-import com.zarholding.zar.background.ZarBackgroundBroadcast
 import com.zarholding.zar.background.ZarNotificationService
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.viewmodel.MainViewModel
@@ -61,12 +58,9 @@ class SplashFragment : Fragment() {
 
     //---------------------------------------------------------------------------------------------- showMessage
     private fun showMessage(message: String) {
-        val snack = Snackbar.make(binding.constraintLayoutParent, message, 5 * 1000)
-        snack.setBackgroundTint(resources.getColor(R.color.primaryColor, requireContext().theme))
-        snack.setTextColor(resources.getColor(R.color.textViewColor3, requireContext().theme))
-        snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
-        snack.setActionTextColor(resources.getColor(R.color.textViewColor1, requireContext().theme))
-        snack.show()
+        activity?.let {
+            (it as MainActivity).showMessage(message)
+        }
         stopLoading()
     }
     //---------------------------------------------------------------------------------------------- showMessage
@@ -76,11 +70,10 @@ class SplashFragment : Fragment() {
     private fun checkUserIsLogged() {
         if (binding.buttonReTry.isLoading)
             return
-
-        val token = splashViewModel.getToken()
-        token?.let {
+        if (splashViewModel.userIsEntered())
             gotoFragmentHome()
-        } ?: gotoFragmentLogin()
+        else
+            gotoFragmentLogin()
     }
     //---------------------------------------------------------------------------------------------- checkUserIsLogged
 
@@ -88,7 +81,7 @@ class SplashFragment : Fragment() {
     //---------------------------------------------------------------------------------------------- gotoFragmentLogin
     private fun gotoFragmentLogin() {
         job = CoroutineScope(IO).launch {
-            delay(5000)
+            delay(3000)
             withContext(Main) {
                 findNavController().navigate(R.id.action_splashFragment_to_loginFragment)
             }
@@ -101,11 +94,7 @@ class SplashFragment : Fragment() {
     private fun gotoFragmentHome() {
         observeErrorLiveDate()
         observeSuccessLiveDataLiveData()
-        job = CoroutineScope(IO).launch {
-            withContext(Main) {
-                requestGetData()
-            }
-        }
+        requestGetData()
     }
     //---------------------------------------------------------------------------------------------- gotoFragmentHome
 

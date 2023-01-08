@@ -1,9 +1,5 @@
 package com.zarholding.zar.viewmodel
 
-import androidx.lifecycle.ViewModel
-import com.zar.core.enums.EnumApiError
-import com.zar.core.models.ErrorApiModel
-import com.zar.core.tools.api.checkResponseError
 import com.zar.core.view.picker.time.ZarTimePicker
 import com.zarholding.zar.database.entity.UserInfoEntity
 import com.zarholding.zar.model.enum.EnumTaxiRequestType
@@ -22,7 +18,6 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.Marker
-import retrofit2.Response
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,10 +27,8 @@ class TaxiReservationViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val companyRepository: CompanyRepository,
     private val roleManager: RoleManager
-) : ViewModel() {
+) : ZarViewModel() {
 
-    private var job: Job? = null
-    val errorLiveDate = SingleLiveEvent<ErrorApiModel>()
     val setFavPlaceLiveData = SingleLiveEvent<Boolean>()
     val addFavPlaceLiveData = SingleLiveEvent<Boolean>()
     val removeFavPlaceLiveData = SingleLiveEvent<Boolean>()
@@ -52,28 +45,6 @@ class TaxiReservationViewModel @Inject constructor(
     private var favPlaceType = FavPlaceType.NONE
     private var timePickMode = ZarTimePicker.PickerMode.RETURNING
     private var enumTaxiRequestType = EnumTaxiRequestType.OneWay
-
-
-
-    //---------------------------------------------------------------------------------------------- setError
-    private suspend fun setError(response: Response<*>?) {
-        withContext(Main) {
-            checkResponseError(response, errorLiveDate)
-        }
-        job?.cancel()
-    }
-    //---------------------------------------------------------------------------------------------- setError
-
-
-    //---------------------------------------------------------------------------------------------- setError
-    private suspend fun setError(message: String) {
-        withContext(Main) {
-            errorLiveDate.value = ErrorApiModel(EnumApiError.Error, message)
-        }
-        job?.cancel()
-    }
-    //---------------------------------------------------------------------------------------------- setError
-
 
 
     //---------------------------------------------------------------------------------------------- getSpinnersData
@@ -96,13 +67,13 @@ class TaxiReservationViewModel @Inject constructor(
                     it.data?.let { items ->
                         companies = items.items.toMutableList()
                     }?: run {
-                        setError("اطلاعات خالی است")
+                        setMessage("اطلاعات خالی است")
                     }
                 }?: run {
-                    setError("اطلاعات خالی است")
+                    setMessage("اطلاعات خالی است")
                 }
             } else
-                setError(response)
+                setMessage(response)
         }
     }
     //---------------------------------------------------------------------------------------------- requestGetCompanies
@@ -117,7 +88,7 @@ class TaxiReservationViewModel @Inject constructor(
             if (response?.isSuccessful == true) {
                 response.body()?.let {
                     if (it.hasError)
-                        setError(it.message)
+                        setMessage(it.message)
                     else
                         it.data?.let { items ->
                             favPlace = items.toMutableList()
@@ -125,11 +96,11 @@ class TaxiReservationViewModel @Inject constructor(
                                 setFavPlaceLiveData.value = true
                             }
                         } ?: run {
-                            setError("اطلاعات خالی است")
+                            setMessage("اطلاعات خالی است")
                         }
                 }
             } else
-                setError(response)
+                setMessage(response)
         }
     }
     //---------------------------------------------------------------------------------------------- requestGetTaxiFavPlace
@@ -143,7 +114,7 @@ class TaxiReservationViewModel @Inject constructor(
             if (response?.isSuccessful == true) {
                 response.body()?.let {
                     if (it.hasError)
-                        setError(it.message)
+                        setMessage(it.message)
                     else
                         it.data?.let { item ->
                             when (getFavPlaceType()) {
@@ -159,11 +130,11 @@ class TaxiReservationViewModel @Inject constructor(
                                 addToFavPlaceList(item)
                             }
                         } ?: run {
-                            setError("اطلاعات خالی است")
+                            setMessage("اطلاعات خالی است")
                         }
                 }
             } else
-                setError(response)
+                setMessage(response)
         }
     }
     //---------------------------------------------------------------------------------------------- requestAddFavPlace
@@ -176,16 +147,16 @@ class TaxiReservationViewModel @Inject constructor(
             if (response?.isSuccessful == true) {
                 response.body()?.let {
                     if (it.hasError)
-                        setError(it.message)
+                        setMessage(it.message)
                     else
                         withContext(Main) {
                             removeItemInFavPlace(id)
                         }
                 } ?: run {
-                    setError("اطلاعات خالی است")
+                    setMessage("اطلاعات خالی است")
                 }
             } else
-                setError(response)
+                setMessage(response)
         }
     }
     //---------------------------------------------------------------------------------------------- requestDeleteFavPlace
@@ -202,10 +173,10 @@ class TaxiReservationViewModel @Inject constructor(
                             sendRequestLiveData.value = it.message
                         }
                 } ?: run {
-                    setError("اطلاعات خالی است")
+                    setMessage("اطلاعات خالی است")
                 }
             } else
-                setError(response)
+                setMessage(response)
         }
     }
     //---------------------------------------------------------------------------------------------- requestTaxi
@@ -223,13 +194,13 @@ class TaxiReservationViewModel @Inject constructor(
                             addressLiveData.value = address
                         }
                     } ?: run {
-                        setError("اطلاعات خالی است")
+                        setMessage("اطلاعات خالی است")
                     }
                 } ?: run {
-                    setError("اطلاعات خالی است")
+                    setMessage("اطلاعات خالی است")
                 }
             } else
-                setError(response)
+                setMessage(response)
         }
     }
     //---------------------------------------------------------------------------------------------- getAddress
@@ -345,16 +316,6 @@ class TaxiReservationViewModel @Inject constructor(
     //---------------------------------------------------------------------------------------------- getEnumTaxiRequest
 
 
-    //---------------------------------------------------------------------------------------------- exceptionHandler
-    private fun exceptionHandler() = CoroutineExceptionHandler { _, throwable ->
-        CoroutineScope(Main).launch {
-            throwable.localizedMessage?.let { setError(it) }
-        }
-    }
-    //---------------------------------------------------------------------------------------------- exceptionHandler
-
-
-
     //---------------------------------------------------------------------------------------------- getUser
     fun getUser(): UserInfoEntity? {
         return userRepository.getUser()
@@ -362,21 +323,8 @@ class TaxiReservationViewModel @Inject constructor(
     //---------------------------------------------------------------------------------------------- getUser
 
 
-
-
     //---------------------------------------------------------------------------------------------- isDisableDaysAgo
     fun isDisableDaysAgo() = roleManager.isDisableDaysAgo()
     //---------------------------------------------------------------------------------------------- isDisableDaysAgo
-
-
-
-
-    //---------------------------------------------------------------------------------------------- onCleared
-    override fun onCleared() {
-        super.onCleared()
-        job?.cancel()
-    }
-    //---------------------------------------------------------------------------------------------- onCleared
-
 
 }

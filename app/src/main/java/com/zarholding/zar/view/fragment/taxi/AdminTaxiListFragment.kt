@@ -1,4 +1,4 @@
-package com.zarholding.zar.view.fragment
+package com.zarholding.zar.view.fragment.taxi
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -17,7 +17,6 @@ import com.google.android.gms.location.*
 import com.google.android.gms.tasks.CancellationToken
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.gms.tasks.OnTokenCanceledListener
-import com.google.android.material.snackbar.Snackbar
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -58,14 +57,11 @@ class AdminTaxiListFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val adminTaxiListViewModel: AdminTaxiListViewModel by viewModels()
-
     private var myTaxiRequestAdapter: MyTaxiAdapter? = null
     private var adminTaxiRequestAdapter: AdminTaxiRequestAdapter? = null
-    private var driverTaxiRequestAdapter : DriverTaxiRequestAdapter? = null
-
+    private var driverTaxiRequestAdapter: DriverTaxiRequestAdapter? = null
     private var endlessScrollListener: EndlessScrollListener? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-
 
     //---------------------------------------------------------------------------------------------- onCreateView
     override fun onCreateView(
@@ -83,12 +79,16 @@ class AdminTaxiListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner
         arguments?.let {
-            adminTaxiListViewModel
-                .setEnumAdminTaxiType(it.getString(CompanionValues.adminTaxiType, null))
-            observeErrorLiveDate()
-            observeTaxiRequestListLiveData()
-            startLoading()
-            getTaxiList()
+            val type = it.getString(CompanionValues.adminTaxiType, null)
+            type?.let {
+                adminTaxiListViewModel.setEnumAdminTaxiType(type)
+                observeErrorLiveDate()
+                observeTaxiRequestListLiveData()
+                startLoading()
+                adminTaxiListViewModel.getTaxiList()
+            } ?: run {
+                activity?.onBackPressedDispatcher?.onBackPressed()
+            }
         } ?: run {
             activity?.onBackPressedDispatcher?.onBackPressed()
         }
@@ -98,13 +98,9 @@ class AdminTaxiListFragment : Fragment() {
 
     //---------------------------------------------------------------------------------------------- showMessage
     private fun showMessage(message: String) {
-        val snack = Snackbar.make(binding.constraintLayoutParent, message, 5 * 1000)
-        snack.setBackgroundTint(resources.getColor(R.color.primaryColor, context?.theme))
-        snack.setTextColor(resources.getColor(R.color.textViewColor3, context?.theme))
-        snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
-        snack.setActionTextColor(resources.getColor(R.color.textViewColor1, context?.theme))
-        snack.show()
-//        loadingManager.stopLoadingRecycler()
+        activity?.let {
+            (it as MainActivity).showMessage(message)
+        }
         binding.textViewLoading.visibility = View.GONE
     }
     //---------------------------------------------------------------------------------------------- showMessage
@@ -133,23 +129,14 @@ class AdminTaxiListFragment : Fragment() {
     //---------------------------------------------------------------------------------------------- observeTaxiRequestListLiveData
 
 
-    //---------------------------------------------------------------------------------------------- getTaxiList
-    private fun getTaxiList() {
-        adminTaxiListViewModel.getEnumAdminTaxiType()?.let {
-            adminTaxiListViewModel.getTaxiList()
-        }
-    }
-    //---------------------------------------------------------------------------------------------- getTaxiList
-
-
     //---------------------------------------------------------------------------------------------- setAdapter
     private fun setAdapter(items: List<AdminTaxiRequestModel>) {
-        when (adminTaxiListViewModel.getEnumAdminTaxiType()!!) {
+        when (adminTaxiListViewModel.getEnumAdminTaxiType()) {
             EnumAdminTaxiType.MY,
             EnumAdminTaxiType.HISTORY
             -> setMyTaxiRequestAdapter(items)
             EnumAdminTaxiType.REQUEST -> {
-                when(adminTaxiListViewModel.getUserType()) {
+                when (adminTaxiListViewModel.getUserType()) {
                     EnumPersonnelType.Driver -> setDriverTaxiRequestAdapter(items)
                     else -> setTaxiRequestAdapter(items)
                 }
@@ -232,7 +219,6 @@ class AdminTaxiListFragment : Fragment() {
     //---------------------------------------------------------------------------------------------- setTaxiRequestAdapter
 
 
-
     //---------------------------------------------------------------------------------------------- setDriverTaxiRequestAdapter
     private fun setDriverTaxiRequestAdapter(items: List<AdminTaxiRequestModel>) {
         if (context == null)
@@ -255,11 +241,10 @@ class AdminTaxiListFragment : Fragment() {
                     lngDestination: Double
                 ) {
                     val bundle = Bundle()
-                    bundle.putDouble("latOrigin", latOrigin)
-                    bundle.putDouble("lngOrigin", lngOrigin)
-                    bundle.putDouble("latDestination", latDestination)
-                    bundle.putDouble("lngDestination", lngDestination)
-
+                    bundle.putDouble(CompanionValues.latOrigin, latOrigin)
+                    bundle.putDouble(CompanionValues.lngOrigin, lngOrigin)
+                    bundle.putDouble(CompanionValues.latDestination, latDestination)
+                    bundle.putDouble(CompanionValues.lngDestination, lngDestination)
                     findNavController()
                         .navigate(R.id.action_AdminTaxiFragment_to_MapFragment, bundle)
                 }
@@ -284,7 +269,6 @@ class AdminTaxiListFragment : Fragment() {
     //---------------------------------------------------------------------------------------------- setDriverTaxiRequestAdapter
 
 
-
     //---------------------------------------------------------------------------------------------- requestLocationPermission
     private fun requestLocationPermission(position: Int) {
         if (context == null)
@@ -292,15 +276,18 @@ class AdminTaxiListFragment : Fragment() {
         Dexter.withContext(requireContext())
             .withPermissions(
                 Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION)
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )
             .withListener(object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(p0: MultiplePermissionsReport?) {
                     getCurrentLocation(position)
                 }
+
                 override fun onPermissionRationaleShouldBeShown(
                     p0: MutableList<PermissionRequest>?,
                     p1: PermissionToken?
-                ) {}
+                ) {
+                }
             })
             .check()
 
@@ -309,20 +296,25 @@ class AdminTaxiListFragment : Fragment() {
     //---------------------------------------------------------------------------------------------- requestLocationPermission
 
 
-
     //---------------------------------------------------------------------------------------------- getCurrentLocation
     private fun getCurrentLocation(position: Int) {
-
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-            == PackageManager.PERMISSION_GRANTED
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
         ) {
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
-            fusedLocationClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, object : CancellationToken() {
-                override fun onCanceledRequested(p0: OnTokenCanceledListener) = CancellationTokenSource().token
-                override fun isCancellationRequested() = false
-            }).addOnSuccessListener { location: Location? ->
+            fusedLocationClient.getCurrentLocation(
+                LocationRequest.PRIORITY_HIGH_ACCURACY,
+                object : CancellationToken() {
+                    override fun onCanceledRequested(p0: OnTokenCanceledListener) =
+                        CancellationTokenSource().token
+
+                    override fun isCancellationRequested() = false
+                }).addOnSuccessListener { location: Location? ->
                 if (location == null)
-                    Toast.makeText(requireContext(), "Cannot get location.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Cannot get location.", Toast.LENGTH_SHORT)
+                        .show()
                 else {
                     val lat = location.latitude
                     val lon = location.longitude
@@ -334,13 +326,14 @@ class AdminTaxiListFragment : Fragment() {
     //---------------------------------------------------------------------------------------------- getCurrentLocation
 
 
-
     //---------------------------------------------------------------------------------------------- requestDriverChangeTripStatus
-    private fun requestDriverChangeTripStatus(position: Int, lat : Double, lon : Double) {
-        startLoading()
-        adminTaxiListViewModel.requestDriverChangeTripStatus(
-            driverTaxiRequestAdapter!!.getList()[position], lat, lon
-        )
+    private fun requestDriverChangeTripStatus(position: Int, lat: Double, lon: Double) {
+        driverTaxiRequestAdapter?.let {
+            startLoading()
+            adminTaxiListViewModel.requestDriverChangeTripStatus(
+                it.getList()[position], lat, lon
+            )
+        }
     }
     //---------------------------------------------------------------------------------------------- requestDriverChangeTripStatus
 
@@ -350,7 +343,7 @@ class AdminTaxiListFragment : Fragment() {
         val endlessScrollListener = object : EndlessScrollListener(manager) {
             override fun loadMoreItems() {
                 binding.textViewLoading.visibility = View.VISIBLE
-                getTaxiList()
+                adminTaxiListViewModel.getTaxiList()
             }
         }
         endlessScrollListener.setLoading(false)
@@ -388,7 +381,7 @@ class AdminTaxiListFragment : Fragment() {
                 endlessScrollListener = null
                 adminTaxiListViewModel.setPageNumberToZero()
                 showMessage(message)
-                getTaxiList()
+                adminTaxiListViewModel.getTaxiList()
             }
         }
         DriverDialog(click, item).show(childFragmentManager, "driver")

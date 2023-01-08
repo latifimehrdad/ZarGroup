@@ -67,7 +67,12 @@ class DriverTaxiRequestHolder(
         }
 
         binding.textViewTripStatus.setOnClickListener {
-            click.changeTripStatus(position)
+            when(item.tripStatus) {
+                EnumTripStatus.Assigned,
+                    EnumTripStatus.Started,
+                    EnumTripStatus.Finished -> click.changeTripStatus(position)
+                else -> {}
+            }
         }
 
         binding.linearLayoutMap.setOnClickListener {

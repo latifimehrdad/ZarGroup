@@ -19,11 +19,11 @@ import zar.databinding.DialogEditPlaqueBinding
 
 
 @AndroidEntryPoint
-class EditPlaqueDialog (private val click : Click): DialogFragment() {
+class EditPlaqueDialog(private val click: Click) : DialogFragment() {
 
     lateinit var binding: DialogEditPlaqueBinding
 
-    private val parkingViewModel : ParkingViewModel by viewModels()
+    private val parkingViewModel: ParkingViewModel by viewModels()
 
     interface Click {
         fun editPlaque()
@@ -74,7 +74,6 @@ class EditPlaqueDialog (private val click : Click): DialogFragment() {
     //---------------------------------------------------------------------------------------------- setListener
 
 
-
     //---------------------------------------------------------------------------------------------- initAlphabetSpinner
     private fun initAlphabetSpinner() {
         binding.powerSpinnerAlphabet.apply {
@@ -101,7 +100,6 @@ class EditPlaqueDialog (private val click : Click): DialogFragment() {
         }
     }
     //---------------------------------------------------------------------------------------------- observeLoginLiveDate
-
 
 
     //---------------------------------------------------------------------------------------------- observeSuccessLiveData

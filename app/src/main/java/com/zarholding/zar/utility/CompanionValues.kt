@@ -16,5 +16,9 @@ class CompanionValues {
         const val adminTaxiType = "adminTaxiType"
         const val myRequest = "myRequest"
         const val notificationLast = "notificationLast"
+        const val latOrigin = "latOrigin"
+        const val lngOrigin = "lngOrigin"
+        const val latDestination = "latDestination"
+        const val lngDestination = "lngDestination"
     }
 }

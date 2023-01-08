@@ -1,4 +1,4 @@
-package com.zarholding.zar.view.fragment
+package com.zarholding.zar.view.fragment.parcking
 
 import android.content.Intent
 import android.net.Uri
@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.snackbar.Snackbar
 import com.skydoves.powerspinner.DefaultSpinnerAdapter
 import com.zar.core.enums.EnumApiError
 import com.zar.core.tools.extensions.persianNumberToEnglishNumber
@@ -61,12 +60,9 @@ class ParkingFragment : Fragment() {
 
     //---------------------------------------------------------------------------------------------- showMessage
     private fun showMessage(message: String) {
-        val snack = Snackbar.make(binding.constraintLayoutParent, message, 5 * 1000)
-        snack.setBackgroundTint(resources.getColor(R.color.primaryColor, requireContext().theme))
-        snack.setTextColor(resources.getColor(R.color.textViewColor3, requireContext().theme))
-        snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
-        snack.setActionTextColor(resources.getColor(R.color.textViewColor1, requireContext().theme))
-        snack.show()
+        activity?.let {
+            (it as MainActivity).showMessage(message)
+        }
         binding.materialButtonSearch.stopLoading()
     }
     //---------------------------------------------------------------------------------------------- showMessage
@@ -91,7 +87,7 @@ class ParkingFragment : Fragment() {
     //---------------------------------------------------------------------------------------------- setListener
     private fun setListener() {
 
-        binding.materialButtonSearch.setOnClickListener { requestUserInfo() }
+        binding.materialButtonSearch.setOnClickListener { requestGetUserInfo() }
 
         binding.imageViewRetry.setOnClickListener { resetSearch() }
 
@@ -184,16 +180,16 @@ class ParkingFragment : Fragment() {
     //---------------------------------------------------------------------------------------------- resetSearch
 
 
-    //---------------------------------------------------------------------------------------------- requestUserInfo
-    private fun requestUserInfo() {
+    //---------------------------------------------------------------------------------------------- requestGetUserInfo
+    private fun requestGetUserInfo() {
         if (binding.materialButtonSearch.isLoading)
             return
         hideKeyboard()
         binding.expandableInfo.collapse()
         binding.materialButtonSearch.startLoading(getString(R.string.bePatient))
-        parkingViewModel.requestUserInfo()
+        parkingViewModel.requestGetUserInfo()
     }
-    //---------------------------------------------------------------------------------------------- requestUserInfo
+    //---------------------------------------------------------------------------------------------- requestGetUserInfo
 
 
 

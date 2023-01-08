@@ -9,13 +9,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.snackbar.Snackbar
 import com.zar.core.tools.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType
 import com.zar.core.tools.autoimageslider.SliderAnimations
 import com.zar.core.tools.autoimageslider.SliderView
 import com.zarholding.zar.database.entity.ArticleEntity
 import com.zarholding.zar.model.enum.EnumArticleType
-import com.zarholding.zar.model.other.AppModel
 import com.zarholding.zar.view.dialog.ArticleDetailDialog
 import com.zarholding.zar.view.dialog.ConfirmDialog
 import com.zarholding.zar.view.recycler.adapter.AppAdapter
@@ -34,7 +32,7 @@ import zar.databinding.FragmentHomeBinding
  */
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(){
+class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -58,26 +56,12 @@ class HomeFragment : Fragment(){
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner
         backClickControl()
-        initApps()
-        getBannerFromDB()
-        initNews()
-        initPersonnelRequest()
+        setAppsAdapter()
+        getSlides()
+        getNews()
+        setPersonnelRequestAdapter()
     }
     //---------------------------------------------------------------------------------------------- onViewCreated
-
-
-    //---------------------------------------------------------------------------------------------- onError
-    fun onError(message: String) {
-        val snack = Snackbar.make(binding.constraintLayoutParent, message, 5 * 1000)
-        snack.setBackgroundTint(resources.getColor(R.color.primaryColor, requireContext().theme))
-        snack.setTextColor(resources.getColor(R.color.textViewColor3, requireContext().theme))
-        snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
-        snack.setActionTextColor(resources.getColor(R.color.textViewColor1, requireContext().theme))
-        snack.show()
-    }
-    //---------------------------------------------------------------------------------------------- onError
-
-
 
 
     //---------------------------------------------------------------------------------------------- backClickControl
@@ -102,50 +86,15 @@ class HomeFragment : Fragment(){
     //---------------------------------------------------------------------------------------------- backClickControl
 
 
-    //---------------------------------------------------------------------------------------------- initApps
-    private fun initApps() {
-        val apps: MutableList<AppModel> = mutableListOf()
-
-        apps.add(
-            AppModel(
-                R.drawable.icon_trip,
-                getString(R.string.tripAndMap),
-                R.id.action_HomeFragment_to_BusServiceFragment
-            )
-        )
-        apps.add(
-            AppModel(
-                R.drawable.ic_taxi,
-                getString(R.string.taxiReservation),
-                R.id.action_HomeFragment_to_TaxiReservationFragment
-            )
-        )
-
-        apps.add(
-            AppModel(
-                R.drawable.ic_parking,
-                getString(R.string.parking),
-                R.id.action_HomeFragment_to_ParkingFragment
-            )
-        )
-
-        apps.add(AppModel(R.drawable.icon_personnel, getString(R.string.personnelList), 0))
-        apps.add(AppModel(R.drawable.icon_food_reservation, getString(R.string.foodReservation), 0))
-        apps.add(AppModel(R.drawable.icon_gift_card, getString(R.string.giftCard), 0))
-        setAppsAdapter(apps)
-    }
-    //---------------------------------------------------------------------------------------------- initApps
-
-
     //---------------------------------------------------------------------------------------------- setAppsAdapter
-    private fun setAppsAdapter(apps: MutableList<AppModel>) {
+    private fun setAppsAdapter() {
         val click = object : AppItemHolder.Click {
             override fun appClick(action: Int) {
                 if (action != 0)
                     findNavController().navigate(action)
             }
         }
-        val adapter = AppAdapter(apps, click)
+        val adapter = AppAdapter(homeViewModel.getApp(), click)
         val linearLayoutManager = LinearLayoutManager(
             requireContext(),
             LinearLayoutManager.HORIZONTAL,
@@ -158,17 +107,17 @@ class HomeFragment : Fragment(){
     //---------------------------------------------------------------------------------------------- setAppsAdapter
 
 
-    //---------------------------------------------------------------------------------------------- getBannerFromDB
-    private fun getBannerFromDB() {
-        val banners = homeViewModel.getArticles(EnumArticleType.SlideShow)
-        setBannerSlider(banners)
+    //---------------------------------------------------------------------------------------------- getSlides
+    private fun getSlides() {
+        val slides = homeViewModel.getArticles(EnumArticleType.SlideShow)
+        setBannerSlider(slides)
     }
-    //---------------------------------------------------------------------------------------------- getBannerFromDB
+    //---------------------------------------------------------------------------------------------- getSlides
 
 
     //---------------------------------------------------------------------------------------------- setBannerSlider
-    private fun setBannerSlider(banners: List<ArticleEntity>) {
-        val adapter = BannerAdapter(banners)
+    private fun setBannerSlider(slides: List<ArticleEntity>) {
+        val adapter = BannerAdapter(slides)
         binding.sliderViewBanner.setSliderAdapter(adapter)
         binding.sliderViewBanner.setIndicatorAnimation(IndicatorAnimationType.WORM)
         binding.sliderViewBanner.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION)
@@ -178,12 +127,12 @@ class HomeFragment : Fragment(){
     //---------------------------------------------------------------------------------------------- setBannerSlider
 
 
-    //---------------------------------------------------------------------------------------------- initNews
-    private fun initNews() {
+    //---------------------------------------------------------------------------------------------- getNews
+    private fun getNews() {
         val news = homeViewModel.getArticles(EnumArticleType.Article)
         setNewsAdapter(news)
     }
-    //---------------------------------------------------------------------------------------------- initNews
+    //---------------------------------------------------------------------------------------------- getNews
 
 
     //---------------------------------------------------------------------------------------------- setNewsAdapter
@@ -208,21 +157,9 @@ class HomeFragment : Fragment(){
     //---------------------------------------------------------------------------------------------- setNewsAdapter
 
 
-    //---------------------------------------------------------------------------------------------- initPersonnelRequest
-    private fun initPersonnelRequest() {
-        val apps: MutableList<AppModel> = mutableListOf()
-        apps.add(AppModel(R.drawable.ic_requests, getString(R.string.personnelRequest), 0))
-        apps.add(AppModel(R.drawable.ic_requests, getString(R.string.personnelRequest), 0))
-        apps.add(AppModel(R.drawable.ic_requests, getString(R.string.personnelRequest), 0))
-        apps.add(AppModel(R.drawable.ic_requests, getString(R.string.personnelRequest), 0))
-        setPersonnelRequestAdapter(apps)
-    }
-    //---------------------------------------------------------------------------------------------- initPersonnelRequest
-
-
     //---------------------------------------------------------------------------------------------- setPersonnelRequestAdapter
-    private fun setPersonnelRequestAdapter(apps: MutableList<AppModel>) {
-        val adapter = RequestAdapter(apps)
+    private fun setPersonnelRequestAdapter() {
+        val adapter = RequestAdapter(homeViewModel.getPersonnelRequest())
         val linearLayoutManager = LinearLayoutManager(
             requireContext(),
             LinearLayoutManager.HORIZONTAL,
@@ -237,22 +174,11 @@ class HomeFragment : Fragment(){
     //---------------------------------------------------------------------------------------------- setPersonnelRequestAdapter
 
 
-/*    private fun setSliderAdapter() {
-        val apps: MutableList<AppModel> = mutableListOf()
-        apps.add(AppModel(R.drawable.icon_trip, getString(R.string.tripAndMap), 1))
-        apps.add(AppModel(R.drawable.icon_personnel, getString(R.string.personnelList), 1))
-        apps.add(AppModel(R.drawable.icon_food_reservation, getString(R.string.foodReservation), 0))
-        apps.add(AppModel(R.drawable.icon_gift_card, getString(R.string.giftCard), 0))
-        binding.viewPager.adapter = SliderAdapter(apps)
-    }*/
-
-
     //---------------------------------------------------------------------------------------------- onDestroyView
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
     //---------------------------------------------------------------------------------------------- onDestroyView
-
 
 }

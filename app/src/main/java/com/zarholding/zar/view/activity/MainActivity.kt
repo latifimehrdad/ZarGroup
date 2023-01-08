@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import com.google.android.material.snackbar.Snackbar
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -272,6 +273,19 @@ class MainActivity : AppCompatActivity() {
         )
     }
     //---------------------------------------------------------------------------------------------- registerReceiver
+
+
+    //---------------------------------------------------------------------------------------------- showMessage
+    fun showMessage(message: String) {
+        val snack = Snackbar.make(binding.constraintLayoutParent, message, 5 * 1000)
+        snack.setBackgroundTint(resources.getColor(R.color.primaryColor, theme))
+        snack.setTextColor(resources.getColor(R.color.textViewColor3, theme))
+        snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
+        snack.setActionTextColor(resources.getColor(R.color.textViewColor1, theme))
+        snack.show()
+    }
+    //---------------------------------------------------------------------------------------------- showMessage
+
 
 
     //---------------------------------------------------------------------------------------------- onDestroy
