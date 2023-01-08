@@ -106,7 +106,7 @@
     <string name="chooseFromList">انتخاب از لیست</string>
     <string name="alphabet">حرف</string>
     <string name="iran">ایران</string>
-    <string name="carHint"> </string>
+    <string name="carHint">--</string>
     <string name="passengers">مسافران</string>
     <string name="passengersDot">مسافران :</string>
     <string name="sendInformation">ارسال اطلاعات</string>
@@ -195,6 +195,13 @@
     <string name="sendSms">ارسال SMS</string>
     <string name="qrCodeNotDigit">مقدار دریافت شده حاوی کاراکتر غیر عددی است</string>
     <string name="pleaseEnterCarNumber">لطفا شماره پلاک ماشین را وارد کنید</string>
+    <string name="startTrip">شروع سفر</string>
+    <string name="finishTrip">پایان سفر</string>
+    <string name="finishedTrip">سفر به پایان رسیده</string>
+    <string name="orgMobile">شماره موبایل سازمانی</string>
+    <string name="orgEmail">ایمیل سازمانی</string>
+    <string name="plaqueNumber">پلاک خودرو</string>
+    <string name="carModel">مدل خودرو</string>
 
     
     

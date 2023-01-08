@@ -1,14 +1,28 @@
 package com.zarholding.zar.view.fragment
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.location.*
+import com.google.android.gms.tasks.CancellationToken
+import com.google.android.gms.tasks.CancellationTokenSource
+import com.google.android.gms.tasks.OnTokenCanceledListener
 import com.google.android.material.snackbar.Snackbar
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.zar.core.enums.EnumApiError
 import com.zar.core.tools.loadings.LoadingManager
 import com.zarholding.zar.model.enum.EnumAdminTaxiType
@@ -30,7 +44,6 @@ import com.zarholding.zar.view.recycler.holder.DriverTaxiRequestHolder
 import com.zarholding.zar.viewmodel.AdminTaxiListViewModel
 import com.zarholding.zar.viewmodel.AdminTaxiViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import org.osmdroid.util.GeoPoint
 import zar.R
 import zar.databinding.FragmentAdminTaxiListBinding
 import javax.inject.Inject
@@ -51,6 +64,7 @@ class AdminTaxiListFragment : Fragment() {
     private var driverTaxiRequestAdapter : DriverTaxiRequestAdapter? = null
 
     private var endlessScrollListener: EndlessScrollListener? = null
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
 
     //---------------------------------------------------------------------------------------------- onCreateView
@@ -90,7 +104,7 @@ class AdminTaxiListFragment : Fragment() {
         snack.setAction(getString(R.string.dismiss)) { snack.dismiss() }
         snack.setActionTextColor(resources.getColor(R.color.textViewColor1, context?.theme))
         snack.show()
-        loadingManager.stopLoadingRecycler()
+//        loadingManager.stopLoadingRecycler()
         binding.textViewLoading.visibility = View.GONE
     }
     //---------------------------------------------------------------------------------------------- showMessage
@@ -249,6 +263,10 @@ class AdminTaxiListFragment : Fragment() {
                     findNavController()
                         .navigate(R.id.action_AdminTaxiFragment_to_MapFragment, bundle)
                 }
+
+                override fun changeTripStatus(position: Int) {
+                    requestLocationPermission(position)
+                }
             }
             AdminTaxiViewModel.requestTaxiLiveDate.value = items.size
             driverTaxiRequestAdapter = DriverTaxiRequestAdapter(items.toMutableList(), click)
@@ -265,6 +283,66 @@ class AdminTaxiListFragment : Fragment() {
     }
     //---------------------------------------------------------------------------------------------- setDriverTaxiRequestAdapter
 
+
+
+    //---------------------------------------------------------------------------------------------- requestLocationPermission
+    private fun requestLocationPermission(position: Int) {
+        if (context == null)
+            return
+        Dexter.withContext(requireContext())
+            .withPermissions(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION)
+            .withListener(object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(p0: MultiplePermissionsReport?) {
+                    getCurrentLocation(position)
+                }
+                override fun onPermissionRationaleShouldBeShown(
+                    p0: MutableList<PermissionRequest>?,
+                    p1: PermissionToken?
+                ) {}
+            })
+            .check()
+
+
+    }
+    //---------------------------------------------------------------------------------------------- requestLocationPermission
+
+
+
+    //---------------------------------------------------------------------------------------------- getCurrentLocation
+    private fun getCurrentLocation(position: Int) {
+
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+            == PackageManager.PERMISSION_GRANTED
+        ) {
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+            fusedLocationClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, object : CancellationToken() {
+                override fun onCanceledRequested(p0: OnTokenCanceledListener) = CancellationTokenSource().token
+                override fun isCancellationRequested() = false
+            }).addOnSuccessListener { location: Location? ->
+                if (location == null)
+                    Toast.makeText(requireContext(), "Cannot get location.", Toast.LENGTH_SHORT).show()
+                else {
+                    val lat = location.latitude
+                    val lon = location.longitude
+                    requestDriverChangeTripStatus(position, lat, lon)
+                }
+            }
+        }
+    }
+    //---------------------------------------------------------------------------------------------- getCurrentLocation
+
+
+
+    //---------------------------------------------------------------------------------------------- requestDriverChangeTripStatus
+    private fun requestDriverChangeTripStatus(position: Int, lat : Double, lon : Double) {
+        startLoading()
+        adminTaxiListViewModel.requestDriverChangeTripStatus(
+            driverTaxiRequestAdapter!!.getList()[position], lat, lon
+        )
+    }
+    //---------------------------------------------------------------------------------------------- requestDriverChangeTripStatus
 
 
     //______________________________________________________________________________________________ getEndlessScrollListener

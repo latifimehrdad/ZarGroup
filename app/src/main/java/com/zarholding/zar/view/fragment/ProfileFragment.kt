@@ -5,12 +5,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.LinearInterpolator
+import android.view.animation.RotateAnimation
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.material.snackbar.Snackbar
-import com.zarholding.zar.database.dao.UserInfoDao
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.view.dialog.ConfirmDialog
+import com.zarholding.zar.view.dialog.EditPlaqueDialog
 import com.zarholding.zar.viewmodel.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import zar.R
@@ -26,9 +29,6 @@ class ProfileFragment : Fragment(){
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
-
-    @Inject
-    lateinit var userInfoDao: UserInfoDao
 
     @Inject
     lateinit var sharedPreferences: SharedPreferences
@@ -75,8 +75,9 @@ class ProfileFragment : Fragment(){
     private fun setListener() {
         binding.layoutLogout.root.setOnClickListener { logOut() }
         binding.layoutMessage.root.setOnClickListener { disableFeature() }
-        binding.layoutPersonalInformation.root.setOnClickListener { disableFeature() }
+        binding.layoutPersonalInformation.setOnClickListener { showAndHideInfo() }
         binding.layoutTrainings.root.setOnClickListener { disableFeature() }
+        binding.layoutPlaque.root.setOnClickListener { showEditCarPlaque() }
     }
     //---------------------------------------------------------------------------------------------- setListener
 
@@ -111,12 +112,74 @@ class ProfileFragment : Fragment(){
 
     //---------------------------------------------------------------------------------------------- setUserInfo
     private fun setUserInfo() {
-        val user = userInfoDao.getUserInfo()
-        binding.item = user
+        binding.item = profileViewModel.getUserInfo()
         binding.token = profileViewModel.getBearerToken()
     }
     //---------------------------------------------------------------------------------------------- setUserInfo
 
+
+
+    //---------------------------------------------------------------------------------------------- showAndHideInfo
+    private fun showAndHideInfo() {
+        if (binding.expandableInfo.isExpanded)
+            hideMoreInfo()
+        else
+            showMoreInfo()
+    }
+    //---------------------------------------------------------------------------------------------- showAndHideInfo
+
+
+
+    //---------------------------------------------------------------------------------------------- showMoreInfo
+    private fun showMoreInfo() {
+        binding.expandableInfo.expand()
+        val rotate = RotateAnimation(
+            0f,
+            -90f,
+            Animation.RELATIVE_TO_SELF,
+            0.5f,
+            Animation.RELATIVE_TO_SELF,
+            0.5f
+        )
+        rotate.duration = 350
+        rotate.interpolator = LinearInterpolator()
+        rotate.fillAfter = true
+        binding.imageViewMore.startAnimation(rotate)
+    }
+    //---------------------------------------------------------------------------------------------- showMoreInfo
+
+
+    //---------------------------------------------------------------------------------------------- hideMoreInfo
+    private fun hideMoreInfo() {
+        binding.expandableInfo.collapse()
+        val rotate = RotateAnimation(
+            -90f,
+            0f,
+            Animation.RELATIVE_TO_SELF,
+            0.5f,
+            Animation.RELATIVE_TO_SELF,
+            0.5f
+        )
+        rotate.duration = 400
+        rotate.interpolator = LinearInterpolator()
+        rotate.fillAfter = true
+        binding.imageViewMore.startAnimation(rotate)
+    }
+    //---------------------------------------------------------------------------------------------- hideMoreInfo
+
+
+
+    //---------------------------------------------------------------------------------------------- showEditCarPlaque
+    private fun showEditCarPlaque() {
+        val click = object : EditPlaqueDialog.Click {
+            override fun editPlaque() {
+
+                setUserInfo()
+            }
+        }
+        EditPlaqueDialog(click).show(childFragmentManager, "edit plaque")
+    }
+    //---------------------------------------------------------------------------------------------- showEditCarPlaque
 
 
 

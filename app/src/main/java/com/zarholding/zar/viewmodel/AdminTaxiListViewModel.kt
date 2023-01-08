@@ -6,6 +6,8 @@ import com.zar.core.models.ErrorApiModel
 import com.zar.core.tools.api.checkResponseError
 import com.zarholding.zar.model.enum.EnumAdminTaxiType
 import com.zarholding.zar.model.enum.EnumPersonnelType
+import com.zarholding.zar.model.enum.EnumTripStatus
+import com.zarholding.zar.model.request.DriverChangeTripStatus
 import com.zarholding.zar.model.request.TaxiChangeStatusRequest
 import com.zarholding.zar.model.response.taxi.AdminTaxiRequestModel
 import com.zarholding.zar.repository.TaxiRepository
@@ -28,7 +30,6 @@ class AdminTaxiListViewModel @Inject constructor(
     private var job: Job? = null
     val errorLiveDate = SingleLiveEvent<ErrorApiModel>()
     val taxiRequestListLiveData = SingleLiveEvent<List<AdminTaxiRequestModel>>()
-
 
     //---------------------------------------------------------------------------------------------- setError
     private suspend fun setError(response: Response<*>?) {
@@ -195,6 +196,45 @@ class AdminTaxiListViewModel @Inject constructor(
         }
     }
     //---------------------------------------------------------------------------------------------- requestChangeStatusOfTaxiRequests
+
+
+
+    //---------------------------------------------------------------------------------------------- requestDriverChangeTripStatus
+    fun requestDriverChangeTripStatus(item : AdminTaxiRequestModel,lat : Double, lon : Double) {
+
+        val status = when(item.tripStatus) {
+            EnumTripStatus.Assigned -> EnumTripStatus.Started
+            EnumTripStatus.Started -> EnumTripStatus.Finished
+            else ->{
+                EnumTripStatus.None
+            }
+        }
+        val request = DriverChangeTripStatus(
+            item.id,
+            status,
+            lat,
+            lon
+        )
+        job = CoroutineScope(IO + exceptionHandler()).launch {
+            val response = taxiRepository.requestDriverChangeTripStatus(request)
+            if (response?.isSuccessful == true) {
+                response.body()?.let {
+                    if (it.hasError)
+                        setError(it.message)
+                    else {
+                        setError(it.message)
+                        taxiRepository.pageNumber = 0
+                        getTaxiList()
+                    }
+                } ?: run {
+                    setError("اطلاعات خالی است")
+                }
+            } else
+                setError(response)
+        }
+    }
+    //---------------------------------------------------------------------------------------------- requestDriverChangeTripStatus
+
 
 
 

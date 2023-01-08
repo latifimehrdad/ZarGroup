@@ -5,7 +5,7 @@ import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
 import androidx.recyclerview.widget.RecyclerView
-import com.zarholding.zar.model.enum.EnumTripStatus
+import com.zarholding.zar.model.enum.EnumStatus
 import com.zarholding.zar.model.other.ShowImageModel
 import com.zarholding.zar.model.response.trip.TripModel
 import com.zarholding.zar.utility.extension.setRegisterStationStatus
@@ -39,7 +39,7 @@ class MyServiceHolder(private val binding: ItemMyServiceBinding) :
         binding.imageViewStatus.setRegisterStationStatus(item.myStationTripStatus)
         binding.textViewStatus.setRegisterStationStatus(item.myStationTripStatus)
         item.myStationTripStatus?.let {
-            if (it == EnumTripStatus.Reject)
+            if (it == EnumStatus.Reject)
                 binding.textViewReason.visibility = View.VISIBLE
             else
                 binding.textViewReason.visibility = View.GONE

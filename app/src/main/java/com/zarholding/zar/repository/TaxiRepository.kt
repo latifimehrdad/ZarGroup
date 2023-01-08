@@ -14,7 +14,7 @@ class TaxiRepository @Inject constructor(
     private val tokenRepository: TokenRepository
 ) {
 
-    private var pageNumber = 0
+    var pageNumber = 0
     private val pageSize = 3
     val request = AdminTaxiListRequest(pageNumber, pageSize, null)
 
@@ -87,5 +87,12 @@ class TaxiRepository @Inject constructor(
         }
     }
     //---------------------------------------------------------------------------------------------- requestAssignDriverToRequest
+
+
+
+    //---------------------------------------------------------------------------------------------- requestDriverChangeTripStatus
+    suspend fun requestDriverChangeTripStatus(request : DriverChangeTripStatus) =
+        apiCall { api.requestDriverChangeTripStatus(request, tokenRepository.getBearerToken()) }
+    //---------------------------------------------------------------------------------------------- requestDriverChangeTripStatus
 
 }

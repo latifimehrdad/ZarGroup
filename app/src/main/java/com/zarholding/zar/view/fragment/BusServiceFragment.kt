@@ -20,7 +20,7 @@ import com.zar.core.enums.EnumApiError
 import com.zar.core.tools.loadings.LoadingManager
 import com.zar.core.tools.manager.DialogManager
 import com.zar.core.tools.manager.ThemeManager
-import com.zarholding.zar.model.enum.EnumTripStatus
+import com.zarholding.zar.model.enum.EnumStatus
 import com.zarholding.zar.model.other.ShowImageModel
 import com.zarholding.zar.model.response.trip.TripModel
 import com.zarholding.zar.utility.CompanionValues
@@ -395,7 +395,7 @@ class BusServiceFragment : Fragment(){
             CoroutineScope(Main).launch {
                 delay(300)
                 binding.textViewLoading.visibility = View.GONE
-                if (tripSelect == TripSelect.MY && item.myStationTripStatus == EnumTripStatus.Confirmed)
+                if (tripSelect == TripSelect.MY && item.myStationTripStatus == EnumStatus.Confirmed)
                     startSignalR()
             }.join()
         }

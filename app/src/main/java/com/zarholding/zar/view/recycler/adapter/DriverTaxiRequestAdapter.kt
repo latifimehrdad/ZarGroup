@@ -30,7 +30,7 @@ class DriverTaxiRequestAdapter(
 
     //---------------------------------------------------------------------------------------------- onBindViewHolder
     override fun onBindViewHolder(holder: DriverTaxiRequestHolder, position: Int) {
-        holder.bind(items[position])
+        holder.bind(items[position], position)
     }
     //---------------------------------------------------------------------------------------------- onBindViewHolder
 
@@ -48,5 +48,9 @@ class DriverTaxiRequestAdapter(
     }
     //---------------------------------------------------------------------------------------------- addRequest
 
+
+    //---------------------------------------------------------------------------------------------- getList
+    fun getList() = items
+    //---------------------------------------------------------------------------------------------- getList
 
 }

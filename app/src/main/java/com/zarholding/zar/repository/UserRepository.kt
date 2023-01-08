@@ -8,6 +8,7 @@ import com.zarholding.zar.database.dao.UserInfoDao
 import com.zarholding.zar.database.entity.RoleEntity
 import com.zarholding.zar.database.entity.UserInfoEntity
 import com.zarholding.zar.model.enum.EnumPersonnelType
+import com.zarholding.zar.model.request.CarPlaqueEditRequest
 import com.zarholding.zar.model.request.FilterUserRequestModel
 import com.zarholding.zar.model.request.UserInfoRequest
 import com.zarholding.zar.model.response.user.UserResponseModel
@@ -86,11 +87,16 @@ class UserRepository @Inject constructor(
     //---------------------------------------------------------------------------------------------- insertUserRole
 
 
-
     //---------------------------------------------------------------------------------------------- deleteUser
     fun deleteUser() {
         userInfoDao.deleteAll()
     }
     //---------------------------------------------------------------------------------------------- deleteUser
+
+
+    //---------------------------------------------------------------------------------------------- requestChangeCarPlaque
+    suspend fun requestChangeCarPlaque(request : CarPlaqueEditRequest) =
+        apiCall { api.requestChangeCarPlaque(request, tokenRepository.getBearerToken()) }
+    //---------------------------------------------------------------------------------------------- requestChangeCarPlaque
 
 }

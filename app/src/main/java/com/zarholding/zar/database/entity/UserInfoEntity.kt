@@ -21,7 +21,9 @@ data class UserInfoEntity(
     val email : String?,
     val mobile : String?,
     val roles : List<String>?,
-    val userType : String?
+    val userType : String?,
+    var pelak : String?,
+    val carModel : String?
 ) {
     @PrimaryKey(autoGenerate = false)
     var id : Int = 0

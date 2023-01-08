@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+
+        <variable
+            name="title"
+            type="String" />
+
+        <variable
+            name="value"
+            type="String" />
+
+        <variable
+            name="icon"
+            type="android.graphics.drawable.Drawable" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/imageViewIcon"
+            android:layout_width="@dimen/_17sdp"
+            android:layout_height="@dimen/_17sdp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginHorizontal="@dimen/_5sdp"
+            android:layout_marginVertical="@dimen/_7sdp"
+            android:src="@{icon}"
+            android:contentDescription="@string/profileDescription" />
+
+
+        <TextView
+            android:id="@+id/textViewTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@id/imageViewIcon"
+            app:layout_constraintBottom_toBottomOf="@id/imageViewIcon"
+            app:layout_constraintEnd_toStartOf="@id/imageViewIcon"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:text="@{title}"
+            android:fontFamily="@font/kalameh_light"
+            android:textSize="@dimen/_8sdp"
+            android:textColor="@color/textViewFooter"
+            />
+
+
+        <TextView
+            android:id="@+id/textViewValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@id/imageViewIcon"
+            app:layout_constraintBottom_toBottomOf="@id/imageViewIcon"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginHorizontal="@dimen/_5sdp"
+            android:text="@{value}"
+            android:fontFamily="@font/kalameh_light"
+            android:textSize="@dimen/_8sdp"
+            android:textColor="@color/textViewFooter" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0.7dp"
+            android:background="@color/textViewFooter"
+            app:layout_constraintStart_toEndOf="@id/textViewValue"
+            app:layout_constraintEnd_toStartOf="@id/textViewTitle"
+            android:layout_marginHorizontal="@dimen/_5sdp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</layout>
+

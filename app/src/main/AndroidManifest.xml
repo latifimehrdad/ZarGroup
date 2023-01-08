@@ -41,11 +41,6 @@
             android:enabled="true"
             android:process=":serviceProcess"/>
 
-        <service android:name="com.zarholding.zar.background.SignalrNotificationBackgroundService"
-            android:enabled="true"
-            android:exported="false"
-            android:process=":serviceProcess" />
-
 
         <service android:name="com.zarholding.zar.background.ZarNotificationService"
             android:enabled="true"

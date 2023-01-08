@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.zar.core.enums.EnumApiError
 import com.zar.core.tools.loadings.LoadingManager
-import com.zarholding.zar.model.enum.EnumTripStatus
+import com.zarholding.zar.model.enum.EnumStatus
 import com.zarholding.zar.model.request.TripRequestRegisterStatusModel
 import com.zarholding.zar.model.response.trip.TripRequestRegisterModel
 import com.zarholding.zar.view.activity.MainActivity
@@ -169,7 +169,7 @@ class AdminBusFragment : Fragment(){
     private fun showDialogReasonOfReject() {
         val click = object : RejectReasonDialog.Click {
             override fun clickSend(reason: String) {
-                requestConfirmAndRejectTripRequestRegister(EnumTripStatus.Reject, reason)
+                requestConfirmAndRejectTripRequestRegister(EnumStatus.Reject, reason)
             }
 
         }
@@ -183,7 +183,7 @@ class AdminBusFragment : Fragment(){
     private fun showDialogConfirm() {
         val click = object : ConfirmDialog.Click {
             override fun clickYes() {
-                requestConfirmAndRejectTripRequestRegister(EnumTripStatus.Confirmed, null)
+                requestConfirmAndRejectTripRequestRegister(EnumStatus.Confirmed, null)
             }
         }
         ConfirmDialog(
@@ -198,7 +198,7 @@ class AdminBusFragment : Fragment(){
 
 
     //---------------------------------------------------------------------------------------------- requestConfirmAndRejectTripRequestRegister
-    private fun requestConfirmAndRejectTripRequestRegister(status: EnumTripStatus, reason: String?) {
+    private fun requestConfirmAndRejectTripRequestRegister(status: EnumStatus, reason: String?) {
         val chosen = adapter.getItems().filterList { choose }
         if (chosen.isEmpty()) {
             showMessage(getString(R.string.chooseItemsIsEmpty))

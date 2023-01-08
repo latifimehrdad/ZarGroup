@@ -5,6 +5,7 @@ import com.zar.core.enums.EnumApiError
 import com.zar.core.models.ErrorApiModel
 import com.zar.core.tools.api.checkResponseError
 import com.zarholding.zar.database.entity.UserInfoEntity
+import com.zarholding.zar.model.request.CarPlaqueEditRequest
 import com.zarholding.zar.model.request.UserInfoRequest
 import com.zarholding.zar.repository.TokenRepository
 import com.zarholding.zar.repository.UserRepository
@@ -29,6 +30,7 @@ class ParkingViewModel @Inject constructor(
     var plaqueNumber2 : String? = null
     var plaqueCity : String? = null
     var plaqueAlphabet : String? = null
+    var carModel : String? = null
 
     //---------------------------------------------------------------------------------------------- setError
     private suspend fun setError(response: Response<*>?) {
@@ -48,6 +50,46 @@ class ParkingViewModel @Inject constructor(
         job?.cancel()
     }
     //---------------------------------------------------------------------------------------------- setError
+
+
+    //---------------------------------------------------------------------------------------------- requestChangeCarPlaque
+    fun requestChangeCarPlaque() {
+        CoroutineScope(Dispatchers.IO + exceptionHandler()).launch {
+            if (plaqueNumber1?.length != 2 || plaqueNumber2?.length != 3 ||
+                plaqueCity?.length != 2 || plaqueAlphabet.isNullOrEmpty()
+            ) {
+                setError("اطلاعات پلاک را کامل وارد نمایید")
+            } else {
+                val user = getUserInfo()
+                if (user == null)
+                    setError("اطلاعات خالی است")
+                else {
+                    val plaque = plaqueNumber1 + plaqueAlphabet + plaqueNumber2 + plaqueCity
+                    val model = CarPlaqueEditRequest(carModel, plaque)
+                    val response = userRepository.requestChangeCarPlaque(model)
+                    if (response?.isSuccessful == true) {
+                        val userInfo = response.body()
+                        userInfo?.let {
+                            if (it.hasError)
+                                setError(it.message)
+                            else {
+                                user.pelak = plaque
+                                userRepository.insertUserInfo(user)
+                                withContext(Main) {
+                                    successLiveData.value = userInfoEntity
+                                }
+                            }
+                        } ?: run {
+                            setError("اطلاعات خالی است")
+                        }
+                    } else
+                        setError(response)
+                }
+            }
+        }
+    }
+    //---------------------------------------------------------------------------------------------- requestChangeCarPlaque
+
 
 
     //---------------------------------------------------------------------------------------------- requestUserInfo
@@ -109,6 +151,11 @@ class ParkingViewModel @Inject constructor(
         "ف","ق","ک","گ","ل","م","ن","و","ه","ی"
     )
     //---------------------------------------------------------------------------------------------- getAlphabet
+
+
+    //---------------------------------------------------------------------------------------------- getUserInfo
+    fun getUserInfo() = userRepository.getUser()
+    //---------------------------------------------------------------------------------------------- getUserInfo
 
 
     //---------------------------------------------------------------------------------------------- onCleared

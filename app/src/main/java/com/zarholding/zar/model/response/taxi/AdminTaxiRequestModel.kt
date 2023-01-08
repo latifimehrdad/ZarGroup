@@ -2,6 +2,7 @@ package com.zarholding.zar.model.response.taxi
 
 import com.zarholding.zar.model.enum.EnumTaxiRequestType
 import com.zarholding.zar.model.enum.EnumTaxiRequestStatus
+import com.zarholding.zar.model.enum.EnumTripStatus
 import com.zarholding.zar.model.response.PassengerModel
 
 data class AdminTaxiRequestModel(
@@ -31,5 +32,6 @@ data class AdminTaxiRequestModel(
     val approverName : String?,
     val waitingTime : Int,
     val personnelJobKeyText : String?,
-    val organizationUnit : String?
+    val organizationUnit : String?,
+    var tripStatus : EnumTripStatus
 )

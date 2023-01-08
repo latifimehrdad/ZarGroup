@@ -8,7 +8,7 @@ import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.LazyHeaders
 import com.zarholding.zar.api.ApiSuperApp
 import com.zarholding.zar.hilt.Providers
-import com.zarholding.zar.model.enum.EnumTripStatus
+import com.zarholding.zar.model.enum.EnumStatus
 import zar.R
 
 /**
@@ -16,12 +16,12 @@ import zar.R
  */
 
 //-------------------------------------------------------------------------------------------------- setRegisterStationStatus
-fun ImageView.setRegisterStationStatus(status: EnumTripStatus?) {
+fun ImageView.setRegisterStationStatus(status: EnumStatus?) {
     status?.let {
         when (status) {
-            EnumTripStatus.Pending -> setImageResource(R.drawable.ic_pending)
-            EnumTripStatus.Confirmed -> setImageResource(R.drawable.ic_check)
-            EnumTripStatus.Reject -> setImageResource(R.drawable.ic_delete)
+            EnumStatus.Pending -> setImageResource(R.drawable.ic_pending)
+            EnumStatus.Confirmed -> setImageResource(R.drawable.ic_check)
+            EnumStatus.Reject -> setImageResource(R.drawable.ic_delete)
         }
     }
 }

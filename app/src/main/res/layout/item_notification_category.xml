@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout>
+<layout xmlns:tools="http://schemas.android.com/tools">
     <data>
         <variable
             name="item"
@@ -10,7 +10,6 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:paddingVertical="8dp"
         android:clipToPadding="false"
@@ -44,16 +43,12 @@
             android:fontFamily="@font/kalameh_light"
             app:setDateTime="@{item.date}"/>
 
-
-        <FrameLayout
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/categoryName"
-            android:outlineProvider="bounds"
-            android:elevation="2dp">
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:cardElevation="@dimen/_5sdp">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewNotification"
@@ -64,7 +59,7 @@
                 tools:itemCount="2"
                 tools:listitem="@layout/item_notification" />
 
-        </FrameLayout>
+        </androidx.cardview.widget.CardView>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

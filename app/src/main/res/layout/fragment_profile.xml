@@ -136,18 +136,114 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-            <include
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layoutPersonalInformation"
-                layout="@layout/layout_profile_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="@dimen/_10sdp"
-                app:layout_constraintTop_toBottomOf="@id/constraintLayoutProfile"
-                app:title="@{@string/personalInformation}"
-                app:icon="@{@drawable/ic_user_vector}"
-                app:showMore="@{true}"/>
+                app:layout_constraintTop_toBottomOf="@id/constraintLayoutProfile">
+
+                <ImageView
+                    android:id="@+id/imageViewMore"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    app:layout_constraintTop_toTopOf="@id/imageViewIcon"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginHorizontal="@dimen/_15sdp"
+                    android:src="@drawable/ic_more"
+                    android:contentDescription="@string/profileDescription" />
+
+                <ImageView
+                    android:id="@+id/imageViewIcon"
+                    android:layout_width="@dimen/_27sdp"
+                    android:layout_height="@dimen/_27sdp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginHorizontal="@dimen/_15sdp"
+                    android:layout_marginVertical="@dimen/_10sdp"
+                    android:src="@drawable/ic_user_vector"
+                    android:contentDescription="@string/profileDescription" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="@id/imageViewIcon"
+                    app:layout_constraintBottom_toBottomOf="@id/imageViewIcon"
+                    app:layout_constraintEnd_toStartOf="@id/imageViewIcon"
+                    app:layout_constraintStart_toEndOf="@id/imageViewMore"
+                    android:layout_marginHorizontal="@dimen/_20sdp"
+                    android:text="@string/personalInformation"
+                    android:fontFamily="@font/kalameh_light"
+                    android:textSize="@dimen/_10sdp"
+                    android:textColor="@color/textViewColor2"
+                    />
+
+                <net.cachapa.expandablelayout.ExpandableLayout
+                    android:id="@+id/expandableInfo"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="@id/imageViewMore"
+                    app:layout_constraintEnd_toStartOf="@id/imageViewIcon"
+                    app:layout_constraintTop_toBottomOf="@id/imageViewIcon"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    app:el_duration="500"
+                    app:el_expanded="false"
+                    app:el_parallax="0.5">
+
+                    <LinearLayout
+                        android:id="@+id/linearLayoutInfo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/_5sdp">
+
+                        <include
+                            layout="@layout/layout_profile_info_item"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:title="@{@string/orgMobile}"
+                            app:icon="@{@drawable/ic_mobile_message}"
+                            app:value="@{item.mobile}"/>
+
+                        <include
+                            layout="@layout/layout_profile_info_item"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:title="@{@string/orgEmail}"
+                            app:icon="@{@drawable/ic_email}"
+                            app:value="@{item.email}"/>
+
+                        <include
+                            layout="@layout/layout_profile_info_item"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:title="@{@string/organizationPhone}"
+                            app:icon="@{@drawable/ic_phone}"
+                            app:value="@{item.phone}"/>
+
+                        <include
+                            android:id="@+id/layoutPlaque"
+                            layout="@layout/layout_profile_info_plaque"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:title="@{@string/plaqueNumber}"
+                            app:icon="@{@drawable/ic_license_plate_number}"
+                            app:value="@{item.pelak}"/>
+
+                    </LinearLayout>
+
+                </net.cachapa.expandablelayout.ExpandableLayout>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1px"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:background="@color/textViewFooter"
+                    app:layout_constraintStart_toStartOf="@id/imageViewMore"
+                    app:layout_constraintEnd_toEndOf="@id/imageViewIcon"
+                    />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
             <include

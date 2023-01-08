@@ -3,7 +3,7 @@ package com.zarholding.zar.utility.extension
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.zar.core.tools.extensions.toSolarDate
-import com.zarholding.zar.model.enum.EnumTripStatus
+import com.zarholding.zar.model.enum.EnumStatus
 import com.zarholding.zar.model.notification_signalr.NotificationSignalrModel
 import com.zarholding.zar.model.response.PassengerModel
 import com.zarholding.zar.model.response.address.AddressModel
@@ -15,6 +15,22 @@ import java.time.LocalDateTime
 /**
  * Created by m-latifi on 11/14/2022.
  */
+
+//-------------------------------------------------------------------------------------------------- setCarPlaque
+@BindingAdapter("setCarPlaque")
+fun TextView.setCarPlaque(plaque: String?) {
+    text = if (plaque.isNullOrEmpty())
+        ""
+    else
+        when (tag.toString()) {
+            "number1" -> plaque.substring(0, 2)
+            "alphabet" -> plaque.substring(2, 3)
+            "number2" -> plaque.substring(3, 6)
+            "city" -> plaque.substring(6, 8)
+            else -> ""
+        }
+}
+//-------------------------------------------------------------------------------------------------- setCarPlaque
 
 
 //-------------------------------------------------------------------------------------------------- getMessageContent
@@ -180,17 +196,16 @@ fun TextView.setDriverAndStation(driverName: String, tripName: String, stationNa
 
 
 //-------------------------------------------------------------------------------------------------- setRegisterStationStatus
-fun TextView.setRegisterStationStatus(status: EnumTripStatus?) {
+fun TextView.setRegisterStationStatus(status: EnumStatus?) {
     status?.let {
         text = when (status) {
-            EnumTripStatus.Pending -> context.resources.getString(R.string.pendingForAccept)
-            EnumTripStatus.Confirmed -> context.resources.getString(R.string.confirmedByOfficial)
-            EnumTripStatus.Reject -> context.resources.getString(R.string.reject)
+            EnumStatus.Pending -> context.resources.getString(R.string.pendingForAccept)
+            EnumStatus.Confirmed -> context.resources.getString(R.string.confirmedByOfficial)
+            EnumStatus.Reject -> context.resources.getString(R.string.reject)
         }
     }
 }
 //-------------------------------------------------------------------------------------------------- setRegisterStationStatus
-
 
 
 //-------------------------------------------------------------------------------------------------- setMyStation

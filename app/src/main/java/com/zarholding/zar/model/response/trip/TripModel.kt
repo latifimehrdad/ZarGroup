@@ -1,6 +1,6 @@
 package com.zarholding.zar.model.response.trip
 
-import com.zarholding.zar.model.enum.EnumTripStatus
+import com.zarholding.zar.model.enum.EnumStatus
 import com.zarholding.zardriver.model.response.TripStationModel
 
 /**
@@ -21,7 +21,7 @@ data class TripModel(
     val stations : List<TripStationModel>?,
     val strTripPoint : String?,
     val myStationTripId : Int,
-    val myStationTripStatus : EnumTripStatus?,
+    val myStationTripStatus : EnumStatus?,
     val myStationName : String?,
     val carImageName : String?,
     val driverImageName : String?,

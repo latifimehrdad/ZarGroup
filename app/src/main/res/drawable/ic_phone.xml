@@ -1,20 +1,42 @@
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="26.5dp"
-    android:height="20.5dp"
-    android:viewportWidth="26.5"
-    android:viewportHeight="20.5">
-  <path
-      android:pathData="M18.75,2.092A17.414,17.414 0,0 0,13.25 1.25a17.419,17.419 0,0 0,-5.5 0.842m11,0A10.876,10.876 0,0 1,24.25 5.75L21.75,8.25l-3,-2zM7.75,2.092A10.876,10.876 0,0 0,2.25 5.75L4.75,8.25l3,-2zM11.25,4.25v3m0,0 l-5.414,5.414A2,2 0,0 0,5.25 14.078L5.25,15.25a2,2 0,0 0,2 2h12a2,2 0,0 0,2 -2v-1.172a2,2 0,0 0,-0.586 -1.414L15.25,7.25m-4,0h4m0,0L15.25,4.25"
-      android:strokeLineJoin="round"
-      android:strokeWidth="1.5"
-      android:fillColor="#00000000"
-      android:strokeColor="@color/textViewColor1"
-      android:strokeLineCap="round"/>
-  <path
-      android:pathData="M13.25,12.25m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0"
-      android:strokeLineJoin="round"
-      android:strokeWidth="1.5"
-      android:fillColor="#00000000"
-      android:strokeColor="@color/textViewColor1"
-      android:strokeLineCap="round"/>
+<vector android:height="50dp" android:viewportHeight="15"
+    android:viewportWidth="15" android:width="50dp" xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:fillColor="#00000000"
+        android:pathData="M3.25,3.25h11.5v9.5L3.25,12.75z"
+        android:strokeColor="@color/profileIconColor2" android:strokeWidth=".5"/>
+    <path android:fillColor="#fff" android:pathData="M5,0h7v5L5,5z"
+        android:strokeColor="#00000000" android:strokeWidth=".5"/>
+    <path android:fillColor="#00000000"
+        android:pathData="M5.25,0.25h6.5v4.5L5.25,4.75z"
+        android:strokeColor="@color/profileIconColor2" android:strokeWidth=".5"/>
+    <group>
+        <clip-path android:pathData="M6,7h5v4L6,11z"/>
+        <path android:fillColor="@color/profileIconColor" android:pathData="M6,7h1v1L6,8z"/>
+    </group>
+    <group>
+        <clip-path android:pathData="M8,7h5v4L8,11z"/>
+        <path android:fillColor="@color/profileIconColor" android:pathData="M8,7h1v1L8,8z"/>
+    </group>
+    <group>
+        <clip-path android:pathData="M10,7h5v4L10,11z"/>
+        <path android:fillColor="@color/profileIconColor" android:pathData="M10,7h1v1L10,8z"/>
+    </group>
+    <group>
+        <clip-path android:pathData="M6,9h5v4L6,13z"/>
+        <path android:fillColor="@color/profileIconColor" android:pathData="M6,9h1v1L6,10z"/>
+    </group>
+    <group>
+        <clip-path android:pathData="M8,9h5v4L8,13z"/>
+        <path android:fillColor="@color/profileIconColor" android:pathData="M8,9h1v1L8,10z"/>
+    </group>
+    <group>
+        <clip-path android:pathData="M10,9h5v4L10,13z"/>
+        <path android:fillColor="@color/profileIconColor" android:pathData="M10,9h1v1L10,10z"/>
+    </group>
+    <path android:fillColor="@color/profileIconColor2"
+        android:pathData="M1.51,13.171A1.502,1.502 0,0 0,3 14.5c0.77,0 1.405,-0.582 1.49,-1.329L1.51,13.171m-0.51,-0.5h4L5,13a2,2 0,1 1,-4 0v-0.329z" android:strokeColor="#00000000"/>
+    <path android:fillColor="#fff" android:pathData="M0,1h4v12L0,13z"
+        android:strokeColor="#00000000" android:strokeWidth=".5"/>
+    <path android:fillColor="#00000000"
+        android:pathData="M0.25,1.25h3.5v11.5L0.25,12.75z"
+        android:strokeColor="@color/profileIconColor2" android:strokeWidth=".5"/>
 </vector>

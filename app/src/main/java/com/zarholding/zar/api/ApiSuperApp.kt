@@ -188,6 +188,19 @@ interface ApiSuperApp {
         @Header("Authorization") token : String
     ) : Response<TaxiRemoveFavePlaceResponse>
 
+    @POST("$v1/CarRequest/driverResponeCarRequest")
+    suspend fun requestDriverChangeTripStatus(
+        @Body request : DriverChangeTripStatus,
+        @Header("Authorization") token : String
+    ) : Response<TaxiRemoveFavePlaceResponse>
+
+
+    @POST("$v1/User/Edit-Myinfo")
+    suspend fun requestChangeCarPlaque(
+        @Body request : CarPlaqueEditRequest,
+        @Header("Authorization") token : String
+    ) : Response<TaxiRemoveFavePlaceResponse>
+
 
     @GET
     suspend fun requestGetAddress(
