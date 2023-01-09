@@ -31,7 +31,9 @@ class SplashViewModel @Inject constructor(
     val successLiveData = SingleLiveEvent<Int>()
 
     //---------------------------------------------------------------------------------------------- userIsEntered
-    fun userIsEntered() = userRepository.isEntered()
+    fun userIsEntered() = sharedPreferences.getString(CompanionValues.TOKEN, null)?.let {
+        true
+    } ?: run { false }
     //---------------------------------------------------------------------------------------------- userIsEntered
 
 

@@ -63,7 +63,6 @@ class DashboardFragment : Fragment(){
         )
 
         apps.add(AppModel(R.drawable.icon_food_reservation, getString(R.string.foodReservation), 0))
-        apps.add(AppModel(R.drawable.icon_gift_card, getString(R.string.giftCard), 0))
 
         val click = object : DashboardItemHolder.Click {
             override fun appClick(action: Int) {

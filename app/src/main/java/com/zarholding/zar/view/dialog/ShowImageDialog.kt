@@ -9,7 +9,8 @@ import android.view.*
 import android.widget.ImageView
 import com.zarholding.zar.model.other.ShowImageModel
 import com.zarholding.zar.utility.TouchImageView
-import com.zarholding.zar.utility.extension.loadImage
+import com.zarholding.zar.view.extension.loadImage
+import com.zarholding.zar.view.extension.loadImageByToken
 import zar.R
 
 class ShowImageDialog(
@@ -46,8 +47,13 @@ class ShowImageDialog(
     private fun initDialog() {
         val imageViewClose = this.findViewById<ImageView>(R.id.imageViewClose)
         val touchImageView = this.findViewById<TouchImageView>(R.id.touchImageView)
-        touchImageView.loadImage(item.imageName, item.entityType)
-
+        item.token?.let {
+            touchImageView.loadImageByToken(item.imageName, it)
+        } ?: run {
+            item.entityType?.let {
+                touchImageView.loadImage(item.imageName, it)
+            }
+        }
         imageViewClose.setOnClickListener {
             dismiss()
         }

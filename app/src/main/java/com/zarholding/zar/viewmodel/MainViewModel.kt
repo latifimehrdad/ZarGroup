@@ -30,8 +30,6 @@ class MainViewModel @Inject constructor(
         sharedPreferences
             .edit()
             .putString(CompanionValues.TOKEN, null)
-            .putString(CompanionValues.userName, null)
-            .putString(CompanionValues.passcode, null)
             .putInt(CompanionValues.notificationLast, 0)
             .apply()
     }

@@ -1,5 +1,6 @@
 package com.zarholding.zar.viewmodel
 
+import androidx.lifecycle.MutableLiveData
 import com.zar.core.tools.extensions.persianNumberToEnglishNumber
 import com.zarholding.zar.database.entity.UserInfoEntity
 import com.zarholding.zar.hilt.ResourcesProvider
@@ -7,6 +8,7 @@ import com.zarholding.zar.model.request.CarPlaqueEditRequest
 import com.zarholding.zar.model.request.UserInfoRequest
 import com.zarholding.zar.repository.UserRepository
 import com.zarholding.zar.utility.SingleLiveEvent
+import com.zarholding.zar.view.extension.toCarPlaque
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.Main
@@ -21,11 +23,24 @@ class ParkingViewModel @Inject constructor(
 
     var userInfoEntity: UserInfoEntity? = null
     val successLiveData = SingleLiveEvent<UserInfoEntity>()
-    var plaqueNumber1: String? = null
-    var plaqueNumber2: String? = null
-    var plaqueCity: String? = null
-    var plaqueAlphabet: String? = null
-    var carModel: String? = null
+    val plaqueNumber1 = MutableLiveData<String>()
+    val plaqueNumber2 = MutableLiveData<String>()
+    val plaqueCity = MutableLiveData<String>()
+    val plaqueAlphabet = MutableLiveData<String>()
+    val carModel = MutableLiveData<String>()
+
+
+    //---------------------------------------------------------------------------------------------- initUserCarPlaque
+    fun initUserCarPlaque() {
+        getUserInfo()?.let {
+            carModel.value = it.carModel ?: ""
+            plaqueNumber1.value = it.pelak.toCarPlaque("number1")
+            plaqueNumber2.value = it.pelak.toCarPlaque("number2")
+            plaqueCity.value = it.pelak.toCarPlaque("city")
+            plaqueAlphabet.value = it.pelak.toCarPlaque("alphabet")
+        }
+    }
+    //---------------------------------------------------------------------------------------------- initUserCarPlaque
 
 
     //---------------------------------------------------------------------------------------------- requestChangeCarPlaque
@@ -38,11 +53,11 @@ class ParkingViewModel @Inject constructor(
                 if (user == null)
                     setMessage(resourcesProvider.getString(R.string.dataSendingIsEmpty))
                 else {
-                    val plaque = plaqueNumber1.persianNumberToEnglishNumber() +
-                            plaqueAlphabet +
-                            plaqueNumber2.persianNumberToEnglishNumber() +
-                            plaqueCity.persianNumberToEnglishNumber()
-                    val model = CarPlaqueEditRequest(carModel, plaque)
+                    val plaque = plaqueNumber1.value.persianNumberToEnglishNumber() +
+                            plaqueAlphabet.value +
+                            plaqueNumber2.value.persianNumberToEnglishNumber() +
+                            plaqueCity.value.persianNumberToEnglishNumber()
+                    val model = CarPlaqueEditRequest(carModel.value, plaque)
                     val response = userRepository.requestChangeCarPlaque(model)
                     if (response?.isSuccessful == true) {
                         val userInfo = response.body()
@@ -51,6 +66,7 @@ class ParkingViewModel @Inject constructor(
                                 setMessage(it.message)
                             else {
                                 user.pelak = plaque
+                                user.carModel = carModel.value
                                 userRepository.insertUserInfo(user)
                                 withContext(Main) {
                                     successLiveData.value = userInfoEntity
@@ -74,10 +90,10 @@ class ParkingViewModel @Inject constructor(
             if (checkPlaqueValidation())
                 setMessage(resourcesProvider.getString(R.string.plaqueInformationIsEmpty))
             else {
-                val plaque = plaqueNumber1.persianNumberToEnglishNumber() +
-                        plaqueAlphabet +
-                        plaqueNumber2.persianNumberToEnglishNumber() +
-                        plaqueCity.persianNumberToEnglishNumber()
+                val plaque = plaqueNumber1.value.persianNumberToEnglishNumber() +
+                        plaqueAlphabet.value +
+                        plaqueNumber2.value.persianNumberToEnglishNumber() +
+                        plaqueCity.value.persianNumberToEnglishNumber()
                 val request = UserInfoRequest(null, plaque)
                 val response = userRepository.requestGetUserInfo(request)
                 if (response?.isSuccessful == true) {
@@ -108,8 +124,8 @@ class ParkingViewModel @Inject constructor(
 
     //---------------------------------------------------------------------------------------------- checkPlaqueValidation
     private fun checkPlaqueValidation(): Boolean =
-        plaqueNumber1?.length != 2 || plaqueNumber2?.length != 3 ||
-                plaqueCity?.length != 2 || plaqueAlphabet.isNullOrEmpty()
+        plaqueNumber1.value?.length != 2 || plaqueNumber2.value?.length != 3 ||
+                plaqueCity.value?.length != 2 || plaqueAlphabet.value.isNullOrEmpty()
     //---------------------------------------------------------------------------------------------- checkPlaqueValidation
 
 

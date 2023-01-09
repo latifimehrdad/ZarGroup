@@ -16,7 +16,7 @@ import com.zarholding.zar.repository.UserRepository
 import com.zarholding.zar.utility.CompanionValues
 import com.zarholding.zar.utility.signalr.RemoteSignalREmitter
 import com.zarholding.zar.utility.signalr.SignalRListener
-import com.zarholding.zar.utility.extension.getMessageContent
+import com.zarholding.zar.view.extension.getMessageContent
 import dagger.hilt.android.AndroidEntryPoint
 import zar.R
 import javax.inject.Inject

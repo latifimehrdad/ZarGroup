@@ -1,18 +1,28 @@
 package com.zarholding.zar.view.fragment.taxi
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import android.util.Size
 import android.view.*
 import android.view.animation.AnimationUtils
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.snackbar.Snackbar
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.tasks.CancellationToken
+import com.google.android.gms.tasks.CancellationTokenSource
+import com.google.android.gms.tasks.OnTokenCanceledListener
 import com.skydoves.powerspinner.IconSpinnerAdapter
 import com.skydoves.powerspinner.IconSpinnerItem
 import com.zar.core.enums.EnumApiError
@@ -32,9 +42,9 @@ import com.zarholding.zar.utility.CompanionValues
 import com.zarholding.zar.utility.OsmManager
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.view.dialog.*
-import com.zarholding.zar.utility.extension.getAddress
-import com.zarholding.zar.utility.extension.hideKeyboard
-import com.zarholding.zar.utility.extension.setApplicatorNameToTextView
+import com.zarholding.zar.view.extension.getAddress
+import com.zarholding.zar.view.extension.hideKeyboard
+import com.zarholding.zar.view.extension.setApplicatorNameToTextView
 import com.zarholding.zar.view.recycler.adapter.PassengerAdapter
 import com.zarholding.zar.view.recycler.holder.PassengerItemHolder
 import com.zarholding.zar.viewmodel.TaxiReservationViewModel
@@ -67,6 +77,7 @@ class TaxiReservationFragment : Fragment() {
 
     private lateinit var osmManager: OsmManager
     private lateinit var passengersAdapter: PassengerAdapter
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     //---------------------------------------------------------------------------------------------- OnBackPressedCallback
     private val backClick = object : OnBackPressedCallback(true) {
@@ -257,6 +268,7 @@ class TaxiReservationFragment : Fragment() {
         binding.powerSpinnerDestination.setOnClickListener { powerSpinnerDestinationClick() }
         binding.powerSpinnerCompany.setOnClickListener { powerSpinnerCompanyClick() }
         binding.buttonSendRequest.setOnClickListener { requestTaxi() }
+        binding.imageViewMyLocation.setOnClickListener { findMyLocation() }
     }
     //---------------------------------------------------------------------------------------------- setListener
 
@@ -681,6 +693,7 @@ class TaxiReservationFragment : Fragment() {
         )
         binding.imageViewMarker.visibility = View.GONE
         binding.textViewChooseLocation.visibility = View.GONE
+        binding.imageViewMyLocation.visibility = View.GONE
         binding.textViewSearch.visibility = View.GONE
         val points = mutableListOf<GeoPoint>()
         points.add(taxiReservationViewModel.getOriginMarker()!!.position)
@@ -703,6 +716,7 @@ class TaxiReservationFragment : Fragment() {
         binding.imageViewMarker.setImageResource(R.drawable.ic_origin)
         binding.textViewChooseLocation.text = getString(R.string.pleaseSelectPlaceOfDestination)
         binding.textViewChooseLocation.visibility = View.VISIBLE
+        binding.imageViewMyLocation.visibility = View.VISIBLE
         binding.textViewSearch.visibility = View.VISIBLE
         binding.powerSpinnerDestination.clearSelectedItem()
         binding.powerSpinnerDestination.showArrow = true
@@ -1026,6 +1040,35 @@ class TaxiReservationFragment : Fragment() {
         }
     }
     //---------------------------------------------------------------------------------------------- fixMapScrolling
+
+
+    //---------------------------------------------------------------------------------------------- findMyLocation
+    private fun findMyLocation() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+            fusedLocationClient.getCurrentLocation(
+                LocationRequest.PRIORITY_HIGH_ACCURACY,
+                object : CancellationToken() {
+                    override fun onCanceledRequested(p0: OnTokenCanceledListener) =
+                        CancellationTokenSource().token
+
+                    override fun isCancellationRequested() = false
+                }).addOnSuccessListener { location: Location? ->
+                if (location == null)
+                    Toast.makeText(requireContext(), "Cannot get location.", Toast.LENGTH_SHORT)
+                        .show()
+                else {
+                    val current = GeoPoint(location.latitude, location.longitude)
+                    osmManager.moveCamera(current)
+                }
+            }
+        }
+    }
+    //---------------------------------------------------------------------------------------------- findMyLocation
 
 
     //---------------------------------------------------------------------------------------------- onDestroyView

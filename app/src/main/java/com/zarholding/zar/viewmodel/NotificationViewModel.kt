@@ -50,8 +50,16 @@ class NotificationViewModel @Inject constructor(
     //---------------------------------------------------------------------------------------------- setError
 
 
+    //---------------------------------------------------------------------------------------------- forceGetListNotification
+    fun forceGetListNotification() {
+        rawListNotification?.clear()
+        categoryNotification.clear()
+        requestGetNotification()
+    }
+    //---------------------------------------------------------------------------------------------- forceGetListNotification
 
 
+    //---------------------------------------------------------------------------------------------- getNotification
     fun getNotification() {
         if (rawListNotification.isNullOrEmpty())
             requestGetNotification()
@@ -61,7 +69,7 @@ class NotificationViewModel @Inject constructor(
             }
         }
     }
-
+    //---------------------------------------------------------------------------------------------- getNotification
 
 
     //---------------------------------------------------------------------------------------------- requestGetNotification
@@ -80,10 +88,8 @@ class NotificationViewModel @Inject constructor(
     //---------------------------------------------------------------------------------------------- requestGetNotification
 
 
-
-
     //---------------------------------------------------------------------------------------------- requestReadNotification
-    fun requestReadNotification(ids : List<Int>) {
+    fun requestReadNotification(ids: List<Int>) {
         job = CoroutineScope(IO + exceptionHandler()).launch {
             val response = notificationRepository.requestReadNotification(ids)
             if (response?.isSuccessful == true) {
@@ -98,19 +104,12 @@ class NotificationViewModel @Inject constructor(
     //---------------------------------------------------------------------------------------------- requestReadNotification
 
 
-
     //---------------------------------------------------------------------------------------------- initListNotification
     private suspend fun initListNotification() {
-        rawListNotification?.let { list ->
+        rawListNotification?.let {
             setTodayNotification()
             setYesterdayNotification()
-            categoryNotification.add(
-                NotificationCategoryModel(
-                    "همه",
-                    null,
-                    list.toMutableList()
-                )
-            )
+            setOldDayNotification()
             withContext(Main) {
                 notificationResponseLiveData.value = categoryNotification
             }
@@ -120,9 +119,9 @@ class NotificationViewModel @Inject constructor(
 
 
     //---------------------------------------------------------------------------------------------- addNotification
-    fun addNotification(item : NotificationSignalrModel) {
+    fun addNotification(item: NotificationSignalrModel) {
         rawListNotification?.add(0, item)
-        categoryNotification.removeAll(categoryNotification)
+        categoryNotification.clear()
         CoroutineScope(IO).launch {
             initListNotification()
         }
@@ -182,6 +181,33 @@ class NotificationViewModel @Inject constructor(
             )
     }
     //---------------------------------------------------------------------------------------------- setYesterdayNotification
+
+
+    //---------------------------------------------------------------------------------------------- setOldDayNotification
+    private fun setOldDayNotification() {
+        val now = LocalDateTime.now().minusDays(1)
+        val yesterdayDate = LocalDateTime.of(
+            now.year,
+            now.month,
+            now.dayOfMonth,
+            0, 0, 0
+        )
+        val yesterday = rawListNotification!!.filter { item ->
+            val strDate = item.lastUpdate?.substring(0, 11) + "00:00:00"
+            val date = LocalDateTime.parse(strDate)
+            val dayBetween = Duration.between(yesterdayDate, date).toDays()
+            dayBetween < 0
+        }
+        if (yesterday.isNotEmpty())
+            categoryNotification.add(
+                NotificationCategoryModel(
+                    "همه",
+                    yesterdayDate,
+                    yesterday.toMutableList()
+                )
+            )
+    }
+    //---------------------------------------------------------------------------------------------- setOldDayNotification
 
 
     //---------------------------------------------------------------------------------------------- exceptionHandler

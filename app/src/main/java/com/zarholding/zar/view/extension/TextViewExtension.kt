@@ -1,8 +1,9 @@
-package com.zarholding.zar.utility.extension
+package com.zarholding.zar.view.extension
 
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.zar.core.tools.extensions.toSolarDate
+import com.zarholding.zar.database.entity.UserInfoEntity
 import com.zarholding.zar.model.enum.EnumStatus
 import com.zarholding.zar.model.notification_signalr.NotificationSignalrModel
 import com.zarholding.zar.model.response.PassengerModel
@@ -16,19 +17,32 @@ import java.time.LocalDateTime
  * Created by m-latifi on 11/14/2022.
  */
 
+//-------------------------------------------------------------------------------------------------- setJobKeyAndUnit
+@BindingAdapter("setJobKeyAndUnit")
+fun TextView.setJobKeyAndUnit(user : UserInfoEntity?) {
+    user?.let {
+        val title = "${it.personnelJobKeyText} ${it.organizationUnit}"
+        text = title
+    } ?: run { ""}
+}
+//-------------------------------------------------------------------------------------------------- setJobKeyAndUnit
+
+
+//-------------------------------------------------------------------------------------------------- setProfileValue
+@BindingAdapter("setProfileValue")
+fun TextView.setProfileValue(value: String?) {
+    text = if (value.isNullOrEmpty())
+        context.getString(R.string.addInFiori)
+    else
+        value
+}
+//-------------------------------------------------------------------------------------------------- setProfileValue
+
+
 //-------------------------------------------------------------------------------------------------- setCarPlaque
 @BindingAdapter("setCarPlaque")
 fun TextView.setCarPlaque(plaque: String?) {
-    text = if (plaque.isNullOrEmpty())
-        ""
-    else
-        when (tag.toString()) {
-            "number1" -> plaque.substring(0, 2)
-            "alphabet" -> plaque.substring(2, 3)
-            "number2" -> plaque.substring(3, 6)
-            "city" -> plaque.substring(6, 8)
-            else -> ""
-        }
+    text = plaque.toCarPlaque(tag.toString())
 }
 //-------------------------------------------------------------------------------------------------- setCarPlaque
 

@@ -1,4 +1,4 @@
-package com.zarholding.zar.utility.extension
+package com.zarholding.zar.view.extension
 
 import android.app.Activity
 import android.content.Context
@@ -123,3 +123,18 @@ fun View.setUnreadNotification(read: Boolean) {
         )
 }
 //-------------------------------------------------------------------------------------------------- setUnreadNotification
+
+
+//-------------------------------------------------------------------------------------------------- toCarPlaque
+fun String?.toCarPlaque(tag: String) =
+    if (this.isNullOrEmpty())
+        ""
+    else
+        when (tag) {
+            "number1" -> this.substring(0, 2)
+            "alphabet" -> this.substring(2, 3)
+            "number2" -> this.substring(3, 6)
+            "city" -> this.substring(6, 8)
+            else -> ""
+        }
+//-------------------------------------------------------------------------------------------------- toCarPlaque

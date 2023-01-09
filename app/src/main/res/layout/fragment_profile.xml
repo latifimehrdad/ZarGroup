@@ -112,7 +112,7 @@
                     app:layout_constraintBottom_toTopOf="@id/textViewPersonalCode"
                     app:layout_constraintEnd_toEndOf="@id/textViewProfileName"
                     app:layout_constraintTop_toBottomOf="@id/textViewProfileName"
-                    android:text="@{item != null ? item.personnelJobKeyText : @string/empty}"/>
+                    app:setJobKeyAndUnit="@{item}"/>
 
                 <TextView
                     android:id="@+id/textViewPersonalCode"
@@ -222,6 +222,14 @@
                             app:value="@{item.phone}"/>
 
                         <include
+                            layout="@layout/layout_profile_info_item"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:title="@{@string/carModel}"
+                            app:icon="@{@drawable/ic_car}"
+                            app:value="@{item.carModel}"/>
+
+                        <include
                             android:id="@+id/layoutPlaque"
                             layout="@layout/layout_profile_info_plaque"
                             android:layout_width="match_parent"
@@ -229,6 +237,7 @@
                             app:title="@{@string/plaqueNumber}"
                             app:icon="@{@drawable/ic_license_plate_number}"
                             app:value="@{item.pelak}"/>
+
 
                     </LinearLayout>
 

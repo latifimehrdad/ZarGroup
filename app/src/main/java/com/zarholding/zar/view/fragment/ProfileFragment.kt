@@ -9,10 +9,11 @@ import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.google.android.material.snackbar.Snackbar
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.view.dialog.ConfirmDialog
 import com.zarholding.zar.view.dialog.EditPlaqueDialog
+import com.zarholding.zar.view.dialog.NotificationDialog
+import com.zarholding.zar.view.dialog.ShowImageDialog
 import com.zarholding.zar.viewmodel.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import zar.R
@@ -68,6 +69,8 @@ class ProfileFragment : Fragment() {
         binding.layoutPersonalInformation.setOnClickListener { showAndHideInfo() }
         binding.layoutTrainings.root.setOnClickListener { disableFeature() }
         binding.layoutPlaque.root.setOnClickListener { showEditCarPlaque() }
+        binding.cardViewProfile.setOnClickListener { showImageProfile() }
+        binding.layoutMessage.root.setOnClickListener { showNotificationDialog() }
     }
     //---------------------------------------------------------------------------------------------- setListener
 
@@ -158,13 +161,31 @@ class ProfileFragment : Fragment() {
     private fun showEditCarPlaque() {
         val click = object : EditPlaqueDialog.Click {
             override fun editPlaque() {
-
                 setUserInfo()
             }
         }
         EditPlaqueDialog(click).show(childFragmentManager, "edit plaque")
     }
     //---------------------------------------------------------------------------------------------- showEditCarPlaque
+
+
+    //---------------------------------------------------------------------------------------------- showImageProfile
+    private fun showImageProfile() {
+        context?.let {
+            ShowImageDialog(requireContext(), profileViewModel.getModelForShowImageProfile()).show()
+        }
+    }
+    //---------------------------------------------------------------------------------------------- showImageProfile
+
+
+    //---------------------------------------------------------------------------------------------- showNotificationDialog
+    private fun showNotificationDialog() {
+        val position = binding.textViewProfile.top +
+                binding.textViewProfile.measuredHeight
+        NotificationDialog(position).show(childFragmentManager, "notification dialog")
+    }
+    //---------------------------------------------------------------------------------------------- showNotificationDialog
+
 
 
     //---------------------------------------------------------------------------------------------- onDestroyView

@@ -73,29 +73,29 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_1sdp">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/materialButtonDeleteAll"
+                <com.zarholding.zar.view.custom.ZarButton
+                    android:id="@+id/materialButtonReadAll"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/materialButtonDeleteChecked"
-                    android:text="@string/deleteAllNotification"
+                    app:layout_constraintEnd_toStartOf="@id/materialButtonReadChecked"
+                    android:text="@string/readAllNotification"
                     android:textSize="@dimen/_10sdp"
                     android:fontFamily="@font/kalameh_regular"
                     android:background="@color/notificationButtonColor"
                     app:backgroundTint="@color/notificationButtonColor"
                     android:textColor="@color/cardViewHomeNotificationColor"/>
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/materialButtonDeleteChecked"
+                <com.zarholding.zar.view.custom.ZarButton
+                    android:id="@+id/materialButtonReadChecked"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/materialButtonDeleteAll"
+                    app:layout_constraintStart_toEndOf="@id/materialButtonReadAll"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginStart="@dimen/_2sdp"
-                    android:text="@string/deleteChecked"
+                    android:text="@string/readChecked"
                     android:textSize="@dimen/_10sdp"
                     android:fontFamily="@font/kalameh_regular"
                     android:background="@color/notificationButtonColor"

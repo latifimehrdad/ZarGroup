@@ -36,7 +36,8 @@ class ServiceHolder(private val binding: ItemServiceBinding) :
             click.showImage(
                 ShowImageModel(
                     item.carImageName!!,
-                    binding.imageViewBus.context.resources.getString(R.string.carEntityType)
+                    binding.imageViewBus.context.resources.getString(R.string.carEntityType),
+                    null
                 )
             )
         }
@@ -44,7 +45,8 @@ class ServiceHolder(private val binding: ItemServiceBinding) :
             click.showImage(
                 ShowImageModel(
                     item.driverImageName!!,
-                    binding.imageViewBus.context.resources.getString(R.string.driversEntityType)
+                    binding.imageViewBus.context.resources.getString(R.string.driversEntityType),
+                    null
                 )
             )
         }

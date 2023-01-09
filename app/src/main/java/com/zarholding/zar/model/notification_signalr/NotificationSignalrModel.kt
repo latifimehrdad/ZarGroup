@@ -14,5 +14,6 @@ data class NotificationSignalrModel(
     val systemType : String,
     val destinationWebToken : String?,
     val id : Int,
-    val status : String?
+    val status : String?,
+    var select : Boolean
 )

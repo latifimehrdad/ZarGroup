@@ -31,8 +31,8 @@
     <string name="yesterday">دیروز</string>
     <string name="today">امروز</string>
     <string name="todayDate">تاریخ امروز</string>
-    <string name="deleteAllNotification">حذف کل اعلانات</string>
-    <string name="deleteChecked">حذف انتخاب شده ها</string>
+    <string name="readAllNotification">خواندن کل اعلانات</string>
+    <string name="readChecked">خواندن انتخاب شده ها</string>
     <string name="profile">پروفایل</string>
     <string name="personalInformation">اطلاعات کاربری</string>
     <string name="messages">پیام ها</string>
@@ -205,6 +205,9 @@
     <string name="plaqueNumber">پلاک خودرو</string>
     <string name="carModel">مدل خودرو</string>
     <string name="plaqueInformationIsEmpty">اطلاعات پلاک را کامل وارد نمایید</string>
+    <string name="addInFiori">در Fiori اضافه کنید</string>
+    <string name="doYouWantToReadNotification">آیا برای تغییر حالت پیام ها به خوانده شده مطمئن هستید؟</string>
+    <string name="thereAreNoUnreadMessage">هیچ پیام خوانده نشده ای وجود ندارد</string>
 
     
     
@@ -214,7 +217,7 @@
     <string name="sliderDescription">slider</string>
     <string name="newsDescription">news</string>
     <string name="closeDescription">close</string>
-    <string name="iconNotificationDescription">iconNotification</string>
+    <string name="iconNotificationDescription">icon notification</string>
     <string name="showMoreDescription">show more</string>
     <string name="iconDescription">icon</string>
     <string name="plusDescription">plus</string>
@@ -222,5 +225,6 @@
     <string name="retryDescription">retry</string>
     <string name="favDescription">favorite</string>
     <string name="markerDescription">marker</string>
+    <string name="myLocationDescription">my location</string>
 
 </resources>

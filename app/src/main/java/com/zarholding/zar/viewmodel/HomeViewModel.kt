@@ -54,13 +54,7 @@ class HomeViewModel @Inject constructor(
                 0
             )
         )
-        apps.add(
-            AppModel(
-                R.drawable.icon_gift_card,
-                resourcesProvider.getString(R.string.giftCard),
-                0
-            )
-        )
+
         return apps
     }
     //---------------------------------------------------------------------------------------------- getApp

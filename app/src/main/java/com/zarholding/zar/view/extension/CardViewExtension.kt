@@ -1,4 +1,4 @@
-package com.zarholding.zar.utility.extension
+package com.zarholding.zar.view.extension
 
 import androidx.cardview.widget.CardView
 import com.zarholding.zar.model.enum.EnumStatus

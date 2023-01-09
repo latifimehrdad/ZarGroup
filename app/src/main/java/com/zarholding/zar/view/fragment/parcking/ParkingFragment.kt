@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.skydoves.powerspinner.DefaultSpinnerAdapter
 import com.zar.core.enums.EnumApiError
 import com.zar.core.tools.extensions.persianNumberToEnglishNumber
-import com.zarholding.zar.utility.extension.hideKeyboard
+import com.zarholding.zar.view.extension.hideKeyboard
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.viewmodel.ParkingViewModel
 import dagger.hilt.android.AndroidEntryPoint

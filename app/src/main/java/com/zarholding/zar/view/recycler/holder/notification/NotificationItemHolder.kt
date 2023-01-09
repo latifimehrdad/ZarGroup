@@ -1,5 +1,7 @@
 package com.zarholding.zar.view.recycler.holder.notification
 
+import android.view.View
+import android.widget.CompoundButton
 import androidx.recyclerview.widget.RecyclerView
 import com.zarholding.zar.model.notification_signalr.NotificationSignalrModel
 import zar.databinding.ItemNotificationBinding
@@ -26,6 +28,9 @@ class NotificationItemHolder(
     fun bind(item: NotificationSignalrModel, notificationPosition : Int) {
         binding.item = item
         binding.root.setOnClickListener { click.showDetail(categoryPosition, notificationPosition) }
+        binding.checkboxRead.setOnCheckedChangeListener { _, b ->
+            item.select = b
+        }
         binding.executePendingBindings()
     }
     //---------------------------------------------------------------------------------------------- bind

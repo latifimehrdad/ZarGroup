@@ -15,6 +15,9 @@
         <variable
             name="icon"
             type="android.graphics.drawable.Drawable" />
+
+        <import type="android.view.View"/>
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -25,9 +28,10 @@
             android:id="@+id/imageViewIcon"
             android:layout_width="@dimen/_17sdp"
             android:layout_height="@dimen/_17sdp"
-            app:layout_constraintTop_toTopOf="@id/constraintLayoutPlaque"
-            app:layout_constraintBottom_toBottomOf="@id/constraintLayoutPlaque"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginVertical="@dimen/_10sdp"
             android:layout_marginHorizontal="@dimen/_5sdp"
             android:src="@{icon}"
             android:contentDescription="@string/profileDescription" />
@@ -37,8 +41,8 @@
             android:id="@+id/textViewTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="@id/constraintLayoutPlaque"
-            app:layout_constraintBottom_toBottomOf="@id/constraintLayoutPlaque"
+            app:layout_constraintTop_toTopOf="@id/imageViewIcon"
+            app:layout_constraintBottom_toBottomOf="@id/imageViewIcon"
             app:layout_constraintEnd_toStartOf="@id/imageViewIcon"
             android:layout_marginHorizontal="@dimen/_10sdp"
             android:text="@{title}"
@@ -53,12 +57,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintWidth_percent="0.5"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="@id/imageViewIcon"
+            app:layout_constraintBottom_toBottomOf="@id/imageViewIcon"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginVertical="@dimen/_5sdp"
             android:orientation="horizontal"
-            android:background="@drawable/drawable_border_car_number">
+            android:background="@drawable/drawable_border_car_number"
+            android:visibility="@{value.length() == 0 ? View.GONE : View.VISIBLE}">
 
             <ImageView
                 android:id="@+id/imageviewIran"
@@ -160,18 +164,32 @@
             android:id="@+id/imageViewEdit"
             android:layout_width="@dimen/_17sdp"
             android:layout_height="@dimen/_17sdp"
-            app:layout_constraintTop_toTopOf="@id/constraintLayoutPlaque"
-            app:layout_constraintBottom_toBottomOf="@id/constraintLayoutPlaque"
+            app:layout_constraintTop_toTopOf="@id/imageViewIcon"
+            app:layout_constraintBottom_toBottomOf="@id/imageViewIcon"
             app:layout_constraintStart_toEndOf="@id/constraintLayoutPlaque"
             android:layout_marginHorizontal="@dimen/_5sdp"
             android:src="@drawable/ic_edit"
             android:contentDescription="@string/profileDescription" />
 
+        <TextView
+            android:id="@+id/textViewValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@id/imageViewIcon"
+            app:layout_constraintBottom_toBottomOf="@id/imageViewIcon"
+            app:layout_constraintStart_toEndOf="@id/imageViewEdit"
+            android:layout_marginHorizontal="@dimen/_5sdp"
+            android:fontFamily="@font/kalameh_light"
+            android:textSize="@dimen/_8sdp"
+            android:textColor="@color/textViewFooter"
+            android:text="@string/addInFiori"
+            android:visibility="@{value.length() == 0 ? View.VISIBLE : View.GONE}"/>
+
         <View
             android:layout_width="0dp"
             android:layout_height="0.7dp"
             android:background="@color/textViewFooter"
-            app:layout_constraintStart_toEndOf="@id/imageViewEdit"
+            app:layout_constraintStart_toEndOf="@id/textViewValue"
             app:layout_constraintEnd_toStartOf="@id/textViewTitle"
             android:layout_marginHorizontal="@dimen/_5sdp"
             app:layout_constraintTop_toTopOf="parent"

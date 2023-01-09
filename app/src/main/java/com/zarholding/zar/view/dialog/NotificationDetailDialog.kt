@@ -10,7 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.zar.core.tools.extensions.toSolarDate
 import com.zarholding.zar.model.notification_signalr.NotificationSignalrModel
-import com.zarholding.zar.utility.extension.getMessageContent
+import com.zarholding.zar.view.extension.getMessageContent
 import zar.R
 import java.time.LocalDateTime
 

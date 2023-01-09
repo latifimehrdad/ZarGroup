@@ -16,14 +16,16 @@ import zar.R
 class ConfirmDialog(
     context: Context,
     private val type: ConfirmType,
-    private val title : String,
-    private val click: Click) : Dialog(context){
+    private val title: String,
+    private val click: Click
+) : Dialog(context) {
 
 
     //---------------------------------------------------------------------------------------------- ConfirmType
     enum class ConfirmType {
         ADD,
-        DELETE
+        DELETE,
+        WARNING
     }
     //---------------------------------------------------------------------------------------------- ConfirmType
 
@@ -41,7 +43,10 @@ class ConfirmDialog(
         setContentView(R.layout.dialog_confirm)
         val lp = WindowManager.LayoutParams()
         this.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        this.window?.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
+        this.window?.setLayout(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.WRAP_CONTENT
+        )
         this.window?.setGravity(Gravity.CENTER)
         lp.copyFrom(this.window?.attributes)
         lp.horizontalMargin = 50f
@@ -58,7 +63,6 @@ class ConfirmDialog(
     //---------------------------------------------------------------------------------------------- onStart
 
 
-
     //---------------------------------------------------------------------------------------------- initDialog
     private fun initDialog() {
         val imageViewClose = this.findViewById<ImageView>(R.id.imageViewClose)
@@ -67,9 +71,10 @@ class ConfirmDialog(
         val buttonYes = this.findViewById<MaterialButton>(R.id.buttonYes)
         val buttonNo = this.findViewById<MaterialButton>(R.id.buttonNo)
 
-        when(type) {
+        when (type) {
             ConfirmType.ADD -> layoutHeader.setBackgroundResource(R.drawable.drawable_confirm)
             ConfirmType.DELETE -> layoutHeader.setBackgroundResource(R.drawable.drawable_reject)
+            ConfirmType.WARNING -> layoutHeader.setBackgroundResource(R.color.waiting)
         }
 
         textViewTitle.text = title

@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.zar.core.tools.BiometricTools
 import com.zarholding.zar.view.activity.MainActivity
-import com.zarholding.zar.utility.extension.hideKeyboard
+import com.zarholding.zar.view.extension.hideKeyboard
 import com.zarholding.zar.viewmodel.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope

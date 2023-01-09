@@ -7,15 +7,16 @@ import android.graphics.drawable.InsetDrawable
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import com.ahmadhamwi.tabsync.TabbedListMediator
+import com.google.android.material.tabs.TabLayout
 import com.google.gson.Gson
 import com.zar.core.tools.loadings.LoadingManager
 import com.zarholding.zar.model.notification_signalr.NotificationSignalrModel
 import com.zarholding.zar.utility.CompanionValues
+import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.view.recycler.adapter.notification.NotificationCategoryAdapter
 import com.zarholding.zar.view.recycler.holder.notification.NotificationItemHolder
 import com.zarholding.zar.viewmodel.NotificationViewModel
@@ -43,6 +44,7 @@ class NotificationDialog(
 
     private var categoryPosition = 0
     private var notificationPosition = 0
+    private var unReadNotifyCount = 0
 
 
     //---------------------------------------------------------------------------------------------- onCreateView
@@ -99,11 +101,21 @@ class NotificationDialog(
 
     //---------------------------------------------------------------------------------------------- setListener
     private fun setListener() {
-
         binding.imageViewClose.setOnClickListener { dismiss() }
-
+        binding.materialButtonReadAll.setOnClickListener { readAllNotification() }
+        binding.materialButtonReadChecked.setOnClickListener { readCheckedNotification() }
     }
     //---------------------------------------------------------------------------------------------- setListener
+
+
+    //---------------------------------------------------------------------------------------------- showMessage
+    private fun showMessage(message: String) {
+        activity?.let {
+            (it as MainActivity).showMessage(message)
+        }
+    }
+    //---------------------------------------------------------------------------------------------- showMessage
+
 
 
     //---------------------------------------------------------------------------------------------- registerReceiver
@@ -129,10 +141,21 @@ class NotificationDialog(
     //---------------------------------------------------------------------------------------------- observeReadLiveData
     private fun observeReadLiveData() {
         notificationViewModel.readLiveData.observe(viewLifecycleOwner) {
-            Log.i("meri", "selectedTabPosition = ${binding.tabLayout.selectedTabPosition}")
-            adapter!!.setReadNotification(categoryPosition, notificationPosition)
-            val intent = Intent("com.zarholding.zar.receive.message")
-            context?.sendBroadcast(intent)
+            if (categoryPosition != -1) {
+                adapter!!.setReadNotification(categoryPosition, notificationPosition)
+                var count = binding.tabLayout.getTabAt(categoryPosition)?.badge?.number
+                count?.let {
+                    count--
+                    if (count < 1)
+                        binding.tabLayout.getTabAt(categoryPosition)?.removeBadge()
+                    else
+                        binding.tabLayout.getTabAt(categoryPosition)?.badge?.number = count
+                }
+                /*این برودکست برای تغییر تعداد نوتیفیکیشن در اکتیویتی است*/
+                val intent = Intent("com.zarholding.zar.receive.message")
+                context?.sendBroadcast(intent)
+            } else
+                forceGetListNotification()
         }
     }
     //---------------------------------------------------------------------------------------------- observeReadLiveData
@@ -142,21 +165,31 @@ class NotificationDialog(
     private fun observeNotificationResponseLiveData() {
         notificationViewModel.notificationResponseLiveData.observe(viewLifecycleOwner) {
             loadingManager.stopLoadingView()
+            for (i in 0 until binding.tabLayout.tabCount)
+                binding.tabLayout.getTabAt(i)?.removeBadge()
             binding.tabLayout.removeAllTabs()
-
+            unReadNotifyCount = 0
             for (category in it) {
-                val tab = binding.tabLayout.newTab().apply {
-                    text = category.name
-                    orCreateBadge
-                    badge?.isVisible = true
-                    badge?.number = category.notifications.size
-                }
+                val count = category.notifications.filter { notify -> !notify.isRead }
+                unReadNotifyCount+=count.size
+                var tab: TabLayout.Tab
+                if (count.isNotEmpty())
+                    tab = binding.tabLayout.newTab().apply {
+                        text = category.name
+                        orCreateBadge
+                        badge?.isVisible = true
+                        badge?.number = count.size
+                    }
+                else
+                    tab = binding.tabLayout.newTab().apply {
+                        text = category.name
+                    }
                 binding.tabLayout.addTab(tab)
             }
 
             val click = object : NotificationItemHolder.Click {
                 override fun showDetail(categoryPosition: Int, notificationPosition: Int) {
-                    requestReadNotification(categoryPosition, notificationPosition)
+                    readItemNotification(categoryPosition, notificationPosition)
                 }
             }
 
@@ -169,6 +202,7 @@ class NotificationDialog(
                 it.indices.toList(),
                 true
             ).attach()
+            (activity as MainActivity).setNotificationCount(unReadNotifyCount)
         }
     }
     //---------------------------------------------------------------------------------------------- observeNotificationResponseLiveData
@@ -187,8 +221,21 @@ class NotificationDialog(
     //---------------------------------------------------------------------------------------------- getNotification
 
 
-    //---------------------------------------------------------------------------------------------- requestReadNotification
-    private fun requestReadNotification(categoryPosition: Int, notificationPosition: Int) {
+    //---------------------------------------------------------------------------------------------- forceGetListNotification
+    private fun forceGetListNotification() {
+        loadingManager.setRecyclerLoading(
+            binding.recyclerViewNotification,
+            R.layout.item_loading,
+            R.color.recyclerLoadingShadow,
+            1
+        )
+        notificationViewModel.forceGetListNotification()
+    }
+    //---------------------------------------------------------------------------------------------- forceGetListNotification
+
+
+    //---------------------------------------------------------------------------------------------- readItemNotification
+    private fun readItemNotification(categoryPosition: Int, notificationPosition: Int) {
         this.categoryPosition = categoryPosition
         this.notificationPosition = notificationPosition
         adapter?.let {
@@ -198,11 +245,76 @@ class NotificationDialog(
             context?.let {
                 NotificationDetailDialog(requireContext(), item).show()
             }
-            notificationViewModel.requestReadNotification(listOf(item.id))
+            requestReadNotification(listOf(item.id))
         }
+    }
+    //---------------------------------------------------------------------------------------------- readItemNotification
 
+
+    //---------------------------------------------------------------------------------------------- requestReadNotification
+    private fun requestReadNotification(ids: List<Int>) {
+        notificationViewModel.requestReadNotification(ids)
     }
     //---------------------------------------------------------------------------------------------- requestReadNotification
+
+
+    //---------------------------------------------------------------------------------------------- readAllNotification
+    private fun readAllNotification() {
+        val notify = mutableListOf<NotificationSignalrModel>()
+        adapter?.let {
+            val categories = it.getListOfCategories()
+            for (category in categories) {
+                val unReads = category.notifications.filter { notify -> !notify.isRead }
+                if (unReads.isNotEmpty())
+                    notify.addAll(unReads)
+            }
+        }
+        if (notify.isEmpty())
+            showMessage(getString(R.string.thereAreNoUnreadMessage))
+        else
+            showDialogConfirmToReadNotification(notify)
+    }
+    //---------------------------------------------------------------------------------------------- readAllNotification
+
+
+    //---------------------------------------------------------------------------------------------- readCheckedNotification
+    private fun readCheckedNotification() {
+        val notify = mutableListOf<NotificationSignalrModel>()
+        adapter?.let {
+            val categories = it.getListOfCategories()
+            for (category in categories) {
+                val unReads = category.notifications
+                    .filter { notify -> !notify.isRead && notify.select }
+                if (unReads.isNotEmpty())
+                    notify.addAll(unReads)
+            }
+        }
+        if (notify.isEmpty())
+            showMessage(getString(R.string.thereAreNoUnreadMessage))
+        else
+            showDialogConfirmToReadNotification(notify)
+    }
+    //---------------------------------------------------------------------------------------------- readCheckedNotification
+
+
+    //---------------------------------------------------------------------------------------------- showDialogConfirmToReadNotification
+    private fun showDialogConfirmToReadNotification(items : MutableList<NotificationSignalrModel>) {
+        val click = object : ConfirmDialog.Click{
+            override fun clickYes() {
+                categoryPosition = -1
+                val ids = items.map { it.id }
+                requestReadNotification(ids)
+            }
+        }
+
+        ConfirmDialog(
+            requireContext(),
+            ConfirmDialog.ConfirmType.WARNING,
+            getString(R.string.doYouWantToReadNotification),
+            click
+        ).show()
+    }
+    //---------------------------------------------------------------------------------------------- showDialogConfirmToReadNotification
 
 
     //---------------------------------------------------------------------------------------------- onDismiss

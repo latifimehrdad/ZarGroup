@@ -1,4 +1,4 @@
-package com.zarholding.zar.utility.extension
+package com.zarholding.zar.view.extension
 
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
@@ -53,9 +53,9 @@ fun ImageView.loadImage(url: String, entityType: String) {
 
 
 
-//-------------------------------------------------------------------------------------------------- loadImageProfile
+//-------------------------------------------------------------------------------------------------- loadImageByToken
 @BindingAdapter("loadImageProfile", "bearerToken")
-fun ImageView.loadImageProfile(url: String?, token : String) {
+fun ImageView.loadImageByToken(url: String?, token : String) {
     val circularProgressDrawable = CircularProgressDrawable(this.context)
     circularProgressDrawable.strokeWidth = 5f
     circularProgressDrawable.centerRadius = 30f
@@ -70,4 +70,4 @@ fun ImageView.loadImageProfile(url: String?, token : String) {
         .load(glideUrl)
         .into(this)
 }
-//-------------------------------------------------------------------------------------------------- loadImageProfile
+//-------------------------------------------------------------------------------------------------- loadImageByToken

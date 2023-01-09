@@ -23,7 +23,7 @@ data class UserInfoEntity(
     val roles : List<String>?,
     val userType : String?,
     var pelak : String?,
-    val carModel : String?
+    var carModel : String?
 ) {
     @PrimaryKey(autoGenerate = false)
     var id : Int = 0

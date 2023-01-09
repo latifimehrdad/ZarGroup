@@ -33,7 +33,7 @@ class SplashFragment : Fragment() {
 
     private val splashViewModel: SplashViewModel by viewModels()
 
-    private lateinit var job: Job
+    private var job: Job? = null
 
     //---------------------------------------------------------------------------------------------- onCreateView
     override fun onCreateView(
@@ -160,7 +160,7 @@ class SplashFragment : Fragment() {
     //---------------------------------------------------------------------------------------------- onDestroyView
     override fun onDestroyView() {
         super.onDestroyView()
-        job.cancel()
+        job?.cancel()
         _binding = null
     }
     //---------------------------------------------------------------------------------------------- onDestroyView

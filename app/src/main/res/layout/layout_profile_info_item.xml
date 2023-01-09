@@ -57,10 +57,10 @@
             app:layout_constraintBottom_toBottomOf="@id/imageViewIcon"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginHorizontal="@dimen/_5sdp"
-            android:text="@{value}"
             android:fontFamily="@font/kalameh_light"
             android:textSize="@dimen/_8sdp"
-            android:textColor="@color/textViewFooter" />
+            android:textColor="@color/textViewFooter"
+            app:setProfileValue="@{value}"/>
 
         <View
             android:layout_width="0dp"

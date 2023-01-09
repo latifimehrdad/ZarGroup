@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.zarholding.zar.model.enum.EnumStatus
 import com.zarholding.zar.model.other.ShowImageModel
 import com.zarholding.zar.model.response.trip.TripModel
-import com.zarholding.zar.utility.extension.setRegisterStationStatus
+import com.zarholding.zar.view.extension.setRegisterStationStatus
 import zar.R
 import zar.databinding.ItemMyServiceBinding
 
@@ -50,7 +50,8 @@ class MyServiceHolder(private val binding: ItemMyServiceBinding) :
             click.showImage(
                 ShowImageModel(
                     item.carImageName!!,
-                    binding.imageViewBus.context.resources.getString(R.string.carEntityType)
+                    binding.imageViewBus.context.resources.getString(R.string.carEntityType),
+                    null
                 )
             )
         }
@@ -58,7 +59,8 @@ class MyServiceHolder(private val binding: ItemMyServiceBinding) :
             click.showImage(
                 ShowImageModel(
                     item.driverImageName!!,
-                    binding.imageViewBus.context.resources.getString(R.string.driversEntityType)
+                    binding.imageViewBus.context.resources.getString(R.string.driversEntityType),
+                    null
                 )
             )
         }

@@ -10,7 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.skydoves.powerspinner.DefaultSpinnerAdapter
 import com.zar.core.enums.EnumApiError
-import com.zarholding.zar.utility.extension.hideKeyboard
+import com.zarholding.zar.view.extension.hideKeyboard
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.viewmodel.ParkingViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -57,12 +57,23 @@ class EditPlaqueDialog(private val click: Click) : DialogFragment() {
         lp.gravity = Gravity.CENTER
         lp.horizontalMargin = 50f
         window.attributes = lp
+        parkingViewModel.initUserCarPlaque()
         observeSuccessLiveData()
         observeErrorLiveDate()
         setListener()
         initAlphabetSpinner()
     }
     //---------------------------------------------------------------------------------------------- onCreateView
+
+
+    //---------------------------------------------------------------------------------------------- showMessage
+    private fun showMessage(message: String) {
+        activity?.let {
+            (it as MainActivity).showMessage(message)
+        }
+    }
+    //---------------------------------------------------------------------------------------------- showMessage
+
 
 
     //---------------------------------------------------------------------------------------------- setListener
@@ -92,6 +103,7 @@ class EditPlaqueDialog(private val click: Click) : DialogFragment() {
     private fun observeErrorLiveDate() {
         parkingViewModel.errorLiveDate.observe(viewLifecycleOwner) {
             binding.buttonYes.stopLoading()
+            showMessage(it.message)
             when (it.type) {
                 EnumApiError.UnAuthorization -> (activity as MainActivity?)?.gotoFirstFragment()
 
