@@ -136,7 +136,7 @@ class ParkingViewModel @Inject constructor(
 
     //---------------------------------------------------------------------------------------------- getAlphabet
     fun getAlphabet() = listOf(
-        "الف",
+        "آ",
         "ب",
         "پ",
         "ت",

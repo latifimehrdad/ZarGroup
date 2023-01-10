@@ -15,14 +15,17 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.work.*
 import com.google.android.material.snackbar.Snackbar
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.zarholding.zar.background.FetchDataWorker
 import com.zarholding.zar.background.ZarNotificationService
 import com.zarholding.zar.utility.CompanionValues
+import com.zarholding.zar.utility.CompanionValues.Companion.NOTIFICATION_WORK_MANAGER_TAG
 import com.zarholding.zar.view.dialog.NotificationDialog
 import com.zarholding.zar.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,6 +37,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import zar.R
 import zar.databinding.ActivityMainBinding
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -55,6 +59,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.token = ""
+        createWorker()
         initView()
     }
     //---------------------------------------------------------------------------------------------- onCreate
@@ -287,10 +292,30 @@ class MainActivity : AppCompatActivity() {
     //---------------------------------------------------------------------------------------------- showMessage
 
 
+    //---------------------------------------------------------------------------------------------- createWorker
+    fun createWorker() {
+        WorkManager.getInstance(application.applicationContext!!)
+            .cancelAllWorkByTag(NOTIFICATION_WORK_MANAGER_TAG)
+
+        val workManager = WorkManager.getInstance(applicationContext)
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .setRequiresBatteryNotLow(false)
+            .build()
+
+        val work = PeriodicWorkRequestBuilder<FetchDataWorker>(15, TimeUnit.MINUTES)
+            .setConstraints(constraints)
+            .addTag(NOTIFICATION_WORK_MANAGER_TAG)
+            .build()
+        workManager.enqueue(work)
+    }
+    //---------------------------------------------------------------------------------------------- createWorker
+
 
     //---------------------------------------------------------------------------------------------- onDestroy
     override fun onDestroy() {
         super.onDestroy()
+        stopService(Intent(this@MainActivity, ZarNotificationService::class.java))
         unregisterReceiver(broadcastReceiver)
     }
     //---------------------------------------------------------------------------------------------- onDestroy

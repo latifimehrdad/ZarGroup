@@ -36,7 +36,7 @@ class ZarNotificationService : LifecycleService(), RemoteSignalREmitter {
     //---------------------------------------------------------------------------------------------- onStartCommand
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        scheduleAlarm()
+//        scheduleAlarm()
         initSignalR()
         return START_STICKY
     }

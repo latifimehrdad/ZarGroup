@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.zar.core.enums.EnumApiError
-import com.zarholding.zar.background.ZarNotificationService
 import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.viewmodel.MainViewModel
 import com.zarholding.zar.viewmodel.SplashViewModel
@@ -99,12 +98,6 @@ class SplashFragment : Fragment() {
     //---------------------------------------------------------------------------------------------- gotoFragmentHome
 
 
-    //---------------------------------------------------------------------------------------------- startServiceNotificationBackground
-    private fun startServiceNotificationBackground() {
-        requireContext().startService(Intent(requireContext(), ZarNotificationService::class.java))
-    }
-    //---------------------------------------------------------------------------------------------- startServiceNotificationBackground
-
 
     //---------------------------------------------------------------------------------------------- observeLoginLiveDate
     private fun observeErrorLiveDate() {
@@ -124,7 +117,7 @@ class SplashFragment : Fragment() {
     private fun observeSuccessLiveDataLiveData() {
         splashViewModel.successLiveData.observe(viewLifecycleOwner) {
             (activity as MainActivity).setUserInfo()
-            startServiceNotificationBackground()
+//            startServiceNotificationBackground()
             MainViewModel.notificationCount = it
             (activity as MainActivity).setNotificationCount(it)
             findNavController().navigate(R.id.action_splashFragment_to_HomeFragment)

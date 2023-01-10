@@ -1,5 +1,6 @@
 package com.zarholding.zar.view.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,8 +13,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.zar.core.tools.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType
 import com.zar.core.tools.autoimageslider.SliderAnimations
 import com.zar.core.tools.autoimageslider.SliderView
+import com.zarholding.zar.background.ZarNotificationService
 import com.zarholding.zar.database.entity.ArticleEntity
 import com.zarholding.zar.model.enum.EnumArticleType
+import com.zarholding.zar.view.activity.MainActivity
 import com.zarholding.zar.view.dialog.ArticleDetailDialog
 import com.zarholding.zar.view.dialog.ConfirmDialog
 import com.zarholding.zar.view.recycler.adapter.AppAdapter
@@ -55,6 +58,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner
+//        startServiceNotificationBackground()
         backClickControl()
         setAppsAdapter()
         getSlides()
@@ -172,6 +176,14 @@ class HomeFragment : Fragment() {
         binding.recyclerViewRequest.adapter = adapter
     }
     //---------------------------------------------------------------------------------------------- setPersonnelRequestAdapter
+
+
+    //---------------------------------------------------------------------------------------------- startServiceNotificationBackground
+    private fun startServiceNotificationBackground() {
+        requireContext().startService(Intent(requireContext(), ZarNotificationService::class.java))
+    }
+    //---------------------------------------------------------------------------------------------- startServiceNotificationBackground
+
 
 
     //---------------------------------------------------------------------------------------------- onDestroyView

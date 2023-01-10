@@ -20,5 +20,7 @@ class CompanionValues {
         const val lngOrigin = "lngOrigin"
         const val latDestination = "latDestination"
         const val lngDestination = "lngDestination"
+        const val NOTIFICATION_WORKER_ID = 7127
+        const val NOTIFICATION_WORK_MANAGER_TAG = "NOTIFICATION_WORK_MANAGER_TAG"
     }
 }

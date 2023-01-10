@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
 
     <application
@@ -36,17 +37,17 @@
         </activity>
 
 
-        <receiver android:name="com.zarholding.zar.background.ZarBackgroundBroadcast"
-            android:exported="false"
-            android:enabled="true"
-            android:process=":serviceProcess"/>
-
-
         <service android:name="com.zarholding.zar.background.ZarNotificationService"
             android:enabled="true"
             android:exported="false"
             android:process=":serviceProcess"
             />
+
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            tools:node="remove">
+        </provider>
 
     </application>
 

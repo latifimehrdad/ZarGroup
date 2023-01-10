@@ -40,7 +40,7 @@ interface ApiSuperApp {
     ) : Response<UserInfoResponseModel>
 
 
-    @POST("${v1}/LogIn/login-userInfo")
+    @POST("${v1}/LogIn/login-userInfoByInfo")
     suspend fun requestGetUserInfo(
         @Body request : UserInfoRequest,
         @Header("Authorization") token : String
